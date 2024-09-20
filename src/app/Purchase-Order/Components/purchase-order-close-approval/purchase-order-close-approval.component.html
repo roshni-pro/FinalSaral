@@ -1,0 +1,280 @@
+<p-toast></p-toast>
+
+<div class="row m-0">
+    <div class="col-12">
+        <!-- Kick start -->
+        <div id="kick-start" class="kick-start card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <h4 class="card-title">PO CLOSE APPROVAL</h4>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Supplier:</label>
+                                <div>
+                                    <p-multiSelect id="supplierids" name="SupplierId" [options]="sellerlist"
+                                        [(ngModel)]="filterreqquestsearch.SupplierIds" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="Name"></p-multiSelect>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Purchase Order Id:</label>
+                                <div>
+                                    <input type="text" name="purchaseorderid" class="form-control"
+                                        [(ngModel)]="filterreqquestsearch.PurchaseOrderId">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Warehouse:</label>
+                                <div>
+                                    <p-multiSelect id="warehouseids" name="warehouseids" [options]="warehouseList"
+                                        [(ngModel)]="filterreqquestsearch.WarehouseIds" #warehouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName"></p-multiSelect>
+                                </div>
+                            </div>
+                        </div>
+
+                       
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <!-- <label> Search</label> -->
+                                <div>
+                                    <button type="button" pButton  class="btn btn-raised btn-raised btn-primary c1 mt"
+                                        (click)="GetClosePOForApprovalData();"
+                                        label="Search"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <!-- <label> Reset:</label> -->
+                                <div>
+                                    <button type="button" class="mt" pButton (click)="initialize();" label="Reset"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <!-- <label> Reset:</label> -->
+                                <div>
+                                    <button type="button" class="ui-button-success mt" pButton (click)="onSelection(selectedList,1,'');" label="Approve request"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <!-- <label> Reset:</label> -->
+                                <div>
+                                   
+                                    <button type="button" class="ui-button-success mt" pButton (click)="isOpenPopup1 = true;" label="Reject request"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <button name="detail" type="button" class="btn btn-raised btn-raised btn-primary "
+      (click)="onSelection(selectedList)">Save</button> -->
+            </div>
+                        
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-content" *ngIf="prRequestList && prRequestList.length">
+                <div class="card-body">
+                    <p-table #table [paginator]="true" [rows]="10" [value]="prRequestList" dataKey="PurchaseOrderId" [(selection)]="selectedList" [lazy]="true"
+                        [totalRecords]="totalCount" (onLazyLoad)="loadLazy($event)" [paginator]="true"
+                        [scrollable]="true" scrollHeight="140vh" text-align: center>
+
+                        <!-- <p-table [value]="prRequestList" [paginator]="true" [lazy]="true" [totalRecords]="totalCount"
+                        (onLazyLoad)="loadLazy($event)"> -->
+
+                        <ng-template pTemplate="header">
+                            <!-- <div style="text-align: right">
+                                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                <input type="text" pInputText size="50" placeholder="Search" (input)="table.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                              </div> -->
+                            <tr>
+                                <th>
+                                    <p-tableHeaderCheckbox ></p-tableHeaderCheckbox>
+                                </th>
+                                <th>PO Number</th>
+                                <th>Warehouse Name</th>
+                                <th>Supplier Name</th>
+                                <th>Buyer Name</th>
+                                <th>PO Date</th>
+                                <th>PO Amount</th>
+                                <th>GR Amount</th>
+                                <th>IR Amount</th>
+
+                                <!-- <th>Send Approval Date</th> -->
+                                <th>Close Rejected</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <!-- <ng-template pTemplate="body" let-po let-i="rowIndex"> -->
+                        <ng-template pTemplate="body" let-po let-i="rowIndex">
+                            <tr style="cursor: pointer; pointer-events: all;">
+                                <!-- <td style="width:60px;">
+                                    <i *ngIf="po.open" class="fa fa-square-o fa-2x" aria-hidden="true">+</i>
+                                    <i *ngIf="po.closed" class="fa fa-check-square-o fa-2x" aria-hidden="true">-</i>
+                                </td> -->
+                                <td>
+                                    <p-tableCheckbox [value]="po"></p-tableCheckbox>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span style="color: red;" (click)="navToPo(po.PurchaseOrderId)">
+                                            {{po.PurchaseOrderId}}
+                                        </span>
+                                        <!-- <span style="margin-left: 20px;" (click)="po.open = !po.open"><i
+                                                *ngIf="!po.open" class="fa fa-expand" aria-hidden="true"></i>
+                                            <i *ngIf="po.open" class="fa fa-compress" aria-hidden="true"></i></span> -->
+
+                                    </div>
+
+                                </td>
+                                
+                                <td (click)="po.open = !po.open">{{po.WarehouseName}}</td>
+                                <td (click)="po.open = !po.open">{{po.SupplierName}}</td>
+                                <td (click)="po.open = !po.open">{{po.BuyerName}}</td>
+                                <td (click)="po.open = !po.open">{{po.CreationDate | date}}</td>
+                                <td (click)="po.open = !po.open">{{po.TotalPOPrice}}</td>
+                                <td (click)="po.open = !po.open">{{po.TotalGRAmount}}</td>
+                                <td (click)="po.open = !po.open">{{po.TotalIrAmount}}</td>
+                                <td (click)="po.open = !po.open">{{po.IsCloseRejected}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                        style="margin-right: 6px;"
+                                        (click)="po.ApprovedStatus = 1; po.RejectedReasion = '' ; POCloseApprove(po)">
+                                        <i class="fa fa-check" aria-hidden="true"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                        (click)="currentPoForReject = po; currentPoForReject.ApprovedStatus = 2; currentPoForReject.RejectedReasion = ''; isOpenPopup = true;">
+                                        <i class="fa fa-ban" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="po.open && po.POItemDetials && po.POItemDetials.length">
+                                <div style="width: 1000%;  color: white; outline: 2px solid black; margin-left: 10px;
+                                margin-bottom: 10px; margin-top: 10px; margin-right: 10px;">
+                                    <div
+                                        style="margin-left: 10px; margin-bottom: 10px; margin-top: 10px; margin-right: 20px;">
+                                        <br>
+                                        <!-- <h4 style="color: royalblue; margin-left: 5px;">Item List</h4> -->
+                                        <br>
+                                        <p-table [value]="po.POItemDetials">
+                                            <ng-template pTemplate="header">
+                            <tr>
+                                <th>Item Name</th>
+                                <th> Item MultiMrp Id</th>
+                                <th>Total PO Price</th>
+                                <th>Total PO Qty</th>
+                                <th>Total GR Amount</th>
+                                <th>Total Gr Qty</th>
+                                <th>Total Ir Amount</th>
+                                <th>Total IR Qty</th>
+                            </tr>
+                        </ng-template>
+                        <!-- <ng-template pTemplate="body" let-po let-i="rowIndex"> -->
+                        <ng-template pTemplate="body" let-poitem let-i="rowIndex">
+                            <tr style="cursor: pointer; pointer-events: all;">
+                                <td>{{poitem.Itemname}}</td>
+                                <td>{{poitem.ItemMultiMRPId}}</td>
+                                <td>{{poitem.TotalPOPrice}}</td>
+                                <td>{{poitem.TotalPOQty}}</td>
+
+                                <td>{{poitem.TotalGRAmount}}</td>
+                                <td>{{poitem.TotalGrQty}}</td>
+                                <td>{{poitem.TotalIrAmount}}</td>
+                                <td>{{poitem.TotalIRQty}}</td>
+                        </ng-template>
+                    </p-table>
+                    <br>
+                </div>
+            </div>
+            <hr style="width: 700%;">
+
+            </tr>
+
+            </ng-template>
+            </p-table>
+
+
+        </div>
+    </div>
+<!--/ Kick start -->
+</div>
+</div>
+
+
+
+<p-dialog *ngIf="currentPoForReject" [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body"
+    positionTop="100" [style]="{width: '50%',height: '40%'}">
+    <p-header>
+        Reject Close Request ?
+    </p-header>
+    <div class="form-group">
+        <div>
+            <textarea placeholder="please enter reason for rejecting close request" class="form-control"
+                id="projectinput1" rows="5" name="projectinput2"
+                [(ngModel)]="currentPoForReject.RejectedReasion"></textarea>
+
+            <!-- <input type="text" id="projectinput1" class="form-actions" name="fname"
+            [(ngModel)]="currentPoForReject.RejectedReasion"> -->
+        </div>
+        <div class="text-right">
+            <button [disabled]="currentPoForReject.RejectedReasion == ''" type="button"
+                class="btn btn-raised btn-raised btn-primary d1" (click)=" POCloseApprove(currentPoForReject)">
+                Reject Close Request
+            </button>
+
+        </div>
+    </div>
+
+</p-dialog>
+
+<p-dialog   [(visible)]="isOpenPopup1" [resizable]="false" [modal]="true" appendTo="body"
+    positionTop="100" [style]="{width: '50%',height: '40%'}">
+    <p-header>
+        Reject Close Request ?
+    </p-header>
+    <div class="form-group">
+        <div>
+            <textarea placeholder="please enter reason for rejecting close request" class="form-control"
+                id="projectinput1" rows="5" name="projectinput2"
+                [(ngModel)]="rejectedReasion"></textarea>
+
+            <!-- <input type="text" id="projectinput1" class="form-actions" name="fname"
+            [(ngModel)]="currentPoForReject.RejectedReasion"> -->
+        </div>
+        <div class="text-right">
+            <button   type="button"
+                class="btn btn-raised btn-raised btn-primary d1" (click)=" onSelection(selectedList,2,rejectedReasion)">
+                Reject Close Request
+            </button>
+
+        </div>
+    </div>
+
+</p-dialog>
+
+
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-confirmDialog header="Confirmation" [baseZIndex]="201" appendTo="body" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>

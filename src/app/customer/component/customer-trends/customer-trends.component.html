@@ -1,0 +1,42 @@
+<div class="row w-100 text-left">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">Order Chart</h4>
+      </div>
+      <div class="card-content">
+        <div class="card-body">
+          <div class="height-300" *ngIf="customerOrders!=null">
+            <canvas baseChart class="chart" [datasets]="lineChartData" [labels]="lineChartLabels"
+              [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend"
+              [chartType]="lineChartType"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="h6 p-2 text-primary font-weight-bold">Last 10 Purchases</div>
+      <div class="m-2">
+        <p-table #dt [columns]="cols" [value]="lastTenOrders" text-align: center>
+          <ng-template pTemplate="header" >
+            <tr>
+              <th *ngFor="let col of cols" style="text-align: center">
+                {{col.header}}
+              </th>
+              
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+            <tr   (click)="openDetails(rowData,$event)">
+              <td *ngFor="let col of columns" style="text-align: center">
+                {{rowData[col.field]}}
+              </td>
+              
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      
+    </div>
+  </div>
+</div>

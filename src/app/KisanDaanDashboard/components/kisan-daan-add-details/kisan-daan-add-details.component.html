@@ -1,0 +1,115 @@
+ <p-toast [style]="{marginTop: '80px'}"></p-toast> 
+
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>Kisan Daan Master</b></h3>
+    </div>
+   </div>
+   <div>
+    <div style="text-align:right">       
+         <button class="btn btn-raised btn-primary mr-1"  (click)="addNewDetail()">Add New Image</button>     
+        <button class="btn btn-raised btn-primary mr-1" (click)="addDescription()">Add Description</button>
+   </div>
+
+    <p-table [value]="Imagedetaillist" [paginator]="true" [rows]="10" dataKey="Id" 
+                 [scrollable]="true" scrollHeight="65vh" text-align: center>
+          <ng-template pTemplate="header">         
+            <tr>
+                <th style="text-align: center">
+                   Sno.
+                 </th>
+                <th style="text-align: center">
+                   Kisan Daan Image
+                </th>
+                <th style="text-align: center">
+                   Description
+                </th>
+                <th style="text-align: center">
+                    IsGallaryImage
+                </th>  
+                <th style="text-align: center">
+                    Active
+                </th>        
+                <th style="text-align: center">
+                    Deleted
+                </th>                           
+            </tr>
+      
+          </ng-template>
+        <ng-template pTemplate="body" let-image let-rowIndex="rowIndex">
+            <tr>
+                <td style="text-align: center">{{rowIndex -- 1}}</td>
+                <td style="text-align: center" ><img src="{{image.KisanDaanImage}}"style="width:100%;"/></td>
+                <td style="text-align: center">{{image.Description}}</td>
+                <td style="text-align: center">{{image.IsGallaryImage}}</td>
+                <td style="text-align: center"><p-inputSwitch name="IsActive" [(ngModel)]="image.IsActive" (ngModelChange)="Active(image)">                
+                </p-inputSwitch></td>     
+                <td style="text-align: center"><button name="delete"  (click)="delete(image)" class="btn btn-raised btn-danger mr-1">Remove</button></td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<div *ngIf="IsPopupopen">
+    <p-dialog [(visible)]="IsPopupopen" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+        <div class="row">
+        <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="uploadAdvertisements">Upload Image:</label><br />
+                <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*" (change)="upload($event.target.files)" />
+                <br />
+                <button type="button" class="btn btn-raised btn-primary" (click)="UploadImage()">
+                  Upload
+                </button>
+                <div class="form-group">
+                    <img *ngIf="imgURL" src="{{imgURL}}"
+                    style="height: 75px;width: 75px;" class="wcr">
+                </div>
+              </div>
+        </div> 
+        <div  class="col-md-6">            
+        <label>Description</label><br/>
+        <textarea pInputTextarea class="Text"style="margin-top: 0px;margin-bottom: 0px;height: 100px;width: 680px;" [(ngModel)]="imagedata.Description"></textarea>
+        <br>
+        <label for="b"><b> IsGallary Image: </b></label><br>
+        <p-checkbox name="IsGallaryImage" class="checkbox"  [(ngModel)]="imagedata.IsGallaryImage" binary="true"></p-checkbox>  
+        
+       </div>      
+    </div>
+    </div>
+    <div style="margin-top: 15px">
+        <button class="btn btn-raised btn-primary mr-1" (click)="saveImage(imagedata)">Save</button>  
+    </div>
+    </p-dialog>
+</div>
+
+<div *ngIf="IsPopupopenDescription">   
+    <p-dialog [(visible)]="IsPopupopenDescription" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '70%',height: '80%', overflow: 'auto'}">      
+            <div class="header">
+                <h3 class="m-2"><b>Kisan Daan Details</b></h3>
+            </div>
+        <div class="row">
+            <div  class="col-md-12">            
+                <label><b>Why Use Kisan Kirana</b></label><br/>
+                <textarea pInputTextarea class="Text2" cols="100" [(ngModel)]="data.WhyUseKd" rows="5"></textarea>
+               </div>
+        <div  class="col-md-12">            
+        <label><b>How It work Kisankirana</b></label><br/>
+        <textarea pInputTextarea2 class="Text" cols="100" rows="5" [(ngModel)]="data.HowItWorkKd" ></textarea>
+       </div>
+    </div>   
+    <div>
+        <button class="btn btn-raised btn-primary mr-1" (click)="Save(data)">Save</button>  
+    </div>
+    </p-dialog>
+  
+    
+</div>
+
+
+
+
+
+

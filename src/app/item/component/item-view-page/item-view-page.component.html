@@ -1,0 +1,154 @@
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+
+<section id="Item">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2">Central Item Master</h3>
+        </div>
+    </div>
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center" (click)="toggleSearch()">
+            <h5 class="m-0">Search By</h5>
+            <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+        </div>
+        <div id="search-content p-2" *ngIf="isSearch">
+            <div class="row p-2 px-5">
+                <div class="col-md-4 border-right border-right-1">
+                    <div class="form-group m-12 form-inline mt-2 ">
+                        
+                        <label for="warehouse" class="mr-1">Warehouse</label> 
+                        <!-- <select type="text" id="warehouse" [(ngModel)]="warehouseID"
+                            (change)="onWarehouseChange($event.target.value)" class="form-control col-md-8"
+                            name="warehouse">
+                            <option [value]="Select">Select</option>
+                            <option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">
+                                {{warehouse.WarehouseName}}</option>
+                        </select> -->
+                        <p-dropdown [options]="warehouseList" name="warehouse" optionLabel="label" 
+                        (onChange)="onWarehouseChange($event.target.value)" [(ngModel)]="warehouseID" [filter]="true" placeholder="Select warehouse Name">
+                        </p-dropdown>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <form class="" name="form" (ngSubmit)="searchCentralItem(searchKey)" #testForm="ngForm" autocomplete="off" ngNativeValidate>
+                        <div class="form-group m-12 form-inline">
+                            <label for="ab" class="mr-1">Items Search</label>
+                            <input type="text" id="ab" class="form-control " [(ngModel)]="searchKey" name="ab">
+                            <button type="submit" class="btn btn-raised btn-primary size" style="margin-top: 10px; margin-left:5px;" >Search</button>
+                            <button type="button" class="btn btn-raised btn-warning "style="margin-left:10px; margin-top: 10px;" (click)="searchClear()">clear</button>
+                        </div>                
+                    </form>
+                </div>                           
+                <div *ngIf="activeCountItem">
+                    <span style="float:right"> <strong style="color:orangered;font-size: medium;">
+                        Active Items for Warehouse: [{{activeCountItem}}]</strong>
+                    </span>
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <div class="ui-fluid shadow mb-2 bg-white rounded" *ngIf="isData">
+        <div class="table-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+            <h5 class="m-0">Central Item Table</h5>
+            <div><i class="fa fa-lg fa-angle-double-down"></i></div>
+        </div>
+        <div id="table-content">
+            <div id="supplier-table">
+                <div class="position-relative">
+                    <div class="position-absolute supplier-details" *ngIf="isDetails">
+                        <app-item-details [details]="selectedItemDetails" [isWarehouse]="isWarehouseId" [activeFields]="activeFields" (isdetailsclose)="isDetailsFalse($event)"
+                            (refreshParent)="ngOnInit()" (activeStatus)="ToggleActivation($event)" (deleteInfo)="onDelete($event)" class="d-flex justify-content-end"></app-item-details>
+                    </div>
+
+                    <div class="position-relative" id="dataTable">
+                        <p-table #dt [value]="itemList" [paginator]="true" [rows]="20" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" [scrollable]="true"
+                            scrollHeight="60vh">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th *ngFor="let col of cols" style="text-align: center">
+                                        <!--[pSortableColumn]="col.field"--->
+                                        {{col.header}}
+                                        <!-- <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon> -->
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData>
+                                <tr class="classForHoverEffect">
+                                    <td *ngFor="let col of cols" style="text-align: center" class="ui-resizable-column" (click)="openDetails(rowData,$event)"
+                                        [ngStyle]="(rowData.active)?{'background-color':'#e8fcd4'}:{'background-color':'#ffe5e5'}">
+                                        <div *ngIf="col.field!='LogoUrl'">
+                                            {{rowData[col.field]}}
+                                        </div>
+                                        <div *ngIf="col.field =='LogoUrl'">
+                                            <!-- {{rowData[col.field]}} -->
+                                            <img [src]="rowData[col.field]" height="40px">
+                                        </div>
+                                        <div class="d-flex flex-column align-items-center" *ngIf="col.field=='Actions'">
+                                            <!-- <div style="height:16px!important"></div> -->
+                                            <div class="d-flex">
+                                                <!-- <i class="btn text-warning m-1 fa fa-chain-broken" *ngIf = "rowData.Active" (click)="open(activationModal)" (mouseover)="nameOfActionButton($event)" (mouseleave)="removeName($event)" name="Deactivate"></i>
+                                                        <i class="btn text-warning m-1 fa fa-link" *ngIf = "!rowData.Active" (click)="open(activationModal)" (mouseover)="nameOfActionButton($event)" (mouseleave)="removeName($event)" name="Activate"></i> -->
+                                                <!-- Activation Modal Start -->
+                                                <ng-template #activationModal let-modal>
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" aria-label="Close"
+                                                            (click)="modal.dismiss('Cross click')">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body d-flex flex-column align-items-center">
+                                                        <h2>Are You Sure?</h2>
+                                                        <p class="m-2" style="text-align: center">
+                                                            <strong>Note:</strong>
+                                                            This will
+                                                            <strong>
+                                                                <span *ngIf="rowData.Active">Deactivate</span>
+                                                                <span *ngIf="!rowData.Active">Activate</span>
+                                                            </strong>
+                                                            the supplier in the database.
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer d-flex p-0 justify-content-center">
+                                                        <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0" (click)="modal.close('No click')">Cancel</button>
+                                                        <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0" (click)="ToggleActivation(rowData)">
+                                                            <span *ngIf="rowData.Active">Deactivate</span>
+                                                            <span *ngIf="!rowData.Active">Activate</span>
+                                                        </button>
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template #removeModal let-modal>
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body d-flex flex-column align-items-center">
+                                                        <h2>Are You Sure?</h2>
+                                                        <p class="m-2" style="text-align: center"><strong>Note:</strong>
+                                                            This will permanently delete the supplier from the records.
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer d-flex p-0 justify-content-center">
+                                                        <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0" (click)="modal.close('No click')">Cancel</button>
+                                                        <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0" (click)="onDelete(rowData.SupplierId)">Delete</button>
+                                                    </div>
+                                                </ng-template>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!isData" style="margin-top: 25px;">
+        <h4><b>No Data Found , Please Select Warehouse</b></h4>
+    </div>
+</section>

@@ -1,0 +1,28 @@
+<div>
+    <div class="my-div">
+
+
+        <input class="abs" id="uploadCompressImage" 
+        *ngIf="SequenceName=='PAN' || SequenceName=='Selfie' || SequenceName=='Aadhar' || SequenceName!='BankStatement'"
+        type="file" accept="image/*"
+            capture="camera" (change)="upload($event)" />
+
+        <input class="abs" id="file"
+            *ngIf="SequenceName=='BankStatement'" type="file"
+            accept=".pdf" capture="camera" (change)="upload($event)" />
+        <div class="img-w" *ngIf="!isShowMyInputLogo">
+            <div class="box">
+                <p><i class="fa fa-plus fa-lg" aria-hidden="true"></i></p>
+            </div>
+        </div>
+        <ng-content select="[uploadLogo]" *ngIf="isShowMyInputLogo"></ng-content>
+    </div>
+    <ng-container *ngIf="imagePath && showUploadedImage">
+        <div>
+            <img class="imageShow" [src]="imagePath">
+        </div>
+    </ng-container>
+    <div *ngIf="isRequired && formSubmitted">
+        <p style="color: red;">Image is required</p>
+    </div>
+</div>

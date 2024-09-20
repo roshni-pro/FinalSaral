@@ -1,0 +1,583 @@
+<!-- <p>approver works!</p> -->
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="header">
+  <h3 class="m-2"><br>Supplier Approver</h3>
+</div>
+<div class="row">
+  <div class="col-md-2">
+    <div class="form-group m-2">
+      <label for="a" style="white-space: nowrap;"> Choose Master Type </label>
+      <select id="entityname" name="entityname" class="form-control" [(ngModel)]="entityname">
+        <option [value]="UnSelect">--select--</option>
+        <option *ngFor="let entity of arrayofentity" [ngValue]="entity.EntityName">
+          {{ entity.EntityName }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="form-group m-2">
+      <label for="a"> Choose Status </label>
+      <select id="sstatus" name="sstatus" class="form-control" [(ngModel)]="sstatus">
+        <option [value]="UnSelect">--select--</option>
+        <option *ngFor="let sta of Status" [ngValue]="sta"> {{ sta }} </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="form-group m-2">
+      <label for="a"> Keyword </label>
+      <input type="text" id="key" class="form-control" name="key"
+        [(ngModel)]="key" placeholder="SupplierName/ SUPPLIERCODES/ MobileNo/ StateName/ City/ GSTINNO" />
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="form-actions right col-sm-12">
+      <label class="col-md-12"> &nbsp;</label>
+      <button type="button" class="btn btn-raised btn-primary" (click)="emp();GetCheckerList($event)">
+        <i class="fa fa-check-square-o"></i> Search
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="PendingList">
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <div class="position-relative">
+      <div class="position-absolute zone-details" *ngIf="isDetails">
+        <app-checherdetails [details]="selectedRowDetails" [activeFields]="activeFields"
+          (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)"
+          class="d-flex justify-content-end"></app-checherdetails>
+      </div>
+      <div class="position-absolute orangebook-details"> </div>
+      <div class="position-relative">
+        <p-table  [columns]="cols" [value]="PendingList" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="70vh" text-align: center
+          (onLazyLoad)="load($event)" [totalRecords]="TotalRecords"  [lazy]="true" [(first)]="first"
+          >
+          <!-- <ng-template pTemplate="caption">
+            <div style="text-align: right">
+              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+              <input type="text" pInputText size="50" placeholder="Search"
+                (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </div>
+          </ng-template> -->
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Sr No</th>
+              <th *ngFor="let col of cols" style="text-align: center">{{col.header}}</th>
+              <th>History</th>
+              <th *ngIf="roleListarry==true && supstatus=='Approved'">Actice/Deactive</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-columns="columns"
+            let-expanded="expanded">
+            <tr>
+              <td>{{rowIndex+1}}</td>
+              <td (click)="openDetails(rowData,$event)" *ngFor="let col of columns" style="text-align: center">
+                {{rowData[col.field]}}</td>
+              <td>
+                <button type="button" class="btn btn-primary btn-sm" (click)="history(rowData)">History</button>
+              </td>
+              <td *ngIf="roleListarry==true && supstatus=='Approved'">
+                <button type="button" class="btn btn-primary btn-sm" (click)="activePopup(rowData)">Action</button>
+
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div *ngIf="depotList">
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+      <p-table [value]="depotList" [paginator]="true" 
+      (onLazyLoad)="load($event)" [totalRecords]="TotalRecords"  [lazy]="true" [(first)]="first"
+        [rows]="10">
+
+        <!-- <ng-template pTemplate="caption">
+          <div style="text-align: right">
+            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+            <input type="text" pInputText size="50" placeholder="Global Filter"
+              (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+          </div>
+        </ng-template> -->
+        <ng-template pTemplate="header">
+
+          <tr>
+            <!-- <th>Id</th> -->
+            <th>Sr no</th>
+            <th>DepoCode</th>
+            <th>Supplier Code</th>
+            <th>Depot Name</th>
+            <th>Supplier Name</th>
+            <th>GST Number</th>
+            <!-- <th>CompanyId</th> -->
+            <th>StateName</th>
+            <th>CityName</th>
+            <th>Active</th>
+            <th>Status</th>
+            <th>CreatedDate</th>
+            <th>Edit</th>
+            <th *ngIf="roleListarry==true && depostatus=='Approved' ">Active/Dactive</th>
+          </tr>
+
+        </ng-template>
+
+        <ng-template pTemplate="body" let-config let-rowIndex="rowIndex">
+
+          <tr>
+            <td>{{rowIndex+1}}</td>
+            <!-- <td>{{config.Id}}</td> -->
+            <td>{{config.DepoCodes}} </td>
+            <td>{{config.SupplierCode}}</td>
+            <td>{{config.DepoName}}</td>
+            <td>{{config.SupplierName}}</td>
+            <td>{{config.GSTin}} </td>
+            <!-- <td>{{config.CompanyId}}</td> -->
+            <td>{{config.StateName}}</td>
+            <td>{{config.CityName}}</td>
+            <td *ngIf="config.IsActive==true">Yes</td>
+            <td *ngIf="config.IsActive==false">No</td>
+            <td>{{config.Status}}</td>
+            <td>{{config.CreatedDate | date:'medium'}}</td>
+            <td>
+              <button type="button" class="btn btn-primary btn-sm" (click)="editDepot(config)">Edit</button>
+            </td>
+
+
+            <td *ngIf="roleListarry==true && depostatus=='Approved'">
+              <button type="button" class="btn btn-primary btn-sm" (click)="depoaction(config)">Action</button>
+
+            </td>
+          </tr>
+
+        </ng-template>
+
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="displayHistoryBasic">
+  <p-dialog header="Supplier history" [(visible)]="displayHistoryBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
+    <p>Supplier History</p>
+    <br>
+    <p-table [value]="historydata">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Sr No</th>
+          <th>Supplier Code</th>
+          <th>Supplier Name</th>
+          <th>Comment</th>
+          <th>CreatedBy</th>
+          <th>CreatedDate</th>
+          <th>Status</th>
+        </tr>
+
+      </ng-template>
+
+      <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+
+        <tr>
+          <td>{{rowIndex+1}}</td>
+          <td>{{data.SupplierCode}}</td>
+          <td>{{data.Suppliername}}</td>
+          <td>{{data.Comment}}</td>
+          <td>{{data.CreatedBy}}</td>
+          <td>{{data.CreatedDate}}</td>
+          <td>{{data.Status}}</td>
+
+        </tr>
+
+      </ng-template>
+
+    </p-table>
+
+
+  </p-dialog>
+</div>
+
+<div *ngIf="displayBasic">
+  <p-dialog header="Supplier Active/Deactive" [(visible)]="displayBasic" [style]="{width: '40vw'}" [baseZIndex]="10000">
+    <p>Supplier Active/Deactive</p>
+    <br>
+    <textarea type="text" [(ngModel)]="activeDactivate.comments">
+      </textarea>
+    <br>
+    <input type="checkbox" [(ngModel)]="activeDactivate.ActiveType"> &nbsp; &nbsp; <span>{{activeDactivate.ActiveType ? 'Active' : 'Deactive'}} </span> 
+    <br>`
+    <br>
+    <button type="submit" (click)="postActivity()" class="btn btn-primary btn-sm">Save</button>
+
+  </p-dialog>
+</div>
+
+
+
+
+<div *ngIf="displayDpotAction">
+  <p-dialog header="Active/Deactive Depo" [(visible)]="displayDpotAction" [style]="{width: '50vw'}"
+    [baseZIndex]="10000">
+    <p>Active/Deactive Depo</p>
+    <br>
+    <textarea type="text" [(ngModel)]="activeDactivateDpot.comments">
+      </textarea>
+    <br>
+    <input type="checkbox" [(ngModel)]="activeDactivateDpot.ActiveType"> &nbsp; &nbsp; <span>{{activeDactivateDpot.ActiveType ? 'Active' : 'Deactive'}} </span> 
+    <br>
+    <br>
+    <button type="submit" (click)="postDpotActivity()" class="btn btn-primary btn-sm">Save</button>
+
+
+  </p-dialog>
+</div>
+
+<div *ngIf="displayEdit">
+  <p-dialog header="Depo Approve" [(visible)]="displayEdit" [style]="{width: '70vw','margin-left':'80px'}"
+    [baseZIndex]="10000">
+
+    <div class="container">
+      <p-toast [style]="{marginTop: '80px'}"></p-toast>
+      <p-dialog header="{{docName}} Document view"  [(visible)]="display">
+        <table>
+            <tr *ngFor="let room of imagelist; let i = index">
+                <td>
+                    <img alt="" src="{{room}}" class="img-square" height="150px;" *ngIf="room">                    
+                </td>
+                <td>
+                   <a href="{{room}} " target="_blank" download>download</a>
+                </td>
+            </tr>
+        </table>
+      </p-dialog>
+      <h5 style="color: orange;">Depo Details</h5>
+      <hr>
+      <div class="row">
+        <div class="col-sm-3">
+          <label>State</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.StateName">
+
+          <!-- <p>{{Dpotdata.StateName}}</p> -->
+        </div>
+        <div class="col-sm-3">
+          <label>City</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.CityName">
+
+          <!-- <p>{{Dpotdata.CityName}}</p> -->
+        </div>
+        <div class="col-sm-3">
+          <label>Depo Name</label><br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.DepoName">
+          <!-- <p>{{Dpotdata.DepoName}}</p> -->
+
+        </div>
+        <div class="col-sm-3">
+          <label>Depo Code</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.DepoCodes">
+
+          <!-- <p>{{Dpotdata.DepoCodes}}</p> -->
+
+        </div>
+       
+        
+
+      </div>
+
+      <br>
+      <div class="row">
+        <div class="col-sm-3">
+          <label>GST Number</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.GSTin">
+
+          <!-- <p>{{Dpotdata.GSTin}}</p> -->
+        </div>
+        <div class="col-sm-3">
+          <label>GstImage</label>
+          <br>
+          <!-- <img src="{{baseURL}}{{Dpotdata.GstImage}}" height="100px;"> -->
+          <!-- <a href="{{baseURL}}{{Dpotdata.GstImage}}" target="_blank" download>download</a> -->
+          <button type="button" (click)="showDialog(Dpotdata.GstImage,'GSTN')" pButton
+          icon="pi pi-info-circle" label="Show Document"></button>
+          
+
+          <br>
+          <input type="checkbox" *ngIf="Dpotdata.Status=='Pending'" [(ngModel)]="img.gstImage" id="myCheckgst"
+            [checked]="isCheckedGst" (click)="myFunctionGst(img)"> <span *ngIf="Dpotdata.Status=='Pending'">Verify
+            Image</span>
+          <input type="checkbox" *ngIf="Dpotdata.Status=='Approved'" [checked]="isCheckedGst==true"><span
+            *ngIf="Dpotdata.Status=='Approved'">Image Verified</span>
+
+        </div>
+        <div class="col-sm-3">
+          <label>Full Business Address</label>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.Address">
+        </div>
+        <div class="col-sm-3">
+          <label> City Pin Code</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.CityPincode">
+
+          <!-- <p>{{Dpotdata.CityPincode}}</p> -->
+        </div>
+        
+       
+        
+
+
+      </div>
+
+      <br>
+      <div class="row">
+        <div class="col-sm-3">
+          <label>Contact Person Name</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.ContactPerson">
+
+          <!-- <p>{{Dpotdata.ContactPerson}}</p> -->
+        </div>
+        <div class="col-sm-3">
+          <label>Contact Number</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.PhoneNumber">
+
+
+        </div>
+
+         <div class="col-sm-3">
+          <label>Email Address</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.Email">
+
+          
+        </div>
+        <div class="col-sm-3">
+          <label> FSSAI Number</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.FSSAI">
+
+          
+        </div>
+
+        
+        <!-- <div class="col-sm-3">
+                       <label>Credit Score </label>
+                       <br>
+                       <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.CreditScore" >
+
+                   </div> -->
+        
+       
+
+
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-3">
+
+          <label>FSSAI Image</label>
+          <br>
+          
+          <button type="button" (click)="showDialog(Dpotdata.FSSAIImage,'FSSAI')" pButton
+          icon="pi pi-info-circle" label="Show Document"></button>
+
+          <br>
+          <input type="checkbox" *ngIf="Dpotdata.Status=='Pending'" [(ngModel)]="img.fassiImage" id="myCheck"
+            [checked]="isCheckedfassi" (click)="fassiChecked(img)"><span *ngIf="Dpotdata.Status=='Pending'"> Verify
+            Image</span>
+          <input type="checkbox" *ngIf="Dpotdata.Status=='Approved'" [checked]="isCheckedfassi==true"><span
+            *ngIf="Dpotdata.Status=='Approved'">Image Verified</span>
+
+        </div>
+
+        <div class="col-sm-3">
+          <label>Pan Card</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.PANCardNo ">
+
+          
+        </div>
+        <div class="col-sm-3">
+          <label>Pan Card Image</label>
+          <br>
+          
+          <button type="button" (click)="showDialog(Dpotdata.PanCardImage,'Pan card')" pButton
+          icon="pi pi-info-circle" label="Show Document"></button>
+
+          <br>
+          <input type="checkbox" *ngIf="Dpotdata.Status=='Pending'" [(ngModel)]="img.pannumberImage" id="myCheckpan"
+            [checked]="isChecked" (click)="myFunction(img)"><span *ngIf="Dpotdata.Status=='Pending'">Verify Image
+          </span>
+          <input type="checkbox" *ngIf="Dpotdata.Status=='Approved'" [checked]="isChecked==true"><span
+            *ngIf="Dpotdata.Status=='Approved'">Image Verified</span>
+        </div>
+
+        <div class="col-sm-3">
+          <label>CreatedBy</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.CreatedBy">
+
+          
+        </div>
+        
+
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-3">
+          <label>CreatedDate </label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.CreatedDate ">
+
+          
+        </div>
+      </div>
+
+
+      <br>
+      <h5 style="color: orange;">Bank Details</h5>
+      <hr>
+      <div class="row">
+        
+        
+        
+
+        <div class="col-sm-3">
+          <label>Bank Name</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.Bank_Name">
+
+          <!-- <p>{{Dpotdata.Bank_Name}}</p> -->
+        </div>
+        <div class="col-sm-3">
+          <label>Bank Account Type</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.BankAccountType">
+        </div>
+
+        <div class="col-sm-3">
+          <label>Bank Account No.</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.Bank_AC_No">
+
+          <!-- <p>{{Dpotdata.Bank_AC_No}}</p> -->
+        </div>
+        <div class="col-sm-3">
+          <label>Bank A/C Image</label>
+          <br>
+          
+          <button type="button" (click)="showDialog(Dpotdata.CancelCheque,'Cancel Cheque')" pButton
+          icon="pi pi-info-circle" label="Show Document"></button>
+
+          <br>
+          <input type="checkbox" *ngIf="Dpotdata.Status=='Pending'" [(ngModel)]="img.canCheImage" id="myCheckadd"
+            [checked]="isCheckedaddress" (click)="myaddressCheck(img)"><span *ngIf="Dpotdata.Status=='Pending'">Verify
+            Image</span>
+          <input type="checkbox" *ngIf="Dpotdata.Status=='Approved'" [checked]="isCheckedaddress==true"><span
+            *ngIf="Dpotdata.Status=='Approved'">Image Verified</span>
+        </div>
+
+      </div>
+
+      <br>
+      <!-- <h5 style="color: orange;">Bank Details</h5>
+              <hr> -->
+      <div class="row">
+        <div class="col-sm-3">
+          <label>Ifsc code</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.Bank_Ifsc">
+
+          <!-- <p>{{Dpotdata.Bank_Ifsc}}</p> -->
+        </div>
+        
+        <div class="col-sm-3">
+          <label>Bank Address</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.BankAddress">
+
+          <!-- <p>{{Dpotdata.BankAddress}}</p> -->
+        </div>
+        <!-- <div class="col-sm-3">
+          <label>SupplierCode</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.SupplierCode">
+
+        </div> -->
+        <div class="col-sm-3">
+          <label>Bank Pin Code</label>
+          <br>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.BankPinCode">
+
+          <!-- <p>{{Dpotdata.BankPinCode}}</p> -->
+        </div>
+        <div class="col-sm-3">
+          <label>PR/PO Stop After Value</label>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.PRPOStopAfterValue">
+        </div>
+
+      </div>
+
+      <br>
+      
+      <div class="row">
+        
+        
+        <!-- <div class="col-sm-3">
+          <label>Opening Hours</label>
+          <input type="text" disabled class="form-control" [(ngModel)]="Dpotdata.OpeningHours">
+        </div> -->
+        
+      </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <label>Status</label>
+          <input type="text"  disabled class="form-control" [(ngModel)]="sstatus1">
+        </div>
+
+        <div class="col-sm-3">
+          <label> Comment </label>
+          &nbsp;
+          <textarea name="Comment" [(ngModel)]="actionDepo.comments"></textarea>
+        </div>
+      </div>
+
+      <!-- <div class="row">
+                  
+               </div>  -->
+
+
+      <br>
+      <br>
+      <div *ngIf="depolistarry==true">
+        <button class="btn btn-primary" *ngIf="Dpotdata.Status=='Pending'" type="button" color="warn"
+          (click)="approveAction()">Approve</button>&nbsp;
+        <button class="btn btn-primary" *ngIf="Dpotdata.Status=='Pending'" type="button" color="warn"
+          (click)="RejectAction()">Reject</button>
+
+
+      </div>
+
+      <p-confirmDialog #cd appendTo="body" header="Confirmation">
+        <p-footer>
+
+          <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+          <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+        </p-footer>
+      </p-confirmDialog>
+
+
+    </div>
+
+  </p-dialog>
+</div>

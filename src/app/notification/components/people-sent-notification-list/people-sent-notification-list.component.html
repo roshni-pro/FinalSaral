@@ -1,0 +1,116 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+        <!-- <div class="col-md-12"> -->
+          <div class="card">
+            <div class="card-header">
+                <h4 class="form-section"><i class="ft-user"></i> People Sent Notification</h4>
+                <hr>
+            </div>                 
+          </div> 
+        <!-- </div> -->
+        <div class="card">
+        <div class="card-body mr">
+            <form class="form text-left" name="notifyForm" #notifyForm="ngForm" autocomplete="off">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="projectinput2">Warehouse<span  style="color:red"> *</span></label>
+                    <select id="warehouse" name="warehouse" class="form-control" [(ngModel)]="WarehouseId"
+                      placeholder="Select Warehouse" (change)="onChangeWarehouse(WarehouseId)" required="1" #warehouse="ngModel">
+                      <div class="col-md-6"></div>
+                      <option value="null">--Select Warehouse--</option>
+                      <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+                        {{ wh.WarehouseName }}
+                      </option>
+                    </select>
+                    <div *ngIf="isInvalid && !warehouse.valid && warehouse.errors.required">
+                        <code>Warehouse is required</code>
+                      </div>
+                      <!-- <div *ngIf="isInvalid && !warehouse.valid && warehouse.errors.minlength">
+                        <code>Minlength 2</code>
+                      </div> -->
+                </div>
+                <div class="col-md-3">
+                    <label for="projectinput2">People<span  style="color:red"> *</span></label>
+                    <select id="peoplerole" name="peoplerole" class="form-control" [(ngModel)]="PeopleID"
+                      placeholder="Select People" required="1" #peoplerole="ngModel">
+                      <div class="col-md-6"></div>
+                      <option value="null">--Select People--</option>
+                      <option *ngFor="let people of peopleList" [ngValue]="people.PeopleId">
+                        {{ people.DisplayName }}
+                      </option>
+                    </select>
+                    <div *ngIf="isInvalid && !peoplerole.valid && peoplerole.errors.required">
+                        <code>People is required</code>
+                      </div>
+                </div>
+                <div class="col-md-3">
+                    <label>OrderId</label>
+                <input id="search_filter" name="search_filter" class="form-control" [(ngModel)]="OrderId" placeholder="Search OrderId">
+                </div>
+                <div class="col-md-3">
+                    <button id="add" name="add" type="button" class="btn btn-raised btn-primary bt" (click)="onSearch(notifyForm)">Search</button>
+                </div>
+            </div>
+            </form>
+            <div *ngIf="notificationList" style="margin-top: .5em;">
+                <p-table #dt [value]="notificationList" [paginator]="true" [rows]="20" [scrollable]="true"
+                [lazy]="true"  [totalRecords]="totalRecords" (onLazyLoad)="load($event)" 
+                    scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr style="text-align: center;">
+                            <th>S.No.</th>
+                            <th>App Type</th>
+                            <!-- <th>FcmId</th> -->
+                            <th>Message</th>
+                            <!-- <th>CreatedBy</th> -->
+                            <!-- <th>Approved By</th> -->
+                            <th>Created Date</th>
+                            <th>IsApproved</th>
+                            <th>IsRejected</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                        <tr style="text-align: center;">
+                            <td>{{i+1}}</td>
+                            <td>{{ir.AppType}}</td>
+                            <!-- <td>{{ir.FcmId}}</td> -->
+                            <td>{{ir.Message}}</td>
+                            <!-- <td>{{ir.CreatedBy}}</td> -->
+                            <!-- <td>{{ir.ApprovalBy}}</td> -->
+                            <td>{{ir.CreatedDate | date : 'dd/MM/yyyy hh:mm a'}}</td>
+                            <td>
+                                <p-inputSwitch name="IsApproved" *ngIf="ir.NotificationType == 2 && ir.IsApproved == false && !ir.IsRejected && ir.isTimeLeft" [(ngModel)]="ir.IsApproved" (ngModelChange)="ActiveInactive(ir,'Approved')">
+                                </p-inputSwitch>
+                                <br>
+                                <span *ngIf="ir.IsApproved">Approved By : </span><br>
+                                <span *ngIf="ir.IsApproved" class="approved_col">{{ir.ApprovalBy}}</span>
+                                <span *ngIf="ir.NotificationType == 2 && ir.IsApproved == false && !ir.isTimeLeft" style="margin:auto;">-</span>
+                            </td>
+                            <td>
+                              <p-inputSwitch name="IsRejected" *ngIf="ir.NotificationType == 2 && ir.IsRejected == false && !ir.IsApproved && ir.isTimeLeft" [(ngModel)]="ir.IsRejected" (ngModelChange)="ActiveInactive(ir,'Rejected')">
+                              </p-inputSwitch>
+                              <br>
+                              <span *ngIf="ir.IsRejected">Rejected By : </span><br>
+                              <span *ngIf="ir.IsRejected" class="approved_col">{{ir.RejectedByName}}</span>
+                              <span *ngIf="ir.NotificationType == 2 && ir.IsRejected == false && !ir.isTimeLeft" style="margin:auto;">-</span>
+                          </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <h5>* Data Not Found</h5>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>   
+    </div>
+
+    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+        <p-footer>
+          <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+          <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+        </p-footer>
+      </p-confirmDialog>
+
+        <p-blockUI [blocked]="blocked"></p-blockUI>
+        <p-progressSpinner *ngIf="blocked"
+          [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+          fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

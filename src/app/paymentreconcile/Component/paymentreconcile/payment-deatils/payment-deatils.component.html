@@ -1,0 +1,112 @@
+<div class="row" >
+    <h4  style="padding-top: 20px; padding-left: 20px"><b>Online Payment Details</b></h4>
+    
+  </div>
+<section id="customer-master">
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="form-group" > 
+                <label for="projectinput3">MOP</label>
+                <br>
+                <select id="desg" name="desg" class="form-control" [(ngModel)]="searchModel.value" (change)="onValueChange($event.target.value)">
+                 <option value="1">Epaylater</option> 
+                 <option value="2">HDFC</option>
+                 <option value="3">mPos</option>
+                 <option value="4">HDFC_NetBanking</option>            
+                </select>
+              </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="projectinput3">From Date</label>
+              <br>
+              <p-calendar name="startDateInput" [showIcon]="true" name="fromDate" [(ngModel)]="searchModel.FromDate">
+              </p-calendar>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="projectinput3">To Date</label>
+              <br>
+              <p-calendar name="endDateInput" [showIcon]="true" name="fromDate" [(ngModel)]="searchModel.ToDate"></p-calendar>
+            </div>
+          </div>
+          <div class="col-sm-1">
+            <div class="form-group">
+              <label for="projectinput3">Search</label>
+              <br>
+              <button type="button" class="btn btn-raised btn-raised btn-primary  " (click)="search(searchModel)">
+                Search
+              </button>
+            </div>
+          </div>
+          <div class="col-sm-1">
+            <div class="form-group">
+              <label for="projectinput3">Refresh</label>
+              <br>
+              <button type="button" class="btn btn-raised btn-raised btn-primary  " (click)="Refresh()">
+                Refresh
+              </button>
+            </div>
+          </div>
+    </div>
+</section>
+<div>
+    <p-table [value]="preport" [paginator]="true" [rows]="20" dataKey="OrderId" 
+                 [scrollable]="true" scrollHeight="65vh" text-align: center>
+          <ng-template pTemplate="header">         
+            <tr>
+                <th style="text-align: center">
+                   Sno.
+                 </th>
+                <th style="text-align: center">
+                   UploadId
+                </th>
+                <th style="text-align: center">
+                   FileType
+                </th>
+                <th style="text-align: center">
+                    UploadBy
+                </th>  
+                <th style="text-align: center">
+                    Upload Date
+                </th>            
+                <th style="text-align: center">
+                    Details
+                </th>                       
+            </tr>
+      
+          </ng-template>
+        <ng-template pTemplate="body" let-image let-rowIndex="rowIndex">
+            <tr>
+                <td style="text-align: center">{{rowIndex -- 1}}</td>
+                <td style="text-align: center">{{image.UploadId}}</td>
+                <td style="text-align: center">{{image.FileType}}</td>
+                <td style="text-align: center">{{image.UplaodBy}}</td>
+                <td style="text-align: center">{{image.UploadDate| date:'medium'}}</td>
+                <td  style="text-align: center" *ngIf="searchModel.value==1" >
+                  <button type="button" class="btn btn-raised btn-primary" style="margin-bottom: 0;"
+                  (click)="NewPageEpay(image)">
+                Epay Details</button>
+              </td>
+                <td  style="text-align: center" *ngIf="searchModel.value==2" >
+                    <button type="button" class="btn btn-raised btn-primary" style="margin-bottom: 0;"
+                    (click)="NewPagehdfc(image)">
+                  Hdfc Details</button>
+                </td>
+                <td  style="text-align: center" *ngIf="searchModel.value==3" >
+                  <button type="button" class="btn btn-raised btn-primary" style="margin-bottom: 0;"
+                  (click)="NewPagemPos(image)">
+                mPos Details</button>
+              </td>
+              <td  style="text-align: center" *ngIf="searchModel.value==4" >
+                <button type="button" class="btn btn-raised btn-primary" style="margin-bottom: 0;"
+                (click)="NewPageNetHdfc(image)">
+              Hdfc NetBanking Details</button>
+            </td>
+                              
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+

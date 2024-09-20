@@ -1,0 +1,488 @@
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">Out-Bound Delivery Dashboard</h4>
+    </div>
+    <div class="col-xl-12 col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title"></h4>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row mr">
+                        <div class="col-md-3">
+                            <label for="cityid">City</label>
+                            <select id="cityid" name="cityid" class="form-control" [(ngModel)]="data.CityId"
+                                (ngModelChange)="onChangeCity(data.CityId)">
+                                <option [ngValue]="null" disabled>--select--</option>
+                                <option *ngFor="let city of cityList" [ngValue]="city.value">
+                                    {{ city.label }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cityid">Hub</label>
+                            <select id="cityid" name="cityid" class="form-control" [(ngModel)]="data.warehouseId"
+                                (ngModelChange)="onChangeHub(data.warehouseId)">
+                                <option [ngValue]="null" disabled>--select--</option>
+                                <option *ngFor="let hub of warehouseList" [ngValue]="hub.value">
+                                    {{ hub.label }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <br>
+                            <button style="margin-top:7px;" *ngIf="data && data.warehouseId" class="btn btn-primary"
+                                (click)="onChangeHub(data.warehouseId)">Refresh</button>
+                        </div>
+                        <div class="col-md-2" *ngIf="!storeType">
+                            <br>
+                            <button style="margin-top:7px;" *ngIf="data && data.warehouseId" class="btn btn-primary"
+                                (click)="OpenTripType()">Generate Trip</button>
+                                <!-- IsRunningUtility() -->
+                        </div>
+                        <div class="col-md-3"  *ngIf="data.warehouseId && !storeType">
+                            <agm-map [latitude]="lat" [longitude]="lng" [disableDefaultUI]="false" [zoomControl]="false"
+                                [fullscreenControlOptions]="options" [style.height.px]="myInnerHeight"
+                                (click)="isOpenMap = true">
+                            </agm-map>
+                        </div>
+                        <div class="col-md-3" *ngIf="data.warehouseId && !storeType">
+                            <br>
+                            <button style="margin-top:7px;" class="btn btn-primary" (click)="redispatchApproval()">
+                                Redispatch Approval
+                            </button>
+                        </div>
+                        <div class="col-md-3" *ngIf="data.warehouseId">
+                            <!-- <br>
+                            <button style="margin-top:7px;" class="btn btn-primary"
+                                (click)="openCustomerLocationVerification()">
+                                <span>
+                                    <i class="fa fa-users" aria-hidden="true"></i> Verify Location
+                                </span>
+                            </button> -->
+                        </div>
+                        <div class="col-md-12">
+                            <div class="tow mr"></div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="data.warehouseId">
+                        <div class="row bl mr"  *ngIf="!storeType">
+                            <div class="col-xl-6">
+                                <img src="assets/img/logo/truck/4.png" alt="sk" class="rotateimg180">Total Available
+                                Truck - {{warehouseVehicleDetail? warehouseVehicleDetail.AvailableVehicleCount: 'N/A'}}
+                            </div>
+                            <div class="col-xl-6">
+                                <img src="assets/img/logo/truck/4.png" alt="sk" class="rotateimg180">Not Used
+                                Trucks,Today - {{warehouseVehicleDetail?
+                                (warehouseVehicleDetail.NotUtilizedVehicleCount): 'N/A'}}
+                            </div>
+                        </div>
+                        <div class="row mr" *ngIf="orderStatus && !storeType">
+                            <div class="col-md-7">
+                                <div class="row">
+                                    <div class="col-4" (click)="clusterWiseOrderList(0)">
+                                        <div class="c25">
+                                            <p class="p1">{{orderStatus.NumberofOrder ? orderStatus.NumberofOrder : 0}}
+                                            </p>
+                                            <p class="p2">No. Of orders</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-4" (click)="clusterWiseOrderList(1)">
+                                        <div class="c25">
+                                            <p class="p1">{{orderStatus.NotCompletedOrder ?
+                                                orderStatus.NotCompletedOrder : 0}}</p>
+                                            <p class="p2">Not Completed</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-4" (click)="clusterWiseOrderList(2)">
+                                        <div class="c25">
+                                            <p class="p1">{{orderStatus.DeliveredOrder ? orderStatus.DeliveredOrder :
+                                                0}}
+                                                ({{orderStatus.NumberofOrder ?((orderStatus.DeliveredOrder/
+                                                orderStatus.NumberofOrder * 100)|number:'1.2-2') : 'N/A'}} %)</p>
+                                            <p class="p2">Ordered Delivered(%)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="row">
+                                    <div class="col-6" (click)="clusterWiseOrderList(3)">
+                                        <div class="c25">
+                                            <p class="p1">{{orderStatus.RedispatchOrder ? orderStatus.RedispatchOrder :
+                                                0}} ({{orderStatus.NumberofOrder ?((orderStatus.RedispatchOrder/
+                                                orderStatus.NumberofOrder * 100)|number:'1.2-2') : 'N/A'}} %)
+                                            </p>
+                                            <p class="p2">Redispatch Order(%)</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-6" (click)="clusterWiseOrderList(4)">
+                                        <div class="c25">
+                                            <p class="p1">
+                                                {{orderStatus.CancelledOrder ? orderStatus.CancelledOrder : 0}}
+                                                ({{orderStatus.NumberofOrder ?((orderStatus.CancelledOrder/
+                                                orderStatus.NumberofOrder * 100)|number:'1.2-2') : 'N/A'}} %)</p>
+                                            <p class="p2">
+                                                Order Cancelled (%)
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="!storeType">
+                            <div class="col-xl-12 col-lg-12" style="margin-top: 27px;">
+                                <span style="font-size: 1.4rem;"> Vehicle Live Details <i
+                                        class="fa fa-arrow-right"></i></span>
+
+                            </div>
+                            <div class="col-12 aa">
+                                <table class="table tbbs" *ngIf="vehicleLiveDetail">
+                                    <tr>
+                                        <td>
+                                            <div class="bxx"
+                                                (click)="openVehicleDetail(vehicleLiveDetail.OnDuty, 'On Duty')">
+                                                On Duty
+                                                <p>{{vehicleLiveDetail.OnDuty.Count}}</p>
+                                            </div>
+
+                                        </td>
+                                        <td>
+                                            <div class="bxx"
+                                                (click)="openVehicleDetail(vehicleLiveDetail.NotStarted, 'Not Started')">
+                                                Not Started
+                                                <p>{{vehicleLiveDetail.NotStarted.Count}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="bxx"
+                                                (click)="openVehicleDetail(vehicleLiveDetail.Intransit, 'In Transit')">
+                                                In Transit
+                                                <p>{{vehicleLiveDetail.Intransit.Count}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="bxx"
+                                                (click)="openVehicleDetail(vehicleLiveDetail.OnBreak, 'On Break')">
+                                                On Break
+                                                <p>{{vehicleLiveDetail.OnBreak.Count}}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="bxx"
+                                                (click)="openVehicleDetail(vehicleLiveDetail.Delivering, 'Delivering')">
+                                                Delivering
+                                                <p>{{vehicleLiveDetail.Delivering.Count}}</p>
+                                            </div>
+
+                                        </td>
+                                        <td>
+                                            <div class="bxx"
+                                                (click)="openVehicleDetail(vehicleLiveDetail.TripEnd, 'Trip End')">
+                                                Trip End
+                                                <p>{{vehicleLiveDetail.TripEnd.Count}}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mr" *ngIf="data.warehouseId">
+                            <div class="col-xl-3">
+                                <label for="trip">Trip Filter</label>
+                                <select id="trip" name="trip" class="form-control" [(ngModel)]="filterType"
+                                    (ngModelChange)="onChangeTripFilter()">
+                                    <!-- <option [ngValue]="null" disabled>--Select Trip--</option> -->
+                                    <option *ngFor="let fltr of filterList" [ngValue]="fltr.value">
+                                        {{ fltr.label }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-xl-3">
+                                <label for="trip">Trip</label>
+                                <select id="trip" name="trip" class="form-control" [(ngModel)]="data.TripNo"
+                                    (ngModelChange)="onChangeTripNo(data.TripNo)">
+                                    <option [ngValue]="null" disabled>--Select Trip--</option>
+                                    <option *ngFor="let trip of tripList" [ngValue]="trip.value">
+                                        {{ trip.label }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12" *ngIf="tripInfoData">
+                            <table class="tta">
+                                <tr class="blue">
+                                    <td>Current Status :</td>
+                                    <td colspan="3">{{tripInfoData[0].CurrentStatus}}</td>
+                                </tr>
+                                <tr class="green">
+                                    <td>Reporting Time : </td>
+                                    <td> {{tripInfoData[0].ReportingTime | date : 'medium'}}</td>
+                                    <td>Trip Start Time : </td>
+                                    <td>
+                                        <span *ngIf="tripInfoData[0].TripStartTime">
+                                            {{tripInfoData[0].TripStartTime | date : 'medium'}}
+                                        </span>
+                                        <span *ngIf="!tripInfoData[0].TripStartTime">
+                                            Trip Not Started Yet
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr class="green">
+                                    <td>End Time : </td>
+                                    <td colspan="3">{{tripInfoData[0].TripEndTime ? (tripInfoData[0].TripEndTime | date
+                                        : 'medium'): 'N/A'}}</td>
+                                </tr>
+                                <tr class="purple">
+                                    <td>Estimated Total Time :</td>
+                                    <td>{{getTotalTimeinMin(tripInfoData[0].EstimatedTotalTimeInMin)}}Hr :
+                                        {{tripInfoData[0].EstimatedTotalTimeInMin%60}}Min
+                                    </td>
+                                    <td>Estimated Travel Time (Exclude Unload Time):</td>
+                                    <td>{{getTotalTimeinMin(tripInfoData[0].EstimatedTraveledTimeInMin)}}Hr :
+                                        {{tripInfoData[0].EstimatedTraveledTimeInMin%60}}Min
+                                    </td>
+
+                                </tr>
+                                <tr class="purple">
+                                    <td>Estimated Time Left:</td>
+
+                                    <td colspan="3">{{getTotalTimeinMin(tripInfoData[0].EstimatedTimeLeftInMin)}}Hr :
+                                        {{tripInfoData[0].EstimatedTimeLeftInMin%60}}Min
+                                    </td>
+                                </tr>
+                                <tr class="red">
+
+                                    <td>Estimated Total Distance :</td>
+                                    <td>{{(tripInfoData[0].EstimatedTotalDistance) | number:'1.0-2'}} Km</td>
+                                    <!-- <td>Estimated Travelled Distance :</td>
+                                    <td>{{(tripInfoData[0].EstimatedTraveledDistance) | number:'1.0-2'}} Km</td> -->
+                                    <td>Estimated Distance Left </td>
+                                    <td>{{(tripInfoData[0].EstimatedDistanceLeft) | number:'1.0-2'}} Km</td>
+
+                                </tr>
+                                <tr class="yellow">
+
+                                    <td>Actual Total Time :</td>
+                                    <td>
+                                        <span *ngIf="tripInfoData[0].ActualTotalTime">
+                                            {{getTotalTimeinMin(tripInfoData[0].ActualTotalTime)}}Hr :
+                                            {{tripInfoData[0].ActualTotalTime%60}}Min
+                                        </span>
+                                        <span *ngIf="!tripInfoData[0].ActualTotalTime">
+                                            Trip Not Started Yet
+                                        </span>
+                                    </td>
+                                    <td>Actual Total Distance </td>
+                                    <td>
+                                        <span *ngIf="tripInfoData[0].ActualTotalDistanceinKm">
+                                            {{(tripInfoData[0].ActualTotalDistanceinKm) | number:'1.0-2'}} Km
+                                        </span>
+                                        <span *ngIf="!tripInfoData[0].ActualTotalDistanceinKm">
+                                            Trip Not Completed Yet
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr class="Orange">
+
+                                    <td>Picker Master Id :</td>
+                                    <td colspan="3">
+                                        <span *ngIf="tripInfoData[0].PickerMasterId">
+                                            {{tripInfoData[0].PickerMasterId}}
+                                        </span>
+                                        <span *ngIf="!tripInfoData[0].PickerMasterId">
+                                            ----
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="row" *ngIf="!storeType">
+                            <div class="col-md-12 pull-right">
+                                <button *ngIf="tripInfoData" type="button" name="tripBtn" class="btn btn-primary btd"
+                                    (click)="onClickcreateTrip()" [disabled]="isCreateTrip">
+                                    <span
+                                        *ngIf="!tripInfoData[0].IsFreezed && !(!tripInfoData[0].IsPickerGenerated && tripInfoData[0].IsPickerRequired)">
+                                        Finalize Trip
+                                    </span>
+                                    <span
+                                        *ngIf="!tripInfoData[0].IsFreezed && (!tripInfoData[0].IsPickerGenerated && tripInfoData[0].IsPickerRequired)">
+                                        Generated Picker
+                                    </span>
+                                    <span *ngIf="tripInfoData[0].IsFreezed">
+                                        Trip Detail
+                                    </span>
+                                    <!-- {{tripInfoData[0].IsFreezed? 'Trip Detail': 'Finalize Trip'}} -->
+                                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                                </button>
+                                <!-- <button type="button" name="tripBtn" class="btn btn-primary btd"
+                            (click)="onClickcreateTrip()" [disabled]="isCreateTrip">
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                            Edit Trip
+                            </button> -->
+                            </div>
+                            <div class="col-md-12">
+                                <div class="tow mr"></div>
+                            </div>
+                        </div>
+                        <div class="row mr"  *ngIf="!storeType">
+                            <div class="col-xl-3">
+                            </div>
+                            <div class="col-xl-3">
+                            </div>
+                            <div class="col-xl-6 pull-right">
+                                <button (click)="trackTrip()" type="button" name="tripliveBtn"
+                                    class="btn btn-success bt">Trip Live
+                                    Tracking</button>
+                                <!-- <button type="button" name="registerbtn" class="btn btn-info bt">Register
+                                    Details</button> -->
+                                <button type="button" name="tripBtn" class="btn btn-primary bt"
+                                    (click)="onClickcreateNewTrip()" [disabled]="isCreateTrip">Plan A New Trip</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isShowClusterWiseOrder">
+    <p-dialog header="No Of Orders Cluster Wise" [(visible)]="isShowClusterWiseOrder" [blockScroll]="true"
+        appendTo="body" [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0"
+        appendTo="body">
+        <div class="cnt">
+            <app-cluster-wise-order-list [warehouseId]="data.warehouseId" [orderNo]="orderNo">
+            </app-cluster-wise-order-list>
+        </div>
+    </p-dialog>
+</div>
+<div *ngIf="isOpenMap">
+    <p-dialog header="Map" [(visible)]="isOpenMap" [blockScroll]="true" appendTo="body"
+        [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0" appendTo="body">
+        <div class="cnt">
+            <app-cluster-map [warehouseId]="data.warehouseId"></app-cluster-map>
+        </div>
+    </p-dialog>
+</div>
+
+
+<div *ngIf="isOpenVehicleDetail">
+
+    <p-dialog [header]="vehicleDetailHeaderMessage" [(visible)]="isOpenVehicleDetail" [blockScroll]="true"
+        appendTo="body" [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0">
+        <div class="cnt" *ngIf="vehicleDetailList && vehicleDetailList.length > 0">
+            <div class="row">
+                <div class="col-3" style="display: table;">
+                    <div class="cntr-w mddd">
+
+                        <div [ngClass]="{'elem': true, 'sel-w': selectedVehicleDetail == v}"
+                            *ngFor="let v of vehicleDetailList; let i = index;" (click)="selectedVehicleDetail = v">
+                            <span>Cluster: {{v.ClusterName}}</span>
+                            &nbsp;&nbsp;
+                            <span>Trip Id.: {{v.TripId}}</span>
+                            &nbsp;&nbsp;
+                            <span>Trip No.: {{v.TripNumber}}</span>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-1 mdll">
+                    <div class="">
+                        <p><i style="color:rgb(194, 78, 78);" class="fa fa-long-arrow-right fa-2x"
+                                aria-hidden="true"></i></p>
+                        <p><i style="color:rgb(72, 141, 72);" class="fa fa-long-arrow-right fa-2x"
+                                aria-hidden="true"></i></p>
+                        <p><i style="color:rgb(211, 160, 66);" class="fa fa-long-arrow-right fa-2x"
+                                aria-hidden="true"></i></p>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="cntr-w">
+
+                        <div class="tbbl">
+                            <div class="gen">
+                                <table>
+                                    <tr>
+                                        <td>Trip Number</td>
+                                        <td><span>: {{selectedVehicleDetail.TripDetails.TripNumber}}</span></td>
+                                        <td>Cluster</td>
+                                        <td>: {{selectedVehicleDetail.TripDetails.ClusterName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Vehicle Name</td>
+                                        <td><span>: {{selectedVehicleDetail.TripDetails.VehicleName}}</span></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="agt">
+                                <table>
+                                    <tr>
+                                        <td>Agent Name</td>
+                                        <td><span>: {{selectedVehicleDetail.TripDetails.AgentName}}</span></td>
+                                        <td>Agent Mobile</td>
+                                        <td>: {{selectedVehicleDetail.TripDetails.AgentMobileNumber}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="dby">
+                                <table>
+                                    <tr>
+                                        <td>D-Boy Name</td>
+                                        <td><span>: {{selectedVehicleDetail.TripDetails.DeliveryBoyName}}</span></td>
+                                        <td>D-Boy Mobile</td>
+                                        <td>: {{selectedVehicleDetail.TripDetails.DeliveryBoyNumber}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="drv">
+                                <table>
+                                    <tr>
+                                        <td>Driver Name</td>
+                                        <td><span>: {{selectedVehicleDetail.TripDetails.DriverName}}</span></td>
+                                        <td>Driver Mobile</td>
+                                        <td>: {{selectedVehicleDetail.TripDetails.DriverMobileNumber}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </p-dialog>
+
+</div>
+<div *ngIf="isRedispatchApproved">
+    <p-dialog header="Redispatch Request" [(visible)]="isRedispatchApproved" [blockScroll]="true" appendTo="body"
+        [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0" appendTo="body">
+        <div class="cnt">
+            <app-redispatch-approval [warehouseId]="data.warehouseId" (close)="closeRedispatchApproval()">
+            </app-redispatch-approval>
+        </div>
+    </p-dialog>
+</div>
+<p-toast position="bottom-right" appendTo="body" key="main" appendTo="body"></p-toast>
+
+<div *ngIf="isOpenCustomerLocationVerification">
+    <app-customer-location-verification [warehouseId]="data.warehouseId" [warehouseList]="warehouseList" (close)="closeCustomerLocationVerification($event)">
+    </app-customer-location-verification>
+</div>
+
+<div *ngIf="isOpenTripType">
+    <p-dialog [header]="vehicleDetailHeaderMessage" [(visible)]="isOpenTripType" [blockScroll]="false"
+        appendTo="body"  [modal]="true" [style]="{width: '35vw', height:'30vh'}">
+    <app-generate-trip-popup [data]="data" (isdetailsclose)="isDetailsFalse($event)" (closeGenerateTripPopup)="ClosePopup()"></app-generate-trip-popup>
+    </p-dialog>
+</div>

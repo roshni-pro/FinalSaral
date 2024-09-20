@@ -1,0 +1,280 @@
+<div class="">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">Auto Refund</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid ui-fluid  p-3 mb-3 bg-white rounded table table-hover">
+        <div class="row ">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-sm-3  mt-2">
+                        <label> Search </label>
+                        <input type="text" placeholder="Order Number/SKcode" class="form-control" [(ngModel)]="keyword">
+                    </div>
+                    <div class="col-sm-3  mt-2">
+                        <label> Warhouse</label>
+                        <p-multiSelect [options]="warehouseList" optionLabel="WarehouseName"
+                            placeholder="Select Warehouse" [(ngModel)]="selectedWarehouse">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-sm-3 mt-2 ">
+                        <label>Status</label>
+                        <p-dropdown [options]="refundOption" optionLabel="refundName" [(ngModel)]="selectedRefundOption"
+                            placeholder="Select Status"></p-dropdown>
+                    </div>
+                    <div class="col-sm-3 mt-2">
+                        <label> MOP </label>
+                        <p-multiSelect [options]="mopOption" optionLabel="mopName" [(ngModel)]="selectedMOPOption"
+                            placeholder="Select MOP"></p-multiSelect>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 mt-2">
+                <label>From Date: </label>
+                <p-calendar [showIcon]="true" name="startdateValNew" [(ngModel)]="startDate" [readonlyInput]="true">
+                </p-calendar>
+            </div>
+            <div class="col-md-3 mt-2">
+                <label>To Date: </label>
+                <p-calendar [showIcon]="true" name="startdateValNew" [(ngModel)]="endDate" [readonlyInput]="true">
+                </p-calendar>
+            </div>
+            <div class="col-sm-3 mt-2 ">
+                <label>Return Type</label>
+                <p-dropdown [options]="returnTypeOption" optionLabel="label" [(ngModel)]="selectedReturnType"
+                    placeholder="Select ReturnType"></p-dropdown>
+            </div>
+            <div class="col-md-6 mt-2">
+                <button type="button" class="btn btn-raised btn-danger" (click)="searchResult(2)"
+                    style="margin-top: 27px;">
+                    Search
+                </button>&nbsp;
+                <button type="button" class="btn btn-raised btn-danger" (click)="resetFilter()"
+                    style="margin-top: 27px;">
+                    Reset Filter
+                </button>&nbsp;
+                <button type="button" class="btn btn-raised btn-danger" (click)="export('AutoRefund')"
+                    style="margin-top: 27px;">
+                    Export 
+                </button>&nbsp;
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid ui-fluid  p-3 mb-5 bg-white rounded table table-hover text-center">
+
+        <p-table #dt [value]="paymentList" [paginator]="true" [rows]="10" [scrollable]="true" [lazy]="true"
+            [totalRecords]="totalRecords" [loading]="loading" (onLazyLoad)="load($event)" text-align:center>
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>SK Code</th>
+                    <th>Order Number</th>
+                    <th>Order Date</th>
+                    <th>Order Amount</th>
+                    <th>Order Status</th>
+                    <th>Dispatch Amount</th>
+                    <th>Online Amount</th>
+                    <th>Refund Amount</th>
+                    <th>MOP</th>
+                    <th>Return Type</th>
+                    <th>Refund Date</th>
+                    <th>Reference Number</th>
+                    <th>Sucess/Failed</th>
+                    <!-- <th>Action(FailedStatus)</th> -->
+                    <th>History</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowdata let-columns="columns" let-rowIndex="rowIndex">
+                <tr>
+                    <td>{{rowdata.Skcode}}</td>
+                    <td>{{rowdata.OrderNumber}}</td>
+                    <td>{{rowdata.OrderDate | date:'medium' }}</td>
+                    <td>{{rowdata.OrderAmount}}</td>
+                    <td>{{rowdata.OrderStatus}}</td>
+                    <td>{{rowdata.DispatchAmount}}</td>
+                    <td>{{rowdata.OnlineAmount}} </td>
+                    <td>{{rowdata.RefundAmount}}</td>
+                    <td>{{rowdata.MOP}}</td>
+                    <td>
+                        <span *ngIf="rowdata.ReturnType == 'AutoRefund'"> Auto Refund </span>
+                        <!-- {{rowdata.ReturnType == 'AutoRefund' ? 'Auto Refund' : rowdata.ReturnType}} -->
+                        <button type="button" *ngIf="rowdata.ReturnType == 'Manual' && rowdata.Status=='Initiated'" class="btn btn-primary" (click)="onClickManual(rowdata.Id)">Manual</button>
+                        <button type="button" *ngIf="rowdata.ReturnType == 'Manual' && rowdata.Status=='Success'" class="btn btn-primary" (click)="onClickManual(rowdata.Id)" disabled>Manual</button>
+                    </td>
+                    <td>{{rowdata.RefundDate | date:'medium' }}</td>
+                    <td>{{rowdata.ReferenceNumber}}</td>
+                    <td [ngClass]="rowdata.Status">
+                        <ng-container *ngIf="rowdata.Status=='Initiated'">
+                            {{rowdata.Status}}
+                        </ng-container>
+                        <ng-container *ngIf="rowdata.Status=='Success'">
+                            {{rowdata.Status}}
+                        </ng-container>
+                        <ng-container *ngIf="rowdata.Status=='Failed'">
+                            <button type="button" class="btn btn-primary" (click)="showProcessDialog(rowdata.Id)">
+                                Failed
+                            </button>
+                        </ng-container>
+                        <!-- <ng-template *ngIf="rowdata.Status=='Failed'">
+                            <span type="button" class="btn btn-primary"
+                                (click)="showProcessDialog(rowdata.Id)">{{rowdata.Status}}</span>
+                        </ng-template> -->
+                    </td>
+
+                    <td><button type="button" class="btn btn-primary" (click)="showHistory(rowdata.Id)">History</button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+               <h5><strong>No data found.</strong></h5>
+            </ng-template>
+        </p-table>
+
+    </div>
+</div>
+
+<p-dialog [(visible)]="viewHistory" header="History" [modal]="true" appendTo="body" positionTop="40vh"
+    [style]="{width: '60vw', left: '440px'}" [draggable]="false">
+
+    <div class="row mt-2">
+        <div class="col-12">
+            <h3>History</h3>
+        </div>
+    </div>
+
+    <div class="row mt-2" style="overflow: auto; height: 600px;">
+        <div class="col-12">
+            <p-table #dt [value]=" historyData" [paginator]="true" [rows]="10" [scrollable]="true" [lazy]="false"
+                [totalRecords]="" text-align:center >
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Id</th>
+                        <th>Status</th>
+                        <th>RequestMsg</th>
+                        <th>ResponseMsg</th>
+                        <th>Created Date</th>
+                        <th>Modified Date</th>
+                        <th>CreatedBy</th>
+                        <th>ModifiedBy</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowdata let-columns="columns" let-rowIndex="rowIndex">
+                    <tr>
+
+                        <td>{{rowdata.Id}}</td>
+                        <td>{{rowdata.status}}</td>
+                        <td>
+                            <!-- <ng-container *ngIf="rowdata.RequestMsg == null else second">
+                                {{rowdata.RequestMsg}}
+                            </ng-container>
+                            <ng-template #second>
+                                <ng-container *ngIf="rowdata.RequestMsg.refund_amount != null else third">
+                                    {{rowdata.RequestMsg.refund_amount}}
+                                </ng-container>
+                            </ng-template>
+                            <ng-template #third>
+                                <ng-container *ngIf="rowdata.RequestMsg.Amount != null else fourth">
+                                    {{rowdata.RequestMsg.Amount}}
+                                </ng-container>
+                            </ng-template>
+                            <ng-template #fourth>
+                                <ng-container>
+                                    {{rowdata.RequestMsg}}
+                                </ng-container>
+                            </ng-template> -->
+                            {{rowdata.RequestMsg}}
+                        </td>
+                        <td>{{rowdata.ResponseMsg}}</td>
+                        <td>{{rowdata.CreatedDate ? (rowdata.CreatedDate | date:'medium' ) : '-'}}</td>
+                        <td>{{rowdata.ModifiedDate ? ( rowdata.ModifiedDate | date:'medium' ) : '-'}}</td>
+                        <td>{{rowdata.CreatedBy ? rowdata.CreatedBy : '-'}}</td>
+                        <td>{{rowdata.ModifiedBy ? rowdata.ModifiedBy : '-'}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog [(visible)]="processDialog" header="Confirmation" [modal]="true" appendTo="body" positionTop="50vh"
+    [style]="{width: '60vw', left: '440px'}" [draggable]="false">
+
+    <h3>Are you sure want to proceed further?</h3>
+
+    <p-footer>
+        <button type="button" style="color: white; background-color: #1CBCD8;" class="btn btn-info" (click)="confirmProcess()">Yes</button>&nbsp;
+        <button type="button" style="color: white; background-color: #ff682d" class="btn btn-warning" (click)="closeProcessDialog()">No</button>
+    </p-footer>
+
+</p-dialog>
+
+
+<p-dialog [(visible)]="isManualOpen" header="Manual Comment" [modal]="true" appendTo="body" positionTop="50vh"
+    [style]="{width: '60vw', left: '440px'}" [draggable]="false">
+    <div class="form-group col-12">
+        <label for="manualComment">Add Comments<span style="color:red"> *</span></label>
+        <textarea class="form-control" id="manualComment" rows="3"  name="manualComment" [(ngModel)] = "Comment" 
+         maxlength="50" minlength="4" ></textarea>
+          <div *ngIf="Comment && Comment.length < 5">
+            <code>minlength 5</code>
+          </div>
+    </div>
+    <div class="col-md-12" style="float: right;" *ngIf="Comment && Comment.length > 4">
+        <label for="a" class="col-md-6"></label>
+        <button type="button" class="btn btn-raised btn-primary pull-right"
+          style="margin-top: 13px;padding-left: 25px;padding-right: 25px"
+          (click)="saveComment(Comment)"><b>Approve</b></button>
+      </div>
+ 
+</p-dialog>
+
+<div class="rght-windw" *ngIf="irSummaryObject">
+    <div class="row">
+        <div class="col-12 tt">
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Head</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Orders</td>
+                    <td>{{irSummaryObject.totalIr}}</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Customers</td>
+                    <td>{{irSummaryObject.totalDistinctSuppliers}}</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Amount</td>
+                    <td>{{irSummaryObject.totalAmount | number: '1.2-2'}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-12">
+            <div class="bt-tb">
+                <div class="cntn" (click)="openPopup()">Click to confirm</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

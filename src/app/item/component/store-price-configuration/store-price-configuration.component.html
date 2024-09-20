@@ -1,0 +1,195 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Store Price configuration</h3>
+    </div>
+</div>
+<div class="ui-fluid shadow p-2 m-2 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-md-2">
+            <label for="name"><b style="font-weight: 600;">Warehouse: </b><span style="color:red;font-weight: 400;">
+                    *</span></label><br>
+            <p-dropdown [filter]="true" appendTo="body" [options]="warehouseListData" [(ngModel)]="WarehouseIds"
+                optionLabel="label" placeholder="Select Warehouse" optionValue="value"></p-dropdown>
+        </div>
+        <div class="col-md-2">
+            <label for="name"><b style="font-weight: 600;">Select Item </b></label><br>
+            <p-autoComplete [(ngModel)]="selecteditem" [suggestions]="itemList" (completeMethod)="getitemList($event)"
+                field="Itemname" [size]="30" placeholder="enter at least 3 chars" [minLength]="1" name="Itemname"
+                required="true" #ledgerName="ngModel">
+            </p-autoComplete>
+        </div>
+        <div class="col-md-1.5">
+            <label><b style="font-weight: 500;"></b></label><br>
+            <button class="btn btn-primary mr-2 mt-1" (click)="ForSearchHit();SearchList($event)">Search</button>
+            <button class="btn btn-primary mr-2 mt-1" (click)="addStore()">Add</button>
+            <button class="btn btn-primary mr-2 mt-1" (click)="ExportStoreConfig()">Export</button>
+            <button class="btn btn-raised btn-raised btn-primary c1 ml-2 mt-1"  (click)="uploaddata()">
+                <i class="fa fa-upload"></i></button>
+        </div>
+    </div>
+    <p-dialog header="Upload" [(visible)]="uploadPopUp" [resizable]="false" (onHide)="cancell()"
+    [modal]="true" appendTo="body" positionTop="100" [style]="{width: '50vw',height: '40%',left: '310px'}">
+    <div class="row">
+        <div class="col">
+            <label for="name"><b style="font-weight: 600;">Warehouse: </b><span style="color:red;font-weight: 400;">
+                *</span></label><br>
+            <p-dropdown [filter]="true" appendTo="body" [options]="warehouseListData" [(ngModel)]="WarehouseIds"
+            optionLabel="label" placeholder="Select Warehouse" optionValue="value"></p-dropdown>
+        </div>
+        <div class="col mt-4" style="text-align: left;" >
+            <label></label>
+             <input #myInput  type="file" style="margin-bottom: 30px;" multiple="false" accept=".xls,.xlsx"
+             (change)="onUpload($event.target.files) " name="file" id="myInput" />
+         <br>
+             <button class="btn btn-primary" accept=".xlsx,.xls" (click)="Uploader()">Upload file</button>
+        </div>
+
+        <div class="col mt-4">
+            <button class="btn btn-primary" (click)="DownloadSampleFile()">Download SampleFile</button>
+        </div>
+    </div>
+
+  </p-dialog>
+    <div class="card">
+        <p-table [value]="itemLists" [paginator]="true" [rows]="10" [lazy]="true" (onLazyLoad)="load($event)"
+            [totalRecords]="totalRecords" [scrollable]="true" scrollHeight="60vh" [(first)]="first">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>S.No.</th>
+                    <th>WarehouseName</th>
+                    <th>ItemName</th>
+                    <th> Type</th>
+                    <th>percentage</th>
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data let-index="rowIndex">
+                <tr>
+                    <td>{{index + 1}}</td>
+                    <td>{{ data.WarehouseName }}</td>
+                    <td>{{ data.ItemName }}</td>
+                    <td>{{ data.Typename }}</td>
+                    <td>{{ data.Percentage }}</td>
+                    <td>
+                        <button class="btn editbtn" (click)="editPOPUP(data)"><i class="fa fa-pencil-square-o"
+                                aria-hidden="true" style="color:blue;"></i></button>
+                        <button class="btn delbtn ml-2" (click)="deleteData(data)"><i class="fa fa-trash"
+                                aria-hidden="true" style="color:red;"></i></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td colspan="13" style="text-align: center;">
+                        <br>
+                        <h4><b>No Data Found.</b></h4>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<p-dialog header="Add" [(visible)]="isShowAddPopup" appendTo="body" (onHide)="cancel()" positionTop="70" modal="true"
+    [style]="{width: '70%',height: '40%',top: '70%',left: '50%'}">
+    <div class="container" style="overflow-x: hidden;">
+        <div class="row mt-2">
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;"> Warehouse: </b><span
+                        style="color:red;font-weight: 400;">
+                        *</span></label><br>
+                <p-dropdown [filter]="true" appendTo="body" [options]="warehouseListData" [(ngModel)]="WarehouseId"
+                    optionLabel="label" placeholder="Select Warehouse" optionValue="value"></p-dropdown>
+            </div>
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;">Select Item: </b><span
+                        style="color:red;font-weight: 400;">
+                        *</span></label><br>
+                <p-autoComplete [(ngModel)]="Addselecteditem" [suggestions]="itemList"
+                    (completeMethod)="getitemList($event)" field="Itemname" [size]="70"
+                    placeholder="enter at least 3 chars" [minLength]="1" name="Itemname" appendTo="body" required="true"
+                    [inputStyle]="{'width': '100%'}" [panelStyle]="{'width': '30%'}" #ledgerName="ngModel">
+                </p-autoComplete>
+            </div>
+        </div>
+        <div class="row  mt-4">
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;">Type: </b><span style="color:red;font-weight: 400;">
+                        *</span></label><br>
+                <p-dropdown id="typeid" [options]="Type" name="typeName" [(ngModel)]="typeName" [filter]="true"
+                    optionValue="value" optionLabel="name" appendTo="body" placeholder="Select Type">
+                </p-dropdown>
+            </div>
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;">percentage: </b><span
+                        style="color:red;font-weight: 400;">
+                        *</span></label><br>
+                <input type="number" class="form-control" [(ngModel)]="percentage" placeholder="Enter percentage">
+            </div>
+
+        </div>
+        <div class="row mt-2 ">
+            <div class="col" style="text-align: center;">
+                <label><b style="font-weight: 500;"></b></label><br>
+                <button class="btn btn-primary mr-2 mt-1 " (click)="saveAddItem()">Save</button>
+
+            </div>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog header="Add" [(visible)]="isShowEditPopup" appendTo="body" positionTop="70" modal="true"
+    [style]="{width: '70%',height: '40%',top: '70%',left: '50%'}">
+    <div class="container" style="overflow-x: hidden;">
+        <div class="row mt-2">
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;">Warehouse: </b><span style="color:red;font-weight: 400;">
+                        *</span></label><br>
+                <input type="text" class="form-control" [(ngModel)]="EditWarehouseName" disabled>
+            </div>
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;">Select Item: </b><span
+                        style="color:red;font-weight: 400;">
+                        *</span></label><br>
+                <input type="text" class="form-control" [(ngModel)]="EdititemName" disabled>
+            </div>
+        </div>
+        <div class="row  mt-3">
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;">Type: </b><span style="color:red;font-weight: 400;">
+                        *</span></label><br>
+                <p-dropdown id="typeiid" [options]="Type" name="typesName" [(ngModel)]="EditTypename" [filter]="true"
+                    optionValue="value" optionLabel="name" appendTo="body" placeholder="Select Type">
+                </p-dropdown>
+            </div>
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;">percentage: </b><span
+                        style="color:red;font-weight: 400;">
+                        *</span></label><br>
+                <input type="number" class="form-control" [(ngModel)]="Editpercentage" placeholder="Enter percentage">
+
+                <!-- <input type="number"  class="form-control" [(ngModel)]="Editpercentage" placeholder="Enter percentage"> -->
+            </div>
+
+        </div>
+        <div class="row mt-2 ">
+            <div class="col" style="text-align: center;">
+                <label><b style="font-weight: 500;"></b></label><br>
+                <button class="btn btn-primary mr-2 mt-1 " (click)="saveEditItem()">Update</button>
+
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

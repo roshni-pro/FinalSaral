@@ -1,0 +1,161 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2"><b>Cluster Store Beat Mapping</b></h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <!-- <form  name="form" #clusterForm="ngForm"> -->
+        <div class="row ">
+            <div class="col-12">
+                <div class="row form-group">
+                        <div class="col-md-3 mt-2">
+                            <label style="font-size: medium;">Warehouse</label>
+                            <p-dropdown [options]="warehouseList" name="WarehouseName" [(ngModel)]="WarehouseName"
+                            optionLabel="WarehouseName" placeholder="Select Warehouse" appendTo="body" 
+                            (onChange)="getWarehouseId($event)"
+                            ></p-dropdown>
+                        </div>
+                        <div class="col-md-3 mt-2" *ngIf="hideFieldBasedOnWarehouse">
+                            <label style="font-size: medium;">Store</label>
+                            <p-dropdown [options]="storeList" name="Name" [(ngModel)]="selectedStore"
+                            optionLabel="Name" placeholder="Select Store" appendTo="body" 
+                            (onChange)="getStoreId($event)"></p-dropdown>
+                        </div>
+                        <div class="col-md-3 mt-2"  *ngIf="hideFieldBasedOnStore">
+                            <label style="font-size: medium;">Cluster</label>
+                            <p-dropdown [options]="clusterWiseWarehouseList" name="ClusterName" [(ngModel)]="selectedCluster"
+                            optionLabel="ClusterName" placeholder="Select Cluster" appendTo="body" 
+                            (onChange)="getClusterId($event)"></p-dropdown>
+                        </div>
+                        <div class="col-md-3 mt-2"  *ngIf="hideFieldBasedOnCluster">
+                            <label style="font-size: medium;">Customer</label>
+                            <p-multiSelect [options]="customerList" name="CustomerName" 
+                            optionLabel="CustomerName" placeholder="Select Customer" appendTo="body"  
+                            (onChange)="getCustomerId($event)"></p-multiSelect>
+                        </div>
+                        <div class="col-md-3 mt-2"  *ngIf="hideFieldBasedOnCustomer">
+                            <label style="font-size: medium;">Schedule</label>
+                            <p-dropdown [options]="scheduleList" name="scheduleName" [(ngModel)]="scheduleType"
+                            optionLabel="scheduleName" placeholder="Select Schedule" appendTo="body" 
+                            (onChange)="getScheduleId($event)"></p-dropdown>
+                        </div>   
+                        <div class="col-md-3 mt-2" *ngIf="hideSkipAndWeek">
+                            <label style="font-size: medium;">Skip Week</label>
+                            <input type="text" class="form-control" name="skipName" autocomplete="off"
+                            (keypress)="numberOnly($event)" placeholder="Enter Week" [(ngModel)]="getSkipNumber"
+                            maxlength="1" max="4"/>
+                        </div>
+                        <div class="col-md-3 mt-2" *ngIf="hideSkipAndWeek">
+                            <label style="font-size: medium;">Days</label>
+                            <p-multiSelect [options]="weekList" name="weekName" 
+                            optionLabel="weekName" placeholder="Select Week" appendTo="body"
+                            (onChange)="getweekId($event)"></p-multiSelect>
+                        </div>
+                        <div class="col-md-3 mt-2" *ngIf="hideSkipAndWeek">
+                            <label style="font-size: medium;">Priority</label>
+                            <input type="text" class="form-control" name="priority"
+                            (keypress)="numberOnlyForPriority($event)" placeholder="Enter Priority" [(ngModel)]="getPriority"
+                            maxlength="1"/>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-1" *ngIf="hideAddBtn">
+               <button class="btn btn-primary" [disabled]="!(WarehouseName && scheduleType)" (click)="onclick()"><span class="pi pi-plus">Add</span></button>
+            </div>
+            <div class="col-md-2" *ngIf="showExcelBtn">
+                <button class="btn btn-primary" (click)="excelDownload()">Download File</button>
+            </div>
+            <div class="col-md-3" *ngIf="showExcelBtn">
+                <span>
+                <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                    (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+                    <code>*</code>
+                </p-fileUpload>
+                </span>
+            </div>
+            <div class="col-md-1" *ngIf="showExcelBtn">
+                <button class="btn btn-primary" (click)="uploadExcelRecord()">Save</button>
+            </div>
+        </div>
+        
+    <!-- </form> -->
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover"> 
+      <p-table #dt [globalFilterFields]="['Skcode','Name']" [value]="storeAndClusterBasedList" [totalRecords]="total_count" [paginator]="true" [rows]="20"
+          [scrollable]="true" 
+          text-align: center>
+          <ng-template pTemplate="caption">
+            <div style="text-align: right">
+              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+              <input type="text" size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </div>
+          </ng-template>  
+          <ng-template pTemplate="header">
+              <tr>
+                  <th style="text-align: left; width: 2px;">S no</th>
+                  <th style="text-align: left; width: 8px;">Name</th>
+                  <th style="text-align: left; width: 7px;">SK Code</th>
+                  <th style="text-align: left; width: 5px;">Schedule Type</th>
+                  <th style="text-align: left; width: 2px;">Skip Week</th>
+                  <th style="text-align: left; width: 40px;">Days</th>
+                  <th style="text-align: left; width: 15px;">Created Date</th>
+                  <th style="text-align: left; width: 10px;">Actions</th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-storeAndClusterBasedList let-rowIndex="rowIndex">
+                  <tr (click)="openDetails(storeAndClusterBasedList,$event)">
+                      <td style="text-align: left; width: 2px;">{{rowIndex+1}}</td>
+                      <td style="text-align: left; width: 8px;">
+                        <ng-container *ngIf="storeAndClusterBasedList.Id != null else second_case">
+                            {{storeAndClusterBasedList.Name}}
+                          </ng-container>
+                          <ng-template #second_case>
+                              <ng-container>
+                                {{storeAndClusterBasedList.Name}} 
+                              </ng-container>
+                          </ng-template> 
+                      </td>
+                      <td style="text-align: left; width: 7px;">{{storeAndClusterBasedList.Skcode}}</td>
+                      <td style="text-align: left; width: 5px;">{{storeAndClusterBasedList.SchedulerType == 1 ? 'Weekly' : 'Monthly'}}</td>
+                      <td style="text-align: left; width: 2px;">{{storeAndClusterBasedList.SkipWeeks}}</td>
+                      <!-- <td style="text-align: left">{{storeAndClusterBasedList.BeatSchedulers.join(', ')}}</td> -->
+                      <td style="text-align: left; width: 40px;">
+                        <span *ngFor="let arr of storeAndClusterBasedList.BeatSchedulers">{{arr.Day == 1? 'Monday, ' : (arr.Day == 2? 'Tuesday, ' : (arr.Day == 3? 'Wednesday, ' : (arr.Day == 4? 'Thursday, ': (arr.Day == 5? 'Friday, ' : (arr.Day == 6? 'Saturday, ' : (arr.Day == 7? 'Sunday, ' : ''))))))}}</span>
+                        </td>
+                      <td style="text-align: left; width: 15px;">{{storeAndClusterBasedList.CreatedDate}}</td>
+                      <td style="text-align: left; width: 10px;">
+                        <ng-container *ngIf="storeAndClusterBasedList.Id != null else second">
+                          <button class="btn btn-primary" (click)="removeData(storeAndClusterBasedList)">Remove</button>
+                        </ng-container>
+                        <ng-template #second>
+                            <ng-container>
+                                <!-- <button class="save_btn" (click)="saveData(storeAndClusterBasedList)">Save</button> -->
+                            </ng-container>
+                        </ng-template>  
+                      </td>
+              </tr>
+          </ng-template>
+      </p-table>
+</div>
+<div class="container-fluid ui-fluid shadow p-1 mb-3 bg-white rounded table table-hover" *ngIf="savedBtnEnable">
+        <div class="row" style="text-align: right" >
+            <div class="col-12">
+               <button class="btn btn-primary" (click)="saveData()">Save</button>
+            </div>
+        </div>
+</div>
+
+<p-dialog [style]="{width: '90vw'}" [positionTop]="1" [header]="'Warning (outOfbeatSkcode)'"
+    [(visible)]="displayoutOfbeatSkcode" appendTo="body" [closable]="true">
+
+    <div *ngIf="outOfbeatSkcode">
+        <span style="color: red;">Warning: </span> Following Skcode will not update: {{outOfbeatSkcode}} . Please remove
+        then reupload with mapped skcode
+    </div>
+    <div style="margin-left: 100px; float: right;">
+        <button type="button" (click)="closeoutOfbeatSkcode(); " pButton icon="pi pi-info-circle"
+            label="Close"></button>
+    </div>
+</p-dialog>

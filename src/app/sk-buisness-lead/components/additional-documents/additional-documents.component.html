@@ -1,0 +1,131 @@
+<div class="container-fluid">
+    <div class="row ml-1 mt-2">
+        <div class="col-3 text-left">
+                <label style="font-weight: bold;">Document Type:</label>
+                <select class="form-control" [(ngModel)]="selectedDocumentType" (change)="onChangeDocumentType()">
+                 <option value="" [disabled]="true">Select Document</option>
+                 <option value="0">All</option>
+                    <option *ngFor="let i of documentList" [ngValue]="i.Id">{{i.DocumentName}}</option>
+                </select>
+        </div>
+     <div class="col-9 text-right">
+        <button type="button" (click)="addNew()" class="search_Button"><i class="fa fa-plus-circle"></i>Add New Document</button>
+     </div>
+    </div>
+</div>
+    <div class="row mt-3" >
+        <p-table [value]="additionalDocumentList">
+         <ng-template pTemplate="header" >
+             <tr>
+                 <th style="font-weight: bold;">Document Type</th>
+                 <th style="font-weight: bold;">Comment</th>
+                 <th style="font-weight: bold;">View Document</th>
+                 <th style="font-weight: bold;">Action</th>
+             </tr>
+         </ng-template>
+         <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+            <tr> 
+                <td>{{rowData.DocumentName}}</td>
+                <td>{{rowData.Comment}}</td>
+                <td><button type="button" style="background:cadetblue !important;
+                    color: #fff;
+                    border: none;
+                    padding: 6px 20px;
+                    border-radius: 5px;" (click)="showDownloadDocument(rowData.ImageUrl)"><i class="pi pi-eye mr-1"></i>View Document</button></td>
+                <!-- <td><i class="pi pi-eye mt-2" style="font-size: 1.5rem" (click)="showDownloadDocument(rowData.ImageUrl)"></i></td> -->
+                <!-- <td><i class="pi pi-trash ml-2" style="font-size: 1.5rem;color: maroon;" (click)="DeleteDoc(rowData.Id)"></i></td> -->
+                <td><button type="button" style="background:indianred !important;
+                    color: #fff;
+                    border: none;
+                    padding: 6px 20px;
+                    border-radius: 5px;" (click)="DeleteDoc(rowData.Id)"><i class="pi pi-trash mr-1"></i>Delete</button></td>
+            </tr>
+             </ng-template>
+             <ng-template pTemplate="emptymessage">
+                 <h5 style="color: #186fe0;font-weight: bold;">Data Not Found</h5>
+             </ng-template>
+     </p-table>
+    </div>
+<p-dialog header="View Document" [(visible)]="showViewDocument" [modal]="true" appendTo="body" positionTop="100"
+[style]="{width: '35vw',height:'50%', overflow: 'auto','box-shadow': 'none','max-width': '52%'}" [draggable]="false"
+[resizable]="false">
+<div class="container-fluid">
+<div class="row">
+<div class="col-3">
+    <img [src]="showImg" *ngIf="showImg" alt="Uploaded Image" width="450" height="300">
+</div>
+</div>
+</div>
+</p-dialog>
+<p-dialog header="View Document" [(visible)]="showAddNew" [modal]="true" appendTo="body" positionTop="100"
+[style]="{width: '65vw',height:'100%', overflow: 'auto','box-shadow': 'none','max-width': '52%'}" [draggable]="false"
+[resizable]="false">
+<div class="container-fluid">
+<div class="row">
+    <div class="row ml-1" *ngIf="showAddNew">
+        <div class="col-3 mt-2">
+           <label style="font-weight: 400;">Document Type</label>
+           <select class="form-control" [(ngModel)]="documentType">
+            <option value="" [disabled]="true">Select Document</option>
+               <option *ngFor="let i of documentList" [ngValue]="i">{{i.DocumentName}}</option>
+           </select>
+        </div>
+        <div class="col-3 mt-2">
+           <label style="font-weight: 400;" >Comment</label>
+           <input type="text" class="form-control" [(ngModel)]="comment">
+        </div>
+        <div class="col-3 mt-2">
+           <!-- <p-fileUpload mode="basic" chooseLabel="Choose" name="myfile[]" [(ngModel)]="myURL" customUpload="true" accept=".xls,.xlsx,image/png, image/jpeg" #uploadCustom
+           (uploadHandler)="onUpload($event)"></p-fileUpload> -->
+           <label>Upload Document</label>
+           <input type="file"  #fileRef (change)="onFileSelected($event)" accept="image/*,.pdf">
+        </div>
+        <div class="col-2 mt-2">
+         <!-- <button class="search_Button" (click)="onSave()">Add</button> -->
+         <button class="search_Button" (click)="OnSaveDocument()">Save</button>
+        </div>
+       </div>
+       <div class="row mt-3" >
+          <!-- <p-table [value]="tempArray" >
+           <ng-template pTemplate="header">
+               <tr>
+                   <th>Document Type</th>
+                   <th>Comment</th>
+                   <th>View Document</th>
+                   <th>Action</th>
+               </tr>
+           </ng-template>
+           <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+               <tr>
+                   <td>{{rowData.documentName}}</td>
+                   <td>{{rowData.comment}}</td>
+                   <td><a (click)="ViewDocument(rowData)">View Document</a></td>
+                   <td><i class="pi pi-trash ml-2" style="font-size: 1.5rem;color: maroon;" (click)="Delete(rowData)"></i></td>
+               </tr>
+            </ng-template>
+               <ng-template pTemplate="emptymessage">
+                   <h5 style="color: #186fe0;font-weight: bold;">Data Not Found</h5>
+               </ng-template>
+       </p-table> -->
+       <div class="col-12 text-center">
+           <button class="search_Button" (click)="OnSaveDocument()">Save</button>
+         </div>
+       </div>
+       </div>
+       </div>
+</p-dialog>
+<p-dialog header="View Document" [(visible)]="showDocPop" [modal]="true" appendTo="body" positionTop="100"
+[style]="{width: '35vw',height:'50%', overflow: 'auto','box-shadow': 'none','max-width': '52%'}" [draggable]="false"
+[resizable]="false">
+<div class="container-fluid">
+<div class="row">
+<div class="col-3">
+    <img [src]="documentURL"  alt="Uploaded Image" width="450" height="300">
+</div>
+</div>
+</div>
+</p-dialog>
+<p-blockUI  [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,607 @@
+<div>
+    <p-toast [style]="{marginTop: '80px'}"></p-toast>
+    <p-blockUI [blocked]="isLoading"></p-blockUI>
+
+    <div *ngIf="itemValue">
+        <app-virtual-stock-auto-settle [warehouseId]="itemValue.WarehouseId" [itemMultiMRPId]="itemValue.ItemMultiMRPId"
+            (directionEvent)="getOptions($event)">
+        </app-virtual-stock-auto-settle>
+    </div>
+    <p-progressSpinner *ngIf="isLoading"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+    <div *ngIf="stocksettle == false">
+
+        <div id="kick-start" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="card-title">Virtual Stock Management</h6>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                            (click)="navToVirtualStockDetailsList()">
+                            View Transactions
+                        </button>
+                        <button type="button" [disabled]="!stockTransactionsList.length" style="cursor: pointer;"
+                            class="btn btn-raised btn-raised btn-primary pull-right mr-10" (click)="saveTransaction()">
+                            Save Transaction
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <form #itemAutoCompleteForm="ngForm">
+                                <app-item-auto-complete id="cusAuto" name="customerAutoComplete"
+                                    #customerValue="ngModel" [(ngModel)]="itemValue" (setInitialTrue)="initial = false"
+                                    (outputItem)="getStocksList($event)" required>
+                                </app-item-auto-complete>
+                            </form>
+                        </div>
+                        <div class="col-md-1">
+                            <a *ngIf="itemValue" class="rfsh pull-right" href="javascript:void(0);"
+                                (click)="getStocksList(null)">
+                                <i class="fa fa-retweet fa-2x" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12" *ngIf="initial">
+            <div class="row">
+                <div class="col-md-12" style="border: 1px solid black;">
+                    <div>
+                        <h3 style="text-align: center;">Manage Stocks</h3>
+                        <hr>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2" droppable (onDrop)="onDrop($event);" id="DamagedStocks">
+                                    <div droppable (onDrop)="onDrop($event);" id="DamagedStocks">
+                                        <ul class="list-group borderDiv header" draggable [dragData]="DamagedStocks"
+                                            droppable (onDrop)="onDrop($event);" id="DamagedStocks">
+                                            <h4 class="card-title" droppable (onDrop)="onDrop($event);"
+                                                id="DamagedStocks">
+                                                Damaged Stock</h4>
+                                            <div class="list-group-item" droppable (onDrop)="onDrop($event);"
+                                                id="DamagedStocks" style="color: black;">
+                                                {{DamagedStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 " id="InReceivedStocks">
+                                    <div id="InReceivedStocks">
+                                        <ul class="list-group borderDiv header" id="InReceivedStocks">
+                                            <h4 class="card-title" id="InReceivedStocks">
+                                                In-received Stock</h4>
+                                            <div class="list-group-item" style="color: black;" id="InReceivedStocks">
+                                                {{InReceivedStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-2" droppable (onDrop)="onDrop($event);" id="ExpiredStocks">
+                                    <div droppable (onDrop)="onDrop($event);" id="ExpiredStocks">
+                                        <ul class="list-group borderDiv header" draggable [dragData]="ExpiredStocks"
+                                            droppable (onDrop)="onDrop($event);" id="ExpiredStocks">
+                                            <h4 class="card-title" droppable (onDrop)="onDrop($event);"
+                                                id="ExpiredStocks">
+                                                Expired Stock</h4>
+                                            <div class="list-group-item" droppable (onDrop)="onDrop($event);"
+                                                id="ExpiredStocks" style="color: black;">
+                                                {{ExpiredStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2" droppable (onDrop)="onDrop($event);" id="FreeStocks">
+                                    <div droppable (onDrop)="onDrop($event);" id="FreeStocks">
+                                        <ul class="list-group borderDiv header" draggable [dragData]="FreeStocks"
+                                            droppable (onDrop)="onDrop($event);" id="FreeStocks">
+                                            <h4 class="card-title" droppable (onDrop)="onDrop($event);" id="FreeStocks">
+                                                Free Stock</h4>
+                                            <div droppable (onDrop)="onDrop($event);" id="FreeStocks"
+                                                class="list-group-item" style="color: black;">
+                                                {{FreeStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 " id="InTransitStocks">
+                                    <div id="InTransitStocks">
+                                        <ul class="list-group borderDiv header" id="InTransitStocks">
+                                            <h4 class="card-title" id="InTransitStocks">
+                                                In-Transit Stock</h4>
+                                            <div class="list-group-item" style="color: black;" id="InTransitStocks">
+                                                {{InTransitStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-2" droppable (onDrop)="onDrop($event);" id="RTVStocks">
+                                    <div droppable (onDrop)="onDrop($event);" id="RTVStocks">
+                                        <ul class="list-group borderDiv header" draggable [dragData]="RTVStocks"
+                                            droppable (onDrop)="onDrop($event);" id="RTVStocks">
+                                            <h4 class="card-title" droppable (onDrop)="onDrop($event);" id="RTVStocks">
+                                                Rtv
+                                                Stock</h4>
+                                            <div droppable (onDrop)="onDrop($event);" id="RTVStocks"
+                                                class="list-group-item" style="color: black;">
+                                                {{RTVStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-2" id="DeliveredStocks">
+                                    <div id="DeliveredStocks">
+                                        <ul class="list-group borderDiv header" id="DeliveredStocks">
+                                            <h4 class="card-title" id="DeliveredStocks">
+                                                Delivered Stocks</h4>
+                                            <div class="list-group-item" style="color: black;" id="DeliveredStocks">
+                                                {{DeliveredStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-2" id="VirtualStocks" droppable (onDrop)="onDrop($event);">
+                                    <div id="VirtualStocks" droppable (onDrop)="onDrop($event);">
+                                        <ul class="list-group borderDiv virtualStockHeader" draggable
+                                            [dragData]="VirtualStocks" id="VirtualStocks" droppable
+                                            (onDrop)="onDrop($event);">
+                                            <h4 class="card-title" id="VirtualStocks" droppable
+                                                (onDrop)="onDrop($event);">
+                                                Virtual Stock</h4>
+                                            <div class="list-group-item" id="VirtualStocks" droppable
+                                                (onDrop)="onDrop($event);" style="color: black;">
+                                                {{VirtualStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 " droppable (onDrop)="onDrop($event);" id="ReservedStocks">
+                                    <div droppable (onDrop)="onDrop($event);" id="ReservedStocks">
+                                        <ul class="list-group borderDiv header" draggable [dragData]="ReservedStocks"
+                                            droppable (onDrop)="onDrop($event);" id="ReservedStocks">
+                                            <h4 class="card-title" droppable (onDrop)="onDrop($event);"
+                                                id="ReservedStocks">
+                                                Reserved Stock</h4>
+                                            <div droppable (onDrop)="onDrop($event);" id="ReservedStocks"
+                                                style="color: black;" class="list-group-item">
+                                                {{ReservedStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-2" id="RTDStocks">
+                                    <div id="RTDStocks">
+                                        <ul class="list-group borderDiv header" id="RTDStocks">
+                                            <h4 class="card-title" id="RTDStocks">RTD Stock</h4>
+                                            <div id="RTDStocks" class="list-group-item" style="color: black;">
+                                                {{RTDStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-2" droppable (onDrop)="onDrop($event);" id="CurrentStocks">
+                                    <div droppable (onDrop)="onDrop($event);" id="CurrentStocks">
+                                        <ul class="list-group borderDiv header" draggable [dragData]="CurrentStocks"
+                                            droppable (onDrop)="onDrop($event);" id="CurrentStocks">
+                                            <h4 class="card-title" droppable (onDrop)="onDrop($event);"
+                                                id="CurrentStocks">
+                                                Current Stocks
+                                            </h4>
+                                            <div droppable (onDrop)="onDrop($event);" id="CurrentStocks"
+                                                class="list-group-item" style="color: black;">
+                                                {{CurrentStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body"
+                            positionTop="100">
+                            <p-header>
+                                <p>{{fromQuantity.name}} TO {{toQuantity.name}}</p>
+                            </p-header>
+                            <ul class="list-group">
+                                <div>
+                                    <div>
+                                        <p>
+                                            <label>
+                                                Remaining Quantity :
+                                            </label>
+                                            {{fromQuantity.quantity}}
+                                        </p>
+                                    </div>
+                                    <br>
+                                    <div>
+                                        <label>
+                                            Quantity To Add
+                                        </label>
+                                        <div>
+                                            <input type="number" class="form-control" [(ngModel)]="quantityToAdd"
+                                                name="quantity" (change)="invalidAmount = false" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            Reason
+                                        </label>
+                                        <div>
+                                            <textarea class="form-control" [(ngModel)]="reason"
+                                                name="reason"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-footer>
+                                    <br>
+                                    <div class="row text-right" style="margin-left: 280px; margin-right: 10px">
+                                        <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                            (click)="calculateVirtualStock();">
+                                            Add Quantity
+                                        </button>
+                                    </div>
+                                    <code *ngIf="invalidAmount"> Amount Entered is invalid </code>
+                                    <code *ngIf="invalidreason"> Please Enter Reason  </code>
+
+                                </p-footer>
+                            </ul>
+                        </p-dialog>
+                    </div>
+                </div>
+                <div class="col-md-12" style="border: 1px solid black;">
+                    <h3 style="text-align: center;">Stock Transaction</h3>
+                    <hr>
+                    <div class="card">
+                        <ng-container *ngIf="stockTransactionsList && stockTransactionsList.length">
+                            <br>
+                            <div>
+                                <div class="card-content">
+                                    <div class="px-3">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p-table #table [value]="stockTransactionsList"
+                                                    [totalRecords]="stockTransactionsList.length" [scrollable]="true"
+                                                    scrollHeight="70vh" text-align: center>
+                                                    <ng-template pTemplate="header">
+                                                        <tr>
+                                                            <th>S.no</th>
+                                                            <th>From Stock</th>
+                                                            <th>Quantity</th>
+                                                            <th>To Stock</th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                                        <tr>
+                                                            <td>{{i+1}}</td>
+                                                            <td>
+                                                                {{rowData.SourceStockType}}</td>
+                                                            <td>{{rowData.Qty}}</td>
+                                                            <td>{{rowData.DestinationStockType}}</td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+
+                                            </div>
+                                        </div>
+                                        <br>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- <div *ngIf="stocksettle == true">
+    <div class="row m-0">
+        <div class="col-12">
+            <div id="kick-start" class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4 class="card-title">Virtual Stock Management</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <app-selected-item-list id="cusAuto" name="customerAutoComplete"
+                                    #customerValue="ngModel" [ItemMultiMRPId]="ItemMultiMRPId"
+                                    [WarehouseId]="WarehouseId" [ItemName]="ItemName" [(ngModel)]="itemValue"
+                                    (setInitialTrue)="initial = false" (outputItem)="getStocksList($event)" required>
+                                </app-selected-item-list>
+
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                                    (click)="navToVirtualStockDetailsList()">
+                                    View Transactions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p-progressSpinner *ngIf="isLoading"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+    <div class="col-md-12" *ngIf="initial">
+        <div class="row">
+            <div class="col-md-6" style="border: 1px solid black;">
+                <div>
+                    <h1 style="text-align: center;">Manage Stocks</h1>
+                    <hr>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4" droppable (onDrop)="onDrop($event);" id="DamagedStocks">
+                                <div droppable (onDrop)="onDrop($event);" id="DamagedStocks">
+                                    <ul class="list-group borderDiv header" draggable [dragData]="DamagedStocks"
+                                        droppable (onDrop)="onDrop($event);" id="DamagedStocks">
+                                        <h4 class="card-title" droppable (onDrop)="onDrop($event);" id="DamagedStocks">
+                                            Damaged Stock</h4>
+                                        <div class="list-group-item" droppable (onDrop)="onDrop($event);"
+                                            id="DamagedStocks" style="color: black;">
+                                            {{DamagedStocks.quantity}}
+                                        </div>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-4" droppable (onDrop)="onDrop($event);" id="ExpiredStocks">
+                                <div droppable (onDrop)="onDrop($event);" id="ExpiredStocks">
+                                    <ul class="list-group borderDiv header" draggable [dragData]="ExpiredStocks"
+                                        droppable (onDrop)="onDrop($event);" id="ExpiredStocks">
+                                        <h4 class="card-title" droppable (onDrop)="onDrop($event);" id="ExpiredStocks">
+                                            Expired Stock</h4>
+                                        <div class="list-group-item" droppable (onDrop)="onDrop($event);"
+                                            id="ExpiredStocks" style="color: black;">
+                                            {{ExpiredStocks.quantity}}
+                                        </div>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4 " droppable (onDrop)="onDrop($event);" id="DeliveredStocks">
+                                <div droppable (onDrop)="onDrop($event);" id="DeliveredStocks">
+                                    <ul class="list-group borderDiv header" draggable [dragData]="DeliveredStocks"
+                                        droppable (onDrop)="onDrop($event);" id="DeliveredStocks">
+                                        <h4 class="card-title" droppable (onDrop)="onDrop($event);"
+                                            id="DeliveredStocks">
+                                            Delivered Stocks</h4>
+                                        <div class="list-group-item" droppable (onDrop)="onDrop($event);"
+                                            style="color: black;" id="DeliveredStocks">
+                                            {{DeliveredStocks.quantity}}
+                                        </div>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="VirtualStocks" droppable (onDrop)="onDrop($event);">
+                                <div id="VirtualStocks" droppable (onDrop)="onDrop($event);">
+                                    <ul class="list-group borderDiv virtualStockHeader" draggable
+                                        [dragData]="VirtualStocks" id="VirtualStocks" droppable
+                                        (onDrop)="onDrop($event);">
+                                        <h4 class="card-title" id="VirtualStocks" droppable (onDrop)="onDrop($event);">
+                                            Virtual Stock</h4>
+                                        <div class="list-group-item" id="VirtualStocks" droppable
+                                            (onDrop)="onDrop($event);" style="color: black;">
+                                            {{VirtualStocks.quantity}}
+                                        </div>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4 " droppable (onDrop)="onDrop($event);" id="ReservedStocks">
+                                <div droppable (onDrop)="onDrop($event);" id="ReservedStocks">
+                                    <ul class="list-group borderDiv header" draggable [dragData]="ReservedStocks"
+                                        droppable (onDrop)="onDrop($event);" id="ReservedStocks">
+                                        <h4 class="card-title" droppable (onDrop)="onDrop($event);" id="ReservedStocks">
+                                            Reserved Stock</h4>
+                                        <div droppable (onDrop)="onDrop($event);" id="ReservedStocks"
+                                            style="color: black;" class="list-group-item">
+                                            {{ReservedStocks.quantity}}
+                                        </div>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4" droppable (onDrop)="onDrop($event);" id="FreeStocks">
+                                <div droppable (onDrop)="onDrop($event);" id="FreeStocks">
+                                    <ul class="list-group borderDiv header" draggable [dragData]="FreeStocks" droppable
+                                        (onDrop)="onDrop($event);" id="FreeStocks">
+                                        <h4 class="card-title" droppable (onDrop)="onDrop($event);" id="FreeStocks">
+                                            Free Stock</h4>
+                                        <div droppable (onDrop)="onDrop($event);" id="FreeStocks"
+                                            class="list-group-item" style="color: black;">
+                                            {{FreeStocks.quantity}}
+                                        </div>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-4" droppable (onDrop)="onDrop($event);" id="RTVStocks">
+                                <div droppable (onDrop)="onDrop($event);" id="RTVStocks">
+                                    <ul class="list-group borderDiv header" draggable [dragData]="RTVStocks" droppable
+                                        (onDrop)="onDrop($event);" id="RTVStocks">
+                                        <h4 class="card-title" droppable (onDrop)="onDrop($event);" id="RTVStocks">Rtv
+                                            Stock</h4>
+                                        <div droppable (onDrop)="onDrop($event);" id="RTVStocks" class="list-group-item"
+                                            style="color: black;">
+                                            {{RTVStocks.quantity}}
+                                        </div>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4" droppable (onDrop)="onDrop($event);" id="RTDStocks">
+                                <div droppable (onDrop)="onDrop($event);" id="RTDStocks">
+                                    <ul class="list-group borderDiv header" draggable [dragData]="RTDStocks" droppable
+                                        (onDrop)="onDrop($event);" id="RTDStocks">
+                                        <h4 class="card-title" droppable (onDrop)="onDrop($event);" id="RTDStocks">Rtd
+                                            Stock</h4>
+                                        <div droppable (onDrop)="onDrop($event);" id="RTDStocks" class="list-group-item"
+                                            style="color: black;">
+                                            {{RTDStocks.quantity}}
+                                        </div>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-4" droppable (onDrop)="onDrop($event);" id="CurrentStocks">
+                                <div droppable (onDrop)="onDrop($event);" id="CurrentStocks">
+                                    <ul class="list-group borderDiv header" draggable [dragData]="CurrentStocks"
+                                        droppable (onDrop)="onDrop($event);" id="CurrentStocks">
+                                        <h4 class="card-title" droppable (onDrop)="onDrop($event);" id="CurrentStocks">
+                                            CurrentStocks
+                                        </h4>
+                                        <div droppable (onDrop)="onDrop($event);" id="CurrentStocks"
+                                            class="list-group-item" style="color: black;">
+                                            {{CurrentStocks.quantity}}
+                                        </div>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body"
+                        positionTop="100">
+                        <p-header>
+                            <p>{{fromQuantity.name}} TO {{toQuantity.name}}</p>
+                        </p-header>
+                        <ul class="list-group">
+                            <div>
+                                <div>
+                                    <p>
+                                        <label>
+                                            Remaining Quantity :
+                                        </label>
+                                        {{fromQuantity.quantity}}
+                                    </p>
+                                </div>
+                                <br>
+                                <div>
+                                    <label>
+                                        Quantity To Add
+                                    </label>
+                                    <div>
+                                        <input type="number" class="form-control" [(ngModel)]="quantityToAdd"
+                                            name="quantity" (change)="invalidAmount = false" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label>
+                                        Reason
+                                    </label>
+                                    <div>
+                                        <input type="text" class="form-control" [(ngModel)]="reason" name="reason" />
+                                    </div>
+                                </div>
+                            </div>
+                            <p-footer>
+                                <br>
+                                <div class="row text-right" style="margin-left: 280px; margin-right: 10px">
+                                    <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                        (click)="calculateSelectedVirtualStock();">
+                                        Add Quantity
+                                    </button>
+                                </div>
+                                <code *ngIf="invalidAmount"> Amount Entered is invalid </code>
+                                <code *ngIf="invalidreason"> Please enter Reason </code>
+
+                            </p-footer>
+                        </ul>
+                    </p-dialog>
+                </div>
+            </div>
+            <div class="col-md-6" style="border: 1px solid black;">
+                <h1 style="text-align: center;">Stock Transaction</h1>
+                <hr>
+                <div class="card">
+                    <ng-container *ngIf="stockTransactionsList && stockTransactionsList.length">
+                        <br>
+                        <div>
+                            <div class="card-content">
+                                <div class="px-3">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p-table #table [value]="stockTransactionsList"
+                                                [totalRecords]="stockTransactionsList.length" [scrollable]="true"
+                                                scrollHeight="70vh" text-align: center>
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                        <th>S.no</th>
+                                                        <th>From Stock</th>
+                                                        <th>Quantity</th>
+                                                        <th>To Stock</th>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                                    <tr>
+                                                        <td>{{i+1}}</td>
+                                                        <td>
+                                                            {{rowData.SourceStockType}}</td>
+                                                        <td>{{rowData.Qty}}</td>
+                                                        <td>{{rowData.DestinationStockType}}</td>
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>
+
+                                        </div>
+                                    </div>
+                                    <br>
+
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p-footer *ngIf="initial">
+        <br>
+        <div class="text-right">
+            <button type="button" [disabled]="!stockTransactionsList.length" style="cursor: pointer;"
+                class="btn btn-raised btn-raised btn-primary pull-right" (click)="saveTransaction()">
+                Save Transaction
+            </button>
+        </div>
+    </p-footer>
+</div> -->

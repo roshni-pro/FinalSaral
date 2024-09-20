@@ -1,0 +1,118 @@
+<div class="w3-container w3-center w3-animate-left">
+    <h1 style="text-align: center;"><b><u>ABC Classification Report</u></b></h1>
+</div>
+<div class="ui-fluid shadow mb-2 bg-white rounded">
+    <form class="ovelFieldForm form" name="form" #abcclassificationForm="ngForm" style="padding:0px 15px;">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                  <label for="projectinput1" >SELECT CITY<span  style="color:red"> *</span></label>
+                  <select id="cityid" name="city" class="form-control" [(ngModel)]="CityId"
+                    (ngModelChange)="onsearch(CityId)" #cityid="ngModel" required = "1">
+                    <option value="">--Select City--</option>
+                    <option *ngFor="let city of cityList" [ngValue]="city.Cityid">{{city.CityName}}
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !cityid.valid && cityid.errors.required">
+                    <code>City is required</code>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="projectinput2">Warehouse<span  style="color:red"> *</span></label>
+                  <select id="warehouse" name="warehouse" class="form-control" [(ngModel)]="WarehouseId"
+                    placeholder="Select Warehouse" required="1" #warehouse="ngModel">
+                    <div class="col-md-6"></div>
+                    <option value="">--Select Warehouse--</option>
+                    <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+                      {{ wh.WarehouseName }}
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !warehouse.valid && warehouse.errors.required">
+                    <code>Warehouse is required</code>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-md-3">
+                <div class="form-group">
+                    <label for="name">ABC Classification <span  style="color:red"> *</span></label>
+                    <select class="form-control" id="status" name="status" [(ngModel)]="categories" #status="ngModel" required="1">
+                      <option value="">Select</option>
+                      <option value="A1">A1</option>
+                      <option value="A2">A2</option>
+                      <option value="A3">A3</option>
+                      <option value="A4">A4</option>
+                      <option value="A5">A5</option>
+                      <option value="B1">B1</option>
+                      <option value="B2">B2</option>
+                      <option value="B3">B3</option>
+                      <option value="B4">B4</option>
+                      <option value="C">C</option>
+                    </select>
+                    <div class="col-md-2"></div>
+                    <div *ngIf="isInvalid && !status.valid && status.errors.required">
+                        <code>ABC Classification is required</code>
+                    </div>
+                  </div>
+            </div> -->
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="name">ABC Classification <span  style="color:red"> *</span></label>
+                    <p-multiSelect id="status" name="status" [options]="Status" [(ngModel)]="categories" optionLabel="label" #status="ngModel" required="1"></p-multiSelect>
+                    <div class="col-md-2"></div>
+                    <div *ngIf="isInvalid && !status.valid && status.errors.required">
+                        <code>ABC Classification is required</code>
+                    </div>
+                  </div>
+            </div>
+           
+            <div class="col-md-3">
+                <button class="btn btn-raised btn-raised btn-primary" style="margin-top: 33px;"
+                    (click)="filter(abcclassificationForm,CityId,WarehouseId,categories)">Search </button>
+                    <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" style="margin-top: 33px;margin-left: 13px;"
+                    (click)="ExportReport() ">Export</button>
+            </div>
+        </div>                  
+    </form>
+</div>
+
+<div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="row text-left" >
+        <div class="col-md-12">
+            <div class="card noneHoverRow">
+                <p-table #dt [value]="AbcClassificationReport" [paginator]="true" [rows]="20" [scrollable]="true"
+                    scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="text-align: center;">Item Name</th>
+                            <th style="text-align: center;">Quantity Sales</th>
+                            <th style="text-align: center;">Balance Stock Qty</th>
+                            <th style="text-align: center;">Sales Value</th>
+                            <th style="text-align: center;">Stock Value</th>
+                            <th style="text-align: center;">Sales % contribute</th>
+                            <th style="text-align: center;">Stock % contribute</th>
+                            <th style="text-align: center;">Category</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ir>
+                        <tr>
+                            <td>{{ir.ItemName}}</td>
+                            <td style="text-align: center;">{{ir.Qty}}</td>
+                            <td style="text-align: center;">{{ir.StockQty}}</td>
+                            <td style="text-align: center;">{{ir.SaleAmount | number :'1.0-2'}}</td>
+                            <td style="text-align: center;">{{ir.StockValue | number :'1.0-2'}}</td>
+                            <td style="text-align: center;">{{ir.SalePercent | number :'1.0-2'}}</td>
+                            <td style="text-align: center;">{{ir.StockPercent | number :'1.0-2'}}</td>
+                            <td style="text-align: center;">{{ir.Category}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

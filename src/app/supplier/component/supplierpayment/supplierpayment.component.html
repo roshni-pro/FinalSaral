@@ -1,0 +1,453 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<section id="customer-master">
+  <div class="header">
+    <h3 class="m-2">Supplier Payment </h3>
+  </div>
+</section>
+
+<div class="ui-fluid">
+  <div class="ui-g text-left" style="margin-bottom: 50px !important;">
+    <div class="ui-g-6">
+      <div class="card">
+        <h6 class="card-title m2" id="basic-layout-form"><b>User Input</b></h6>
+        <div class="ui-g">
+          <div class="ui-g-10">
+            <div class="form-group pb-2">
+              <label for="SupplierName">Supplier Name</label><br>
+              <p-autoComplete [(ngModel)]="selectedSupplier" [suggestions]="supplierList"
+                (completeMethod)="getSuppplierList($event)" field="Name"
+                placeholder="enter at least 3 chars" [minLength]="1" name="SupplierName"
+                (ngModelChange)="onAdjustSelectSupplier()" name="SupplierName" required="true"
+                inputStyleClass="form-control" #SupplierName="ngModel" [disabled]="supplierdisble==true">
+              </p-autoComplete>
+            </div>
+          </div>
+          <div class="ui-g-2">
+            <div class="form-group pb-2">
+              <label>&nbsp;</label><br>
+              <button class="pi pi-trash trash  tt" aria-hidden="true" (click)="trash()"> </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="form-body">
+            <ngb-tabset #tabselect="ngbTabset" (tabChange)="onTabChange($event)">
+              <ngb-tab id="tab1" title="Supplier">
+                <ng-template ngbTabContent>
+                  <form class="form" name="paymentForm" #payment="ngForm">
+                    <h4 class="form-section"><i class="ft-user"></i> <b>Bank Info</b></h4>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="projectinput5">Select Bank <code>*</code></label>
+                          <select id="desg" name="desg" class="form-control" [(ngModel)]="inputModel.BankId"
+                            [disabled]="inputModel.isDisabled" #bankInput="ngModel" required>
+                            <option value="">--select--</option>
+                            <option *ngFor="let bank of bankList" [ngValue]="bank.ID">
+                              {{ bank.Name }}
+                            </option>
+                          </select>
+                          <code *ngIf="inputModel.showPaymentValidation && !bankInput.valid">
+                            Bank is required
+                          </code>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="projectinput3">Ref No.<code>*</code></label>
+                          <input type="text" id="projectinput3" class="form-control" name="refno"
+                            [(ngModel)]="inputModel.refno" [disabled]="inputModel.isDisabled" #refno="ngModel"
+                            required>
+                          <code *ngIf="inputModel.showPaymentValidation && !refno.valid">
+                              Reference number is required
+                            </code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="projectinput4">Amount<code>*</code></label>
+                          <input type="number" id="projectinput4" class="form-control" name="amount"
+                            [(ngModel)]="inputModel.amount" [disabled]="inputModel.isDisabled" #amount="ngModel"
+                            required>
+                          <code *ngIf="inputModel.showPaymentValidation && !amount.valid">
+                              Amount is required
+                            </code>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="projectinput15">Payment Date<code>*</code></label>
+                          <p-calendar name="toDateInput" [(ngModel)]="inputModel.paymentDate" dateFormat="dd/mm/yy"
+                            [showIcon]="true" [disabled]="inputModel.isDisabled" #paymentDate="ngModel" required
+                            [monthNavigator]="true" [yearNavigator]="true" [yearRange]="yearRangeForCalender">
+                          </p-calendar>
+
+                          <!-- <p-calendar name="toDateInput" [(ngModel)]="inputModel.paymentDate" [showIcon]="true"
+                            name="toDate" [disabled]="inputModel.isDisabled" #paymentDate="ngModel" required>
+                          </p-calendar> -->
+                          <code *ngIf="inputModel.showPaymentValidation && !paymentDate.valid">
+                            Payment Date is required
+                            </code>
+                        </div>
+                      </div>
+                      <!-- <div class="col-md-12">
+                        <label for="projectinput15">Depo<code>*</code></label>
+                        <select id="depoid" name="depoid" class="form-control" [(ngModel)]="inputModel.depoID"
+                          #depoIdInput="ngModel" required>
+                          <option value="">--select--</option>
+                          <option *ngFor="let bank of bankList" [ngValue]="bank.ID">
+                            {{ bank.Name }}
+                          </option>
+                        </select>
+                      </div> -->
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="projectinput3">Narration <code>*</code></label>
+                          <textarea type="text" id="projectinput3" class="form-control" name="remark"
+                            [(ngModel)]="inputModel.remark" [disabled]="inputModel.isDisabled" #remark="ngModel"
+                            required></textarea>
+                          <code *ngIf="inputModel.showPaymentValidation && !remark.valid">
+                            Narration is required
+                              </code>
+                        </div>
+                      </div>
+
+                      <div class="col-md-12">
+                        <button type="button" class="btn btn-raised btn-raised btn-primary mr-1 "
+                          (click)="resetIRPayments()">
+                          Reset
+                        </button>
+                        <button type="button" [disabled]="inputModel.isDisabled" 
+                          [ngClass]="{'dis': inputModel.isDisabled, 'btn btn-raised btn-raised btn-primary': true}"
+                          (click)="enableIRPayments(payment)" [disabled]="disbleselectbill">
+                          Select Bill
+                        </button>
+                      </div>
+                    </div>
+
+                  </form>
+                </ng-template>
+              </ngb-tab>
+
+              <ngb-tab id="tab2" title="Advance ">
+                <ng-template ngbTabContent>
+                  <form class="form" name="adjustmentmentForm" #adjustForm="ngForm">
+                    <h4 class="form-section"><i class="ft-user"></i><b> Advance</b></h4>
+                    <div *ngIf="advancePaymentList && advancePaymentList.length > 0 &&  inputModeladdjustment">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group" *ngIf="advancePaymentList && advancePaymentList.length >0">
+                            <label for="projectinput5">Select Adjustment<code>*</code></label>
+                            <select id="adjustment" name="adjustment" class="form-control" 
+                            [(ngModel)]="selectedAdvacePaymentId" (ngModelChange)="onChangeAdjustment()"
+                            [disabled]="inputModeladdjustment.isDisabled" #adjustment="ngModel" required>
+                              <option value="">--select--</option>
+                              <option *ngFor="let paymenttt of advancePaymentList" [ngValue]="paymenttt.Id">
+                                {{ paymenttt.refno + '- (Rs. ' + paymenttt.amount + ')'  }}
+                              </option>
+                            </select>
+                            <code *ngIf="inputModeladdjustment.showPaymentValidation && !adjustment.valid">
+                              Adjustment is required
+                              </code>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="projectinput5">Select Bank</label>
+                            <select id="desg" name="desg" class="form-control"
+                              [(ngModel)]="inputModeladdjustment.BankId" #BankId="ngModel" disabled>
+                              <option value="">--select--</option>
+                              <option *ngFor="let bank of bankList" [ngValue]="bank.ID">
+                                {{ bank.Name }}
+                              </option>
+                            </select>
+
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="projectinput3">Ref No.</label>
+                            <input type="text" id="projectinput3" class="form-control" name="refno"
+                              [(ngModel)]="inputModeladdjustment.refno" disabled>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="projectinput4">Amount</label>
+                            <input type="number" id="projectinput4" class="form-control" name="amount"
+                              [(ngModel)]="inputModeladdjustment.amount " disabled>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="projectinput3">Narration<code>*</code></label>
+                            <input type="text" id="projectinput3" class="form-control" name="remark"
+                              [(ngModel)]="inputModeladdjustment.remark"
+                              [disabled]="inputModeladdjustment.isDisabled" #remark="ngModel" required>
+                            <code *ngIf="inputModeladdjustment.showPaymentValidation && !remark.valid">
+                              Narration is required
+                                </code>
+                          </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="col-md-12">
+                          <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                            (click)="resetBillFromAdjustment()">
+                            Reset
+                          </button>
+                          <button type="button" [disabled]="inputModeladdjustment.isDisabled" 
+                            [ngClass]="{'dis': inputModeladdjustment.isDisabled,  'btn btn-raised btn-raised btn-primary mr-1 pull-right': true}"
+                            (click)="selectBillFromAdjustment(adjustForm)" [disabled]="disbleselectbilladjust">
+                            Select Bill
+                          </button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </form>
+
+                  <div *ngIf="hideshow">
+                    <h4 class="ts"><b> No Advance Record found</b></h4>
+                  </div>
+                </ng-template>
+              </ngb-tab>
+
+              <ngb-tab id="tab3" title="Upload IR ">
+                <ng-template ngbTabContent>
+                  <form class="form" name="uploadForm" #upload="ngForm">
+                    <h4 class="form-section"><i class="ft-user"></i> <b>Upload IR</b></h4>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="projectinput5">Select Bank<code>*</code></label>
+                          <select id="desg" name="desg" class="form-control" [(ngModel)]="inputModel.BankId"
+                            [disabled]="isDisabledUpload" #BankId="ngModel" required>
+                            <option value="">--select--</option>
+                            <option *ngFor="let bank of bankList" [ngValue]="bank.ID">
+                              {{ bank.Name }}
+                            </option>
+                          </select>
+                          <code *ngIf="inputModel.showPaymentValidation && !BankId.valid">
+                            Bank is required
+                            </code>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="projectinput3">Ref NO.</label>
+                          <input type="text" id="projectinput3" class="form-control" name="refno"
+                            [(ngModel)]="inputModel.refno" [disabled]="isDisabledUpload" #refno="ngModel" required>
+                          <code *ngIf="inputModel.showPaymentValidation && !refno.valid">
+                              Reference Number is required
+                              </code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="projectinput3">Narration<code>*</code></label>
+                          <input type="text" id="projectinput3" class="form-control" name="remark"
+                            [(ngModel)]="inputModel.remark" [disabled]="isDisabledUpload" #remark="ngModel"
+                            required>
+                          <code *ngIf="inputModel.showPaymentValidation && !remark.valid">
+                            Narration  is required
+                              </code>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div *ngIf="!paymentList || paymentList.length <1">
+                          <p-fileUpload name="myfile[]" customUpload="true"
+                            (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom
+                            [disabled]="isDisabledUpload || !inputModel.BankId || !inputModel.refno || !inputModel.remark">
+                            <code>*</code>
+                          </p-fileUpload>
+                          <br>
+                        </div>
+                        <div>
+                          <button type="button" class="btn btn-raised btn-raised btn-primary pull-right mr-5"
+                            (click)="generateReport(true, ledgerForm, upload)">
+                            Download Sample
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </ng-template>
+              </ngb-tab>
+
+            </ngb-tabset>
+
+                
+              <h4 class="form-section"><i class="ft-file-text"></i> Calculations</h4>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="projectinput15">TotalReamainingAmount</label>
+                    <input type="text" id="projectinput15" class="form-control" name="TotalAmountRemaining"
+                      [(ngModel)]="totalremainingamount " disabled>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="position-relative ">
+                    <p-table #dt [globalFilterFields]="cols" [value]="selectIRList" [rows]="20"
+                      dataKey="paymentRequestid" scrollHeight="70vh" [(selection)]="selectIRList" class="center">
+
+                      <ng-template pTemplate="header">
+                        <tr>
+                          <th>PO ID</th>
+                          <th>IR ID</th>
+                          <th>PaymentStatus</th>
+                          <th>Total Amount</th>
+                          <th>Remaining Amt</th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                        <tr>
+                          <td>{{rowData.PurchaseOrderId}}</td>
+                          <td>{{rowData.IRID}}</td>
+                          <td>{{rowData.PaymentStatus}}</td>
+                          <td>{{rowData.TotalAmountRemaining | number:'1.2-2'}}</td>
+                          <td>{{rowData.ReamainingAmt |number:'1.2-2'}}</td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
+                    <br>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="row">
+                <div *ngFor="let ir of selectIRList; let i = index;">
+                  
+                </div>
+              </div> -->
+            </div>
+
+            <div class="form-actions" style="padding-bottom: 20px;">
+              <button type="button" class="btn btn-raised btn-raised btn-warning mr-1" (click)="redirect()">
+                <i class="ft-x"></i> Cancel
+              </button>
+              <button *ngIf="selectedTab != tabs[2]" type="button" class="btn btn-raised btn-raised btn-primary"
+                (click)="save()">
+                <i class="fa fa-check-square-o"></i> Save
+              </button>
+            </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="ui-g-6">
+      <div class="card">
+        <div class="card-header pb-2">
+          <h4 class="card-title" id="basic-layout-colored-form-control">Supplier Approved IR</h4>
+        </div>
+        <div class="card-content">
+          <div class="px-3">
+            <div class="position-relative " *ngIf="!paymentList">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="searchpoid">POID/IRID</label>
+                    <input type="text" id="searchpoid" class="form-control" name="searchpoid" 
+                    [(ngModel)]="searchModel.Contains">
+                  </div>
+                </div>
+
+              </div>
+              <p-table #dt [globalFilterFields]="cols" [value]="irList | filter:searchModel.Contains"
+                dataKey="paymentRequestid" scrollHeight="70vh" [(selection)]="selectIRList" class="center"
+                [paginator]="true" [rows]="10">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th></th>
+                    <th>PO ID</th>
+                    <th>Invoice</th>
+                    <th>Payment Status</th>
+                    <th>IR Type</th>
+                    <th>Total Amount</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                  <tr>
+                    <td>
+                      <input type="checkbox" class="ui-chkbox-box" [(ngModel)]="rowData.IsChecked"
+                        (ngModelChange)="onClickIR(rowData)" [name]="rowData.Id" [id]="rowData.IRID"
+                        [disabled]="rowData.isDisabled">
+                    </td>
+                    <td>{{rowData.PurchaseOrderId}}</td>
+                    <td>{{rowData.IRID}}</td>
+                    <td>{{rowData.PaymentStatus}}</td>
+                    <td>{{rowData.IRType}}</td>
+                    <td>{{rowData.TotalAmountRemaining |number:'1.2-2'}}</td>
+
+                  </tr>
+                </ng-template>
+              </p-table>
+              <br>
+            </div>
+            <div class="row" *ngIf="paymentList">
+
+              <div class="col-md-12">
+                <p-table #dt [value]="paymentList" [rows]="20" dataKey="paymentRequestid" class="center">
+
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Date</th>
+                      <th>Payment</th>
+                      <th>Action</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData>
+                    <tr>
+                      <td>{{rowData.Date | date}}</td>
+                      <td>{{rowData.Payment}}</td>
+                      <td> <a href="javascript:void(0);" (click)="deletePayment(rowData)">Delete</a></td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+
+              </div>
+              <div class="col-12">
+                <br>
+                <button *ngIf="selectedTab != tabs[2]" type="button"
+                  class="btn btn-raised btn-raised btn-primary pull-right" (click)="savePaymentBulUpload()">
+                  Save Payments
+                </button>
+                <button *ngIf="selectedTab == tabs[2]" type="button"
+                  class="btn btn-raised btn-raised btn-primary pull-right" (click)="uploadPayment()">
+                  Upload Payments
+                </button>
+
+                <br> <br>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row totalamt">
+          <div class="col-md-6 ">
+            <div class="form-group">
+              <label for="projectinput15">Balance Outstanding </label>
+              <input type="text" id="projectinput15" class="form-control" name="IRTotalAmount"
+                [(ngModel)]="IRTotalAmount " disabled>
+            </div>
+          </div>
+          <div class="col-md-6 export">
+            <button type="button" class="btn btn-raised btn-raised btn-primary mr-1  pull-right" (click)="exportIr()">
+              Export IR
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

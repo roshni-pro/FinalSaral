@@ -1,0 +1,70 @@
+
+<div class="card tp common-padding">
+    <div>
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp" style="margin-left: 36px;"> <b>Current UMRN Number :</b></div>
+            </div>
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cl">
+                   {{previousUMRN}}
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>  <br>
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp" style="margin-left: 36px;"> <b>UMRN Number </b></div>
+                </div>
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cl">
+                        <input [disabled]="previousUMRN" id="umrnno" name="umrnno" class="form-control cpl" type="text" (keyup)="UMRNLength($event)"
+                        placeholder="Enter Your UMRN number" [(ngModel)]="UMRN"
+                        (change)="checkUMRN(UMRN)" maxlength="20" minlength="11" >
+                        <code *ngIf="falseUMRN" style="font-size: 87.5%;
+                        color: #e83e8c;
+                        word-break: break-word;">*length Should be Greater than 10 </code>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3">
+                    <button type="submit" [disabled]="previousUMRN" class="btn btn-raised btn-danger m1-3" (click)="save()" >
+                        save
+                      </button>
+                </div>
+            </div>  <br>
+            <!-- <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp"> <b>SLA Document </b></div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl"></div>
+                </div>
+            </div>  <br>
+            <div class="row">
+                <div class="col-1 text-left ml-1">
+                    <img pTooltip="Export" class="fa fa-mouse-pointer" width="40" height="40" (click)="DawnloadSampleFile()" src="https://img.icons8.com/wired/64/download--v1.png" alt="download--v1"/>
+                </div>
+                <div class="col-3">Download file</div>
+                *ngIf="offerInformationDetails.IsUpload"
+                <div  class="col-1 text-left ml-1" >
+                    <img pTooltip="Upload" class="fa fa-mouse-pointer" width="40" height="40" (click)="openFilePicker()" src="https://img.icons8.com/wired/64/upload--v1.png" alt="upload--v1"/>
+                </div>
+                <div  class="col-2 text-left "><span id="file-name"></span>
+                   <span id="my-button">Select file here</span>
+                </div>
+                <div  class="col-2 text-left "><span id="file-name"></span>
+                    <button type="submit" [disabled]="!hasSelectedFile" (click)="upoloadSLAdocuments()" class="btn btn-raised btn-raised btn-success" >
+                        Upload
+                      </button>&nbsp;&nbsp;
+                      <span *ngIf="!hasSelectedFile" style="color: #e83e8c;"></span>
+                 </div>
+            </div> -->
+
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

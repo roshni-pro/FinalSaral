@@ -1,0 +1,195 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<br>
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-12">
+            <h4>Notification</h4>
+            <hr style="background-color: white;">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-2">
+                    <label for="City">City</label><br>
+                    <p-multiSelect [style]="{minWidth:''}" id="Cityid" name="CityName" [options]="cityList"
+                        [(ngModel)]="dataset.cityid" (onChange)="GetCityWarehouse(dataset.cityid)"
+                        [panelStyle]="{minWidth:'25em'}" optionLabel="CityName" appendTo="body">
+                    </p-multiSelect>
+                </div>
+
+                <div class="col-sm-2">
+                    <label>Select Hub</label><br>
+                    <p-multiSelect [style]="{minWidth:''}" id="warehouse" name="warehouse" [options]="warehouseList"
+                        [(ngModel)]="selectedwarehouse" [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName">
+                    </p-multiSelect>
+
+                </div>
+                <div class="col-sm-2">
+                    <label for="FromDate">Status</label>
+                    <select name="" value="" [(ngModel)]="searchdata.StatusValue" class="form-control">
+                    <option  value="All">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Accept">Accept</option>
+                    <option value="Reject">Reject</option>
+                </select>
+                </div>
+                <div class="col-sm-2">
+                    <label for="FromDate">StartDate</label>
+                    <input type="datetime-local" id="startDate" name="startDate" class="form-control"
+                        [ngModel]="searchdata.startDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="searchdata.startDate  = $event" />
+                </div>
+                <div class="col-sm-2">
+                    <label for="FromDate">ToDate</label>
+                    <input type="datetime-local" id="endDate" name="endDate" class="form-control"
+                        [ngModel]="searchdata.endDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="searchdata.endDate = $event" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <br>
+            <button (click)="getnotificationList(searchdata)" class="btn btn-primary">search</button>&nbsp;&nbsp;&nbsp;
+            <button (click)="Export(searchdata)" class="btn btn-primary">Export</button>
+        </div>
+    </div>
+    <div >
+
+        <p-table [value]="notificationdata" [paginator]="true" 
+            [lazy]="true" (onLazyLoad)="lazyLoad($event)" [rows]="10" [totalRecords]="totalRecords">
+            <ng-template pTemplate="header">
+                <tr >
+                    <th>Sr No</th>
+                    <th>Warehouse</th>
+                    <th>Status</th>
+                    <th>Seller</th>
+                    <th>StartDate</th>
+                    <th>EndDate</th>
+                    <th>Action</th>
+                    <th>IsApproved</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowIndex="rowIndex" let-list>
+                <tr>
+                    <td>{{rowIndex+1}}</td>
+                    <td>{{list.Warehouse}}</td>
+                    <td>{{list.Status}}</td>
+                    <td>{{list.SubCatName}}</td>
+                    <td>{{list.StartDate | date:'medium'}}</td>
+                    <td>{{list.EndDate | date:'medium'}}</td>
+
+                    <td>
+                        <button class="btn btn-primary" (click)="edit(list)">
+                            Details
+                        </button>
+                    </td>
+                    <td>{{list.IsApproved}}</td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<div *ngIf="notificationdetailsDetails">
+    <p-dialog header="Notification Details" [(visible)]="opendetailspopup" [resizable]="false" [modal]="true"
+        appendTo="body" positionTop="10" [style]="{width: '70%',height: '88%',top: '45px',overflow: 'auto'}">
+        <p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Seller</label>
+                <input class="form-control" [(ngModel)]="notificationdetailsDetails.SubCatName" disabled>
+            </div>
+            <div class="col-md-6">
+                <label>WarehouseName</label>
+                <input class="form-control" [(ngModel)]="notificationdetailsDetails.Warehouse" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Notification Title</label>
+                <input class="form-control" [(ngModel)]="notificationdetailsDetails.NotificationTitle" disabled>
+
+            </div>
+            <div class="col-md-6">
+                <label>Description</label>
+                <textarea class="form-control" [(ngModel)]="notificationdetailsDetails.NotificationDescription"
+                    disabled></textarea>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+
+            <div class="col-md-6">
+                <label>StartDate</label>
+                <input  type="datetime-local" class="form-control" [ngModel]="notificationdetailsDetails.StartDate | date:'yyyy-MM-ddTHH:mm'" disabled>
+            </div>
+            <div class="col-md-6">
+                <label>EndDate</label>
+                <input  type="datetime-local" class="form-control" [ngModel]="notificationdetailsDetails.EndDate | date:'yyyy-MM-ddTHH:mm'" disabled>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <label>ApprovedDate</label>
+                <input type="datetime-local" class="form-control" [ngModel]="notificationdetailsDetails.ApprovedDate | date:'yyyy-MM-ddTHH:mm'" disabled>
+            </div>
+            <div class="col-md-6">
+                <label>Comment</label>
+                <textarea class="form-control" [(ngModel)]="notificationdetailsDetails.Comment"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Status</label>
+                <span *ngIf="notificationdetailsDetails.IsApproved">
+                    <input class="form-control" [(ngModel)]="notificationdetailsDetails.Status" disabled>
+                </span>
+                <span *ngIf="!notificationdetailsDetails.IsApproved"><select class="form-control" name="sa" id="sa"
+                        [(ngModel)]="notificationdetailsDetails.Status">
+                        <option value="Pending">Pending</option>
+                        <option value="Accept">Accept</option>
+                        <option value="Reject">Reject</option>
+                    </select></span>
+            </div>
+            <div class="col-md-6">
+                <label>Image</label>
+                <br>
+                <div class="form-group" (click)="openImage(notificationdetailsDetails.ImageUrl)">
+                    <img src="{{baseURL}}{{notificationdetailsDetails.ImageUrl}}" height="100px" width="100px">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-actions right col-sm-12 p-3">
+                <span
+                    *ngIf="notificationdetailsDetails.Status=='Accept' && notificationdetailsDetails.IsApproved==false && notificationdetailsDetails.IsActive==true">
+                    <button type="submit" class="btn btn-raised btn-primary"
+                        (click)="Approve(notificationdetailsDetails)">
+                        <i class="fa fa-check-square-o"></i> Approve</button>
+                </span>
+                <span
+                    *ngIf="!notificationdetailsDetails.IsActive && notificationdetailsDetails.IsApproved==false && notificationdetailsDetails.Status!='Pending' ">
+                    <button type="submit" class="btn btn-raised btn-primary"
+                        (click)="UpdateStatus(notificationdetailsDetails)">
+                        <i class="fa fa-check-square-o"></i> Update</button>
+                </span>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>

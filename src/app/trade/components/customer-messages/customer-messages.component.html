@@ -1,0 +1,196 @@
+<p-toast></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+<div class="header"><br>
+  <h3 class="m-2">Customer Messages <i class="fa fa-plus-square" style="font-size:36px;"></i> </h3>
+</div>
+<section id="basic-form-layouts">
+  <div class="row text-left">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header pb-2">
+          <h4 class="card-title" id="basic-layout-form">Message</h4>
+          <p class="mb-0">It is a way to directly
+            connecting
+            with End users.Creator is only responsible for this.</p>
+        </div>
+        <div class="card-content">
+          <div class="px-3 mr-b-20">
+            <form class="form" #masterForm="ngForm">
+              <h4 class="form-section"><i class="fa fa-desktop" aria-hidden="true"></i>Customer Message List</h4>
+              <div class="form-body">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="City"> <b>Select City:</b></label>
+                      <select id="city" name="city" class="form-control" [(ngModel)]="Id" placeholder="Select City"
+                        (ngModelChange)="onCustomerlist(Id)">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let city of cityLists" [ngValue]="city.Id">
+                          {{ city.City }}
+                        </option>
+                      </select>
+                    </div>                 
+                    <div class="ui-g-10 scr">
+                      <div *ngFor="let cust of selectedList; let i=index;" class="btn-a">                       
+                      <span>{{cust.SkCode}}</span>
+                      &nbsp;<a href="javascript:void(0);" (click)="removeCustomer(cust)"><i class="fa fa-times"
+                          aria-hidden="true"></i></a>                         
+                  </div>
+                  </div>
+                
+                  </div>
+                  <!-- <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="projectinput8">Search</label>
+                      <input type="text" class="form-control" [(ngModel)]="paginator.Contains" (ngModelChange)="onContainChange()">
+                    </div>
+                  </div> -->
+
+
+                  <!-- <div class="col-md-12" *ngIf="isList">
+                      <p-table #dt [value]="list" [paginator]="true" [rows]="rowCount" [lazy]="true"
+                        (onLazyLoad)="loadDataLazy($event)" [totalRecords]="totalRecords" [scrollable]="true"
+                        scrollHeight="70vh" text-align: center>
+      
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th style="text-align: center">Select <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                            <th style="text-align: center">SkCode</th>
+                            <th style="text-align: center">CustomerName</th>
+                            <th style="text-align: center">Mobile</th>
+                          </tr>
+                        </ng-template>
+      
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                          <tr>
+                            <td style="text-align: center">
+                                <p-tableCheckbox [value]="rowData" [(ngModel)]="rowData.isSelected" binary="true"
+                                (ngModelChange)="onSelectCustomer(rowData)"></p-tableCheckbox>
+                                   <p-checkbox [(ngModel)]="rowData.isSelected" binary="true"
+                                (ngModelChange)="onSelectCustomer(rowData)"></p-checkbox>
+                            </td>                     
+                            <td style="text-align: center">{{rowData.SkCode}}</td>
+                            <td style="text-align: center">{{rowData.CustomerName}}</td>
+                            <td style="text-align: center">{{rowData.Mobile}}</td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div> -->
+                </div>
+                <br>
+                <div class="form-group">
+                  <label for="projectinput8"><b>To Enter Message (Optional)*</b></label><br>
+                  <button name="detail" class="btn btn" (click)="onSelection()" style="color: crimson;">Click
+                    Here</button>
+                  <!-- <p-checkbox [(ngModel)]="checked" binary="true" (ngModelChange)="onSelection()"></p-checkbox>&nbsp;
+                  <label for="projectinput8">Message</label>                             -->
+                </div>
+                <div class="form-actions" *ngIf="checked==true">
+                  <textarea id="projectinput8" rows="5" class="form-control" name="comment"
+                    [(ngModel)]="message"> </textarea><br>
+                  <button style="float: right;" type="button" class="btn btn-raised btn-raised btn-primary"
+                    (click)="sendMessages()" [disabled]="message==null"> Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header pb-2">
+          <h4 class="card-title" id="basic-layout-colored-form-control">Customer List </h4>
+        </div>
+        <div class="card-content">
+          <div class="px-3">
+            <div class="row">
+
+              <!-- <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="City"> <b>Select City:</b></label>
+                        <select id="city" name="city" class="form-control" [(ngModel)]="Id"
+                          placeholder="Select City">
+                          <option value="">--Select--</option>
+                          <option *ngFor="let city of cityLists" [ngValue]="city.Id">
+                            {{ city.City }}
+                          </option>
+                        </select>
+                    </div>
+                  </div>
+
+
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="projectinput8">Search</label>
+                  <input type="text" class="form-control" [(ngModel)]="paginator.Contains" (ngModelChange)="onContainChange()">
+                </div>
+              </div> -->
+              <div class="col-md-12">
+                <p-table #dt [columns]="cols" [value]="list" dataKey="Id" [paginator]="false"
+                  [(selection)]="selectedList" [rows]="rowCount" [lazy]="false" [scrollable]="true" scrollHeight="64vh"
+                  text-align: center>
+
+                  <ng-template pTemplate="caption">
+                    <div style="text-align: right;">
+                      <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                      <input type="text" pInputText size="50" placeholder="Search"
+                        (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                  </ng-template>
+
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th style="width: 3em">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th *ngFor="let col of columns">
+                        {{col.header}}
+                      </th>
+                    </tr>
+                  </ng-template>
+
+                  <!-- <ng-template pTemplate="header">
+                    <tr>
+                      <th style="text-align: center">Select <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th style="text-align: center">SkCode</th>
+                      <th style="text-align: center">CustomerName</th>
+                      <th style="text-align: center">Mobile</th>
+                    </tr>
+                  </ng-template> -->
+
+                  <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                    <tr>
+                      <td style="width: 3em">
+                        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                      </td>
+                      <td *ngFor="let col of columns">
+                        {{rowData[col.field]}}
+                      </td>
+
+                      <!-- <p-tableCheckbox  [value]="rowData" binary="true"
+                        (ngModelChange)="onSelectCustomer(rowData)"></p-tableCheckbox> -->
+                      <!-- <p-checkbox [(ngModel)]="rowData.isSelected" binary="true"
+                          (ngModelChange)="onSelectCustomer(rowData)"></p-checkbox>
+                      </td>
+                      <td style="text-align: center">{{rowData.SkCode}}</td>
+                      <td style="text-align: center">{{rowData.CustomerName}}</td>
+                      <td style="text-align: center">{{rowData.Mobile}}</td> -->
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

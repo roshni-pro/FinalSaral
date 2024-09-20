@@ -1,0 +1,241 @@
+<br>
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Sales Return</h3>
+    </div>
+</div>
+<div class="card" >
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-1">
+                <label><b>Brand*</b></label>
+            </div>
+            <div class="col-md-2">
+              <!-- {{BrandObj|json}} -->
+                <p-dropdown  [options]="brandList" optionLabel="SubsubcategoryName" filter="true"
+                 optionValue="SubsubCategoryid" [(ngModel)]="BrandObj" (onChange)="getCategoryList()"
+                 placeholder="Select a Brand" [disabled]="isDisabled">
+                </p-dropdown>
+            </div>
+            <div class="col-md-2 text-right" style="padding-right: 2%;" >
+                <label><b>Category*</b></label>
+            </div>
+            <div class="col-md-2">
+                <!-- <p-dropdown  id="id" name="Name" filter="true"  [options]="categoryList" optionLabel="CategoryName"
+                optionValue="Categoryid" [(ngModel)]="CategoryObj" (onChange)="Search()"
+                 placeholder="Select a Category" >
+                </p-dropdown> -->
+                
+                <p-multiSelect id="selectedCategoryid" name="selectedCategoryid" [options]="categoryList"  [filter]="true"
+                [(ngModel)]="selectedCategory" optionValue="Categoryid" optionLabel="CategoryName" placeholder="Select Category"
+                #selectedCategoryid="ngModel" [disabled]="isDisabled" required (ngModelChange)="onSelectCat()">
+               </p-multiSelect >
+               <!-- {{selectedCategoryid | json}}<br/> -->
+               <!-- {{selectedCategoryid}} -->
+                <code *ngIf="!selectedCategoryid.valid && !isDisabled">
+                  Required!!
+                </code>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-1"></div>
+            <div class="col-md-2" >
+                <label ><b>Total Order Qty%</b></label>
+            </div>
+            <div class="col-md-2">
+                <input type="text" (input)="onInputChange()" oncopy="return false" onpaste="return false" (keydown)="validate($event)" (keypress)="numberOnly($event)"  min="0" max="100" [(ngModel)]="DataList.QtyPercent"  style="width: 100%;">
+            </div>
+        </div>
+        <div class="row mt-3">
+         <div class="col-md-1">
+          
+
+         </div>
+         <div class="col-md-2" >
+          <p-radioButton [(ngModel)]="IsSelectExpiry" id="IsSelectExpiryy"name="IsOrderDate" (onClick)="checkradioq()" value="Select Expiry">
+          </p-radioButton>
+            <label style="padding-left: 6%;"><b>Select Expiry</b></label>
+         </div>
+         <div class="col-md-1">
+            <label><b>Pre</b></label>
+         </div>
+         <div class="col-sm-1" >
+            <p-inputSwitch [disabled]="!fo" [(ngModel)]="DataList.IsPreExpiry"></p-inputSwitch>
+        </div>
+        <div class="col-md-2" style="padding-left: 5%;">
+            <label><b>Day Before Expiry</b></label>
+        </div>
+        <div class="col-md-3" >
+            <input type="text" oncopy="return false" onpaste="return false" (input)="onInputChange()" maxlength="3" (keydown)="validate($event)" (keypress)="numberOnly($event)"
+             [disabled]="!DataList.IsPreExpiry " min="0" step="width: 63%;" [(ngModel)]="DataList.DayBeforeExpiry">
+        </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-1"></div>
+            <div class="col-md-2" style="padding-left: 6%;">
+            </div>
+            <div class="col-md-1">
+               <label><b>Post</b></label>
+            </div>
+            <div class="col-sm-1" >
+               <p-inputSwitch [disabled]="!fo" [(ngModel)]="DataList.IsPostExpiry"></p-inputSwitch>
+           </div>
+           <div class="col-md-2" style="padding-left: 5%;">
+               <label><b>Day After Expiry</b></label>
+           </div>
+           <div class="col-md-3" >
+               <input [disabled]="!DataList.IsPostExpiry " oncopy="return false" onpaste="return false" (input)="onInputChange()"   maxlength="3" (keydown)="validate($event)"
+                (keypress)="numberOnly($event)" type="text"  min="0" step="width: 63%;" [(ngModel)]="DataList.DayAfterExpiry">
+           </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-md-1">
+          </div>
+          <div class="col-md-1">
+            <p-radioButton [(ngModel)]="IsOrderDate" id="ISOrderDatee" name="IsOrderDate" (onClick)="checkradio()" value="ISOrderDatee">
+            </p-radioButton></div>
+          <div class="col-md-4" >
+             <label for="city1"><b>Enter Duration From Order-Date</b></label>
+          </div>
+          <div class="col-md-4">
+            <input type="text" oncopy="return false" onpaste="return false"  maxlength="3" (keydown)="validate($event)" 
+            (keypress)="numberOnly($event)" [disabled]="!od" min="0" step="width: 63%;" [(ngModel)]="DataList.DurationOrderDate">
+          </div>
+         <div class="col-md-3" >
+         </div>
+        </div>
+        
+        <div class="row mt-3">
+          <div class="col-md-1">
+          </div>
+          <div class="col-md-1">
+            <p-radioButton [(ngModel)]="IsDeliveryDate" id="IsDeliveryDatee"name="IsOrderDate" (onClick)="checkradioo()" value="IsDeliveryDate">
+            </p-radioButton>
+          </div>
+          <div class="col-md-4" >
+             <label for="city2"><b>Enter Duration From Delivery-Date</b></label>
+          </div>
+          <div class="col-md-4">
+            <input type="text" oncopy="return false" onpaste="return false" (input)="onInputChange()" maxlength="3" (keydown)="validate($event)" 
+            (keypress)="numberOnly($event)" [disabled]="!dd" min="0" step="width: 63%;" [(ngModel)]="DataList.DurationDeliveryDate">
+          </div>
+         <div class="col-md-3" >
+         </div>
+        </div>
+
+        <div class="row" >
+            <div class="col-12" style="text-align: center;   margin-top: 50px;">
+              <div class="row">
+                <div class="col-4"></div>
+                <div class="col-2">
+                  <button *ngIf="!IsUpdated" class="btn btn-success" style="background-color: green;" (click)="Save()">Save</button>
+                  <button *ngIf="IsUpdated" class="btn btn-success" style="background-color: green;" (click)="Confim();">Update</button>
+                </div>
+
+                <div class="col-2">
+
+                  <button *ngIf="IsUpdated" class="btn btn-primary" style="margin-right: 10%;" (click)="Cancel()">Cancel</button>
+                </div>
+                <div class="col-4"></div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div class="card">
+    <div class="card-header"> -->
+        <p-card class="table-card">
+            <!-- <div class="cfr-table"> -->
+              <ng-container>
+                <p-table [value]="SalesReturnList"  [lazy]="true" [first]="first"   [paginator]="true" [totalRecords]="totalRecords" 
+                 (onLazyLoad)="load($event)" scrollHeight="25vh" [rows]="10" responsiveLayout="scroll">
+                  <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                      <button class="btn btn-Export" (click)="onExport()">Export</button>
+                      <i class="fa fa-search" style="margin:14px 4px 0 0"></i>
+                      <input type="text" size="50" placeholder="Global Filter" (input)="onSearchFilter($event.target.value)" style="width:auto">                      
+                    </div>
+                  </ng-template>  
+                  <ng-template pTemplate="header" pReorderableColumn >
+                    <tr>
+                      <th>Brand</th>
+                      <th>Category</th>
+                      <th>Total Order Qty %</th>
+                      <th>Pre Expiry Days</th>
+                      <th>Post Expiry Days</th>
+                      <th>Duration From Order-Date</th>
+                      <th>Duration From Delivery-Date</th>
+                      <th>Action</th>
+                      <th>History</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns" let-index="rowIndex" >
+                    <tr [pReorderableRow]="index">
+                      <td style="width: 17%;">{{rowData.BrandName}}</td>
+                      <td style="width: 20%;">{{rowData.CategoryName}}</td>
+                      <td style="width: 16%;">{{rowData.QtyPercent}}</td>
+                      <td style="width: 17%;">{{rowData.DayBeforeExpiry}}</td>
+                      <td style="width: 14%;">{{rowData.DayAfterExpiry}}</td>
+                      <td style="width: 14%;">{{rowData.DurationOrderDate}}</td>
+                      <td style="width: 14%;">{{rowData.DurationDeliveryDate}}</td>
+                      <td>
+                        <a style="color: rgb(46, 12, 240);" (click)="rowData.isEdit=true; Edit(rowData);scrollToTop();"   [ngClass]="{'button-scroll-to-top--show': showScroll}"><b> Edit </b></a> /
+                        <a style="color: rgb(249, 4, 28);" (click)="confirm(rowData)"><b> Delete </b></a> 
+                      </td>
+                      <td>
+                        <a style="color: rgb(46, 12, 240);" (click)="onClickHistory(rowData)"><b> History <i class="fa fa-history" ></i></b></a> 
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                      <td colspan="5" style="text-align: center;">
+                        <br>
+                        <h3><b>No Data Found.</b></h3>
+                      </td>
+                    </tr>
+                </ng-template>
+                </p-table>
+                <!-- <div class="row mt-2">
+                  <div class="col-md-5"></div>
+                  <div class="col-md-7"><button class="btn btn-raised btn-primary" (click)="onSave()">Save</button></div>
+                </div> -->
+              </ng-container>
+            <!-- </div> -->
+          </p-card>
+    <!-- </div>
+</div> -->
+
+<div *ngIf="isHistoryOpen">
+  <p-dialog header="History" [(visible)]="isHistoryOpen" [blockScroll]="true" appendTo="body"
+      [style]="{width: '75vw', height:'75vh'}" [modal]="true" [positionTop]="0" appendTo="body">
+      <div class="cnt">
+          <app-history [entity]="entity" [id]="selectedItemRowData.Id"></app-history>
+      </div>
+  </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+
+<script>
+  $("#contactUs").click(function(){
+  // any value you need
+  $(document).scrollTop(100) 
+  });
+</script>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmationn">
+  <p-footer>
+
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>

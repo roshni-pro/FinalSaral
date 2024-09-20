@@ -1,0 +1,162 @@
+<!-- Basic form layout section start -->
+
+
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-sm-12">
+        <div class="content-header">Turnaround Time</div>
+      </div>
+    </div>
+    <div class="row text-left">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="fa fa-filter"></i> Filters </h4>
+
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group" *ngIf="warehouseList && warehouseList.length > 0">
+                        <label for="projectinput6">Warehouse</label>
+
+                        <select id="projectinput6" name="warehouse" [(ngModel)]='selectedWarehouse'
+                          class="form-control">
+                          <option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">
+                            {{ warehouse.WarehouseName }}</option>
+                        </select>
+
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="projectinput3">Start Date</label>
+                        <br>
+                        <p-calendar name="startDateInput" [(ngModel)]="startDate" [showIcon]="true"></p-calendar>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="projectinput4">Start Date</label>
+                        <br>
+                        <p-calendar name="endDateInput" [(ngModel)]="endDate" [showIcon]="true"></p-calendar>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                        (click)="getData()">
+                        Apply
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <div class="row" *ngIf="tatList && tatList.length > 0">
+                <p-table #dt [columns]="selectedColumns" [value]="tatList" [paginator]="true" [rows]="50">
+                  <ng-template pTemplate="caption">
+                    <div class="row">
+                      <div class="col-sm-3">
+                          <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+                          selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" defaultLabel="Choose Columns"></p-multiSelect>
+                      </div>
+                       
+                      <div class="col-sm-offset-9 col-sm-3 col-md-offset-10 col-md-2">
+                        <button class="pull-right" type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export"
+                          (click)="dt.exportCSV()" style="float: right;"></button>
+                      </div>
+
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th *ngFor="let col of columns">
+                        {{col.header}}
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                      <td *ngFor="let col of columns">
+                        {{rowData[col.field]}}
+                      </td>
+                    </tr>
+                    <!-- <tr>
+                      <td>
+                        {{rowData.OrderID}}
+                      </td>
+                      <td>
+                        {{rowData.Status}}
+                      </td>
+                      <td>
+                        {{(rowData.PendingToReadyToDispatch? rowData.PendingToReadyToDispatch/60 : null) |  number:'1.0-2'}}
+                      </td>
+                      <td>
+                        {{(rowData.ReadytoDispatchToIssued? rowData.ReadytoDispatchToIssued/60 : null)  |  number:'1.0-2'}}
+                      </td>
+                      <td>
+                        {{ (rowData.IssuedToShipped? rowData.IssuedToShipped/60 : null) |  number:'1.0-2'}}
+                      </td>
+                      <td>
+                        {{  (rowData.ShippedToDelivery? rowData.ShippedToDelivery/60 : null)  |  number:'1.0-2'}}
+                      </td>
+                      <td>
+                        {{ (rowData.ShippedToRedispatch? rowData.ShippedToRedispatch/60 : null)  |  number:'1.0-2'}}
+                      </td>
+                      <td>
+                        {{ (rowData.RedispatchToDelivery? rowData.RedispatchToDelivery/60 : null) |  number:'1.0-2'}}
+                      </td>
+                      <td>
+                        {{ (rowData.TotalDeliveryTime? rowData.TotalDeliveryTime/60 : null) |  number:'1.0-2'}}
+                      </td>
+                      <td>
+                        {{ rowData.DBoyName}}
+                      </td>
+                      <td>
+                        {{ rowData.OrderDate| date:'short'}}
+                      </td>
+                      <td>
+                        {{rowData.ReadytoDispatchDate| date:'short'}}
+                      </td>
+                      <td>
+                        {{rowData.IssuedDate| date:'short'}}
+                      </td>
+                      <td>
+                        {{rowData.ShippedDate| date:'short'}}
+                      </td>
+                      <td>
+                        {{rowData.DeliveredDate | date:'short'}}
+                      </td>
+                      <td>
+                        {{rowData.DeliveryRedispatchTime| date:'short'}}
+                      </td>
+                      <td>
+                        {{rowData.DeliveryRedispatchTime2| date:'short'}}
+                      </td>
+                      <td>
+                        {{rowData.DeliveryRedispatchTime3| date:'short'}}
+                      </td>
+                    </tr> -->
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+  </section>
+
+
+</div>
+<!-- // Basic form layout section end -->

@@ -1,0 +1,256 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">!!! Priority Warehouse Stores !!!</h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-2 mt-2">
+                    <label><b>Select City<span class="required">*</span></b></label>
+                    <p-multiSelect id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="SelectedCity"
+                        (onChange)="GetWarehouse()" [filter]="true" optionLabel="CityName" optionValue="Cityid"
+                        placeholder="Select City">
+                    </p-multiSelect>
+                </div>
+                <div class="col-sm-2 mt-2">
+                    <label><b>Select WareHouse<span class="required">*</span></b></label>
+                    <p-multiSelect id="ware" name="ware" [options]="WareHouseList" [filter]="true"
+                        [(ngModel)]="selectedWareHouse" optionLabel="WarehouseName" placeholder="Select WareHouse">
+                    </p-multiSelect>
+                </div>
+                <div class="col-sm-2 mt-2">
+                    <label><b>Select Store</b></label>
+                    <p-multiSelect [options]="store" [(ngModel)]="Selectedstore" optionLabel="Name"
+                        placeholder="Store Name"></p-multiSelect>
+                </div>
+                <div class="col-sm-5 mt-4 ">
+                    <button class="btn btn-primary mr-2 mt-1" (click)="Search(null)">Search</button>
+                    <button class="btn btn-warning mr-2 mt-1 " (click)="AddWHConfig()" *ngIf="WarehouseRole">Add WH Config</button>
+                    <button class="btn btn-warning mr-2 mt-1" (click)="AddStoreConfig()" *ngIf="SalesRole">Add Store Config</button>
+                    <button class="btn btn-success mr-2 mt-1" (click)="Export()">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+
+    <p-table [value]="DataList" [scrollable]="true" [lazy]="true" scrollHeight="70vh" text-align: center [totalRecords]="TotalRecord" [(first)]="first"
+        [paginator]="true" [rows]="10" [lazy]="true" (onLazyLoad)="load($event)">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>S.No</th>
+                <th>Warehouse</th>
+                <th>WH Priority Config(%)</th>
+                <th>Store </th>
+                <th>Store Priority Config(%)</th>
+                <th>Action</th>
+                <th>Status</th>
+                <th>History</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item let-index="rowIndex">
+            <tr>
+                <td>{{index+1}}</td>
+                <td>{{item.WarehouseName}}</td>
+                <td><input type="text" required="1" type="tel" name="Title" class="form-control" disabled
+                    (keypress)="keyPress($event)" (keydown)="space($event)" 
+                        [(ngModel)]="item.WarehouseConfigpercentage" /> </td>
+                <td>{{item.StoreName}} </td>
+                <td> <input type="text" required="1" type="tel" name="Title" class="form-control" disabled
+                    (keypress)="keyPress($event)" (keydown)="space($event)" 
+                        [(ngModel)]="item.StoreConfigpercentage" /></td>
+                <td><button class="btn btn-Info a mr-2 mt-1" (click)="Edit(item)" *ngIf="SalesRole || WarehouseRole">Edit</button> </td>
+                <td><button class="btn btn-infor a mr-2 mt-1" (click)="ChangeStatus(item)" [(ngModel)]="item.Status"
+                        *ngIf="item.Status">Active</button>
+                    <button class="btn btn-inform a mr-2 mt-1" (click)="ChangeStatus(item)" [(ngModel)]="item.Status"
+                        *ngIf="!item.Status">DeActive</button>
+                </td>
+                <td> <a class="view" (click)="openHistory(item,$event)">
+                        <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                    </a></td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-dialog header="Store Configuration " [(visible)]="StConfigShow" *ngIf="SalesRole" class="e90b"
+    [style]="{width: '890px', height: '850px',overflow: 'hidden'}" (onHide)="Stcancel()" [modal]="true" appendTo="body"
+    [blockScroll]="true" [draggable]="false" class="xyz">
+    <div class="row">
+        <div class="col mt-2">
+            <label><b>Select City<span class="required">*</span></b></label>
+            <p-multiSelect class="tb"  id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="StConfigCity" 
+                (onChange)="Stware()" [filter]="true" optionLabel="CityName" optionValue="Cityid"
+                placeholder="Select City">
+            </p-multiSelect>
+        </div>
+        <div class="col mt-2">
+            <label><b>Select WareHouse<span class="required">*</span></b></label>
+            <p-dropdown id="ware" name="ware" [options]="WareHouseLists" [filter]="true" [(ngModel)]="StConfigWareHouse" 
+                optionLabel="WarehouseName" placeholder="Select WareHouse" (onChange)="GetWarehoseCOnfig()">
+            </p-dropdown>
+        </div>
+        <div class="col mt-2">
+            <label><b>WH Config(%)</b></label>
+            <input type="text" required="1" type="tel" name="Title" class="form-control" disabled
+            (keypress)="keyPress($event)" (keydown)="space($event)" 
+                [(ngModel)]="StConfigPerc" />
+        </div>
+        <div class="col mt-2">
+            <label><b>Select Store<span class="required">*</span></b></label>
+            <p-multiSelect [options]="store" [(ngModel)]="StConfigstore" optionLabel="Name"
+                placeholder="Store Name"></p-multiSelect>
+        </div>
+        <div class="col mt-2">
+            <label><b>Select Status<span class="required">*</span></b></label>
+            <p-dropdown [options]="Status" [(ngModel)]="StConfigStatus" optionLabel="name"
+                placeholder="Select status"></p-dropdown>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-right">
+            <button class="btn btn-primary mr-2 mt-1" (click)="Add()">Add</button>
+        </div>
+
+    </div>
+    <br>
+    <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+
+    <p-table [value]="StNameList" [scrollable]="true" [lazy]="true" scrollHeight="40vh" text-align: center 
+        [paginator]="true" [rows]="5">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>S.No</th>
+                <th>Warehouse</th>
+                <th>Store</th>
+                <th>Enter Percentage</th>
+                <th>Delete</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item let-index="rowIndex">
+            <tr>
+                <td>{{index+1}}</td>
+                <td>{{item.WarehouseName}}</td>
+                <td>{{item.StoreName}}</td>
+                <td><input type="text" required="1" type="tel" name="Title" class="form-control"
+                    (keypress)="keyPress($event)" (keydown)="space($event)" 
+                        [(ngModel)]="item.StConfigStorePerc" (keyup)="StorePerc(item)" /> </td>
+                <td> <button type="button" (click)="Remove(item,index)" class="btn btn-raised btn-primary float-right align-self-end v1"  > <i
+                    class="pi pi-trash"></i></button>
+                    
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="row">
+        <div class="col text-right">
+            <button class="btn btn-primary mr-2 mt-1" (click)="SaveSt()" [disabled]="addC">Save</button>
+            <button class="btn btn-success mr-2 mt-1" (click)="Stcancel()">Close</button>
+
+        </div>
+    </div>
+    </div>
+    <br><br><br><br><br><br><br>
+</p-dialog>
+
+<p-dialog header="Warehouse Configuration " [(visible)]="WhConfigShow"  [blockScroll]="true" [draggable]="false"
+    [style]="{width: '890px', height: '400px',overflow: 'hidden'}" (onHide)="Whcancel()" [modal]="true" appendTo="body">
+    <div class="row">
+        <div class="col mt-2">
+            <label><b>Select City<span class="required">*</span></b></label>
+            <p-multiSelect id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="WhConfigCity"
+                (onChange)="WhWare()" [filter]="true" optionLabel="CityName" optionValue="Cityid"
+                placeholder="Select City">
+            </p-multiSelect>
+        </div>
+        <div class="col mt-2">
+            <label><b>Select WareHouse<span class="required">*</span></b></label>
+            <p-dropdown id="ware" name="ware" [options]="WareHouseListt" [filter]="true" [(ngModel)]="WhConfigWareHouse" (onChange)="GetWarehoseCOnfigAll()"
+                optionLabel="WarehouseName" placeholder="Select WareHouse">
+            </p-dropdown>
+        </div>
+        <div class="col mt-2">
+            <label><b>Enter Config(%)<span class="required"></span></b></label>
+            <input type="text" required="1" type="tel" name="Title" class="form-control" [(ngModel)]="WhConfigPerc" 
+            (keypress)="keyPress($event)" (keydown)="space($event)" />
+        </div>
+
+        <div class="col mt-2">
+            <br>
+            <button class="btn btn-primary mr-2 mt-1" (click)="SaveWh()">Save</button>
+            <button class="btn btn-success mr-2 mt-1" (click)="Whcancel()">Close</button>
+        </div>
+    </div>
+    <br><br><br><br><br><br><br>
+</p-dialog>
+
+<p-dialog header="Edit configuration Percentage" [(visible)]="editShow"
+    [style]="{width: '890px', height: '200px',overflow: 'hidden'}" (onHide)="Editcancel()" [modal]="true"
+    appendTo="body" [blockScroll]="true" [draggable]="false">
+    <div class="row">
+        <div class="col mt-2" *ngIf="WarehouseRole">
+            <label><b>Warehouse Percentage<span class="required">*</span></b></label>
+            <input type="text" required="1" type="tel" name="Title" class="form-control" (keypress)="keyPress($event)" (keydown)="space($event)" 
+                [(ngModel)]="editWHConfigper" />
+        </div>
+        <div class="col mt-2" *ngIf="SalesRole">
+            <label><b>Store Percentage<span class="required">*</span></b></label>
+            <input type="text" required="1" type="tel" name="Title" class="form-control" (keypress)="keyPress($event)" (keydown)="space($event)" 
+                [(ngModel)]="editStConfigper" />
+        </div>
+        <div class="col mt-2">
+            <br>
+            <button class="btn btn-primary a mr-2 mt-1" (click)="ChangeEdit()">Save</button>
+            <button class="btn btn-success mr-2 mt-1" (click)="Editcancel()">Close</button>
+
+        </div>
+    </div>
+
+</p-dialog>
+<div *ngIf="historypopup">
+    <p-dialog [(visible)]="historypopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="50"
+        [style]="{width: '83%',height: '90%', left : '11px', overflow: 'auto'}">
+        <p-header>
+            <h4
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                <b>History </b>
+            </h4>
+        </p-header>
+        <app-history [entity]="entity" [id]="historyDetailid"></app-history>
+        <footer></footer>
+    </p-dialog>
+    <button class="btn btn-success mr-2 mt-1" (click)="historypopupClose()">Close</button>
+
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<p-toast [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+
+<p-confirmDialog #cd [style]="{width: '45vw'}"  appendTo="body"	 >
+    <ng-template pTemplate="header">
+        <h3>Header Content</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog>

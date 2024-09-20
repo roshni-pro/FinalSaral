@@ -1,0 +1,98 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="customer-master">
+  <div class="d-flex justify-content-between">
+    <div class="header col-md-4 mt-3">
+        <h3>Murli</h3>
+        <input type="text"  class="form-control col-md-8"  pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')">   
+    </div>
+    <!--style=" margin-left: 1150px;"  style="text-align: right"   style="margin:4px 4px 0 0"-->
+    <div class="col-md-8 ml-3 mt-4">
+        <form class="d-flex justify-content-end">
+            <div class="form-group mr-2">
+                <label for="name">Select City</label>            
+                <select id="city" name="city" class="form-control"  [(ngModel)]="cityId" (ngModelChange)="onCityChangeBasedWarehouse(cityId)">
+                    <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                      {{ city.CityName }}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group mr-1">
+                <label for="name">Select Warehouse</label>
+                <select id="wareid" name="wareid"  class="form-control" [(ngModel)]="WarehouseId">
+                      <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                        {{ warehouse.WarehouseName }}
+                      </option>
+                </select>
+            </div>         
+            <div class="form-group mt-1">
+                <label for="name"></label>
+                <button type="button" class="btn btn-raised btn-primary float-right align-self-end addbutton mt-3 ml-2"
+                (click)="warehouseSave()">         
+                <i class="fa fa-plus-circle"></i> Add Warehouse</button>
+            </div>
+        </form>
+    </div>
+  </div>
+
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover mar-top">
+    <div class="position-relative">
+        <p-table  #dt [globalFilterFields]="cols" [value]="warehouseItemList" [paginator]="true" [rows]="20" dataKey="WarehouseId"  [scrollable]="true" scrollHeight="70vh"  class="center">
+            <ng-template pTemplate="header" >
+                <tr>
+                  <th class="center" >
+                  WarehouseId  
+                  </th>
+                  <th class="center" >
+                  WarehouseName   
+                  </th>
+                  <th class="center" >
+                  Text
+                  </th>
+                  <th  class="center">
+                  From Date
+                  </th>
+                  <th  class="center">
+                    To Date
+                  </th>
+                  <th  class="center">
+                      Audio
+                  </th>
+                  <th class="right">
+                      Edit
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData  let-columns="columns"   let-expanded="expanded"  >
+                <!-- <tr  (click)="openDetails(rowData,$event)"></tr> -->
+                <tr>
+                  <td class="center">
+                    {{rowData.WarehouseId}}
+                  </td>
+                  <td>
+                    {{rowData.WarehouseName}}
+                  </td>
+                  <td>
+                    {{rowData.HindiTopItem}}
+                  </td>
+                  <td>
+                    {{rowData.FromDate | date:'medium'}}
+                  </td>
+                  <td>
+                    {{rowData.ToDate | date:'medium'}}
+                  </td>
+                  <td>
+                      <audio controls class="audiowidth">
+                          <source src="{{rowData.Mp3url}}" type="audio/mp3">
+                      </audio>
+                  </td>
+                  <td class="right">
+                      <button  class="btn btn-raised btn-primary center"  (click)="add(rowData)"> Edit</button>
+                  </td>                    
+                </tr>
+              </ng-template>
+        </p-table>    
+    </div>
+ 
+  </div>
+
+</section>

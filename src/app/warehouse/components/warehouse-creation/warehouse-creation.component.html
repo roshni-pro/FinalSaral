@@ -1,0 +1,160 @@
+<!-- 
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-sm-12">
+        <div class="content-header"> Warehouse
+
+  <div class="row  float-right " style="height: 60px ; padding-right: 15px">
+      <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: auto;" (click) = "addWarehouse()" >
+          <i class="fa fa-plus-circle"></i> Add Warehouse
+        </button>
+  </div> -->
+  <section id="Warehouse" >
+      <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+          <h3 class="m-2">Warehouse</h3>
+        </div>
+        <div>
+          <button pButton type="button" label="Add Warehouse" (click)="addWarehouse()"
+            class="ui-button-raised m-2 shadow"></button>
+        </div>
+      </div>
+<div class="row ">
+    <div class="col-sm-12">
+        <form class="form" #ledgerForm="ngForm">
+          <div class="form-body">
+            <div class="row">         
+              <div class="col-md-2">
+                  <div class="form-group" > 
+                    <label for="projectinput3">STATE</label>
+                    <br>
+                    <select id="desg" name="desg" class="form-control" [(ngModel)]="searchModel.Stateid" (change)="onstateChange(searchModel.Stateid)">
+                     <option value="">--select--</option>
+                      <option *ngFor="let state of stateList" [ngValue]="state.Stateid">
+                        {{ state.StateName }}
+                      </option>
+                    </select>
+                  </div>
+                </div>   
+                <div class="col-md-2">
+                    <div class="form-group" > 
+                      <label for="projectinput3">CITY</label>
+                      <br>
+                      <select id="desg" name="desg" class="form-control" [(ngModel)]="searchModel.cityId" (change)="allDataWare(searchModel.cityId)">
+                       <option value="">--select--</option>
+                        <option *ngFor="let city of citylist" [ngValue]="city.Cityid">
+                          {{ city.CityName }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>            
+            </div>
+          </div>
+        </form>
+      <!-- </div> -->
+    </div>
+  </div>
+  <!-- <div class="container h-100">
+      <div class="d-flex justify-content-left ">
+        <div class="searchbar">
+          <input class="search_input" type="text" name="" placeholder="Search..."  >
+          <a href="#" class="search_icon"><i class="fas fa-search"></i></a>
+        </div>
+      </div>
+    </div> -->
+  <!-- </div>
+  </div> -->
+  <!-- <br><br> -->
+
+  
+
+  <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+  
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+  
+
+
+  <div class="ui-fluid shadow p-3 m-2 mt-4 bg-white rounded table table-hover min-height-80">
+    <div class="position-relative">
+        <div class="position-absolute tax-details" *ngIf="isDetails" >
+            <app-warehouse-details [details]="selectedRowDetails" [activeFields]="activeFields" (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)" class="d-flex justify-content-end"></app-warehouse-details>
+        </div>
+  <div class="position-relative ">
+  
+    <p-table  #dt [globalFilterFields]="cols"  [value]="warehouseList" [paginator]="true" [rows]="20" dataKey="WarehouseId"[scrollable]="true" scrollHeight="70vh" text-align: center>
+    
+
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">        
+               <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+               <input   type="text" pInputText size="50" style="width: 400px;" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" >
+           </div>
+         </ng-template>
+        
+      <ng-template pTemplate="header" >
+        <tr>
+        <!-- <th>Edit</th> -->
+          <th *ngFor="let col of cols" [pSortableColumn]="col.field"  style="text-align: center" >
+            {{col.header}}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+          <!-- <th>Action</th> -->
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData  let-columns="columns"  let-expanded="expanded" >
+        <tr  (click)="openDetails(rowData,$event)">
+          <!-- <td>
+            <a href="javascript:void(0);" [pRowToggler]="rowData">
+              <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+            </a>
+          </td> -->
+          
+          <td *ngFor="let col of cols"  style="text-align: center">
+            {{rowData[col.field]}}
+          </td>
+          <!-- <td style="text-align:center">
+          
+              <i style="cursor: pointer;" class="ft-trash-2 danger font-medium-1 mr-2" (click)= "open(content)" data-toggle="modal" data-target="#exampleModal"></i>
+  
+              <ng-template #content let-modal>
+                <div class="modal-header">
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body d-flex flex-column align-items-center">
+                  <h2>Are You Sure?</h2>
+                  <form class="col-12">
+                      <div class="form-group col-12">
+                          <label for="DeleteComment">Add Comments</label>
+                          <textarea class="form-control" id="DeleteComment" rows="3"  name="DeleteComment" [(ngModel)] = "rowData.DeleteComment" ></textarea>
+                      </div>
+                  </form>
+                </div>
+                <div class="modal-footer d-flex p-0 justify-content-center">
+                  <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0" (click)="modal.close('No click')">Cancel</button>
+                  <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0" (click)="onDelete(rowData)">Delete</button>
+                </div>
+              </ng-template>
+        
+          </td> -->
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="rowexpansion" let-rowData  let-columns="columns" >
+        <tr>
+          <td colspan="7"> 
+            <app-add-warehouse [warehouseID]="rowData.WarehouseId">
+            </app-add-warehouse>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  </div>
+  </div>
+  </section>

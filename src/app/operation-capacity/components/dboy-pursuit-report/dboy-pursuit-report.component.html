@@ -1,0 +1,203 @@
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">D-Boy Performance Report</h4>
+    </div>
+    <div class="col-xl-12 col-lg-12">
+        <div class="card">
+            <div class="card-content">
+                <div class="card-body">
+                    <form class="form" #filterForm="ngForm">
+                        <div class="ui-fluid">
+                            <div class="ui-g">
+                                <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">City</label>
+                                        <!-- <select name="cityInput" class="form-control" required
+                                            [(ngModel)]="input.selectedCityId" (ngModelChange)="onCityChange()"
+                                            #cityInputModel="ngModel">
+                                            <option [value]="null">Select City</option>
+                                            <option *ngFor="let city of cityList" [value]="city.value">{{city.label}}
+                                            </option>
+                                        </select>
+                                        <code *ngIf="input.isFilterFormSubmitted && !cityInputModel.valid">
+                                            Required!!
+                                        </code> -->
+                                        <p-dropdown [options]="cityList" name="cityList" optionLabel="label" 
+                                        (onChange)="onCityChange()"  [(ngModel)]="input.selectedCityId" [filter]="true" placeholder="select city">
+                                    </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Warehouse</label>
+                                        <p-multiSelect name="warehouseInput" [options]="warehouseList" required
+                                            [(ngModel)]="input.selectedWarehouseList"
+                                            (onPanelHide)="onWarehouseChange()" #warehouseInputModel="ngModel">
+                                        </p-multiSelect>
+                                        <code *ngIf="input.isFilterFormSubmitted && !warehouseInputModel.valid">
+                                                Required!!
+                                        </code>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Date</label>
+                                        <select name="dateInput" class="form-control" required
+                                            [(ngModel)]="input.selectedDateOption"
+                                            (ngModelChange)="onChangeDateOption()">
+                                            <option *ngFor="let opt of dateOptionList" [value]="opt.value">
+                                                {{opt.label}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3" *ngIf="input.rangeDates && input.rangeDates.length>0">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Range</label>
+                                        <p-calendar name="dateCalenderInput"  view="month"  [(ngModel)]="input.rangeDates"
+                                            selectionMode="range" [readonlyInput]="true" (onClose)="setDate()"></p-calendar>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <button type="button" class="btn-r btn btn-primary" (click)="onSearch(filterForm)"
+                                        label="Search">
+                                        <i class="fa fa-search"></i> Search
+                                    </button>
+
+                                    <button type="button" class="btn-r exp btn btn-primary" (click)="export(filterForm)"
+                                        label="Reset">
+                                        <i class="fa fa-file-excel-o"></i> Export
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="ui-g" *ngIf="dboyList && dboyList.length >0">
+                                <div class="ui-g-12">
+                                    <p-table [value]="dboyList" dataKey="DboyName" rowExpandMode="single" >
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th class="th-1"></th>
+                                                <th>DboyName</th>
+                                                <th>Hub</th>
+                                                <th>Orders
+                                                    <span><br> (Delivered / Planned) </span>
+                                                </th>
+                                                <th>Amount
+                                                    <span><br> (Delivered / Planned) </span>
+                                                </th>
+                                                <th>Load(KG)
+                                                    <span><br> (Delivered / Planned) </span>
+                                                </th>
+                                                <th>Touch Points
+                                                    <span><br> (Delivered / Planned) </span>
+                                                </th>
+                                                <th>KM Travelled
+                                                    <span><br> (Expected | Computed | Entered) </span>
+                                                </th>
+                                                <th>Avg Trip Time(Hrs.)
+                                                    <span><br> (Expected | Actual) </span>
+                                                </th>
+                                                <th>Avg Service Time(Mins.)</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-dboy let-rowIndex="rowIndex"
+                                            let-expanded="expanded">
+                                            <tr class="tr-hd">
+                                                <td>
+                                                    <a [pRowToggler]="dboy">
+                                                        <i
+                                                            [ngClass]="expanded ? 'fa fa-minus-circle fa-lg' : 'fa fa-plus-circle fa-lg'"></i>
+                                                    </a>
+                                                </td>
+                                                <td>{{dboy.DboyName}}</td>
+                                                <td>{{dboy.WarehouseName}}</td>
+                                                <td>{{dboy.DeliveredOrderCount}}/{{dboy.TotalOrderCount}}</td>
+                                                <td>{{dboy.DeliveredOrderAmount}}/{{dboy.TotalOrderAmount}}</td>
+                                                <td>{{dboy.DeliveredOrderWeightInKg | number :
+                                                    '1.2-2'}}/{{dboy.TotalOrderWeightInKg | number : '1.2-2'}}</td>
+                                                <td>
+                                                    {{dboy.ServedTouchPoints}}/{{dboy.TotalTouchPoints}}
+                                                    <span>({{dboy.ServedTouchPoints/dboy.TotalTouchPoints*100| number :
+                                                        '1.2-2'}}%)</span>
+                                                </td>
+                                                <td pTooltip="Expected | By Google | By Driver" tooltipPosition="top">
+                                                    <span>{{dboy.ExpectedDistanceInKm| number : '1.2-2'}} </span>
+                                                    |<span> {{dboy.ActualDistanceTraveledByGoogleInKm| number : '1.2-2'}} </span>
+                                                    |<span> {{dboy.ActualDistanceTraveledByMiloMeterInKm| number : '1.2-2'}} </span>
+                                                </td>
+                                                <td pTooltip="Expected | Actual" tooltipPosition="top">
+                                                    <span>{{dboy.ExpectedServiceTimeInHrs| number : '1.2-2'}} </span>
+                                                    |<span> {{dboy.TripServiceTimeInHrs| number : '1.2-2'}} </span>
+                                                </td>
+                                                <td>
+                                                    <span>{{dboy.AvgServiceTimeInMins| number : '1.0-0'}} </span>
+                                                    
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="rowexpansion" let-dboy>
+                                            <tr class="th-sub">
+                                                <th></th>
+                                                <th>Trip Number</th>
+                                                <th>Date</th>
+                                                <th>Orders
+                                                    
+                                                </th>
+                                                <th>Amount
+                                                   
+                                                </th>
+                                                <th>Load(KG)
+                                                   
+                                                </th>
+                                                <th>Touch Points
+                                                   
+                                                </th>
+                                                <th>KM Travelled
+                                                   
+                                                </th>
+                                                <th>Avg Trip Time(Hrs.)
+                                                   
+                                                </th>
+                                                <th>Avg Service Time(Mins.)</th>
+                                            </tr>
+                                            <tr class="th-sub" *ngFor="let db of dboy.TripList">
+                                                <td></td>
+                                                <td>{{db.TripPlannerMasterId}} </td>
+                                                <td>{{db.Date |date : 'dd/MM/yyyy'}}</td>
+                                                <td>{{db.DeliveredOrderCount}}/{{db.TotalOrderCount}}</td>
+                                                <td>{{db.DeliveredOrderAmount}}/{{db.TotalOrderAmount}}</td>
+                                                <td>{{db.DeliveredOrderWeightInKg | number :
+                                                    '1.2-2'}}/{{db.TotalOrderWeightInKg | number : '1.2-2'}}</td>
+                                                <td>
+                                                    {{db.ServedTouchPoints}}/{{db.TotalTouchPoints}}
+                                                    <span>({{db.ServedTouchPoints/db.TotalTouchPoints*100| number :
+                                                        '1.2-2'}}%)</span>
+                                                </td>
+                                                <td>
+                                                    <span>{{db.ExpectedDistanceInKm| number : '1.2-2'}} </span>
+                                                    |<span> {{db.ActualDistanceTraveledByGoogleInKm| number : '1.2-2'}} </span>
+                                                    |<span> {{db.ActualDistanceTraveledByMiloMeterInKm| number : '1.2-2'}} </span>
+                                                </td>
+                                                <td>
+                                                    <span>{{db.ExpectedServiceTimeInHrs| number : '1.2-2'}} </span>
+                                                    |<span> {{db.TripServiceTimeInHrs| number : '1.2-2'}} </span>
+                                                </td>
+                                                <td>
+                                                    <span>{{db.AvgServiceTimeInMins| number : '1.0-0'}} </span>
+                                                    
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

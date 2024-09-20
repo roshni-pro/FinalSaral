@@ -1,0 +1,124 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="row text-left">
+  <div class="col-md-3">
+    <div class="card">
+      <div class="card-header pb-2">
+        <h4 class="card-title" id="basic-layout-form">Cluster Input</h4>
+
+      </div>
+      <div class="card-content">
+        <div class="px-3">
+          <form class="form" #clusterEditForm="ngForm">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <!-- <label for="projectinput1" *ngIf="onMapReady(map)">SELECT CITY</label> -->
+                    <label for="projectinput1" >SELECT CITY<span  style="color:red"> *</span></label>
+                    <select id="city" name="city" class="form-control" [(ngModel)]="cluster.CityId"
+                      (ngModelChange)="onsearch(cluster.CityId)" #cityId="ngModel" required>
+                      <option value="">--Select City--</option>
+                      <option *ngFor="let city of cityList" [ngValue]="city.Cityid">{{city.CityName}}
+                      </option>
+                    </select>
+                    <div *ngIf="isInvalid && !cityId.valid && cityId.errors.required">
+                      <code>City is required</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="projectinput2">Warehouse<span  style="color:red"> *</span></label>
+                    <select id="wh" name="wh" class="form-control" [(ngModel)]="cluster.WarehouseId"
+                      placeholder="Select Warehouse" required="1" #WarehouseId="ngModel">
+                      <div class="col-md-6"></div>
+
+                      <option value="">--Select Warehouse--</option>
+                      <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+                        {{ wh.WarehouseName }}
+                      </option>
+                    </select>
+                    <div *ngIf="isInvalid && !WarehouseId.valid && WarehouseId.errors.required">
+                      <code>Warehouse is required</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="projectinput3">Latitude<span  style="color:red"> *</span></label>
+                    <input type="tel" id="lat" class="form-control" name="lat" placeholder="Latitude"  required="1" #Latitude="ngModel"
+                      [(ngModel)]="ClusterData.Latitude">
+                  
+                  <div *ngIf="isInvalid && !Latitude.valid && Latitude.errors.required">
+                    <code>Latitude is required</code>
+                  </div>
+                </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="projectinput4">Longitude<span  style="color:red"> *</span></label>
+                    <input type="tel" id="long" class="form-control" name="long" placeholder="Longitude" required="1" #Longitude="ngModel"
+                      [(ngModel)]="ClusterData.Longitude">
+                 
+                  <div *ngIf="isInvalid && !Longitude.valid && Longitude.errors.required">
+                    <code>Longitude is required</code>
+                  </div>
+                </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <label for="active"> Active</label>
+                  <div class="custom-control custom-checkbox custom-control-inline">
+                    <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1"
+                      type="checkbox" [(ngModel)]="cluster.Active">
+                    <label class="custom-control-label" for="customCheckboxInline1"></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                Cancel
+              </button>
+              <button type="button" class="btn btn-raised btn-primary" (click)="update(clusterEditForm)" >
+                  <!-- [disabled]="!cluster.CityId ||!cluster.WarehouseId||!ClusterData.Latitude||!ClusterData.Longitude||!cluster.Active" -->
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-9">
+    <div class="card">
+      <div class="card-header pb-2">
+        <h4 class="card-title" id="basic-layout-colored-form-control">Cluster Map</h4>
+
+      </div>
+      <div class="card-content" *ngIf="cluster.CityId">
+        <agm-map [latitude]="ClusterData.Latitude" [longitude]="ClusterData.Longitude" (mapReady)="onMapReady($event)" [zoom]="zoom" [zoomControl]="false"
+          [style.height.px]="myInnerHeight"  [zoom]="zoom" [fullscreenControl]="fullscreenControl" [zoomControl]="true"
+          [disableDefaultUI]="false" [zoomControl]="false" [fullscreenControlOptions]="options">
+        </agm-map>
+      </div>
+      <div class="card-content" *ngIf="!cluster.CityId">
+          <div class="hr-nt">
+            <h3>Please select city first</h3>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

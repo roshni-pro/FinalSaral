@@ -1,0 +1,30 @@
+<div class=ui-g *ngIf="!isSelected">
+    <div  class="ui-g ldt" *ngIf="!selectedAffactedParty">
+        <label for="affactedPartyLedgerType">Affacted Ledger Type:</label>
+        <select id="desg" name="desg" class="form-control" [(ngModel)]="affactedPartyLedgerID"
+            (ngModelChange)="onAffactedLedgerTypeChange()">
+            <option [ngValue]="null">select</option>
+            <option *ngFor="let ledgerType of ledgerTypeList" [ngValue]="ledgerType.ID">
+                {{ ledgerType.code }}
+            </option>
+        </select>
+    </div>
+    <div class="ui-g ld" [ngClass]="{'ui-g':!selectedAffactedParty, 'ui-g-6': selectedAffactedParty}" >
+        <label for="affactedPartyLedgerT">Affacted Ledger :</label>
+        <select id="desg" name="desg" class="form-control" [(ngModel)]="affactedLedgerID"  (ngModelChange)="onSelectAffectLedger(affactedLedgerID)"
+        >
+        <option [ngValue]="null">select</option>
+        <option *ngFor="let ledger of ledgerList" [ngValue]="ledger" >
+            {{ ledger.Name }}
+        </option>
+    </select>
+    </div>
+</div>
+<div class=ui-g *ngIf="isSelected">
+    <div class="ui-g-12">
+        <div class="ui-inputgroup">
+            <input class="form-control" [(ngModel)]="selectedAffactedParty.Name" disabled>
+            <button pButton type="button" icon="pi pi-times" (click)="cancel()" class="ui-button-danger"></button>
+        </div>
+    </div>
+</div>

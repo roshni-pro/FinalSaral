@@ -1,0 +1,49 @@
+<section id="city-details">
+    <div class="email-app-mail-content px-2 py-0 h-100 border-left border-left-2">
+      <div class="email-app-mail-content-detail h-100 overflow-hidden">
+        <div class="info-header">
+          <button type="button" class="close" aria-label="Close" (click)="closeDetails(false)">
+            <span aria-hidden="true">&times;</span>
+          </button>
+
+          <h3 class="m-2">{{details[activeFields[0].field]}}</h3>
+  
+          <ul class="nav border-bottom">
+            <li class="nav-item" (click)="overviewDisplay($event)">
+              <a [ngClass]="activeTabClass[0].isActive==true? 'nav-link active' : 'nav-link' " id="overview-btn">Overview</a>
+            </li>
+  
+            <li class="nav-item" (click)="editFormDisplay($event)">
+              <a [ngClass]="activeTabClass[1].isActive==true? 'nav-link active' : 'nav-link' ">Edit</a>
+            </li>
+          </ul>
+  
+        </div>
+        
+        <div id="editForm" *ngIf="displayTabs[1].bool" class="info-div m-2">
+          <div>
+            <app-gullak-detail [Id]="details" (isdetailsclose)="closeDetails($event)" (refreshParent) = "RefreshParent()"></app-gullak-detail>
+          </div>
+        </div>
+        
+        <div id="depo" *ngIf="displayTabs[2].bool" class="info-div m-2"><!-- <app-depot></app-depot> --></div>
+  
+        <!-- Depo Start -->
+        <div id="depo" *ngIf="displayTabs[2].bool" class=""></div>
+        <!-- Depo End -->
+        
+        <div id="overview" *ngIf="displayTabs[0].bool" class="info-div text-sm">
+          <!-- <div class="info-heading text-bold-600 m-3"><h4>Supplier Info</h4></div> -->
+          <div class="info-content">
+            <div class="row m-2 mx-4">
+              <div class="col-md-6 d-flex" *ngFor="let activeField of activeFields">
+                <div class="info-label font-weight-bold m-2">{{activeField.label}}</div>
+                <div class="info-value m-2">{{details[activeField.field]}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+      </div>
+    </div>
+  </section>  

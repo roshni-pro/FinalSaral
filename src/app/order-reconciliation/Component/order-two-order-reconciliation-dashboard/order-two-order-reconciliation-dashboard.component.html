@@ -1,0 +1,384 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+  <div class="header">
+    <h3 class="m-2">Order To Order Reconciliation Dashboard</h3>
+  </div>
+</div>
+
+<div class="ui-fluid shadow p-2 m-2 bg-white rounded table table-hover">
+  <div class="row">
+    <div class="col">
+      <label><b style="font-weight: 500;">Select City</b></label>
+      <p-multiSelect id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="SelectedCity"
+        (onChange)="GetWarehouse()" optionLabel="label" selectedItemsLabel="{0} City selected"
+        placeholder="Select City">
+      </p-multiSelect>
+    </div>
+    <div class="col">
+      <label><b style="font-weight: 500;">Select WareHouse</b></label>
+      <p-multiSelect id="Categorys" name="Categorys" [options]="WareHouseList" [filter]="true" optionLabel="label"
+        placeholder="Select WareHouse" [(ngModel)]="SelectedWarehouse">
+      </p-multiSelect>
+    </div>
+
+    <div class="col md-3">
+      <label><b>Select Start Date</b></label><br>
+      <p-calendar name="startDateInput"  appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  [maxDate]="maxDate"   
+       [readonlyInput]="false" [showIcon]="true" showButtonBar="true"  
+       [showIcon]="true" [(ngModel)]="FromDate"  showButtonBar="true" >
+      </p-calendar>
+  </div>
+  <div class="col md-3">
+      <label><b>Select End Date</b></label><br>
+      <p-calendar name="endDateInput" name="ToDate" [showIcon]="true"  appendTo="body"  [yearNavigator]="true"  [maxDate]="maxDate" 
+       [monthNavigator]="true" yearRange="2022:2099"  [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+       [showIcon]="true" [minDate]="FromDate" [(ngModel)]="ToDate" >
+      </p-calendar>
+  </div>
+    <div class="col mt-4  d-flex">
+      <button class="btn btn-Success mr-1"  (click)="IsToday=true;Today()"  style="background-color:aqua;border: aqua;color: black;">
+        Today</button>
+      <button class="btn btn-Success mr-1" (click)="Month()" style="background-color:aqua;border: aqua;color: black;">
+        Month</button>
+        <button class="btn btn-primary" (click)="onSearch()">Search</button>
+        <!-- <button class="btn btn-Success" (click)="Month()" style="background-color:aqua;border: aqua;color: black;">
+          MisToBank</button> -->
+    </div>
+    <div class="col mt-4 d-flex">
+      <button class="btn btn-Success mr-1" (click)="export()">Export</button>
+      <button class="btn btn-Success" (click)="MisToBank()">
+        MisToBank</button>
+      <!-- <button class="btn btn-primary" (click)="onSearch()">Search</button> -->
+    </div>
+  </div>
+</div>
+<div class="content-wrapper">
+  <div class="offers">
+    <div class="row">
+      <div class="col offer-box-container">
+        <div class="offer-box">
+          <div class="row">
+            <div class="col-md-12" >Total Orders : <span class="f-right">{{TotalOrders}}</span></div>
+          </div>
+          <div class="row">
+           
+            <div class="col-md-12">Total Amount : <span class="f-right">{{TotalAmount}}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col offer-box-container">
+        <div class="offer-box">
+          <div class="row">
+            <div class="col-md-12">Verified Orders : <span class="f-right">{{TotalVerifiedOrder}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">Verified Amount : <span class="f-right">{{TotalVerifiedAmount}}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col offer-box-container">
+        <div class="offer-box">
+          <div class="row">
+            <div class="col-md-12">NotVerified Orders : <span class="f-right">{{TotalNotVerifiedOrder}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12"> NotVerified Amount : <span class="f-right">{{TotalNotVerifiedAmount}}</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col offer-box-container">
+        <div class="offer-box">
+          <div class="row">
+            <div class="col-md-12">NotVerified Orders : <span class="f-right">{{TotalNotVerifiedOrder}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12"> NotVerified Amount : <span class="f-right">{{TotalNotVerifiedAmount}}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col offer-box-container">
+        <div class="offer-box">
+          <div class="row">
+            <div class="col-md-12">PartialyVerified Orders : <span class="f-right">{{TotalPartialVerifiedOrder}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">PartialyVerified Amount : <span class="f-right">{{TotalPartialVerifiedAmount}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col offer-box-container">
+        <div class="offer-box">
+          <div class="row">
+            <div class="col-md-12">Refund Amount : <span class="f-right">{{RefundAmount}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">Excess Amount : <span class="f-right">{{ExcessAmount}}</span></div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>
+<div class="content-wrapper">
+  <div class="offers">
+    <div class="row">
+     
+      <div class="col offer-box-container">
+        <div class="offer-box">
+          <div class="row">
+            <div class="col-md-12">PartialyVerified Orders : <span class="f-right">{{TotalPartialVerifiedOrder}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">PartialyVerified Amount : <span class="f-right">{{TotalPartialVerifiedAmount}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col offer-box-container">
+        <div class="offer-box">
+          <div class="row">
+            <div class="col-md-12">Refund Amount : <span class="f-right">{{RefundAmount}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">Excess Amount : <span class="f-right">{{ExcessAmount}}</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col offer-box-container">
+        <div class="offer-box">
+          <div class="row">
+            <div class="col-md-12">Refund Amount : <span class="f-right">{{RefundAmount}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">Excess Amount : <span class="f-right">{{ExcessAmount}}</span></div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+
+<div class="content-wrapper">
+  <div class="offers">
+    <div class="row">
+      <div class="col-md-6 offer-box-container">
+        <div class="offer-boxx">
+          <div class="row">
+            <div class="col-md-12">HDFC</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-3">Order</div>
+            <div class="col-md-5">Amount</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4" style="padding-right: 0%;">Partially Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{hdfcPartiallyVerifiedOrder ? hdfcPartiallyVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{hdfcPartiallyVerifiedAmount? hdfcPartiallyVerifiedAmount : 0}}</span></div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-4">Not Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{hdfcNotVerifiedOrder ? hdfcNotVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{hdfcNotVerifiedAmount ? hdfcNotVerifiedAmount : 0}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{hdfcVerifiedOrder ? hdfcVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{hdfcVerifiedAmount ? hdfcVerifiedAmount : 0}}</span></div>
+          </div>
+
+        </div>
+      </div>
+      <div class="col-md-6 offer-box-container">
+        <div class="offer-boxx">
+          <div class="row">
+            <div class="col-md-12">Gullak</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-3">Order</div>
+            <div class="col-md-5">Amount</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4" style="padding-right: 0%;">Partially Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{GullakPartiallyVerifiedOrder ? GullakPartiallyVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{GullakPartiallyVerifiedAmount ? GullakPartiallyVerifiedAmount :0}}</span></div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-4">Not Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{GullakNotVerifiedOrder ? GullakNotVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{GullakNotVerifiedAmount ? GullakNotVerifiedAmount :0}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{GullakVerifiedOrder ? GullakVerifiedOrder :0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{GullakVerifiedAmount ? GullakVerifiedAmount : 0}}</span></div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <div class="offers">
+    <div class="row">
+      <div class="col-md-6 offer-box-container">
+        <div class="offer-boxx">
+          <div class="row">
+            <div class="col-md-12">Direct Udhar</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-3">Order</div>
+            <div class="col-md-5">Amount</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4" style="padding-right: 0%;">Partially Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{DirectUdharPartiallyVerifiedOrder ? DirectUdharPartiallyVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{DirectUdharPartiallyVerifiedAmount ? DirectUdharPartiallyVerifiedAmount : 0}}</span></div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-4">Not Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{DirectUdharNotVerifiedOrder ? DirectUdharNotVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{DirectUdharNotVerifiedAmount ? DirectUdharNotVerifiedAmount :0}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{DirectUdharVerifiedOrder ? DirectUdharVerifiedOrder :0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{DirectUdharVerifiedAmount ? DirectUdharVerifiedAmount : 0}}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 offer-box-container">
+        <div class="offer-boxx">
+          <div class="row">
+            <div class="col-md-12">UPI</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-3">Order</div>
+            <div class="col-md-5">Amount</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4" style="padding-right: 0%;">Partially Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{UPIPartiallyVerifiedOrder ? UPIPartiallyVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{UPIPartiallyVerifiedAmount ? UPIPartiallyVerifiedAmount : 0}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Not Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{UPINotVerifiedOrder ? UPINotVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{UPINotVerifiedAmount ? UPINotVerifiedAmount : 0}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{UPIVerifiedOrder ? UPIVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{UPIVerifiedAmount ? UPIVerifiedAmount :0}}</span></div>
+          </div>
+        </div>
+      </div>
+      
+
+    </div>
+  </div>
+  <div class="offers">
+    <div class="row">
+      <div class="col-md-6 offer-box-container">
+        <div class="offer-boxx">
+          <div class="row">
+            <div class="col-md-12">Cheque</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-3">Order</div>
+            <div class="col-md-5">Amount</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4" style="padding-right: 0%;">Partially Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{ChequePartiallyVerifiedOrder ? ChequePartiallyVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{ChequePartiallyVerifiedAmount ? ChequePartiallyVerifiedAmount :0}}</span></div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-4">Not Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{ChequeNotVerifiedOrder ? ChequeNotVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{ChequeNotVerifiedAmount ? ChequeNotVerifiedAmount :0}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{ChequeVerifiedOrder ? ChequeVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{ChequeVerifiedAmount ? ChequeVerifiedAmount :0}}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 offer-box-container">
+        <div class="offer-boxx">
+          <div class="row">
+            <div class="col-md-12">RTGS/NEFT</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-3">Order</div>
+            <div class="col-md-5">Amount</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4" style="padding-right: 0%;">Partially Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{RTGS_NEFTPartiallyVerifiedOrder ? RTGS_NEFTPartiallyVerifiedOrder :0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{RTGS_NEFTPartiallyVerifiedAmount ? RTGS_NEFTPartiallyVerifiedAmount : 0}}</span></div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-4">Not Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{RTGS_NEFTNotVerifiedOrder ? RTGS_NEFTNotVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{RTGS_NEFTNotVerifiedAmount ? RTGS_NEFTNotVerifiedAmount :0}}</span></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Verified :</div>
+            <div class="col-md-3"><span class="f-right">{{RTGS_NEFTVerifiedOrder ? RTGS_NEFTVerifiedOrder : 0}}</span></div>
+            <div class="col-md-5"><span class="f-right">&#8377;{{RTGS_NEFTVerifiedAmount ? RTGS_NEFTVerifiedAmount : 0}}</span></div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<div class="offers">
+  <div class="row">
+    <div class="col-md-12 offer-box-container">
+      <div class="offer-boxx">
+        <div class="row">
+          <div class="col-md-12">Cash</div>
+        </div>
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-3">Order</div>
+          <div class="col-md-5">Amount</div>
+        </div>
+        <div class="row">
+          <div class="col-md-4" style="padding-right: 0%;">Partially Verified :</div>
+          <div class="col-md-3"><span class="f-right">{{CashPartiallyVerifiedOrder ? CashPartiallyVerifiedOrder : 0}}</span></div>
+          <div class="col-md-5"><span class="f-right">&#8377;{{CashPartiallyVerifiedAmount ? CashPartiallyVerifiedAmount : 0}}</span></div>
+
+        </div>
+        <div class="row">
+          <div class="col-md-4">Not Verified :</div>
+          <div class="col-md-3"><span class="f-right">{{CashNotVerifiedOrder ? CashNotVerifiedOrder : 0}}</span></div>
+          <div class="col-md-5"><span class="f-right">&#8377;{{CashNotVerifiedAmount ? CashNotVerifiedAmount :0}}</span></div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">Verified :</div>
+          <div class="col-md-3"><span class="f-right">{{CashVerifiedOrder ? CashVerifiedOrder : 0}}</span></div>
+          <div class="col-md-5"><span class="f-right">&#8377;{{CashVerifiedAmount ? CashVerifiedAmount : 0}}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

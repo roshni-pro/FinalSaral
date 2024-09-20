@@ -1,0 +1,397 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Pay Later Collection</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="row mt-2 ml-2">
+        <div class="col-md-2">
+            <label><b>Select Warehouse</b></label>
+            <p-multiSelect id="id" name="Name" placeholder="Select a Warehouse" [options]="WarehouseList" [filter]="true"
+                [(ngModel)]="selectedwarehouse" optionLabel="WarehouseName">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-2">
+            <label><b>Select Store</b></label>
+            <p-multiSelect id="id" name="Name" placeholder="Select a Store" [options]="allStoreList" [filter]="true"
+                [(ngModel)]="selectedStore" optionLabel="Name">
+            </p-multiSelect>
+        </div>
+        
+        <div class="col-md-2">
+            <label><b>Status</b></label>
+            <p-dropdown [options]="StatusList" [(ngModel)]="SelectedStatus" optionLabel="Name"></p-dropdown>
+        </div>
+        <div class="col-md-2">
+            <label><b>Account Approval Pending</b></label>
+            <p-dropdown [options]="PaymentPendingList" [(ngModel)]="PaymentSelectedStatus" optionLabel="Name"></p-dropdown>
+        </div>
+        <div class="col-md-2">
+            <label><b>Enter Skcode/OrderId/Invoice</b></label>
+            <input type="text" class="form-control" placeholder="Enter Skcode/OrderId/Invoice" [(ngModel)]="keyword">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary mr-2" style="margin-top: 30px;" (click)="ForSearchHit();SearchList($event)">Search</button>
+            <button class="btn btn-primary mr-2" style="margin-top: 30px;" (click)="ExportList($event)">Export</button>
+        </div>
+
+    </div>
+</div>
+<div class="card">
+    <div class="my-2 d-flex justify-content-between">
+                
+        <div class="header">
+    <p-table dataKey="id" [value]="itemList" [paginator]="true" [rows]="10" [lazy]="true" (onLazyLoad)="load($event)"
+        [totalRecords]="totalRecords" [scrollable]="true" scrollHeight="60vh" [(first)]="first">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Extend</th>
+                <th>OrderId</th>
+                <th>Invoice Number</th>
+                <th>SalesPerson</th>
+                <th>Skcode</th>
+                <th>StoreName</th>
+                <th>Mobile</th>
+                <th>Order Status</th>
+                <th>Amount</th>
+                <th>PaymentStatus</th>
+                <th>Paid /<br>Refund</th>
+                <th>Return <br>Amount</th>
+                <th>Remaining <br>Amount</th>
+                <th>OrderDate</th>
+                <th>Delivered<br>Date</th>
+                <th>Due Date</th>
+                <th>History</th>
+                <th *ngIf="addBtnRole">Add Payment</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data let-expanded="expanded" let-index="rowIndex">
+            <tr href="#" [pRowToggler]="data" (click)="data.expanded = !data.expanded" >
+                <td><i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i></td>
+                <td>{{ data.OrderId }}</td>
+                <td>{{ data.InvoiceNo }}</td>
+                <td>{{data.OrderTakenSalesPerson}}</td>
+                <td>{{ data.Skcode }}</td>
+                <td>{{ data.StoreName }}</td>
+                <td>{{ data.Mobile }}</td>
+                <td
+                    [ngStyle]="data.Status=='Order Canceled' ||data.Status=='Payment Pending'||data.Status=='Failed'||data.Status=='Post Order Canceled'||data.Status=='Delivery Canceled'?{'color': 'red','font-weight': '700'}:{'color':'black'}">
+                    {{ data.Status }}</td>
+                <td>{{ data.Amount }}</td>
+                <td>{{ data.PaymentStatus }}</td>
+                <td>{{ data.PaidAmount }}</td>
+                <td>{{ data.ReturnAmount }}</td>
+                <td>{{ data.RemainingAmount }}</td>
+                <td>{{ data.OrderDate |date:'dd/MM/yyyy' }}</td>
+                <td>{{ data.DeliveredDate |date:'dd/MM/yyyy'}}</td>
+                <td>{{data.DueDate |date:'dd/MM/yyyy'}}</td>
+                <td> <button class="btn btn-primary mr-1" pTooltip="History" (click)="historyPopUp(data)"><i
+                            class="fa fa-history"></i></button></td>
+                <td *ngIf="( data.IsAddPayment ==true) && addBtnRole"><button class="btn btn-primary"
+                        (click)="ReturnChargeMode(data)">Add</button></td>
+                <td *ngIf="!( data.IsAddPayment ==true) && addBtnRole"></td>
+            </tr>
+
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-rowData>
+            <tr *ngIf="rowData.expanded">
+                <td colspan="9">
+                    <div class="p-3 cc">
+                        <p-table [value]="rowData.payLaterCollectionReturnOrderDCs" dataKey="OrderId">
+                            <ng-template pTemplate="header">
+                                <tr >
+                                    <th>Return orderId</th>
+                                    <th>Sales Person</th>
+                                    <th>Skcode</th>
+                                    <th>Mobile</th>
+                                    <th>Order Status</th>
+                                    <th>Payment Status</th>
+                                    <th>Order Date</th>
+                                    <th>Delivered Date</th>
+                                    <th>Gross Amount</th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-order>
+                                <tr >
+                                    <td>{{order.ReturnorderId}}</td>
+                                    <td>{{order.OrderTakenSalesPerson}}</td>
+                                    <td>{{order.Skcode}}</td>
+                                    <td>{{order.Mobile}}</td>
+                                    <td>{{order.OrderStatus}}</td>
+                                    <td>{{order.Paymentstatus}}</td>
+                                    <td>{{order.OrderDate | date : 'medium'}}</td>
+                                    <td>{{order.DeliveredDate | date : 'medium'}}</td>
+                                    <td>{{order.GrossAmount}}</td>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td>There are no Return Orders.</td>
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="13" style="text-align: center;">
+                    <br>
+                    <h4><b>No Data Found.</b></h4>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+        </div>
+    </div>
+</div>
+<p-dialog header="History" [(visible)]="HistorypopUp" appendTo="body" positionTop="70" modal="true"
+    [style]="{width: '70%',height: '40%',top: '70%',left: '50%'}">
+    <div class="container" style="overflow-x: hidden;">
+        <p-table [value]="HistoryList" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="60vh">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>PaymentMode</th>
+                    <th>Amount</th>
+                    <th>RefNo</th>
+                    <th>CreatedDate</th>
+                    <th>Payment Status</th>
+                    <th>Comment</th>
+                    <th *ngIf="roleListarry">Approve</th>
+                    <th *ngIf="roleListarry">Reject</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data let-index="rowIndex">
+                <tr>
+                    <td>{{ data.PaymentMode }}</td>
+                    <td>{{ data.Amount }}</td>
+                    <td>{{ data.RefNo?data.RefNo:'--' }}</td>
+                    <td>{{ data.CreatedDate | date:'dd/MM/yyyy'}}</td>
+                    <td>{{data.PaymentStatus}}</td>
+                    <td>{{ data.Comment }}</td>
+                    <td *ngIf="roleListarry" ><button class="btn btn-primary" [disabled]="data.PaymentStatus != 'Pending'" (click)="onApprove(data.Id)">Approve</button></td>
+                    <td *ngIf="roleListarry "><button class="btn btn-primary" [disabled]="data.PaymentStatus != 'Pending'" (click)="onReject(data.Id)">Reject</button></td>  
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td colspan="13" style="text-align: center;">
+                        <br>
+                        <h4><b>No Data Found.</b></h4>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-dialog>
+<p-dialog header="Add Details" [(visible)]="ReturnChargeModePopUp" (onHide)="cancell(data)" appendTo="body"
+    positionTop="5" modal="true" [style]="{width: '65vw',height: 'auto',left: '50%',top:'-20px'}">
+    <div class="container">
+        <div class="row ml-1">
+            <div class="col-md-6">
+                <label><b class="lables">Select Payment Mop:<span style="color: red;">*</span> </b></label>
+                <br />
+                <select class="form-control" id="mod" name="mod" #mod="ngModel" (change)="selectPaymentMode(data.mod)"
+                    [(ngModel)]="data.mod">
+                    <!--  -->
+                    <option value="">Select</option>
+                    <option value="1">Cash</option>
+                    <option value="2">Cheque</option>
+                    <option value="3">Online</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="UOM"><b class="lables">Total Amount</b></label><br />
+                <input type="text" class="form-control ng-pristine ng-valid" [(ngModel)]="Returncheque"
+                    placeholder="Enter Total Amount" readonly style="margin-bottom:5px;width: 95%;">
+            </div>
+        </div>
+        <div class="col-md-12" style="margin-top: 15px;" *ngIf="data.mod=='1'">
+            <div class="panel-success panel div-highlight">
+                <!-- <div class="panel-heading text-center"> -->
+                <div id="scroll-container">
+                    <h3 id="scroll-text" style="font-weight: 800;height: 24px;">Cash Payment Details</h3>
+                </div>
+                <p-table [value]="Denomination" styleClass="p-datatable-striped" [scrollable]="true" scrollHeight="48vh"
+                    text-align: center [tableStyle]="{'min-width': '50rem'}" [ngClass]="{'alternate-rows': true}">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Denomination</th>
+                            <th>Quantity</th>
+                            <th>Amount</th>
+                        </tr>
+                        <br>
+                        <tr style="font-weight: 800;">Notes</tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-data>
+                        <tr *ngIf="data.currencyType=='Notes'">
+                            <td>₹ {{data.Title}}</td>
+                            <td><input type="number" value="0" class="form-control" [(ngModel)]="data.CurrencyCount"
+                                    style="width: auto" min="0" onkeydown="if(event.key==='.'){event.preventDefault();}"
+                                    (keydown)="onKeyDown($event)" (input)="checkValue($event)"></td>
+                            <td>₹{{data.CurrencyCount*data.Title}}</td>
+                        </tr>
+
+                        <tr *ngIf="data.filter==true" style="font-weight: 800;">Coins</tr>
+                        <tr *ngIf="data.currencyType=='Coins'">
+                            <td>₹ {{data.Title}}</td>
+                            <td><input type="number" value="0" class="form-control" [(ngModel)]="data.CurrencyCount"
+                                    style="width: auto;" min="0" (input)="checkValue($event)"></td>
+                            <td>₹ {{data.CurrencyCount*data.Title}}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr>
+                            <td>Total</td>
+                            <td style="padding-left: 20px;">{{ calculateTotall() }}</td>
+                            <td style="padding-left: 18px;">{{ calculateTotal() }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+        <div class="col-md-12" style="margin-top: 15px;" *ngIf="data.mod=='2'">
+            <div id="scroll-container">
+                <h3 id="scroll-text" style="font-weight: 800;height: 24px;">Cheque Payment Details</h3>
+            </div>
+            <div class="row mt-2">
+                <div class=" col-md-6">
+                    <label class="lables">Cheque Number : <span style="color: red;">*</span> </label><br />
+                    <input type="number" id="cheque" class="form-control" name="cheque" (keypress)="keyPress($event)"
+                        [(ngModel)]="data.ChequeNumber" placeholder="Enter Cheque Number" required="1" />
+                </div>
+                <div class=" col-md-6" *ngIf="data.mod=='2'">
+                    <label class="lables">Cheque Date:<span style="color: red;">*</span> </label><br />
+                    <p-calendar name="Date" [style]="{'width':'102%'}" [inputStyle]="{'width':'90%'}" appendTo="body"
+                        [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099" [readonlyInput]="false"
+                        [showIcon]="true" [showIcon]="true" [(ngModel)]="data.ChequeDate">
+                    </p-calendar>
+                    <!-- <input id="dat" type='date' title="Select Date" class="form-control"
+                            [(ngModel)]="data.ChequeDate" value="{{Binddata.ChequeDate}}" autocomplete="off" /> -->
+
+                </div>
+            </div>
+            <div class="row mt-2">
+
+                <div class="col-md-6" *ngIf="data.mod=='2'">
+                    <label> <b class="lables">Select Bank Name:<span style="color: red;">*</span> </b></label>
+                    <select class="form-control" id="site-name" [(ngModel)]="data.BankId">
+                        <option value="">--Select --</option>
+                        <option value="{{bankdt.Id}}" *ngFor="let bankdt of bankname">{{bankdt.BankName}}</option>
+                    </select>
+                </div>
+                <div class=" col-md-6" *ngIf="data.mod=='2'">
+                    <label class="lables">Cheque Amount<span style="color: red;">*</span> </label><br />
+                    <input type="number" class="form-control ng-pristine ng-valid" placeholder="Enter Total Amount"
+                        min="0" (input)="checkValue($event)" onkeydown="if(event.key==='.'){event.preventDefault();}"
+                        (keydown)="onKeyDown($event)" [(ngModel)]="data.CollectAmount">
+                </div>
+            </div>
+            <div class="row mt-2 ml-2">
+                <div class="" *ngIf="data.mod=='2'">
+                    <label class="lables mr-2">Upload File:<span style="color: red;">*</span> </label>
+                    <input class="btn btn-primary " #myInput id="myInput"  accept="image/jpg, image/jpeg,image/png" name="file" type="file"
+                        (change)="onUpload($event.target.files)" />
+
+                    <button type="button" class="btn btn-success ml-2" (click)="uploader()">
+                        Upload
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 mt-2" style="margin-top: 15px;" *ngIf="data.mod=='3'">
+            <div id="scroll-container">
+                <h3 id="scroll-text" style="font-weight: 800;height: 24px;">Online Payment Details</h3>
+            </div>
+            <div class="row">
+                <div class=" col-md-6" *ngIf="data.mod=='3'">
+                    <label class="lables"> Online Payment Type:<span style="color: red;">*</span> </label>
+                    <select class="form-control" id="site-name" (change)="paymenttypes(data)"
+                        [(ngModel)]="data.PaymentType">
+                        <!--  -->
+                        <option value="">--Select--</option>
+                        <option value="Mpos">Mpos</option>
+                        <option value="RTGS/NFT">RTGS/NFT</option>
+                        <option value="UPI">UPI</option>
+                    </select>
+                </div>
+                <!-- <div class=" col-md-6" *ngIf="data.mod=='3'">
+                    <label class="lables">Online Date:<span style="color: red;">*</span> </label><br />
+                    <div class="">
+                        <p-calendar name="Date" [style]="{'width':'102%'}" [inputStyle]="{'width':'90%'}" appendTo="body"
+                        [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099" [readonlyInput]="false"
+                        [showIcon]="true" [showIcon]="true" [(ngModel)]="data.ChequeDate">
+                    </p-calendar>
+                     
+                    </div>
+                </div> -->
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6" *ngIf="data.PaymentType=='Mpos'">
+                    <label class="lables">MPOS Refrence No:<span style="color: red;">*</span> </label>
+                    <!-- <input type="text" class="form-control" placeholder="xxxx-xxxx-xx"
+                        [(ngModel)]="data.MPOSReferenceNo"> -->
+                    <input type="text" id="MPOS" class="form-control" name="MPOS" (input)="inputValidator($event)"
+                        [(ngModel)]="data.MPOSReferenceNo" placeholder="xxxx-xxxx-xx" required="1" />
+                </div>
+                <div class="col-md-6" *ngIf="data.PaymentType=='Mpos'">
+                    <label class="lables">Collect MPOS Amount:<span style="color: red;">*</span> </label>
+                    <input type="number" class="form-control" placeholder="Enter Total Amount" min="0"
+                        (input)="checkValue($event)" onkeydown="if(event.key==='.'){event.preventDefault();}"
+                        (keydown)="onKeyDown($event)" [(ngModel)]="data.CollectAmount">
+                </div>
+
+
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6" *ngIf="data.PaymentType=='UPI'">
+                    <label class="lables">UPI Refrence No:<span style="color: red;">*</span> </label>
+                    <input type="text" class="form-control" placeholder="xxxx-xxxx-xx" [(ngModel)]="data.UPIReferenceNo"
+                        (input)="inputValidator($event)">
+                </div>
+                <div class="col-md-6" *ngIf="data.PaymentType=='UPI'">
+                    <label class="lables">Collect UPI Amount:<span style="color: red;">*</span> </label>
+                    <input type="number" class="form-control" placeholder="Enter Total Amount" min="0"
+                        (input)="checkValue($event)" onkeydown="if(event.key==='.'){event.preventDefault();}"
+                        (keydown)="onKeyDown($event)" [(ngModel)]="data.CollectAmount">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6" *ngIf="data.PaymentType=='RTGS/NFT'">
+                    <label class="lables">Payment ReferenceNO:<span style="color: red;">*</span> </label>
+                    <input type="text" class="form-control" placeholder="xxxx-xxxx-xx" (input)="inputValidator($event)"
+                        [(ngModel)]="data.PaymentReferenceNO">
+                </div>
+                <div class="col-md-6" *ngIf="data.PaymentType=='RTGS/NFT'">
+                    <label class="lables">Collect Payment Amount:<span style="color: red;">*</span> </label>
+                    <input type="number" class="form-control" placeholder="Enter Total Amount" min="0"
+                        (input)="checkValue($event)" onkeydown="if(event.key==='.'){event.preventDefault();}"
+                        (keydown)="onKeyDown($event)" [(ngModel)]="data.CollectAmount">
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer d-flex p-0 justify-content-left mt-3">
+        <button type="button" class="btn btn-info" (click)="cancel()">Cancel</button>
+        <button type="button" class="btn btn-info" (click)="Addpayment(data,Denomination)">Save</button>
+    </div>
+</p-dialog>
+
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>

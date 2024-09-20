@@ -1,0 +1,110 @@
+<div class="col-xl-12 col-lg-12 tp">
+  <div class="card">
+    <div class="sk">
+      <div class="tooltip-clu" *ngIf="selectedPolygon">
+        <span>
+          {{selectedPolygon.warehouse}} - {{selectedPolygon.ClusterName ? selectedPolygon.ClusterName: ''}}
+        </span>
+        <table *ngFor="let rowData of selectedClusterInfo">
+          <thead>
+            <tr>
+              <!-- <th>Cluster Name</th> -->
+              <th>Load</th>
+              <th>Touch Point </th>
+              <th>No. Of Order</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <!-- <td>{{rowData.ClusterName}}</td> -->
+              <td>{{rowData.TotalWeight}}</td>
+              <td>{{rowData.CustomerCount}}</td>
+              <td>{{rowData.OrderCount}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="showMap">
+        <agm-map [latitude]="actualOrigin?actualOrigin.lat:lat" [longitude]="actualOrigin?actualOrigin.lng:lng"
+          [zoom]="zoom" [zoomControl]="true" [fullscreenControl]="fullscreenControl" [disableDefaultUI]="false"
+          [zoomControl]="false" [fullscreenControlOptions]="options" [style.height.px]="myInnerHeight">
+          <div *ngIf="clusterWarehouseWise">
+            <agm-polygon [fillColor]="item.fillColor" *ngFor="let item of clusterWarehouseWise.clusters; let i=index"
+              [polyDraggable]="false" [fillOpacity]="0.4" [paths]="item.clusterlatlng" [editable]="false"
+              strokeOpacity="0.1" (polyPathsChange)="onPolygonChange($event, item, i)"
+              (polyClick)="polyClicked(item, clusterWarehouseWise)">
+            </agm-polygon>
+            <div *ngIf="touchPoints && touchPoints.length>0">
+              <agm-marker *ngFor="let wp of touchPoints; let i = index;" label="{{i+1}}" [latitude]="wp.Lat"
+                [longitude]="wp.Lng">
+                <agm-info-window [disableAutoPan]="false" #infoWindow>
+                  <div>
+                    {{wp.Skcode}}
+                  </div>
+                </agm-info-window>
+              </agm-marker>
+              <agm-marker label="W" [latitude]="warehouse.Lat" [longitude]="warehouse.Lng">
+                <agm-info-window [disableAutoPan]="false" #infoWindow>
+                  <div>
+                    warehouse
+                  </div>
+                </agm-info-window>
+              </agm-marker>
+              <agm-direction [renderOptions]="renderOptions" [optimizeWaypoints]="false" [origin]="actualOrigin"
+                [destination]="actualDestination" [waypoints]="waypoints">
+              </agm-direction>
+            </div>
+
+          </div>
+        </agm-map>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="col-xl-12 col-lg-12">
+  <div class="ui-fluid shadow bg-white rounded table table-hover">
+    <p-table [value]="tripInfoList" #dt [globalFilterFields]="['ClusterName']">
+      <ng-template pTemplate="caption">
+        <div style="text-align: right">
+          <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+          <input type="text" pInputText size="50" placeholder="Global Filter"
+            (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Trip</th>
+          <!-- <th>Cluster Name</th> -->
+          <th>Vehicle Type</th>
+          <th>Load</th>
+          <th>Touch Point </th>
+          <th>Order Count </th>
+          <th>Estimate Time </th>
+          <th>Estimated Distance </th>
+          <th>Total Amount</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+        <tr (click)="getTouchPoints(rowData.TripNo)">
+          <td>
+            {{rowData.TripNo}}
+            <br>
+            {{rowData.IsFreezed ? 'Finalized': 'Not Finalized'}}
+
+          </td>
+          <td>{{rowData.ClusterName}}</td>
+          <td>{{rowData.VehicleType}}</td>
+          <td>{{rowData.TotalWeightInKg}}</td>
+          <td>{{rowData.CustomerCount}}</td>
+          <td>{{rowData.OrderCount}}</td>
+          <td>{{getHr(rowData)}}Hr : {{rowData.TotalTimeInMins%60}}Min</td>
+          <td>{{(rowData.TotalDistanceInMeter / 1000) | number:'1.0-2'}} Km</td>
+          <td>{{rowData.TotalAmount | number : '1.0-2'}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+  </div>
+</div>

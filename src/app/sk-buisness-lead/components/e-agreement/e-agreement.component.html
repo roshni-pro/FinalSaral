@@ -1,0 +1,66 @@
+
+<div class="card tp common-padding">
+    <div>
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp"> <b>SLA Document </b></div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl"></div>
+                </div>
+            </div>  <br>
+
+            <div class="row">
+                <div  class="col-2 text-left ml-1">
+                    <label for="">Download file</label>&nbsp;&nbsp;
+                    <span pTooltip="file not available "><i *ngIf="SlaDetails?.UrlSlaDocument==null || SlaDetails?.UrlSlaDocument==''"  class="pi pi-times"></i></span>
+                    <i *ngIf="SlaDetails?.UrlSlaDocument"  class="pi pi-check"></i> <br> 
+                    <img  pTooltip="Download" class="fa fa-mouse-pointer" width="40" height="40" (click)="DawnloadSampleFile()"  src="https://img.icons8.com/wired/64/download--v1.png" alt="download--v1"/>
+                </div>
+                <!-- <div class="col-2">Download file</div> -->
+    
+                <div  class="col-md-3 text-left ml-1"  *ngIf="(SlaDetails || !SlaDetails?.UrlSlaUploadSignedDocument) && !SlaDetails?.UrlSlaUploadSignedDocument">
+                    <label for="">Select file here</label> <br>
+                    <img pTooltip="Select" class="fa fa-mouse-pointer" width="40" height="40" (click)="openFilePicker()" src="https://img.icons8.com/wired/64/upload--v1.png" alt="upload--v1"/>
+                    <br>
+                    <div  ><span style="color:blue" id="file-name"></span>
+      
+                     </div>
+                </div>
+
+                <div *ngIf="hasSelectedFile" >
+                    <div class="col-2">
+                       
+                        <label for="">View selected SLA PDF</label>   <br>
+                        <div class="p-img" >
+                            <i class="fa fa-file-pdf-o" style="font-size:48px;color:blue" (click)="view()"></i>
+                            </div>
+                    </div>
+
+                </div> 
+                <div *ngIf="SlaDetails?.UrlSlaUploadSignedDocument" >
+                    <div class="col-2">
+                       
+                        <label for="">View uploaded SLA Document PDF</label> <br>
+                        <div class="p-img" >
+                            <i class="fa fa-file-pdf-o" style="font-size:48px;color:blue" (click)="view1()"></i>
+                            </div>
+                    </div>
+
+                </div> 
+                <div  class="col-2 text-left "><span id="file-name"></span>
+                    <button  type="submit" [disabled]="!hasSelectedFile" (click)="upoloadSLAdocuments()" class="btn btn-raised btn-raised btn-success" >
+                        Upload
+                      </button>&nbsp;&nbsp;
+                      <span *ngIf="!hasSelectedFile" style="color: #e83e8c;"></span>
+                 </div>
+            </div>
+    </div>
+</div>
+
+    
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,65 @@
+<h3 class=" heading mt-4 abb" style="text-align: center;">Beat Edit Config</h3>
+<div class="one">
+<div class="row mt-4 ">
+    <div class="col-md-12" >
+        <div class="container-fluid mt-2 " style="align-items: center;">
+            <div class="card-body" style="height: 50%;">
+                <div class="d-flex justify-content-between" >
+                    <div class="col-md-4">
+                        <br>
+                    </div>
+                    <div class="col-md-1" >
+                        <label class="headerStyle">Anytime</label><br>
+                    </div>
+                    <div class="col-md-3 ">
+                        <label class="headerStyle"> FromDate </label>    
+                    </div>
+                    <div class="col-md-3 ">
+                        <label class="headerStyle"> <b>Todate</b> </label>      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ng-container *ngFor="let data of BeatEditList;let i = index">
+        <!-- <div class="col-md-2"></div> -->
+        
+        <div class="col-md-12" >
+            <div class="container-fluid mt-2 " style="align-items: center;">
+                <div class="card-body" style="height: 50%;">
+                    <div class="d-flex justify-content-between" >
+                        <div class="col-md-4 text-center">
+                            <!-- <br> -->
+                            <label  style="font-size: 23px;  font-weight: 800;"><b>{{data.StoreName}}</b></label>
+                        </div>
+                        <div class="col-md-1" >
+                            <!-- <label ><b>Anytime</b></label><br> -->
+                            <p-inputSwitch id="cty" name="StoreNam" [(ngModel)]="data.IsAnytime"  (onChange)="OnToggleChange(data,i)" >   
+                            </p-inputSwitch>
+                        </div>
+                        <div class="col-md-3 ">
+                            <!-- <label > FromDate </label> -->
+                            <p-dropdown [options]="FromDate" placeholder="Select Date" optionLabel="name" optionValue="id" [(ngModel)]="data.FromDate1"  (onChange)="DateChange(data,i)" [disabled]="data.IsAnytime">                                
+                            </p-dropdown>
+                            
+                        </div>
+                        <div class="col-md-3 ">
+                            <!-- <label > <b>Todate</b> </label> -->
+                            <p-dropdown [options]="data.TodateList"  placeholder="Select Date"  optionLabel="name" optionValue="id"   [(ngModel)]="data.ToDate1"  [disabled]="data.IsAnytime">                   
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-md-2"></div> -->
+    </ng-container>
+
+</div> 
+
+</div>
+<br>
+<br>
+<div class="text-center"><button  class="btn btn-primary" (click)="Save()" >Save</button></div>
+ 
+<p-toast position="top-right"></p-toast>

@@ -1,0 +1,236 @@
+<section>
+  <div class="my-2 d-flex justify-content-between">
+    <div class=" header">
+      <div class="col-12">
+        <h3>Ledger Dashboard</h3>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-raised btn-raised btn-primary  pull-right pl mr-10"
+          (click)="downloadConsolidatedLadger()"> Supplier Report </button>
+      </div>
+    </div>
+  </div>
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover tre" *ngIf="ledgerList">
+    <div class="row" *ngFor="let ledger of ledgerList; let i=index;">
+      <div class="col-md-3 col-12">
+        <br *ngIf="i<1">
+        <h4 class="margin">{{ledger.ObjectType}}</h4>
+        <div class="card-content cr-cn">
+          <div class="card-body pt-2 pb-0">
+            <div class="media">
+              <div class="media-body white text-left c-1">
+              </div>
+              <div class="media-right white text-right">
+                <div>
+                  <h2><b></b></h2>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <h4 *ngIf="i<1">Debit</h4>
+        <div class="card bg-danger text-white">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{ledger.Debit |  number : '1.2-2'}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <h4 *ngIf="i<1">Credit</h4>
+        <div class="card bg-success text-white">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{ledger.Credit |  number : '1.2-2'}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-12">
+        <h4 *ngIf="i<1">Balance</h4>
+        <div class="card bg-secondary text-white">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{ledger.Balance |  number : '1.2-2'}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="row">
+      <div class="col-md-3 col-12">
+        <h4 class="margin">SUPPLIER</h4>
+        <div class="card-content cr-cn">
+          <div class="card-body pt-2 pb-0">
+            <div class="media">
+              <div class="media-body white text-left c-1">
+              </div>
+              <div class="media-right white text-right">
+                <div>
+                  <h2><b></b></h2>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+
+        <div class="card bg-success text-white">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{ledgerReportSupplier.Credit  |  number : '1.2-2'}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+
+        <div class="card bg-danger">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{ledgerReportSupplier.Debit  |  number : '1.2-2'}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+
+        <div class="card bg-secondary">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{ledgerReportSupplier.Balance  |  number : '1.2-2'}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-12">
+        <h4 class="margin">AGENT</h4>
+        <div class="card-content cr-cn">
+          <div class="card-body pt-2 pb-0">
+            <div class="media">
+              <div class="media-body white text-left c-1">
+
+              </div>
+              <div class="media-right white text-right">
+                <div>
+                  <h2><b></b></h2>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+
+        <div class="card bg-success">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{ledgerReportAgent.Credit  |  number : '1.2-2'}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+
+        <div class="card bg-danger">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{ledgerReportAgent.Debit  |  number : '1.2-2'}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <div class="card bg-secondary">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{ledgerReportAgent.Balance  | number : '1.2-2'}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div> -->
+  </div>

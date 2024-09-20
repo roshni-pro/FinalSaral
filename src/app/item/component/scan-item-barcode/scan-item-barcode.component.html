@@ -1,0 +1,83 @@
+<section id="Barcode">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="">
+            <h3 class="hddd"><b>Scan Barcode Update</b></h3>
+        </div>
+    </div>
+    <div class="card">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="warehouse">Warehouse</label>
+                <select type="text" id="warehouse" [(ngModel)]="WarehouseId"
+                    (change)="onChangeWarehouse()" class="form-control" name="warehouse">
+                    <option [ngValue]="null">Select Warehouse</option>
+                    <option *ngFor="let warehouse of warehouselist" [value]="warehouse.WarehouseId">
+                        {{warehouse.WarehouseName}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <p-card>
+                <div *ngIf="itemList && itemList.length>0">
+                    <p-table #dt [value]="itemList" [paginator]="true" [rows]="20" [globalFilterFields]="['ItemName','ItemNumber','NewEAN']" [scrollable]="true" width="100%" >
+                        <ng-template pTemplate="caption">
+                            <div style="text-align: right">        
+                                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <!-- <th>Id</th> -->
+                                <th>Name</th>
+                                <th>Number</th>
+                                <!-- <th>Existing Barcodes</th> -->
+                                <th>New Barcode</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-itemNew>
+                            <tr>
+                                <!-- <td>{{itemNew.Id}}</td> -->
+                                <td>{{itemNew.ItemName}}</td>
+                                <td>{{itemNew.ItemNumber}}</td>
+                                <!-- <td>{{itemNew.ExistingEAN}}</td> -->
+                                <td>{{itemNew.NewEAN}}</td>
+                                <td><img src="{{itemNew.ImageUrl}}"style="width:100px;height:120px" (click)="openImg(itemNew.ImageUrl)" /></td>
+                                <td>
+                                    <button class="btn btn-success ml-2 approed" (click)="onChangeStatus(itemNew,true)">Approved</button>
+                                    <button class="btn btn-primary ml-2 reject" (click)="onChangeStatus(itemNew,false)">Reject</button>
+                                    <!-- <span><a href="javascript:void(0)" class="approed" (click)="onChangeStatus(itemNew,true)">Approved</a></span>
+                                    <span> <a href="javascript:void(0)" class="reject" (click)="onChangeStatus(itemNew,false)">Reject</a></span> -->
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </p-card>
+        </div>
+    </div>
+</section>
+<div *ngIf="isopenPopup">
+<p-dialog [(visible)]="isopenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100" appendTo="body"
+    [style]="{width: '100vw', overflow: 'auto'}">
+    <p-header>Barcode Image</p-header>
+    <div class="ui-fluid txt">
+      <img src="{{BarcodeImageUrl}}" style="max-width:100%"/>
+    </div>
+</p-dialog>
+</div>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+  
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

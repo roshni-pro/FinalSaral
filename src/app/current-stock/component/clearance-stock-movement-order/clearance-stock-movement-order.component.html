@@ -1,0 +1,730 @@
+<div class="d-flex justify-content-between" style="margin-top: 50px;">
+    <div class="header">
+        <h3 class="m-2">Clearance Stock Movement Orders</h3>
+    </div>
+</div>
+
+
+<div class="card">
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-2">
+                <button label="Add" style="width:100%;" class="btn btn-primary" (click)="AddNew()">Add New
+                    Order</button>
+            </div>
+            <div class="col-3" *ngIf="WarehouseId">
+                <button label="Available" class="btn btn-raised btn-info" (click)="IsAvailable=true">Available Items
+                </button>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <label for="">Select Warehouse</label>
+                <p-dropdown [options]="Warehouselist" [filter]="true" [resetFilterOnHide]="true"
+                    [(ngModel)]="SelectedId" optionLabel="label" optionValue="value"
+                    placeholder="Select Warehouse" name="WareId" id="Warehouse"
+                    (onChange)="getId(SelectedId,'Id');"></p-dropdown>
+            </div>
+            <div class="col-2">
+                <label for="">Select Order Type</label>
+                <p-dropdown [options]="OrderTypes" [(ngModel)]="Types" optionLabel="TypeName" optionValue="TypeValue"
+                    placeholder="Select Order Type" name="TypeId" id="Type" (onChange)="getTypes(Types)"></p-dropdown>
+            </div>
+            <div class="col-2">
+                <label for="">Select Status</label>
+                <p-dropdown [options]="StatusTypes" [(ngModel)]="StatTypes" optionLabel="StatusName"
+                    optionValue="StatusValue" placeholder="Select Status Type" name="Status" id="StatusType"
+                    (onChange)="getStatus(StatTypes)"></p-dropdown>
+
+            </div>
+            <div class="col-2">
+                <label for="">Select Date Range</label><br>
+                <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [style]="{'width':'90%'}"
+                    [inputStyle]="{'width':'75%'}" [readonlyInput]="true" inputId="range"
+                    [showIcon]="true"></p-calendar>
+            </div>
+            <!-- [disabled]="!OrderList ||OrderList.length==0 || !rangeDates ||rangeDates.length==0" -->
+            <div class="col-3 pt-4">
+                <button class="btn btn-primary" (click)="getList()">Search</button>
+                <button type="button" class="btn btn-primary ml-1" (click)="Refresh()">Clear</button>
+                <button class="btn btn-primary ml-1" 
+                  [disabled]="!showBtn"
+                    (click)="Export()" >Export</button>
+            </div>
+        </div>
+
+
+
+        <div>
+            <p-table #dt [value]="OrderList" [tableStyle]="{'min-width': '50rem','margin-top':'10px'}"
+                [paginator]="true" [rows]="10" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" [lazy]="true">
+                <ng-template pTemplate="caption">
+                    <div class="row">
+                        <div class="col" style="margin-left:68%;">
+                            <span class="p-input-icon-left">
+                                <input type="text" name="search" [(ngModel)]="Keyword" pInputText id="search"
+                                    placeholder="Search by OrderId" style="border-radius:20px;margin-top:8px;">
+                                <button class="btn btn-primary ml-1 mt-1" (click)="getList()"
+                                    style="border-radius:20px;"><i class="pi pi-search"
+                                        style="margin-top:5px;"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Order Id</th>
+                        <!-- <th>StockType</th> -->
+                        <th>Ordertype</th>
+                        <th>WarehouseName</th>
+                        <th>CreatedDate</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Open</th>
+                        <th>Print</th>
+                        <th>History</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-order>
+                    <tr>
+                        <td>{{order.Id}}</td>
+                        <!-- <td>{{order.StockType}} StockType</td> -->
+                        <td>{{order.OrderType}}</td>
+                        <td>{{order.WarehouseName}}</td>
+                        <td>{{order.CreatedDate|date}}</td>
+                        <td
+                            [ngStyle]="order.Status=='Physically Moved' ?{'background-color':'#74B72E'}:{'background-color':'#CD6155'} &&
+                        order.Status=='Pending' ?{'background-color':'#FFEA95'}:{'background-color':'#CD6155'} && order.Status=='Approved' ?{'background-color':'#CEF2F8'}:{'background-color':'#CD6155'}">
+                            {{order.Status}}</td>
+                        <td>{{order.Amount|number: '1.0-2'}}</td>
+                        <td><button class="btn btn-raised btn-info" (click)="OpenDialog(order)">Open</button></td>
+                        <td><button class="btn btn-raised btn-info" (click)="Print(order);">Print</button></td>
+                        <td> <a class="view" (click)="getHistory(order.Id)">
+                                <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                            </a></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<!-- History -->
+<div *ngIf="OpenHistory">
+    <!-- [style]="{width: '60%',height: '50%', overflow: 'auto', top: '30px'}" -->
+    <p-dialog header="View History" [(visible)]="OpenHistory" [resizable]="false" positionTop="50" [modal]="true"
+        appendTo="body" [draggable]="false" [style]="{width: '60%', top: '30px'}">
+        <app-history [entity]="entity" [id]="Id"></app-history>
+        <button class="btn btn-raised btn-success  ml-1" (click)="OpenHistory=false"
+            style="float:right;">Cancel</button>
+    </p-dialog>
+</div>
+
+<!-- [style]="{width: '90%',top: '30px','overflow':'scroll','left': '309px !important', 'height': '90%'}" -->
+<!-- edit page -->
+<p-dialog [(visible)]="EditDialog" [resizable]="false" positionTop="50" [modal]="true" appendTo="body" showEffect="fade"
+    [draggable]="false" 
+    [style]="{width: '80%',top: '30px','max-height':'650px','overflow':'scroll'}">
+    <p-toast *ngIf="EditDialog && !IsAvailable"></p-toast>
+    <div class="card">
+        <div class="card-header">
+            <h4 style="margin-left:38%;">
+                <i class="fa fa-cubes" style="font-size: 2rem"></i> Order Details
+            </h4>
+        </div>
+
+    </div>
+
+
+
+    <div *ngIf="PopupData!=undefined || PopupData!=null">
+        <div class="row pl-2">
+            <div class="col">
+                <label for="">Order Number</label><br>
+                <input type="text" name="OrderNo" [disabled]="true" pInputText id="order" placeholder="Order Number"
+                    [(ngModel)]="Idd">
+            </div>
+            <div class="col">
+                <label for="">Warehouse</label>
+                <p-dropdown [options]="Warehouselist" [disabled]="true" [(ngModel)]="WareHouse"
+                    optionLabel="label" optionValue="value" placeholder="Select Warehouse"
+                    name="WarehouseId" id="Warehouse" ></p-dropdown>
+                    <!-- (onChange)="getId(order.WarehouseName,'Id')" -->
+            </div>
+            <div class="col">
+                <label for="">Status</label>
+                <p-dropdown [options]="StatusTypes" [disabled]="true" [(ngModel)]="Stats" optionLabel="StatusName"
+                    optionValue="StatusValue" placeholder="Select Status Type" name="Status"
+                    id="StatusType"></p-dropdown>
+            </div>
+            <div class="col">
+                <label for="">Request Date</label><br>
+                <input type="text" name="Requestdate" [disabled]="true" [(ngModel)]="Requestdate" pInputText
+                    id="request" placeholder="Request date">
+            </div>
+        </div>
+        <div class="row mt-2 pl-2">
+            <div class="col">
+                <label for="">Amount</label><br>
+                <input type="text" name="Amount" [(ngModel)]="Amount" [disabled]="true" pInputText id="amt"
+                    placeholder="Amount">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <p-table [value]="PopupData"  dataKey="ItemMultiMRPId" [tableStyle]="{'min-width': '65rem'}">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 5rem"></th>
+                            <!-- <th>OrderId</th> -->
+                            <th>StoreName</th>
+                            <th>Item Name </th>
+                            <th>ItemNumber</th>
+                            <th>ItemMultiMRPId</th>
+                            <th>MRP</th>
+                            <th>UnitPrice</th>
+                            <th>Amount</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-List let-expanded="expanded" let-i="rowIndex">
+                        <tr>
+                            <td>
+                                <button type="button" pButton pRipple [pRowToggler]="List"
+                                    class="p-button-text p-button-rounded p-button-plain"
+                                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                            </td>
+                            <!-- <td>{{List.ClearanceStockMovementOrderMasterId}}</td> -->
+                            <td>{{List.StoreName}} </td>
+                            <td>{{List.itemname}}</td>
+                            <td>{{List.ItemNumbr}}</td>
+                            <td>{{List.ItemMultiMRPId}}</td>
+                            <td>{{List.MRP}}</td>
+                            <td>{{List.UnitPrice}}</td>
+                            <td>{{List.Amount|number: '1.0-2'}}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="rowexpansion" let-List>
+                        <tr>
+                            <td colspan="8">
+                                <div>
+                                    <p-table [value]="List.GetCleNonSaleableMovementOrderDetailsDCs" dataKey="ItemMultiMRPId" [tableStyle]="{'min-width': '75rem'}">
+                                        <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 4rem" *ngIf="statusLabel=='Pending'"></th>
+                            <th>BatchCode</th>
+                            <th>BatchQuantity</th>
+                            <th>MFG-Date</th>
+                            <th>ExpiryDate</th>
+                            <th>CurrentShelfLife</th>
+                            <th>RemainShelfLifedays</th>
+                            <!-- <th>AvailableQuantity</th> -->
+                            <th>OrderQuantity</th>
+                            <!-- {{statusLabel}} -->
+                            <th *ngIf="statusLabel=='Pending'">Quantity</th>
+                            <th *ngIf="statusLabel=='Physically Moved' || statusLabel=='Rejected' || statusLabel=='Approved'">
+                                Quantity</th>
+                            <th *ngIf="statusLabel=='Pending'">Update </th>
+                            <th *ngIf="statusLabel=='Pending'"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-order>
+                        <tr  [ngStyle]="(order.Quantity > order.AvailableQuantity && statusLabel=='Pending') ?{'background-color':'#FF0000','color':'white'}:{'background-color':''}">
+                            <td *ngIf="statusLabel=='Pending'"><p-checkbox [(ngModel)]="order.checked" [binary]="true"
+                                    inputId="binary" disabled></p-checkbox></td>
+                            <td>{{order.BatchCode}}</td>
+                            <td>{{order.AvailableQuantity}}</td>
+                            <td>
+                                {{order.MFGDate|date}}
+                            </td>
+                            <td>
+                                {{order.ExpiryDate|date}}
+                            </td>
+                            <!-- <td>{{order.ItemMultiMRPId}}</td> -->
+                            <td>{{order.CurrentShelfLife}}</td>
+                            <td>{{order.RemainShelfLifedays}}</td>
+                            <!-- <td>{{order.AvailableQuantity}}</td> -->
+                            <td>
+                                {{order.OrderQuantity}}
+                            </td>
+                            <td *ngIf="statusLabel=='Pending'">
+                                <!-- <div *ngIf="statusLabel=='Pending'"> -->
+                                <input type="number" [(ngModel)]="order.qty" [max]="order.OrderQuantity" (input)="changeQty($event.target.value,order)" style="width:70%" >
+                            </td>
+                            <td *ngIf="statusLabel=='Physically Moved' || statusLabel=='Rejected' || statusLabel=='Approved'">
+                                {{order.Quantity}}
+                            </td>
+        
+                            <td *ngIf="statusLabel=='Pending'">
+                                <button (click)="AlterQuantity(List.ClearanceStockMovementOrderMasterId,order)" [disabled]="order.OrderQuantity==order.qty"
+                                    class="btn btn-primary mt-1"
+                                    [ngStyle]="(order.OrderQuantity==order.qty) ?{'background-color':'#ffc6ac'}:{'background-color':'#ff4500'}"
+                                    disabled>Update</button>
+                            </td>
+                            <!-- </div>  -->
+                            <!-- <div *ngIf="Stats.StatusName=='Physically Moved' && Stats.StatusName=='Rejected' && Stats.StatusName=='Approved'"> -->
+                            <!-- </div> -->
+                            <p-dialog #cd appendTo="body" header="Confirmation" [(visible)]="openEdit">
+                                <label> Are you sure want to continue? Changes will be saved </label>
+                                <p-footer>
+                                    <button type="button" class="btn btn-raised btn-danger mr-1"
+                                        (click)="AlterQuantity(List.ClearanceStockMovementOrderMasterId,order,'CnfTrue')">Yes</button>
+                                    <button type="button" class="btn btn-raised btn-primary mr-1"
+                                        (click)="AlterQuantity(List.ClearanceStockMovementOrderMasterId,order,'CnfFalse')">No</button>
+                                </p-footer>
+                            </p-dialog>
+                        </tr>
+                       
+                    </ng-template>
+        
+                </p-table>
+            </div>
+            </td>
+            </tr>
+            </ng-template>
+            </p-table>
+            </div>
+        </div>
+     
+
+
+   
+
+
+    <div class="row mt-1 pl-2" *ngIf="statusLabel=='Pending'">
+        <div class="col-3">
+            <label for="">Select Status</label>
+            <select class="form-control" name="Status" id="StatusType" [(ngModel)]="Stattype"
+                (change)="getstates(Stattype)" placeholder="select status">
+                <option value="" selected>--select--</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
+        <div class="col-4 mt-3 pt-1" *ngIf="Stattype=='Rejected'">
+            <input type="text" name="rejComments" pInputText id="Comments" placeholder="Add Comments Here!"
+                style="width:100%;" [(ngModel)]="Comments">
+        </div>
+
+        <p-dialog #cd appendTo="body" header="Confirmation" [(visible)]="openConfirm">
+            <label> Are you sure you want to continue with available batch qty for red item? </label>
+            <p-footer>
+                <button type="button" class="btn btn-raised btn-danger mr-1"
+                    (click)="EditData(Comments,'CnfTrue')">Yes</button>
+                <button type="button" class="btn btn-raised btn-primary mr-1"
+                    (click)="EditData(Comments,'CnfFalse')">No</button>
+            </p-footer>
+        </p-dialog>
+    </div>
+    <br>
+
+    <div class="row">
+        <div class="col-10"></div>
+        <div class="col-2">
+            <button label="Add" class="btn btn-primary" (click)="EditData(Comments)"
+                *ngIf="Stats && statusLabel!='Physically Moved' && statusLabel!='Rejected'  && statusLabel!='Approved'">Save</button>
+            <button label="Cancel" class="btn btn-success add ml-1"
+                (click)="EditDialog=false;Stattype=[];Comments=''">Cancel</button>
+        </div>
+    </div>
+    </div>
+</p-dialog>
+
+
+<!-- [style]="{width: '70%', top: '30px','height': '50%'}" -->
+<!-- Add new Order'overflow':'scroll' , -->
+<p-dialog  [(visible)]="displayBasic" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+    showEffect="fade" [draggable]="false" 
+    [style]="{width: '70%',top: '30px','max-height':'800px','overflow':'scroll'}">
+    <p-toast *ngIf="displayBasic && !EditDialog  && !IsAvailable"></p-toast>
+    <div class="card">
+        <div class="card-header">
+            <h4 style="margin-left:38%;">
+                <i class="fa fa-cubes" style="font-size: 2rem"></i> Add New Order
+            </h4>
+        </div>
+
+    </div>
+    <div>
+        <div class="row">
+            <div class="col">
+                <label for="">Select Warehouse</label>
+                <p-dropdown [options]="addWarehouselist" [filter]="true" [resetFilterOnHide]="true"
+                    [disabled]="disableField" [(ngModel)]="Selected" optionLabel="WarehouseName"
+                    optionValue="WarehouseId" placeholder="Select Warehouse" name="WareId" id="Warehouse"
+                    (onChange)="getId(Selected,'Add');BuyerList=[];selectedtype=[]; "></p-dropdown>
+            </div>
+            <div class="col">
+                <label for="">Select Order Type</label>
+                <p-dropdown [options]="addTypes" [(ngModel)]="selectedtype" [disabled]="disableField"
+                    optionLabel="TypeName" optionValue="TypeId" placeholder="Select Order Type" name="TypeId" id="Type"
+                    (onChange)="getTypes(selectedtype);getbuyerList();"></p-dropdown>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label for="">Select Buyer</label>
+                <p-dropdown [options]="BuyerList" [filter]="true" [resetFilterOnHide]="true" [(ngModel)]="SelectedBuyer"
+                    [disabled]="disableField" optionLabel="BuyerName" placeholder="Select Buyer"
+                    (onChange)="getItembyBuyer()"></p-dropdown>
+            </div>
+
+        </div>
+
+        <br><br><br>
+        <!-- rowexpand -->
+
+        <p-table [value]="ItemList" [tableStyle]="{'min-width': '60rem'}" dataKey="ItemMultiMRPId">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 5rem"></th>
+                    <th>Index</th>
+                    <th>Item Number</th>
+                    <th>Item Name </th>
+                    <th>Multi MrpId</th>
+                    <th>Unit Price</th>
+                    <th>Total Quantity</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-List let-expanded="expanded" let-i="rowIndex">
+                <tr>
+                    <td>
+                        <button type="button" pButton pRipple [pRowToggler]="List"
+                            class="p-button-text p-button-rounded p-button-plain"
+                            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                    </td>
+                    <td>{{i+1}}</td>
+                    <td>{{List.ItemNumber}} </td>
+                    <td>{{List.ItemName}}</td>
+                    <td>{{List.ItemMultiMRPId}}</td>
+                    <td>{{List.UnitPrice}}</td>
+                    <td>{{List.TotalQuantity}}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="rowexpansion" let-List>
+                <tr>
+                    <td colspan="7">
+                        <div class="p-3">
+                            <p-table [value]="List.GetClearanceOrderItemDetailDCs" dataKey="ItemMultiMRPId">
+                                <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 4rem"></th>
+                    <th>BatchCode</th>
+                    <th>ItemMultiMRPId</th>
+                    <th>AvailableQuantity</th>
+                    <th>CurrentShelfLife</th>
+                    <th>RemainShelfLifeDays</th>
+                    <th>Quantity</th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-order>
+                <tr>
+                    <td><p-checkbox [(ngModel)]="order.Checked" [binary]="true" inputId="binary"></p-checkbox></td>
+                    <td>{{order.BatchCode}}</td>
+                    <td>{{order.ItemMultiMRPId}}</td>
+                    <td>{{order.AvailableQuantity}}</td>
+                    <td>{{order.CurrentShelfLife}}</td>
+                    <td>{{order.RemainShelfLifeDays}}</td>
+                    <td> <input type="number" [(ngModel)]="order.quantity"> </td>
+                </tr>
+            </ng-template>
+
+        </p-table>
+    </div>
+    </td>
+    </tr>
+    </ng-template>
+    </p-table>
+
+
+    <div class="row mt-3">
+        <div class="col-9"></div>
+        <div class="col-3">
+            <button label="Save" class="btn btn-primary btn-info" (click)="SaveItem()"
+                [disabled]="ItemList && ItemList.length==0" disabled>Save</button>
+            <button label="Cancel" class="btn btn-success add ml-1 " (click)="Cancel();selectedCode=''">Cancel</button>
+        </div>
+    </div>
+    </div>
+</p-dialog>
+<p-toast *ngIf="!displayBasic && !EditDialog  && !IsAvailable"></p-toast>
+
+
+
+<!-- History  -->
+<p-dialog [(visible)]="historyHide" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+    [draggable]="false" [style]="{width: '83%',height: '90%', overflow: 'auto', top: '30px'}">
+    <p-header>
+        <div>
+            <h2
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                Movement Orders List</h2>
+        </div>
+    </p-header>
+
+    <div class="position-relative" style="padding:0px 15px;">
+        <form class="ovelFieldForm form" name="form" #MovementForm="ngForm">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-raised btn-raised btn-primary" printSectionId="print-section"
+                        ngxPrint>Print</button>
+                    <button label="Cancel" class="btn btn-success add"
+                        (click)="historyHide=false;EditDialog=false;">Cancel</button>
+
+                </div>
+            </div>
+        </form>
+        <form class="ovelFieldForm form form-inline" name="form" #orderForm="ngForm"
+            style="position: relative;z-index: 9;">
+            <div id="print-section" style="padding:10px 15px; position: relative;z-index: 9;">
+                <div class="waterMark"
+                    style="width: 50%;position: absolute;top: 41%;left: 45%;transform: skew(23deg, -36deg);height: 390px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+                    <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+                </div>
+                <div style="position: absolute; right: 15px; margin-top: 40px;">
+                    <img src="assets/img/logo/Logo.png" width="200px">
+                </div>
+                <div class="row" style="border-bottom: 1px solid #eee;">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div style="display: inline-block;width: 20%;vertical-align: top; font-weight: 600;">
+                                <b>OrderId</b><br>
+                                <b>WarehouseName</b><br>
+                                <b>CreatedDate</b><br>
+                                <b>Status</b><br>
+                                <b>Amount</b><br>
+                            </div>
+                            <div style="display: inline-block;width:10%;vertical-align: top; font-weight: 600;">
+                                <b> :</b><br>
+                                <b>:</b><br>
+                                <b>: </b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                            </div>
+                            <div style="display: inline-block;width: 25%;vertical-align: top;">
+                                {{printId}} <br />
+                                {{printWareHouse}} <br />
+                                {{printRequestdate}} <br />
+                                {{printStats}} <br />
+                                {{printAmount|number : '1.1-2'}} <br />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h2 style="text-align: center;"><b><u>Order List </u></b></h2>
+                <div class="borderTable">
+                    <p-table #dt [value]="PrintData" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <ng-template pTemplate="header">
+                            <!-- style="width:100%;" padding:5px 15px; margin: 0px; min-width:150px;  -->
+                            <tr>
+
+                                <th style="text-align: center; border:1px solid #000 !important">
+                                    Item Code</th>
+                                <th style="text-align: center; border:1px solid #000 !important">
+                                    Item Name</th>
+                                <th style="text-align: center; border:1px solid #000 !important">
+                                    MRPId </th>
+                                <th style="text-align: center; border:1px solid #000 !important ">
+                                    BatchCode</th>
+                                <th style="text-align: center; border:1px solid #000 !important ">
+                                    MFGDate</th>
+                                <th style="text-align: center; border:1px solid #000 !important ">
+                                    ExpiryDate</th>
+
+                                <th style="text-align: center; border:1px solid #000 !important ">
+                                    BatchQuantity</th>
+                                <th style="text-align: center; border:1px solid #000 !important ">
+                                    Quantity</th>
+
+                                <th style="text-align: center; border:1px solid #000 !important ">
+                                    ShelfLife</th>
+                                <th style="text-align: center; border:1px solid #000 !important ">
+                                    Unit Price</th>
+                                <th style="text-align: center; border:1px solid #000 !important ">
+                                    MRP</th>
+                                <th style="text-align: center; border:1px solid #000 !important ">
+                                    Amount</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir>
+                            <tr>
+                                <!--  [ngStyle]="(ir.Quantity > ir.BatchQuantity)?{'background-color': 'red'}:{'background-color':'white'}" -->
+                                <!-- <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.StoreName}}</td> -->
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.ItemNumber}}</td>
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.itemname}}</td>
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.ItemMultiMRPId}}
+                                </td>
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.BatchCode}}
+                                </td>
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.MFGDate|date}}
+                                </td>
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.ExpiryDate|date}}
+                                </td>
+
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.BatchQuantity}}
+                                </td>
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.Quantity}}</td>
+
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.ShelfLife}}
+                                </td>
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.UnitPrice|number: '1.0-2'}}
+                                </td>
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.MRP|number: '1.0-2'}}
+                                </td>
+                                <td style="text-align: center;border:1px solid #000 !important">
+                                    {{ir.Amount|number: '1.0-2'}}
+                                </td>
+
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+    <p-footer></p-footer>
+</p-dialog>
+
+
+<!-- Available Items -->
+<p-dialog header="Available Items" [(visible)]="IsAvailable" [resizable]="false" positionTop="50" [modal]="true"
+    appendTo="body" [draggable]="false" [style]="{width: '85%', top: '30px','overflow':'scroll' ,'max-height': '80%'}">
+    <p-toast *ngIf="!displayBasic && !EditDialog  && !IsAvailable"></p-toast>
+    <button class="btn btn-primary" style="margin-left:79%;" [disabled]="availableData &&  availableData.length==0"
+        (click)="openPrint=true;getAll()" disabled>Print All</button>
+    <!-- exportfile() -->
+    <button (click)="exportType=true" class="btn btn-primary" style="margin-left:5px;"
+        [disabled]="availableData &&  availableData.length==0" disabled>Export</button>
+    <button class="btn btn-primary" (click)="IsAvailable=false" style="margin-left:5px;">Cancel</button>
+
+    <p-dialog [(visible)]="exportType" [modal]="true" appendTo="body">
+        <div class="card">
+            <div class="card-header">
+                <h4>
+                    Download File For:
+                </h4>
+            </div>
+        </div>
+        <button class="btn btn-primary" (click)="exportfile('Clearance')">Clearance</button>
+        <button class="btn btn-primary" style="margin-left:42%;" (click)="exportfile('Nonsellable')">Non
+            sellable</button>
+    </p-dialog>
+
+    <div class="row">
+        <div class="col" *ngIf="IsAvailable">
+            <p-table #dt1 [value]="availableData" [tableStyle]="{'min-width': '50rem'}" [paginator]="true" [rows]="10"
+                [scrollable]="true" [lazy]="true" (onLazyLoad)="loader($event)" [totalRecords]="total">
+                <!-- [globalFilterFields]="['Itemname']" -->
+                <!-- <ng-template pTemplate="caption">
+            <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')" placeholder="Search keyword" />
+            </span>
+        </ng-template> -->
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>BuyerName</th>
+                        <th>StockType</th>
+                        <th>Itemname</th>
+                        <th>Available Qty</th>
+                        <th>BatchCode</th>
+                        <th>ShelfLife</th>
+                        <th>MRP</th>
+                        <th>ItemMultiMRPId</th>
+                        <th>MFGDate</th>
+                        <th>ExpiryDate</th>
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-List>
+                    <tr>
+                        <td>{{List.BuyerName}}</td>
+                        <td
+                            [ngStyle]="List.StockType=='CL' ?{'background-color':'#74B72E'}:{'background-color':'#F7DC6F '}">
+                            {{List.StockType}}</td>
+                        <td>{{List.itemname}}</td>
+                        <td>{{List.AvailableQty}}</td>
+                        <td>{{List.BatchCode}}</td>
+                        <td>{{List.ShelfLife}}</td>
+                        <td>{{List.MRP}}</td>
+                        <td>{{List.ItemMultiMRPId}}</td>
+                        <td>{{List.MFGDate |date:'short'}}</td>
+                        <td>{{List.ExpiryDate|date:'short'}}</td>
+
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+            <div class="row" *ngIf="availableData &&  availableData.length==0">
+                <h4 style="margin-left: 45%"><b>No Data Found</b></h4>
+            </div>
+        </div>
+    </div>
+    <p-dialog header="All Available Items" [(visible)]="openPrint" [resizable]="false" positionTop="50" [modal]="true"
+        appendTo="body" [draggable]="false"
+        [style]="{width: '85%', top: '30px','overflow':'scroll' ,'max-height': '80%'}">
+        <button class="btn btn-primary" style="margin-left:87%;" printSectionId="print-section" ngxPrint>Print</button>
+        <button class="btn btn-primary" (click)="openPrint=false;skip=0;take=10;Available()"
+            style="margin-left:5px;">Cancel</button>
+        <div class="row" id="print-section">
+            <div class="col" *ngIf="openPrint">
+                <p-table [value]="availableData" [tableStyle]="{'min-width': '50rem'}" [scrollable]="true">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>StockType</th>
+                            <th>itemname</th>
+                            <th>AvailableQty</th>
+                            <th>BatchCode</th>
+                            <th>ShelfLife</th>
+                            <th>MRP</th>
+                            <th>ItemMultiMRPId</th>
+                            <th>MFGDate</th>
+                            <th>ExpiryDate</th>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-List>
+                        <tr>
+                            <td
+                                [ngStyle]="List.StockType=='CL' ?{'background-color':'#74B72E'}:{'background-color':'#F7DC6F '}">
+                                {{List.StockType}}</td>
+                            <td>{{List.itemname}}</td>
+                            <td>{{List.AvailableQty}}</td>
+                            <td>{{List.BatchCode}}</td>
+                            <td>{{List.ShelfLife|number: '1.0-2'}}</td>
+                            <td>{{List.MRP|number: '1.0-2'}}</td>
+                            <td>{{List.ItemMultiMRPId}}</td>
+                            <td>{{List.MFGDate |date:'short'}}</td>
+                            <td>{{List.ExpiryDate|date:'short'}}</td>
+
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </p-dialog>
+</p-dialog>
+
+
+<!-- <p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner> -->

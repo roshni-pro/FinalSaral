@@ -1,0 +1,208 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+<section id="customer-master">
+  <div class="my-1 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="m-2">Customer Survey</h3>     
+    </div>
+    <div class="backbtn">
+        <button type="button" name="back" class="btn btn-raised btn-raised btn-primary" (click)="backtopage()">back</button>  
+    </div>
+  </div>
+
+  <div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center" >   
+      <!-- <h5 class="m-0">Search By</h5> -->
+      <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+    <div id="search-content p-2">
+      <div class="row ">
+        <div class="col-sm-12">
+          <form class="form" #ledgerForm="ngForm">
+            <div class="row p-2 px-5">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="projectinput">Warehouse:</label>
+                  <br>
+                  <select id="des" name="warehouse" class="form-control" [(ngModel)]="data.WarehouseId">
+                    <option value="" selected>--select--</option>
+                    <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                      {{warehouse.WarehouseName}} {{warehouse.CityName}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="startdate"><b>Start Date: </b></label>
+                  <p-calendar id="sdate" name="start" [(ngModel)]="data.StartDate" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="1900:2030" placeholder="Start Date"></p-calendar>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label for="enddate"><b>End Date: </b></label>
+                <p-calendar id="edate" name="end" [(ngModel)]="data.EndDate" placeholder="End Date"
+                  [monthNavigator]="true" [yearNavigator]="true" yearRange="1900:2030"></p-calendar>
+              </div>  
+              <span > 
+                  <div class="col-md-10">
+                      <label for="surveylistproject">Survey Name:</label><br>
+                      <input type="text" id="ab" class="form-control" name="SurveyName" style="width: 400px;" [(ngModel)]="data.SurveyName" [disabled]="isActive">
+                  </div>     
+              </span> 
+              <!-- <span *ngIf="isEnabled">       
+              <div class="col-md-4">
+                <label for="surveylistproject">Survey Name:</label>
+                <select id="des" name="SurveyName" class="form-control" style="width: 400px;" [(ngModel)]="data.SurveyId" disabled>
+                  <option *ngFor="let survey of surveyList" [ngValue]="survey.SurveyId">
+                    {{survey.SurveyName}}
+                  </option>
+                </select>
+              </div>   
+              </span>       -->
+              <br>
+              <div class="col-md-5">
+                <label for="input">Question:</label>
+                <input id="dess" type="text" name="question" class="form-control" [(ngModel)]="data.QueName"
+                  placeholder="Enter Question?" />
+                  <div *ngIf="isFormInvalid">
+                      <code>Question is required</code>
+                    </div>
+              </div>
+              <br>
+              <div class="col-md-4" style="margin-top: 28px;">
+                <button type="button" name="add" class="btn btn-raised btn-raised btn-primary"
+                  (click)="addQuestion(data)">Add</button>  
+                <span *ngIf="isActive">          
+                <button class="btn btn-raised btn-raised btn-primary pull-right" style="margin-right: 20px;"
+                  (click)="UpdateServeyQuestion(Survey)">Submit Questions</button>    
+                </span> 
+                <span *ngIf="!isActive">          
+                    <button class="btn btn-raised btn-raised btn-primary pull-right" style="margin-right: 20px;"
+                      (click)="Saveservey(Survey)" [disabled]="!isEnabled">Submit Questions</button>    
+                </span>                                     
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+      <p-table #dt  [value]="Questionlist" [lazy]="true" dataKey="Id" [scrollable]="false" cdkDropList (cdkDropListDropped)="onDrop($event)"
+           scrollHeight="65vh" text-align: center>
+        <ng-template pTemplate="body" let-pageData let-rowIndex="rowIndex">
+          <!-- let-rowIndex="rowIndex"         -->
+          <div cdkDrag>  
+          <tr>
+            <td class="pageStyle">
+              <b>{{pageData.QuestionId}} . {{pageData.QueName}} </b>&nbsp;
+              <label for="input" style="padding-left: 180px;"><b>isRequired : </b></label>&nbsp;&nbsp;
+              <p-checkbox name="{{pageData.SurveyId}}" value="{{pageData.isRequired}}" [(ngModel)]="pageData.isRequired" binary="true"></p-checkbox>&nbsp;&nbsp;&nbsp;&nbsp;
+              <label for="input"><b> Point :  </b></label>&nbsp;
+              <input type="number" name="point" value="Point" [(ngModel)]="pageData.Point" style="width: 60px;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        
+            </td>
+            <td class="m1">                 
+              <div>
+                <button type="button" class="btn btn-raised btn-primary"
+                  (click)="editQuestion(pageData.QuestionId)">Edit</button> &nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-raised btn-warning"
+                  (click)="delete(pageData.QuestionId)">Delete</button>&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;                 
+              </div>
+          </td> 
+          </tr>
+          <tr>
+            <td>           
+              <div class="col-md-8">               
+                <label for="input"><b>Answer: </b></label><br>
+                <input id="des" type="text" name="Answer" class="form-control" [(ngModel)]="pageData.Answer"
+                  placeholder="Enter Answer" />   <br>                
+                  <button type="button" class="btn btn-raised btn-primary" (click)="addAnswer(pageData)">Add
+                      Answer</button>         
+              </div>                          
+            </td>  
+                                
+          </tr>         
+          <div>
+            <p-table #dt  [value]="pageData.AnswerList" [lazy]="true" dataKey="pageData.QuestionId" cdkDropList (cdkDropListDropped)="onanswerDrop($event)"
+              [scrollable]="false" scrollHeight="65vh" text-align: center>
+              <ng-template pTemplate="body" let-Data let-columns="columns" let-expanded="expanded" let-rowIndex="rowIndex+1">
+                  <div cdkDrag>  
+                <tr>
+                  <td class="">
+                    <div class="ui-g">
+                      <div id="{{Data.QuestionId}}" class="answerStyle ui-g-12">
+                        <p-radioButton name="{{Data.QuestionId}}" value="{{rowIndex}}" label="{{rowIndex}} - {{Data.Answer}}" [(ngModel)]="pageData.RightAnsId"></p-radioButton>&nbsp;
+                        <!-- <button name="delete" class="btn1 btn" (click)="deleteAnswer(pageData)">Delete</button> -->
+                      </div>
+                      <br>
+                    </div>
+                  </td>
+                </tr>
+            </div>
+              </ng-template>
+            </p-table>
+          </div>
+          </div> 
+        </ng-template>
+      </p-table>
+      <div *ngIf="Questionlist != null">
+        <div class="row">
+          <div class="col-md-6">
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+  </div>
+  <!-- <div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-1 px-2 text-primary"> -->
+  <!-- <div> 
+  <button class="btn btn-raised btn-raised btn-primary pull-right" style="margin-right: 40px;" (click)="Saveservey(Survey)" [disabled]="!isEnabled">Save</button>
+</div> -->
+  <!-- </div>
+</div> -->
+
+
+  <div *ngIf="selectedQue">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+      <p-header>
+        Edit Question
+      </p-header>
+      <div class="ui-fluid">
+        <form #storyForm="ngForm">
+          <div class="ui-g">
+            <div class="ui-g-6">
+              <div class="ui-g">
+                <div class="col-md-8">
+                  <label for="input">Question:</label>
+                  <input id="des" type="text" name="question" class="form-control" [(ngModel)]="selectedQue.QueName"
+                    placeholder="Enter Question?" />
+                    <div *ngIf="isFormInvalid">
+                      <code>Question is required</code>
+                    </div>
+                </div>
+
+
+              </div>
+            </div>
+            <div class="ui-g-12">
+              <div class="bdry"> </div>
+              <button class="btn btn-raised btn-raised btn-primary pull-right"
+                (click)="SaveeditQuestion(storyForm, titleInput)">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </p-dialog>
+  </div>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  <div class="row" *ngIf="isResultFalse">
+    <h4 style="margin-left: 25px"><b>No Data Found</b></h4>
+  </div>

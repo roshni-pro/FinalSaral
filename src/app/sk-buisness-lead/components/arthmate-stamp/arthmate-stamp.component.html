@@ -1,0 +1,207 @@
+<p-toast></p-toast>
+<div class="col-12">
+    <div class="mt-4 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="">Arthmate Stamp Uploader</h3>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="card shadow">
+        <div class="card-content p-2">
+            <div class="row">
+                <div class="col-3">
+                    <label>Stamp Type</label>
+                    <p-dropdown [options]="stampType" optionLabel="label" [(ngModel)]="selectedStampType"
+                        placeholder="Select Stamp Type"></p-dropdown>
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary mt-4" (click)="Search()">Search</button>
+                </div>
+                <div class="col-6 text-right">
+                    <button class="btn btn mt-4" style="background-color: green;color: white;"
+                        (click)="AddNewStamp()">Add New Stamp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="card shadow">
+        <div class="card-content p-2">
+            <p-table [value]="arthmateStampData" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="10">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>User For</th>
+                        <th>PartnerName</th>
+                        <th>Stamp Amount</th>
+                        <th>Date Of Utilisation</th>
+                        <th>Stamp Paper No.</th>
+                        <th>LeadName</th>
+                        <th>Mobile No.</th>
+                        <th>SkCode</th>
+                        <th>Show Image</th>
+                        <th>Edit</th>
+
+                        <th>Action</th>
+                        <th>History</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data>
+                    <tr>
+                        <td>{{data.UsedFor}}</td>
+                        <td>{{data.PartnerName}}</td>
+                        <td>{{data.StampAmount}}</td>
+                        <td>{{data.DateOfUtilisation}}</td>
+                        <td>{{data.StampPaperNo}}</td>
+                        <td>{{data.LeadName}}</td>
+                        <td>{{data.MobileNo}}</td>
+                        <td>{{data.SkCode}}</td>
+                        <td><button class="btn btn" style="background-color: dodgerblue;color: whitesmoke;"
+                                (click)="View(data.StampUrl)">View</button></td>
+                        <td>
+                            <i class="pi pi-pencil ml-2" (click)="onEdit(data)"
+                                style="font-size: 2rem;color:orangered;"></i>
+                        </td>
+
+                        <td>
+                            <i class="pi pi-trash ml-2" style="font-size: 2rem;color:orangered;"
+                                (click)="onDelete(data)"></i>
+                        </td>
+                        <td >
+                            <div> <button  class="btn btn-primary mr-2" (click)="historyDetails(data)">History</button></div>
+                        </td> 
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <h5 class="mt-2" style="font-weight: 600;">Data Not Found</h5>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+<p-dialog header="Add New Stamp" [(visible)]="showNewStamp" [style]="{ width: '70%', height: '60%' }" appendTo="body" [blockScroll]="true"
+    [modal]="true" [draggable]="false" (onHide)="onSavecancel()">
+    <!-- <div class="card shadow"> -->
+    <div class="row m-1">
+        <div class="col-3">
+            <label>Used For:</label><span style="color: red;">*</span>
+            <input class="form-control" [(ngModel)]="UsedFor" disabled>
+        </div>
+        <div class="col-2">
+            <label>Partner Name:</label><span style="color: red;">*</span>
+            <input class="form-control" [(ngModel)]="PartnerName" disabled>
+        </div>
+        <div class="col-2">
+            <label>Stamp Amount:</label><span style="color: red;">*</span>
+            <input class="form-control" type="number" [(ngModel)]="stampAmount" disabled>
+        </div>
+        <div class="col-2">
+            <label>Purpose:</label><span style="color: red;">*</span>
+            <input class="form-control" [(ngModel)]="purpose" disabled>
+        </div>
+        <div class="col-2">
+            <label>Stamp Paper No.:</label><span style="color: red;">*</span>
+            <input class="form-control" type="number" [(ngModel)]="stampPaperNo">
+        </div>
+    </div>
+    <div class="row m-1">
+
+
+        <div class="col-4">
+            <label>Upload Image</label><span style="color: red;">*</span><br>
+            <input type="file" #fileRef id="fileRef" accept="image/*" (change)="Upload($event)" />
+
+            <br>
+            <img  *ngIf="uploadedImage" [src]="uploadedImage" id="uploadedImage" (click)="openLargeImage(uploadedImage)"
+             style="width:400px!important; height: 200px !important;" />
+        </div>
+        <div class="col-6 mt-4">
+
+        </div>
+        <div class="col-3 mt-4">
+
+
+            <button class="btn btn-succces" (click)="OnSave()">Save</button>&nbsp;
+            <!-- <button class="btn btn-primary" (click)="Add(uploadCustom)">Add</button> -->
+            <button class="btn btn-warning" (click)="OnClear()">Clear</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 text-right">
+        </div>
+    </div>
+</p-dialog>
+
+<!-- <p-dialog header="View" appendTo="body"
+[modal]="true" [draggable]="false" [(visible)]="isPopupOpen" [style]="{ width: 'auto', height: 'auto' }" (onHide)="cancel()" >
+    <img [src]="showImg" alt="Uploaded Image" width="700" height="700">
+    <br><br>
+    <div style="justify-content:space-between;">
+        <button class="btn btn-primary" (click)="download(showImg)">Download</button>
+    </div>
+</p-dialog> -->
+
+
+
+
+<p-dialog header="Edit" appendTo="body"
+[modal]="true" [draggable]="false" [(visible)]="editDisplay" [style]="{ width: '60vw', height: '40%' }" [blockScroll]="true" (onHide)="editCancel()">
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <label>Stamp Paper No.:</label><span style="color: red;">*</span>
+            <input class="form-control" type="number" [(ngModel)]="newstampPaperNo">
+        </div>
+
+        <div class="col-4">
+            <label>Upload Image</label><span style="color: red;">*</span><br>
+
+            <input type="file" #fileRef1 accept="image/*" (change)="Upload($event)" />
+
+            <br>
+            <img  *ngIf="uploadedImage" [src]="uploadedImage" (click)="openLargeImage(uploadedImage)"
+            style="width:400px!important; height: 200px !important;"  />
+
+
+        </div>
+        <div class="col-4">
+            <label></label><br>
+
+            <button class="btn btn-primary" (click)="editRowData()">Edit</button>
+        </div>
+    </div>
+
+    </div>
+</p-dialog>
+
+
+  <div id="history" *ngIf="historyDisplay" >
+    <p-dialog [(visible)]="historyDisplay" [resizable]="true" [blockScroll]="true" [draggable]="false"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+      <p-header>
+        History
+      </p-header>
+      <app-history [entity]="entity" [id]="rowData.Id" ></app-history>
+     
+  </p-dialog>
+
+<p-dialog header="ViewImage" 
+[modal]="true" [draggable]="false" [(visible)]="showImageAdd" >
+<img  [src]="uploadedImage" style="max-width: 100%; max-height: 500px;" />
+
+</p-dialog>
+
+<!-- <p-confirmDialog #cd [style]="{width: '45vw'}" appendTo="body">
+    <ng-template pTemplate="header">
+        <h3>Confirmation</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog> -->
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

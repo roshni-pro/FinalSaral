@@ -1,0 +1,146 @@
+<div class="row" *ngIf="!openPopup">
+    <div class="col-12">
+        <button (click)="addCoupon()">Add New Coupon</button>
+        &nbsp;&nbsp;
+        <a href="javascript:void(0);" (click)="updateShowingList(1)">
+            <span *ngIf="showingListStatus == 0">
+                <i class="fa fa-check-square-o fa-2x" aria-hidden="true"></i>
+                <span class="aa">&nbsp; &nbsp;Active</span>
+            </span>
+            <span *ngIf="showingListStatus == 1">
+                <i class="fa fa-square-o fa-2x" aria-hidden="true"></i>
+                <span class="aa">&nbsp; &nbsp;ALL</span>
+            </span>
+            <span *ngIf="showingListStatus == 2">
+                <i class="fa fa-window-close-o fa-2x" aria-hidden="true"></i>
+                <span class="aa">&nbsp; &nbsp;Deactive | Expired | Used</span>
+            </span>
+        </a>
+        <button type="button" class="btn btn-raised btn-raised btn-primary" style="margin-left: 590px;"
+            (click)="exportCouponlist()">
+            Export
+        </button> &nbsp;
+    </div>
+    <div class="col-12">
+        <table class="table table-responsive-sm text-center" *ngIf="couponCodesList && couponCodesList.length > 0">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>#</th>
+                    <th>Coupon Code</th>
+                    <th>
+                        Expiry Date
+                    </th>
+                    <th>Min Order Amount</th>
+                    <th>Coupon Amount</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr [ngClass]="{'deleted-x': !code.IsActive}" *ngFor="let code of couponCodesList; let i = index;">
+                    <td>
+                        <div class="dele" *ngIf="!code.IsActive">
+                            <i class="fa fa-window-close-o fa-lg" aria-hidden="true"></i>
+                        </div>
+                        <div class="notdele" *ngIf="code.IsActive">
+                            <i class="fa fa-check-square-o fa-lg" aria-hidden="true"></i>
+                        </div>
+                    </td>
+                    <td>{{i+1}} &nbsp;
+
+                    </td>
+                    <td>{{code.CouponCode}}</td>
+                    <td>{{code.ExpiryDate? (code.ExpiryDate| date: 'dd/MM/yyyy'): 'N/A'}}</td>
+                    <td>{{code.MinOrderAmount}}</td>
+                    <td>{{code.CouponAmount}}</td>
+                    <td>{{code.Status}}</td>
+                    <td>
+                        <div *ngIf="code.IsEditable">
+                            <a href="javascript:void(0);" (click)="delete(code)">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                        <div *ngIf="!code.IsEditable">
+                            N/A
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+<div class="ui-fluid" *ngIf="openPopup">
+    <form #addCouponForm="ngForm">
+        <div class="ui-g">
+            <div class="ui-g-6">
+                <div class="form-group">
+                    <label for="couponCodeIp">Coupon Code</label>
+                    <input type="text" name="couponCodeIp" class="form-control" id="couponCodeIp"
+                        [(ngModel)]="selectedCouponCode.CouponCode" [disabled]="true" #couponCodeIp="ngModel">
+
+                    <!-- <code>*</code> -->
+                </div>
+            </div>
+            <div class="ui-g-6">
+                <div class="form-group">
+                    <label for="name">Expiry Date (optional)</label>
+                    <p-calendar [(ngModel)]="selectedCouponCode.ExpiryDate" [showIcon]="true" appendTo="body"
+                        [minDate]="minDate" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050"
+                        id="expiry" name="expiry" dateFormat="dd/mm/yy" #expiry="ngModel"></p-calendar>
+
+                    <code *ngIf="!expiry.valid && isInvalid">
+                        Enter code
+                    </code>
+                    <!-- <code>*</code> -->
+                </div>
+            </div>
+            <div class="ui-g-6">
+                <div class="form-group">
+                    <label for="name">Coupon Amount <code>*</code></label>
+                    <input type="number" name="couponAmount" class="form-control" id="couponAmount"
+                        [(ngModel)]="selectedCouponCode.CouponAmount" (ngModelChange)="onCouponAmountChange()"
+                        placeholder="Coupon Amount" required="1" #couponAmount="ngModel">
+                    <code *ngIf="!couponAmount.valid && isInvalid">
+                        Enter coupon amount
+                    </code>
+                    <!-- <code>*</code> -->
+                </div>
+            </div>
+
+            <div class="ui-g-6">
+                <div class="form-group">
+                    <label for="name">Minimum Order Amount <code>*</code></label>
+                    <input type="number" name="minOrderAmount" class="form-control" id="minOrderAmount"
+                        [(ngModel)]="selectedCouponCode.MinOrderAmount" placeholder="Minimum order Amount" required="1"
+                        #minOrderAmount="ngModel">
+                    <code *ngIf="!minOrderAmount.valid && isInvalid">
+                        Enter minimum order amount
+                    </code>
+                    <!-- <code>*</code> -->
+                </div>
+            </div>
+            <div class="col-md-12 right" style="text-align: right;">
+                <button class="btn btn-raised btn-raised btn-primary"
+                    (click)="cancel()">Cancel</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-raised btn-raised btn-primary" (click)="saveNewCoupon(addCouponForm)">Save New
+                    Coupon</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>

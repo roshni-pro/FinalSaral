@@ -1,0 +1,124 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div *ngIf="!isView">
+<div class="card">
+    <div class="card-header">
+        <div class="header">Customer Profile</div>
+    </div>
+    <div class="row mr_left">
+        <div class="col-md-2">
+            <label>Warehouse</label>
+            <p-dropdown [options]="warehouseList" name="warehouse" optionLabel="label" 
+            (onChange)="getClusterlist(WarehouseId)" [(ngModel)]="WarehouseId" [filter]="true" placeholder="Select warehouse Name">
+            </p-dropdown>
+        </div>
+        <div class="col-md-2">
+            <label>Cluster</label>
+            <p-multiSelect [options]="clusterList" [(ngModel)]="selectedCluster" optionLabel="ClusterName">
+            </p-multiSelect>
+            <!-- <select id="cluster" name="cluster" [(ngModel)]="customerProfileSearchDC.ClusterId" class="form-control"
+              #cluster="ngModel" >
+               <option value="">Select Cluster </option>
+               <option value="0">All</option>
+               <option *ngFor="let cl of clusterList;" [value]="cl.ClusterId">{{cl.ClusterName}}
+               </option>
+            </select> -->
+        </div>
+        <div class="col-md-2">
+            <label>Search Keyword</label>
+            <input type="text" id="Search" [(ngModel)]="customerProfileSearchDC.Keyword"
+            placeholder="Enter Customer Name,Skcode,Cluster"
+            name="search" class="form-control">
+        </div>
+        <div class="col-md-5">
+            <button class="btn btn-primary btn_tp" id="search" name="search" (click)="onSearch()">Search</button>
+            <button class="btn btn-success btn_tp" id="export" name="export" (click)="onExport()">Export</button>
+            <button class="btn btn-info btn_tp" id="exportall" name="exportall" (click)="onExportAll()">Export All</button>
+        </div>
+        <!-- <div class="col-md-2">
+            <button class="btn btn-primary" id="export" name="export" (click)="onExport()">Export</button>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary" id="exportall" name="exportall" (click)="onExportAll()">Export All</button>
+        </div> -->
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <p-table #dt [value]="customerProfileList" [paginator]="true" [rows]="20" [scrollable]="true"
+            [lazy]="true"  [totalRecords]="totalcount" (onLazyLoad)="load($event)" 
+            scrollHeight="130vh" text-align: center>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Customer</th>
+                    <th>Skcode</th>
+                    <th>Cluster</th>
+                    <th>Total Orders</th>
+                    <th>Total Call</th>
+                    <th>Total Visits</th>
+                    <th>AOV</th>
+                    <th>TOV</th>
+                    <th>Physical Visit</th>
+                    <!-- <th *ngIf="isTelleyCaller">IsTellyCaller</th> -->
+                    <th>Details</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-cust>
+                <tr>
+                    <td>{{cust.CustomerName}}</td>
+                    <td>{{cust.Skcode}}</td>
+                    <td>{{cust.ClusterName}}</td>
+                    <td>{{cust.TotalOrder}}({{cust.LastOrderBeforeDays}} a days ago)</td>
+                    <td>{{cust.TotalCalls}}</td>
+                    <td>{{cust.TotalVisit}}</td>
+                    <td>{{cust.AOV | number : '1.0-2'}}</td>
+                    <td>{{cust.TOV}}</td>
+                    <td>
+                        <div *ngIf="cust.IsPhysicalVisit">Yes</div>
+                        <div *ngIf="!cust.IsPhysicalVisit">No</div>
+                        <p-inputSwitch name="IsActive" *ngIf="isTelleyCaller" [(ngModel)]="cust.IsPhysicalVisit" (ngModelChange)="IsPhysicalVisit(cust)">
+                        </p-inputSwitch>
+                    </td>
+                    <!-- <td *ngIf="isTelleyCaller">
+                        <p-inputSwitch name="isTellyCaller" *ngIf="isTelleyCaller" [(ngModel)]="cust.isTelleyCaller" (ngModelChange)="onClickTellyCaller(cust)">
+                        </p-inputSwitch>
+                    </td> -->
+                    <td>
+                        <a (click)="onClickView(cust)" href="javascript:void(0)" style="margin-right: 70px;">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<div *ngIf="isOpenTellyCallerPopup">
+    <p-dialog [(visible)]="isOpenTellyCallerPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '50%',height: '50%'}">
+    <p-header>
+      Get OTP
+    </p-header>
+    <div class="row">
+        <div class="col-md-3">
+            <label>OrderId</label>
+            <input id="orderId" name="orderId" [(ngModel)]="OrderId" class="form-control">
+        </div>
+        <div class="col-md-3" style="top:2em;">
+            <button class="btn btn-primary" (click)="onGetotp(OrderId)">Get OTP</button>
+        </div>
+    </div>
+  </p-dialog>
+</div>
+</div>
+<div *ngIf="isView">
+    <app-customer-profile [customerData]="customerData" (isdetailsclose)="onCloseProfile()"></app-customer-profile>
+</div>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

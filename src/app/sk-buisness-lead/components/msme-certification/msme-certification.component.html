@@ -1,0 +1,210 @@
+<div class="card tp common-padding">
+    <div *ngIf="MsMeDataDcs != null && MsMeDataDcs?.DocumentName != null">
+        <!-- <div class="text-right">
+            <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" (click)="Onhistory()" >history</button>
+        </div> -->
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12 text-right">
+            <div class="ml cl">
+                <!-- <button type="button" class="btn btn-raised btn-danger mr-1" (click)="onClickPostArthmate()">Post Arthmate</button> -->
+            </div>
+        </div>
+        </div> 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Document Name</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{MsMeDataDcs?.DocumentName}}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Business Name</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{MsMeDataDcs?.Msme_Bus_Name}}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Business Type</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{MsMeDataDcs?.Msme_Bus_Type}}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Vintage</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    {{MsMeDataDcs?.Msme_VintageDays}}
+                </div>
+            </div>
+        </div>
+
+        <div class="row" *ngIf="!isVerified  && !isRejected">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Upload Udyam Certificate</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img" *ngIf="MsMeDataDcs && MsMeDataDcs.FrontFileUrl">
+                            <app-image-upload type="Product" [frontImagePath]="MsMeDataDcs.FrontFileUrl"
+                                [isShowMyInputLogo]="true" [SequenceName]="'BankStatement'"
+                                [uploadImagePage]="MsMeDataDcs.FrontFileUrl" [isRequired]="true" [showUploadedImage]="false"
+                                (detectchange)="onUploadFrontimage($event)">
+                                <div class="uploadImgShow" uploadLogo>
+                                    <i class="fa fa-file-pdf-o" style="font-size:30px;color:red"></i>
+                                </div>
+                            </app-image-upload>
+                        </div>
+                        <div class="p-img-nt" *ngIf="!MsMeDataDcs || (MsMeDataDcs && !MsMeDataDcs.FrontFileUrl)">
+                            <app-image-upload type="Product" id="imageValid" [isShowMyInputLogo]="true"
+                                [isRequired]="true" [showUploadedImage]="false" [SequenceName]="'BankStatement'"
+                                [uploadImagePage]="'MsMeDataDcs'" (detectchange)="onUploadFrontimage($event)">
+                                <div uploadLogo>
+                                    <i class="fa fa-file-pdf-o" style="font-size:30px;color:red"></i>
+                                    <div style="color: #E9754E;">Click Upload Udyam Certificate</div>
+                                    <div>Supports JPG,JPEG,PNG</div>
+                                </div>
+                            </app-image-upload>           
+                        </div>
+                    </div>
+                <!-- <img src="{{baseURL}}{{MsMeDataDcs?.FrontFileUrl}}"> -->
+                </div>
+            </div>
+        </div>  
+        <div class="row" *ngIf="MsMeDataDcs && MsMeDataDcs.FrontFileUrl">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">View MSME Certificate PDF</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img" *ngIf="MsMeDataDcs && MsMeDataDcs.FrontFileUrl">
+                           <i class="fa fa-file-pdf-o" style="font-size:48px;color:blue" (click)="OpenPdf()"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Status</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <span *ngIf="isVerified" style="color:green;">
+                        Verified
+                    </span>
+                    <span *ngIf="isRejected" style="color:red;">
+                        Rejected
+                    </span>
+                </div>
+            </div>
+        </div>  
+        <!-- <div class="row" *ngIf="!isVerified">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Back Image</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img" *ngIf="MsMeDataDcs && MsMeDataDcs.BackFileUrl">
+                            <app-image-upload type="Product" [frontImagePath]="MsMeDataDcs.BackFileUrl"
+                                [isShowMyInputLogo]="true" [SequenceName]="'Aadhar'"
+                                [uploadImagePage]="MsMeDataDcs.BackFileUrl" [isRequired]="true" [showUploadedImage]="false"
+                                (detectchange)="onUploadBackimage($event)">
+                                <div class="uploadImgShow" uploadLogo>
+                                  <img src="{{baseURL}}{{MsMeDataDcs?.BackFileUrl}}" class="button-img">
+                                </div>
+                            </app-image-upload>
+                        </div>
+                        <div class="p-img-nt" *ngIf="!MsMeDataDcs || (MsMeDataDcs && !MsMeDataDcs.BackFileUrl)">
+                            <app-image-upload type="Product" id="imageValid" [isShowMyInputLogo]="true"
+                                [isRequired]="true" [showUploadedImage]="false" [SequenceName]="'Aadhar'"
+                                [uploadImagePage]="'MsMeDataDcs'" (detectchange)="onUploadBackimage($event)">
+                                <div uploadLogo>
+                                  <img src="assets/img/gallery.svg" class="button-logo">
+                                    <div style="color: #E9754E;">Click Back Image</div>
+                                    <div>Supports JPG,JPEG,PNG</div>
+                                </div>
+                            </app-image-upload>           
+                        </div>
+                    </div>
+            </div>
+        </div>     
+        </div> -->
+        <!-- <div class="row" *ngIf="isVerified || !isRejected">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Front Image</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img">
+                                <div class="uploadImgShow" uploadLogo>
+                                    <i class="fa fa-file-pdf-o" style="font-size:48px;color:blue" (click)="OpenPdf()"></i>
+                                  <img src="{{baseURL}}{{MsMeDataDcs?.FrontFileUrl}}" class="button-img">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  -->
+        <!-- *ngIf="!isVerified  && !isRejected && rowData?.SequenceNo == 7" -->
+        <!-- && !isVerified && !isRejected -->
+        <div class="row" *ngIf="!loanPosted">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+            <div class="ml cl" style="float: right;">
+                <i class="fa fa-times-circle" style="font-size:30px;color:red;float: right;margin-left: .5em;" (click)="onRejectDoc()"></i>
+                <i class="fa fa-check-circle" style="font-size:30px;color:green;float: right;" (click)="onApproved()"></i>
+                <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" *ngIf="isUpload" (click)="onUpdate()">Update</button>
+            </div>
+        </div>
+        </div> 
+        <!-- isVerified || isRejected -->
+        <div class="row" *ngIf="loanPosted">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+            <div class="ml cl">
+                <i class="fa fa-times-circle" *ngIf="isRejected" style="font-size:30px;color:red;float: right;margin-left: .5em;"></i>
+                <i class="fa fa-check-circle" *ngIf="isVerified" style="font-size:30px;color:green;float: right;"></i>                
+            </div>
+        </div>
+        </div> 
+    <div class="no-Txt" *ngIf="MsMeDataDcs == null">* No Record Found</div>
+</div>
+<div class="no-Txt" *ngIf="MsMeDataDcs == null || MsMeDataDcs?.DocumentName == null">* No Record Found</div>
+</div>
+
+
+<p-dialog [(visible)]="isRejectDoc" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: 'auto', overflow: 'auto'}">
+    <p-header>Reason For Reject</p-header>
+    <div class="ui-fluid">
+      <input type="text" id="_selfiecomment" name="_selfiecomment" class="form-control" [(ngModel)]="Comment" placeholder="Enter Reason For Reject">
+    </div>
+    <p-footer>
+        <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" (click)="onReject()">Reject</button>
+    </p-footer>
+</p-dialog>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

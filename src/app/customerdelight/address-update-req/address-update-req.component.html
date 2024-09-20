@@ -1,0 +1,156 @@
+<div class="card">
+    <div class="card-header">
+        <h3> Address Update Request</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+
+            <div class="col-sm-2">
+                <label for="">Warehouse:</label>
+                <select name="" value="" class="form-control col md-3" [(ngModel)]="filterdata.WarehouseId">
+                    <option Value="0">--Select--</option>
+                    <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WarehouseId">{{item.WarehouseName}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <label for="">Search By Key</label>
+                <input type="text" name="txtsrch" class="form-control" [(ngModel)]="filterdata.Keyword">
+            </div>
+            <div class="col-sm-2">
+                <label for="FromDate">Status</label>
+                <select name="" value="" class="form-control col md-3" [(ngModel)]="filterdata.status">
+                    <option [ngValue]="-1">--Select--</option>
+                    <option [ngValue]="0">Pending</option>
+                    <option [ngValue]="1">Approved</option>
+                    <option [ngValue]="2">Reject</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <label for="FromDate">FromDate</label>
+                <input type="datetime-local" id="fromDate" name="FromDate" class="form-control"
+                    [ngModel]="filterdata.FromDate | date:'yyyy-MM-ddTHH:mm'"
+                    (ngModelChange)="filterdata.FromDate  = $event" />
+            </div>
+            <div class="col-sm-2">
+                <label for="FromDate">ToDate</label>
+                <input type="datetime-local" id="toDate" name="ToDate" class="form-control"
+                    [ngModel]="filterdata.ToDate | date:'yyyy-MM-ddTHH:mm'"
+                    (ngModelChange)="filterdata.ToDate = $event" />
+            </div>
+            <div class="col-md-2 mt">
+                <input type="button" id="btnSrch" (click)="Search()" class="btn btn-raised btn-info" value="Search">&nbsp;
+                <input type="button" id="btnExport" (click)="Export()" class="btn btn-raised btn-warning" value="Export">
+            </div>
+        </div>
+        <div class="row">
+            <p-table #dt [value]="PageList" [lazy]="true" [paginator]="true" [rows]="10" [scrollable]="true"
+                [totalRecords]="totalRecords" (onLazyLoad)="load($event)" scrollHeight="130vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Sr.No.</th>
+                        <th>Name</th>
+                        <th>SKCode</th>
+                        <th>ShopName</th>
+                        <th>MobileNo</th>
+                        <th>Status</th>
+                        <th>Created Date</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowIndex="rowIndex" let-item>
+                    <tr style="width: 100px;">
+                        <td>{{rowIndex+1}}</td>
+                        <td>{{item.Name}}</td>
+                        <td>{{item.SkCode}}</td>
+                        <td>{{item.ShopName}}</td>
+                        <td>{{item.MobileNo}}</td>
+                        <td>{{item.status}}</td>
+                        <td>{{item.CreatedDate | date:'medium'}}</td>
+                        <td>
+                            <input type="button" id="btnEdit" class="btn btn-raised btn-info " value="Detail"
+                                (click)="EditAddress(item)">
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+    </div>
+</div>
+
+<div *ngIf="isOpenPopup">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="10"
+        [style]="{width: '80%',height: '70%',left: '323px'}">
+        <p-header>
+            <div>
+                <h3>Address Update Request</h3>
+            </div>
+        </p-header>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <label for="">SkCode</label>
+                <input type="text" id="txtSkCode" class="form-control" disabled [(ngModel)]="updateData.SkCode">
+            </div>
+            <div class="col-sm-4">
+                <label for="">Name</label>
+                <input type="text" id="txtName" class="form-control" disabled [(ngModel)]="updateData.Name">
+            </div>
+            <div class="col-sm-4">
+                <label for="">ShopName</label>
+                <input type="text" id="txtshopname" class="form-control" disabled [(ngModel)]="updateData.ShopName">
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-sm-4">
+                <label for="">MobileNo</label>
+                <input type="text" id="txtMobileNo" class="form-control" disabled [(ngModel)]="updateData.MobileNo">
+            </div>
+            <div class="col-sm-4">
+                <label for="">Address</label>
+                <input type="text" id="txtAddress" class="form-control" disabled [(ngModel)]="updateData.Address">
+            </div>
+            <div class="col-sm-4">
+                <label for="">CurrentLat</label>
+                <input type="text" id="txtCurrentLat" class="form-control" disabled [(ngModel)]="updateData.CurrentLat">
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-sm-4">
+                <label for="">CurrentLng</label>
+                <input type="text" id="txtCurrentLng" class="form-control" disabled [(ngModel)]="updateData.CurrentLng">
+            </div>
+            <div class="col-sm-4">
+                <label for="">UpdateedAddress</label>
+                <input type="text" id="UpdateedAddress" class="form-control" disabled [(ngModel)]="updateData.UpdateedAddress">
+            </div>
+            <div class="col-sm-4">
+                <label for="">UpdatedLat</label>
+                <input type="text" id="UpdatedLat" class="form-control" disabled [(ngModel)]="updateData.UpdatedLat">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <label for="">UpdatedLng</label>
+                <input type="text" id="UpdatedLng" class="form-control" disabled [(ngModel)]="updateData.UpdatedLng">
+            </div>
+            <div class="col-sm-4">
+                <label for="FromDate">Status</label>
+                <select name="" value="" class="form-control col md-3" [disabled]="IsDisabled" [(ngModel)]="updateData.Status">
+                    <!-- <option [ngValue]="">--Select--</option> -->
+                    <option [ngValue]="0">Pending</option>
+                    <option [ngValue]="1">Approved</option>
+                    <option [ngValue]="2">Reject</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2 mt">
+                <input type="button" id="btnSrch" (click)="Update()" *ngIf="IsUpdateBtn" class="btn btn-raised btn-info" value="Update">
+            </div>
+        </div>
+    </p-dialog>
+</div>

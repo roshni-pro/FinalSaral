@@ -1,0 +1,157 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form " name="form" #groupEditForm="ngForm">
+                <!-- <div class="form-body"> -->
+                <h4 class="form-section"><p class="ft-user"></p> Add GULLAK</h4>
+                <div class="row col-md-12" *ngIf="input">
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="Warehouse"> SelectHub:</label>
+                      <!-- <div class="col-md-6"> -->
+                      <select id="Warehouse" name="WarehouseName" class="form-control" [(ngModel)]="input.WarehouseId"
+                        #WarehouseId="ngModel" required="1">
+                        <option *ngFor="let WareHouse of warehousess" [ngValue]="WareHouse.WarehouseId">
+                          {{WareHouse.CityName}} -{{WareHouse.WarehouseName}}
+                        </option>
+                      </select>
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !WarehouseId.valid && WarehouseId.errors.required">
+                        <code>Warehouse Name is required</code>
+                      </div>
+                    </div>
+                  </div>
+                
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="projectinput3">From Date</label>
+                      <br>
+                      <p-calendar name="startDateInput" [(ngModel)]="input.StartDate" [showIcon]="true" 
+                        name="fromDate" ></p-calendar>
+                      
+                    </div>
+                    
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="projectinput4">To Date</label>
+                      <br>
+                      <p-calendar name="endDateInput" [(ngModel)]="input.EndDate" [showIcon]="true" name="toDate"
+                        ></p-calendar>
+                     
+                    </div>
+                  </div>
+               
+                  
+                  
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="aname">Amount From</label>
+                      <!-- <div class="col-md-6"> -->
+                      <input type="text" id="aname" class="form-control" name="aname" placeholder="Enter AmountFrom "
+                        [(ngModel)]="input.AmountFrom" maxlength="100" required="1" #AmountFrom="ngModel" />
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !AmountFrom.valid && AmountFrom.errors.required">
+                        <code>AmountFrom is required</code>
+                      </div>
+                      <div *ngIf="isInvalid && !AmountFrom.valid && AmountFrom.errors.minlength">
+                        <code>Minlength 2</code>
+                      </div>
+                      <div *ngIf="isInvalid && !AmountFrom.valid && AmountFrom.errors.maxlength">
+                        <code>Maxlength 2</code>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="aname">Amount To</label>
+                      <!-- <div class="col-md-6"> -->
+                      <input type="text" id="cname" class="form-control" name="cname" placeholder="Enter Amount To "
+                        [(ngModel)]="input.AmountTo" maxlength="100" required="1" #AmountTo="ngModel" />
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !AmountTo.valid && AmountTo.errors.required">
+                        <code>AmountTo is required</code>
+                      </div>
+                      <div *ngIf="isInvalid && !AmountTo.valid && AmountTo.errors.minlength">
+                        <code>Minlength 2</code>
+                      </div>
+                      <div *ngIf="isInvalid && !AmountTo.valid && AmountTo.errors.maxlength">
+                        <code>Maxlength 2</code>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="aname">Maximum CashBack Amount</label>
+                      <!-- <div class="col-md-6"> -->
+                      <input type="number" id="fname" class="form-control" name="fname" placeholder="Enter Maximum CashBack Amount"
+                        [(ngModel)]="input.MaximumCashBackAmount" maxlength="100" required="1" #MaximumCashBackAmount="ngModel" />
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !MaximumCashBackAmount.valid && MaximumCashBackAmount.errors.required">
+                        <code>Maximum CashBack Amount is required</code>
+                      </div>
+                      <div *ngIf="isInvalid && !MaximumCashBackAmount.valid && MaximumCashBackAmount.errors.minlength">
+                        <code>Minlength 2</code>
+                      </div>
+                      <div *ngIf="isInvalid && !MaximumCashBackAmount.valid && MaximumCashBackAmount.errors.maxlength">
+                        <code>Maxlength 2</code>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="aname">CashBack Percent</label>
+                      <!-- <div class="col-md-6"> -->
+                      <input type="number" id="dname" class="form-control" name="dname" placeholder="Enter CashBackPercent "
+                        [(ngModel)]="input.CashBackPercent" maxlength="100" required="1" #CashBackPercent="ngModel" />
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !CashBackPercent.valid && CashBackPercent.errors.required">
+                        <code>Combo Name is required</code>
+                      </div>
+                      <div *ngIf="isInvalid && !CashBackPercent.valid && CashBackPercent.errors.minlength">
+                        <code>Minlength 2</code>
+                      </div>
+                      <div *ngIf="isInvalid && !CashBackPercent.valid && CashBackPercent.errors.maxlength">
+                        <code>Maxlength 2</code>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-actions right col-sm-12 p-3">
+                    <button type="button" class="btn btn-raised btn-warning mr-1" *ngIf="!hideCancelButton" (click)="onCancel()">
+                      Cancel
+                    </button>
+                    <button type="button" class="btn btn-raised btn-primary"
+                      (click)="save(input,groupEditForm)">
+                      Save
+                    </button>
+                  </div>
+                </div>
+               
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </section>
+</div>

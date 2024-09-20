@@ -1,0 +1,50 @@
+<div>
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Repayment Upload</h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-sm-6 col-lg-4 mt-2">
+            <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+                <code>*</code>
+            </p-fileUpload>
+        </div>
+        <div class="col"></div>
+        <div class="col-md-3 text-right">
+            <button class="btn btn-primary mt-4" type="submit" (click)="Export()">Export</button>
+        </div>
+        <!-- <div class="col-md-3 text-right">
+            <button class=" btn mt-4" type="submit" (click)="downloadSample()" style=" background-color: #119150;color: white;">Download Sample</button>
+        </div> -->
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <!-- <div *ngIf="!data">
+        <h3>Please Enter Correct Info or No Data Found </h3>
+</div> -->
+<p-table [value]="uploadedData" [scrollable]="true" [paginator]="true" [rows]="10" >
+        <ng-template pTemplate="header">
+            <tr class="text-center">
+                <th style="width: 20px;">Sr.No</th>
+                <th style="width: 100px;">File Name</th>
+                <th style="width: 60px;">Date Of Upload</th>
+                <th style="width: 100px;">Status By Arthmate</th>
+                <th style="width: 100px;">Upload By</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body"  let-item let-rowIndex="rowIndex">
+            <tr>
+                <td style="width: 20px;">{{rowIndex+1}}</td>
+                <td style="width: 100px;">{{item.Filename}} </td>
+                <td style="width: 60px;">{{item.DateOfupload | date: 'dd/MM/yyyy'}}</td>
+                <td style="width: 100px;">{{item.ArthmateStatusMsg}}</td>
+                <td style="width: 100px;">{{item.CreatedBy}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+</div>

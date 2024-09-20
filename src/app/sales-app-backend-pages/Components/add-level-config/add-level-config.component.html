@@ -1,0 +1,127 @@
+<p-toast></p-toast>
+<div style="display: inline-flex;">
+    <i class="pi pi-angle-double-left mt-3" style="font-size: 1.5em" (click)="Back()" style="cursor: pointer;"></i>
+</div>
+<div style="display: inline-flex;">
+    <h3 class="lab">Add Condition</h3><br>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 bg-white rounded table table-hover">
+    <div class="row">
+    <div class="col mb-2">
+        <label><b>Bucket Number From:</b></label>
+        <input [disabled]="!OpenCheck" type="number" class="form-control" [(ngModel)]="selectedFromBucketNo">
+    </div>    
+    <div class="col mb-2">
+        <label><b>Bucket Number To:</b></label>
+        <input [disabled]="!OpenCheck" type="number" class="form-control" [(ngModel)]="selectedToBucketNo">
+    </div>
+    <div class="col mb-2 mt-3" *ngIf="OpenCheck">
+        <button class="btn btn"  style="background-color:#ff4500d1 ;color: white;" (click)="Check()">Check</button>
+    </div> 
+    <div class="col mb-2" *ngIf="!OpenCheck">
+        <button class="btn btn mt-3"  style="background-color:#0e6889d1 ;color: white;" (click)="clear()">Clear</button>
+        </div>
+        <div class="col mb-2 mt-3" *ngIf="!OpenCheck">
+           <h5 style="    font-weight: bold;
+           color: black;">Streak Duration : {{streakDuration}}</h5> 
+        </div> 
+    </div>
+</div>
+<div class="container-fluid" *ngIf="!OpenCheck">
+    <div class="row">
+        <div class="col mb-2">
+            <label><b>Select Condition</b></label>
+            <p-dropdown placeholder="Select Condition" [options]="levalConditionsList" optionLabel="Name" [(ngModel)]="selectedCondition" (onChange)="OnChangeCondition()" ></p-dropdown>
+        </div>
+        <div class="col mb-2">
+            <label for=""><b>Reward Type</b></label><br>
+            <p-dropdown   placeholder="Select Reward Type" optionLabel="RewardType" [options]="rewardList"  [(ngModel)]="streakRewardType"></p-dropdown>
+           </div>
+           <div class="col mb-2" *ngIf="showStreak">
+            <label for="" ><b> Choose Reward Type</b></label><br>
+            <p-dropdown placeholder="Select Reward" [options]="rewardType" optionLabel="Name" [(ngModel)]="streakRewardSection"></p-dropdown>
+           </div>
+           <div class="col mb-2">
+            <label for=""><b>Reward</b></label><br>
+            <input type="number" class="form-control" [(ngModel)]="streakBlank">
+           </div>
+           <div class="col mb-3" *ngIf="showIndividual">
+            <label for=""><b>Level:</b></label><br>
+           <input type="number" class="form-control" [(ngModel)]="IndLeval">
+        </div>
+         <div class="col mb-2" *ngIf="showStreak">
+            <label for=""><b> Streak Count:</b></label><br>
+           <input type="number" class="form-control" [(ngModel)]="streakCount">
+       </div>
+       <div class="col mb-2" *ngIf="showOutOff">
+        <label for=""><b>Total Streak Bucket:</b></label><br>
+       <input type="number" class="form-control" [(ngModel)]="totalStrakBucket">
+   </div>
+   <div class="col mb-2" *ngIf="showOutOff">
+    <label for=""><b>Out of:</b></label><br>
+   <!-- <input type="number" class="form-control" [(ngModel)]="outofNew"> -->
+   <input type="number" disabled class="form-control" [(ngModel)]="outOffBucket">
+</div>
+       <div class="col mb-2">
+        <button class="btn btn-primary mt-3" (click)="AddCondition()">Add</button>
+       </div>
+       </div>
+</div>
+<div class="row card mt-2" *ngIf="conditionDataList.length>0">
+    <p-table [value]="conditionDataList">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width:1rem"></th>
+                <th>BucketNoFrom</th>
+                <th>BucketNoTo</th>
+                <th> Type</th>
+                <th>Condition</th>
+                <th>Reward</th> 
+                 <th>RewardTypeName</th>
+                 <th></th>
+                <!-- <th>Choose Reward Name</th>
+                <th>StreakCount </th>
+                <th>Level</th>
+                <th>Total Streak Bucket</th>
+                <th>Out of</th> -->
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td style="width:1rem"></td>
+                <td>{{item.BucketNoFrom}}</td>
+                <td>{{item.BucketNoTo}}</td>
+                <td>{{item.StreakConditionTypeName}}</td>
+                <td>{{item.Condition}}</td>
+                <td >{{item.Reward}}</td>
+                <td>{{item.RewardTypeName}}</td>
+                <td><i class="pi pi-trash ml-2" (click)="Delete(item)"style="font-size: 2rem;color:orangered;"></i></td>
+                <!-- <td style="color:green;font-weight: bold;">{{item.Streak_ChooseRewardName}}</td>
+                <td style="color:green;font-weight: bold;">{{item.Streak_StreakCount}}</td>
+                <td style="color: red;font-weight: bold;">{{item.LevelNo}}</td>
+                <td style="color:blue;font-weight: bold;">{{item.OutOf_TotalBucket}}</td>
+                <td style="color:blue;font-weight: bold;">{{item.OutOf_OutOfBucket}}</td> -->
+            </tr>
+        </ng-template>
+    </p-table>
+    </div>
+<div class="row">
+    <div class="col-12 text-right">
+        <button  class="btn btn mt-3 ml-4"style="background-color:green;
+        color: white;width: 7%;" (click)="SaveAllConfig()"   [disabled]="OpenCheck">Save</button>
+   </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}"
+    strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-confirmDialog #cd [style]="{width: '45vw'}"  appendTo="body"	 >
+    <ng-template pTemplate="header">
+        <h3>Header Content</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog>

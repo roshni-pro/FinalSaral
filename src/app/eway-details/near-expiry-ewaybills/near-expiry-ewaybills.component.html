@@ -1,0 +1,212 @@
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+<div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+      (click)="toggleSearch()">
+      <h5 class="m-0"><b>Search By</b></h5>
+      <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+        <div id="search-content p-2">
+        <br>
+        <div class="row p-2 px-5">
+            <div class="col-md-2">
+                <label><span class="required ">*</span><b>Select Warehouses</b></label>
+                <p-multiSelect  [options]="WareHouseList" 
+                    [(ngModel)]="selectedWareHousethird" optionLabel="label" optionValue="value" placeholder="select warehouse" >
+                </p-multiSelect>
+            </div>
+             <div class="col-md-2">
+                <label><b>Select Status</b></label>
+                <p-dropdown id="Category" name="Category"  [(ngModel)]="OrderTypeThree" [filter]="true" [options]="OrderTypeList"
+                optionLabel="name" placeholder="Select Status"  > 
+                </p-dropdown>
+            </div> 
+            <div class="col-md-2">
+                <label><b>Enter OrderID</b></label><br>   
+                    <input type="text"  required="1"  maxlength="9" type="tel" name="Title" class="form-control"  
+                    optionLabel="Select OrderType" [(ngModel)]="Orderidthree"/>
+                    <!-- (keyup)="KeyUpClean()"  (keypress)="keyPress($event)" -->
+            </div>
+            <div class="col-md-2">
+                <label><b>Select Start Range</b></label><br>
+                <p-calendar name="startDateInput" [showIcon]="true" [(ngModel)]="FromDatethree" 
+                appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  
+                 [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+                 [showIcon]="true" >
+                </p-calendar>
+            </div>
+            <div class="col-md-2">
+                <label><b>Select End Range</b></label><br>
+                <p-calendar name="endDateInput" name="ToDate" [showIcon]="true" [(ngModel)]="ToDatethree" 
+                appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  [minDate]="FromDatethree"
+               [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+                 [showIcon]="true" >
+                </p-calendar>
+            </div>
+            <div class="col-md-2">
+                <label><b>Select Order Types</b></label><br>
+                <p-dropdown  [options]="General" optionLabel="name" optionValue="code"[(ngModel)]="general">
+                </p-dropdown>
+                </div>
+        </div>
+        <div class="row " style="margin-left: 20px;">
+            <!-- <div class="col-md-2" style="margin-left: 66px;">
+                <label><b>Select Order Types</b></label><br>
+                <p-dropdown [options]="General" optionLabel="name" optionValue="code"[(ngModel)]="general">
+                </p-dropdown>
+                </div> -->
+             <div class="col-2 md-3 d-flex" style="margin-left: 30px; margin-top: 20px;">
+                <button  class="btn btn-primary mr-2" (click)="ForSearchHit()"  (click)="ExpiryEwaybills($event)" >Search</button>  
+                <button  class="btn btn-primary mr-2" (click)="ClearExpiryEway()" >Clear</button>  
+                <button  class="btn btn-success mr-2" (click)="ExportExpiryEway()" >Export</button>  
+            </div>
+      
+        </div>        
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <p-table [scrollable]="true" [value]="NearExpiryewaybillList"   scrollHeight="70vh"  text-align: center [totalRecords]="TotalRecords" [lazy]="true"  (onLazyLoad)="load($event)"
+     [paginator]="true" [rows]="10" [(first)]="first" >
+        <ng-template pTemplate="header">
+            <tr >
+                <th *ngIf="showOrderType" style="width: 20%;">TransferOrderId</th>
+                <th *ngIf="!showOrderType" style="width: 20%;">OrderId</th>
+                <th style="width: 20%;">Order Amount/ Invoice Amount</th>
+                <th style="width: 20%;">OrderStatus</th>
+                <th style="width: 20%;">EWay Bill Number</th>
+                <th style="width: 20%;">Eway Bill Generate Date</th>
+                <th style="width: 20%;">Eway Bill Update Upto</th>
+                <th style="width :20%">WarehouseName/RequestToWarehouse</th>
+                <th style="width: 20%;">Action</th>
+                <th *ngIf="roleListarry" style="width: 20%;">History</th>
+
+            </tr>         
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.OrderId}}</td> 
+                <td> <b style="font-weight: 900;">Order Amount:</b> {{item.OrderAmount}}<br><b style="font-weight: 900;">Invoice No.:</b> {{item.InvoiceNumber}}</td>  
+                <td>{{item.OrderStatus}}</td>
+                <td>{{item.EwaybillNumber}}</td>
+                <td>{{item.EwayBillDate | date:'dd/MM/yyyy HH:mm:ss'}}</td> 
+                <td>{{item.EwayBillValidTill | date:'dd/MM/yyyy HH:mm:ss'}}</td> 
+                <td>{{item.WarehouseName}}<br>{{item.RequestToWarehouseName}}</td>
+                <td>
+                    <ng-container>
+                        <div *ngIf ="!item.EwayBillStatus">  <button  class="btn btn-primary mr-2" (click)="NearExpiryEwaypopup(item)"  >Extent E-waybill</button>   </div>
+                        <div *ngIf ="item.EwayBillStatus" style="color:red ; font-weight: bold; FONT-SIZE: LARGE;">  <b>  {{item.EwayBillStatus}} </b> </div>                        
+                    </ng-container>
+                </td> 
+
+                <td *ngIf="roleListarry">
+                    <div> <button  class="btn btn-primary mr-2" (click)="openDetails(item)">History</button></div>
+                </td> 
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div> 
+
+
+<p-dialog [(visible)]="NearExpiryEwayBillspopup" header="Extend Eway-Bill" [blockScroll]="true" [draggable]="false" [style]="{ width: '50%',height:'50%' }" [modal]="true" appendTo="body">
+    <!-- <div class="row"> -->
+        <div class="row">         
+            <div class="col-6">
+                <label><b>Vehicle Number *</b></label>&nbsp;&nbsp;
+                 <input type="text" required="1" name="Title" (keypress)="Capital($event)"   class="form-control" placeholder="Enter vehicle Number"  [(ngModel)]="VehicleNumberThird"  />              
+                 <span style="COLOR: red; font-weight: bold;">Note:- Press CapsLock On Before Enter</span><br>
+                 <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!VehicleNumberThird && isVehicleNumberThird" >Enter Vehicle Number</span>
+                <br>
+            </div>
+            <div class="col-6">
+                <label><b>Reason of extension *</b></label>&nbsp;&nbsp;
+                <p-dropdown [options]="NearExpiryreasonss" [(ngModel)]="Reasonofextension" appendTo="body"  optionLabel="name" placeholder="Select Reason"> 
+                </p-dropdown>
+                <span style="COLOR: darkred; font-weight: bold;" *ngIf="!Reasonofextension && isReasonofextension">Select Reason of extension  </span>
+                <br>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <label><b>Transport Document No.</b></label><br>   
+                <div class="d-flex">
+                    <input type="text" required="1" name="Title" class="form-control" maxlength="15" placeholder="Transport Document No."  [(ngModel)]="transDocNo">
+                
+                </div>  
+                <span style="COLOR: red; font-weight: bold;">Note:- Max length 15 Allowed</span><br>
+                <span style="COLOR: darkred; font-weight: bold;" *ngIf="!transDocNo && istransDocNo">Enter Transport Document Number  </span>
+            </div>
+            <div class="col-6">
+                <label><b>Transport Document Date </b></label><br>  
+                <p-calendar [showIcon]="true"  [style]="{ width: 'max-content' }" [(ngModel)]="transDocDate"  [minDate]="dateMin" [maxDate]="dateMax"  
+                  [readonlyInput]="true" showButtonBar="true" appendTo="body">
+                </p-calendar><br> <span style="COLOR: darkred; font-weight: bold;" *ngIf="!transDocDate && istransDocDate">Enter Transport Document Date  </span>
+                
+            </div>
+        </div><br>
+       <div class="row">
+        <div class="col-6">
+            <label><b>Enter Remark*</b></label><br>   
+                <input type="text"  required="1" name="Title" class="form-control" placeholder="Enter Remark"  [(ngModel)]="RemarkThird" />
+                <span style="COLOR: darkred; font-weight: bold;" *ngIf="!RemarkThird && isRemarkThird">Enter Remark </span><br>
+        </div>        
+        <div class="col-6">
+            <label><b>Current AddressLine*</b></label>
+             <input type="text"  required="1" name="Title" class="form-control" placeholder="Enter Address" [(ngModel)]="Address"/>
+             <span style="COLOR: darkred; font-weight: bold;" *ngIf="!Address && isAddress">Enter Address  </span>
+            <br>
+        </div>
+    </div>                 
+    <!-- </div> -->
+   
+    
+        
+
+    <!-- <div class="row">
+        <div class="col-3">
+            <label><b>Current Pincode</b></label>
+        </div>
+        <div class="col-9">
+             <input type="text" (keypress)="keyPress($event)"  [(ngModel)]="Pincodethird" maxlength="6" type="tel"  required="1" name="Title" class="form-control" placeholder="Enter Pincode"  />
+            <br>
+        </div>  minlength="15" maxlength="15"
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <label><b>Current State</b></label>
+        </div>
+        <div class="col-9">
+             <input type="text"  required="1" name="Title" class="form-control" placeholder="Enter Current State"  [(ngModel)]="CurrentStatethird" />
+            <br>
+        </div>
+    </div> -->   
+    <div class="row" style=" padding-left: 3%;">        
+            <button  class="btn btn-primary mr-2" (click)=" ExtendValidityEwaybill()" >Submit</button>  
+            <button  class="btn btn-primary mr-2"  (click)=" NearExpiryEwayCancel()"  >Cancel</button>  
+        <!-- </div> -->
+    </div>
+</p-dialog>
+<!-- <div class="col-2 md-3" style="margin-top:28px;"> -->  
+
+
+    <div id="history" *ngIf="popupOpen" >
+        <p-dialog [(visible)]="popupOpen" [resizable]="true" [blockScroll]="true" [draggable]="false"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+          <p-header>
+            History
+          </p-header>
+          <app-history [entity]="entity" [id]="rowDataV1.EwayBillId" ></app-history>
+         
+      </p-dialog>
+      </div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

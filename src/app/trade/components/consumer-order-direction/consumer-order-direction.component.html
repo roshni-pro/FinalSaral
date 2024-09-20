@@ -1,0 +1,17 @@
+<p-blockUI [baseZIndex]="555" [blocked]="isShowDialog"></p-blockUI>
+<p-dialog appendTo="body"  [style]="{width: '50vw'}"
+ [baseZIndex]="556" [(visible)]="isShowDialog" [blockScroll]="isShowDialog" [closable]="false">
+    <p-header>
+        Consumer Location
+    </p-header>
+    <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false"
+        [style.height.px]="myInnerHeight">
+        <agm-direction [origin]="origin" [destination]="destination" [renderOptions]="renderOptions"
+            [markerOptions]="markerOptions" [waypoints]="wayPoint">
+        </agm-direction>
+
+    </agm-map>
+    <p-footer>
+        <button (click)="onCloseDialog()">close</button>
+    </p-footer>
+</p-dialog>

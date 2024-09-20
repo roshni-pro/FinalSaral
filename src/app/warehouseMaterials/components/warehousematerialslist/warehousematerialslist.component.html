@@ -1,0 +1,147 @@
+<div>
+    <p-header>
+        <br>
+        <h1>Brand Buyer Allocation</h1>
+    </p-header>
+</div>
+<div class="row m-0">
+    <div class="col-12">
+    
+        <div id="kick-start" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h3 class="card-title">Warehouse List</h3>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <div>
+                                <input type="text" class="form-control" placeholder="search warehouses"
+                                    (keyup)="searchWarehouses($event.target.value)" [(ngModel)]="searchVal">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="col-md-3">
+                        <button type="button" style="margin-left: 10px;" class="btn btn-raised  btn-primary"
+                            (click)="viewbrandbuyer()">
+                            View Complete Allocation List
+                        </button>
+                    </div> -->
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-raised  btn-primary text-right" (click)="navToGraph()">
+                            View Graph
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-content">
+
+
+                <div class="card-body">
+                    <div class="row">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+     
+    </div>
+
+</div>
+
+
+
+
+<p-table #table [paginator]="true" [rows]="10" [value]="warehouseList" [lazy]="true" [totalRecords]="totalRecords"
+    (onLazyLoad)="load($event)" [paginator]="true" [scrollable]="true" scrollHeight="140vh" text-align: center>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>
+                S.no
+            </th>
+            <th *ngFor="let col of warehouseCols" [pSortableColumn]="col.field" style="text-align: center">
+                {{col.header}}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded" let-i="rowIndex">
+        <tr (click)="setWhouse(i, rowData); ">
+            <td>
+                {{i+1}}
+            </td>
+
+            <td *ngFor="let col of warehouseCols" style="text-align: center">
+                {{rowData[col.field] + (col.field == 'ConsumedPercentage' ? '%' : '')}}
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+
+
+    <p-dialog *ngIf="viewBrandBuyerList" [(visible)]="viewBrandBuyerList" appendTo="body">
+
+    <div class="card-content">
+        <div class="col-md-3">
+            <h4 class="card-title" id="basic-layout-colored-form-control" style="padding-bottom: 20px;">
+                Allocated Items
+            </h4>
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" placeholder="search brand /  buyer / whouse"
+                (keyup)="globalsearch($event.target.value)" [(ngModel)]="globalsearchval">
+        </div>
+        <br>
+        <p-toast [style]="{marginTop: '20px'}"></p-toast>
+
+
+        <p-table #table [value]="brandBuyerDetailsList" [scrollable]="true" scrollHeight="70vh" text-align: center>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>
+                        S.no
+                    </th>
+                    <th *ngFor="let col of brandBuyerDetailsCols" [pSortableColumn]="col.field"
+                        style="text-align: center">
+                        {{col.header}}
+                    </th>
+
+
+
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded" let-i="rowIndex">
+                <tr>
+                    <td>
+                        {{i+1}}
+                    </td>
+                    <td style="text-align: center">
+                        {{rowData.WareHouseName}}
+                      
+                    </td>
+                    <td style="text-align: center">
+                        {{rowData.BrandName}}
+                    </td>
+                    <td style="text-align: center">
+                        {{rowData.BuyerName ? rowData.BuyerName : ''}}
+                    </td>
+
+                    <td style="text-align: center">
+                        {{rowData.AllocatePercent}} %
+                    </td>
+
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-dialog>

@@ -1,0 +1,179 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<!-- <app-add-trade-item [ID]="itemID" (refreshParent)="reLoad()" (isdetailsclose)="CancelV1($event)" *ngIf="istrue">
+</app-add-trade-item> -->
+<div class="header">
+  <h3 class="m-2"> Order Master <i class="icon-notebook"></i> </h3>
+</div>
+    <div class="ui-fluid shadow mb-2 rounded">
+      <div class="search-head rounded d-flex p-2 px-4 justify-content-between align-items-center"
+        (click)="toggleSearch()">
+        <h5 class="m-0">Filters</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+      </div>
+      <div id="search-content p-2" *ngIf="isSearch">
+            <form class="form" #ledgerForm="ngForm">
+              <div class="form-body p-3">
+                <div class="row ">
+
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group">
+                      <label for="City"> <b>Select City:</b></label>
+                      <select id="city" name="city" class="form-control" [(ngModel)]="paginator.cityid"
+                          (ngModelChange)="onNameChange()" placeholder=" Select City">
+                          <option value="">--Select--</option>
+                          <option *ngFor="let city of cityLists" [ngValue]="city.Id">
+                            {{ city.City }}
+                          </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group">
+                      <label for="Category">Category Name*</label>
+                      <select id="Category" name="Catlist" class="form-control" [(ngModel)]="paginator.categoryid"
+                        (ngModelChange)="onNameChange()">
+                        <option value="">Select</option>
+                        <option *ngFor="let Catlist of CategoryList" [ngValue]="Catlist.CategoryId">
+                          {{ Catlist.CategoryName }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group">
+                      <label for="orderType">skcode</label>
+                      <input type="text" id="orderType" [(ngModel)]="paginator.skcode" (ngModelChange)="onNameChange()"
+                        name="orderType" placeholder="skcode" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group">
+                      <label for="orderType">orderNo</label>
+                      <input type="text" placeholder="orderNo" [(ngModel)]="paginator.orderNo" (ngModelChange)="onNameChange()"
+                        id="orderType" name="orderType" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group">
+                      <label for="orderType">Name</label>
+                      <input type="text" id="orderType" [(ngModel)]="paginator.Name" (ngModelChange)="onNameChange()"
+                        name="orderType" placeholder="Enter Buyer Name or Seller Name" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group">
+                      <label for="orderType">item Name</label>
+                      <input type="text" id="orderType" [(ngModel)]="paginator.itemName" (ngModelChange)="onNameChange()"
+                        placeholder="item Name" name="orderType" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group">
+                      <label for="orderType">OrderStatus</label>
+                      <p-dropdown [(ngModel)]="paginator.OrderStatus" name="status" (ngModelChange)="onNameChange()"
+                        [options]="CurrentStatus"></p-dropdown>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group">
+                      <label for="startdate"><b>Date Selector: </b></label>
+                      <p-calendar [showIcon]="true" [(ngModel)]="rangeDates" name="dateRangeInput" selectionMode="range"
+                        (ngModelChange)="onNameChange()" [readonlyInput]="true">
+                      </p-calendar>
+                    </div>
+                  </div>
+
+                  <!-- <div class="col-md-2" style="padding-top: 30px;margin-left:980px"> -->
+                  <div class="col-md-2 col-sm-4">
+                    <div class="form-group">
+                      <label for="" style="width: 100%;">&nbsp;</label>
+                      <button type="button" class="btn btn-raised btn-raised btn-warning" (click)="onClear()">
+                        Clear
+                      </button>
+                      </div>
+                  </div>
+                  <div class="col-md-4 col-sm-4">
+                    <div class="form-group"> 
+                      <label for="" style="width: 100%;">&nbsp;</label>                     
+                      <button type="button" class="btn btn-raised btn-raised btn-primary" style="margin-left:10px"
+                          (click)="exportOrder()">
+                          Export Order List
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </form>
+      </div>
+    </div>
+
+    <div class="ui-fluid shadow p-3  rounded table table-hover">
+      <div class="position-relative">
+        <div class="position-absolute order-details" *ngIf="isDetails">
+          <app-order-details [details]="selectedRowDetails" [activeFields]="activeFields"
+            (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)"
+            class="d-flex justify-content-end"></app-order-details>
+        </div>
+        <div class="position-relative">
+          <p-table #dt [columns]="cols" [value]="orderList" [lazy]="true" [totalRecords]="totalRecords"
+            (onLazyLoad)="load($event)" [paginator]="true" [rows]="pageSize" [loading]="loading" dataKey="Id"
+            [scrollable]="true" scrollHeight="105vh" text-align: center>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Order No</th>
+                <th>Date</th>
+                <th>Buyer</th>
+                <th>Seller</th>
+                <th>Item</th>
+                <th>MRP</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>TAT(in days)</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+              <tr (click)="openDetails(rowData,$event)">
+                <td>{{rowData.OrderNo}}</td>
+                <td>{{rowData.CreatedDate| date: 'medium'}}</td>
+                <td>
+                  <a href="javascript:;" (click)="openCustomer(rowData.BuyerId)">
+                    <span>{{rowData.BuyerName}}</span><br>
+                    <span>{{rowData.BuyerSkCode}}</span><br>
+                    <span>{{rowData.BuyerMobile}}</span>
+                  </a>
+
+                </td>
+                <td>
+                  <a href="javascript:;" (click)="openCustomer(rowData.SellerId)">
+                    <span>{{rowData.SellerName}}</span><br>
+                    <span>{{rowData.SellerSkCode}}</span><br>
+                    <span>{{rowData.SellerMobile}}</span>
+                  </a>
+                </td>
+                <td>{{rowData.ItemName}}</td>
+                <td>{{rowData.MRP}}</td>
+                <td>{{rowData.Qty}}</td>
+                <td>{{rowData.Price}}</td>
+                <td>{{rowData.Qty * rowData.Price | number : '1.1-2'}}</td> 
+                <td>{{rowData.CurrentStatus}}</td>
+                <td>{{rowData.CurrentStatus == "Booked" ? rowData.tatInDays: 'NA'}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

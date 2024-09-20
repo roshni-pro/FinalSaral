@@ -1,0 +1,414 @@
+<div class="container-fluid">
+    <!-- head setion -->
+    <div class="row mt-2">
+        <div class="col-12" style="color: orangered;">
+            <h3>
+                Vendor Payment Automation Summary
+            </h3>
+        </div>
+    </div>
+
+
+    <!-- search section -->
+    <div class="card shadow p-2">
+        <div class="row" *ngIf="selectedRole && selectedRole.role">
+            <div class="col"></div>
+            <div class="col-4">
+                <label>Current Role: <b>{{selectedRole.role}}</b></label>
+            </div>
+        </div>
+        <div class="row" *ngIf="!selectedRole">
+            <div class="col"></div>
+            <div class="col-4">
+                <label>Current Role: <b style="color: red;">Page permission required</b></label>
+            </div>
+        </div>
+        <div class="row">
+            <!-- *ngIf="userRoleDropdownList&&userRoleDropdownList.lenght>1" -->
+            <div class="col-3">
+                <label>Select Role</label>
+                <p-dropdown id="userRole" name="userRole" [options]="userRoleDropdownList"
+                    [disabled]="showUserRoleDropdown" [(ngModel)]="selectedRole" optionLabel="role"
+                    placeholder="Select Here" (onChange)="setUserRole()">
+                </p-dropdown>
+            </div>
+            <div class="col-3">
+                <label>Select Warehouse</label>
+                <!-- <p-dropdown id="warehouseList" name="warehouseList" [options]="warehouseList" [filter]="true"
+                    [(ngModel)]="selectedWarehouse" optionLabel="label" optionValue="value" placeholder="Select Here">
+                </p-dropdown> -->
+
+                <p-multiSelect [options]="warehouseList" appendTo="body" placeholder="Select Warehouse"
+                                name="whList" optionLabel="label" optionValue="value" [(ngModel)]="warehouseids"
+                                filter="true">
+                                <!-- (ngModelChange)="onChangeWarehouse(WarehouseIds)" -->
+                </p-multiSelect>
+            </div>
+            <div class="col-3">
+                <label>Filter</label>
+                <!-- [disabled]="vendorTableData.length == 0" -->
+                <p-dropdown id="filter" name="filter" [options]="filterOptions" [(ngModel)]="selectedfilter"
+                    optionLabel="label" optionValue="value" placeholder="Select Here" (onChange)="filter()">
+                </p-dropdown>
+            </div>
+            <div class="col-3">
+                <label for="RangeDate">Select Month</label>
+                <br>
+                <p-calendar [(ngModel)]="date" view="month" placeholder="Select Month" [style]="{'width':'100%'}"
+                    [showIcon]="true" dateFormat="mm/yy" [readonlyInput]="true"></p-calendar>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary mt-3" type="button" (click)="search()">Search</button>
+                <button class="btn btn-primary mt-3 ml-2" type="button" (click)="exportToExcel()">Export</button>
+                <!-- <button class="btn btn-primary mt-3 ml-2"
+                    *ngIf="selectedRole && (selectedRole.role == 'Accounts executive' || selectedRole.role == 'Accounts associates' || selectedRole.role == 'HQ Accounts Lead')"
+                    type="button" (click)="TallyFilegenerated()">Generate File for
+                    Telly</button> -->
+                <!-- <button class="btn btn-primary mt-3 ml-2"
+                    *ngIf="selectedRole && (selectedRole.role == 'Accounts executive' || selectedRole.role == 'Accounts associates' || selectedRole.role == 'HQ Accounts Lead')"
+                    type="button" (click)="ExportPaymentFile()">Generate File for
+                    Payment</button> -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- table serction -->
+    <div class="row text-center p-2" *ngIf="vendorTableData.length>0">
+        <p-table [value]="vendorTableData" dataKey="PaymentId" [scrollable]="true" scrollHeight="80vh" class="shadow">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Invoice ID
+                        <!-- <p-tableHeaderCheckbox (click)="selectRowsForTell($event)"></p-tableHeaderCheckbox> -->
+                    </th>
+                    <th>Transporter Name</th>
+                    <th>Fleet Type</th>
+                    <th>Utilized Amount</th>
+                    <th>Extra Km Amount</th>
+                    <th>Toll Amount</th>
+                    <th>Other Charges</th>
+                    <th>Taxable Amount</th>
+                    <th>Total Payable</th>
+                    <th>Remaining Amount</th>
+                    <th>Payment Status</th>
+                    <th>Approval Status</th>
+                    <th>Actions</th>
+                    <!-- <th>check</th> -->
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product let-expanded="expanded">
+                <tr>
+                    <td>
+                        <p-checkbox
+                            *ngIf="(selectedRole && (selectedRole.role == 'Accounts executive' || selectedRole.role == 'Accounts associates')) && product.ApprovalStatus == 8"
+                            [(ngModel)]="product.isChecked" [binary]="true" inputId="binary" name="fieldName"
+                            (click)="selectRowsForTell(product)"></p-checkbox>
+                        {{product.PaymentId}}
+                    </td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.TransportertName}}</td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product" >
+                        {{product.FleetType}}</td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.UtilizedAmount  | number : '1.2-2'}}</td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.ExtraKmAmount  | number : '1.2-2'}}</td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.TollAmount}}</td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.OtherCharges}}</td>
+
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.TaxableAmount  | number : '1.2-2'}}</td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.TotalPayable | number : '1.2-2'}}</td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.RemainingAmount | number : '1.2-2'}}</td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.paymentMsg}}</td>
+                    <td (click)="RegionalTranspoterPaymentDetailList(product)" [pRowToggler]="product">
+                        {{product.approvalMsg}}</td>
+                    <td>
+                        <!-- checkApprovalOrRejectStatus(product) -->
+                        <button class="btn btn-primary" type="button"
+                            (click)="actionPopup(product); getpaymenthistoryList(product)">
+                            <i class="fa fa-window-restore" aria-hidden="true"></i></button>
+                    </td>
+                    <!-- <td>{{product.showAction}}</td>
+                    <td>{{product.isMarkedAsPaid}}</td> -->
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="rowexpansion" let-product>
+                <tr>
+                    <td colspan="11">
+                        <div>
+                            <p-table [value]="product.subdata" dataKey="VehicleMasterId">
+                                <ng-template pTemplate="header">
+                <tr class="sub-hd">
+                    <th>Vehicle No</th>
+                    <th>Attendance</th>
+                    <th>Vehicle Type</th>
+                    <th>Monthly Contract Km</th>
+                    <th>Utilized Km</th>
+                    <th>Monthly Contract Amount</th>
+                    <th>Utilized Amount</th>
+                    <th>Extra Km</th>
+                    <th>Extra Km Amt</th>
+                    <th>Toll Amount</th>
+                    <th>Other Expense</th>
+                    <th>Payable Amount</th>
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-order>
+                <tr class="sub-hd">
+                    <td>{{order.VehicleNo}}</td>
+                    <td>{{order.Attendance}}</td>
+                    <td>{{order.VehicleType}}</td>
+                    <td>{{order.MonthlyContractKm}}</td>
+                    <td>{{order.UtilizedKm}}</td>
+                    <td>{{order.MonthlyContractAmount}}</td>
+                    <td>{{order.UtilizedAmount}}</td>
+                    <td>{{order.ExtraKm}}</td>
+                    <td>{{order.ExtraKmAmt}}</td>
+                    <td>{{order.TollAmount}}</td>
+                    <td>{{order.OtherExpense}}</td>
+                    <td>{{order.PayableAmount}}</td>
+                    <td> <button class="btn-primary" type="button" (click)="fleetDetails(order)">Details</button></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr class="sub-hd">
+                    <td colspan="6">No Records Available...</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    </td>
+    </tr>
+    </ng-template>
+    </p-table>
+</div>
+
+<div class="row text-center" *ngIf="vendorTableData.length ==0">
+    No Records Available...
+</div>
+
+
+
+</div>
+
+<!-- action popup -->
+<p-dialog header="Action Panel" [(visible)]="actionPopupOpen" positionTop="0" [modal]="true" appendTo="body"
+    [style]="{ width: '100vw', height: '100vh'}" [draggable]="false" [resizable]="false">
+
+    <div class="container-fluid">
+        <div class="row ">
+
+            <div class="col-2 p-2 text-center" style="background-color: rgb(236, 236, 236); border-radius: 3px;">
+                <!-- *ngIf="selectedTransporterRow.showAction" -->
+                <div class="row">
+                    <!-- <div class="col-12">
+                        <label *ngIf="selectedTransporterRow.showAction" class="txt"
+                            [ngClass]="actionTabs == 'Approve/Reject' ? 'txt2' : ''"
+                            (click)="switchActionTabs('Approve/Reject')">
+                            <b>Approve/Reject</b></label>
+                    </div> -->
+                    <!-- <div class="col-12">
+                        <label *ngIf="!selectedTransporterRow.showAction" class="txtDis"
+                            [ngClass]="actionTabs == 'Approve/Reject' ? 'txt2' : ''">
+                            <b>Approve/Reject</b></label>
+                    </div> -->
+                    <div class="col-12">
+                        <label (click)="switchActionTabs('View Doc')" class="txt"
+                            [ngClass]="actionTabs == 'View Doc' ? 'txt2' : '' "> <b>View Doc</b> </label>
+                    </div>
+                    <!-- <div class="col-12">
+                        <label *ngIf="selectedTransporterRow.isMarkedAsPaid" (click)="switchActionTabs('Mark as Paid')"
+                            class="txt" [ngClass]="actionTabs == 'Mark as Paid' ? 'txt2' : ''"> <b>Mark as Paid</b>
+                        </label>
+                    </div> -->
+                    <!-- <div class="col-12">
+                        <label *ngIf="!selectedTransporterRow.isMarkedAsPaid" class="txtDis"
+                            [ngClass]="actionTabs == 'Mark as Paid' ? 'txt2' : ''"> <b>Mark as Paid</b> </label>
+                    </div> -->
+                    <div class="col-12">
+                        <label (click)="switchActionTabs('Comments')" class="txt"
+                            [ngClass]="actionTabs == 'Comments' ? 'txt2' : ''"> <b>Comments</b> </label>
+                    </div>
+                    <div class="col-12">
+                        <label (click)="switchActionTabs('History')" class="txt"
+                            [ngClass]="actionTabs == 'History' ? 'txt2' : ''"> <b>History</b> </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div *ngIf="actionTabs == ''" class="col p-2">
+                <div class="row text-center ">
+                    <div class="col-12">
+                        <h4>Select Actions from the left given menu.</h4>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div *ngIf="actionTabs == 'View Doc'" class="col p-2">
+                <div class="row">
+                    <div class="col-4">
+                        <label>Transporter Invoice Path :</label>
+                    </div>
+                    <div class="col-8">
+                        <label (click)="openInvoice(selectedTransporterRow.TransporterInvoicePath)"
+                            *ngIf="selectedTransporterRow.TransporterInvoicePath"><b><u>{{ 
+                                    selectedTransporterRow.TransporterInvoicePath}}</u></b></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label>Generated Invoice Path :</label>
+                    </div>
+                    <div class="col-8">
+                        <label (click)="openInvoice(selectedTransporterRow.GeneratedInvoicePath)"
+                            *ngIf="selectedTransporterRow.GeneratedInvoicePath"><b><u>{{
+                                    selectedTransporterRow.GeneratedInvoicePath}}</u></b></label>
+                    </div>
+                </div>
+            </div>
+            <!-- <div *ngIf="actionTabs == 'Mark as Paid'" class="col p-2">
+                <div class="row">
+                    <div class="col-3">
+                        <label>Transaction Id</label>
+                        <input type="text" class="form-control" [(ngModel)]="invoicePayload.TransactionId">
+                    </div>
+                    <div class="col-3">
+                        <label>Payment Date</label>
+                        <br>
+                        <p-calendar  [(ngModel)]="invoicePayload.PaymentDate"></p-calendar>
+                    </div>
+                    <div class="col-3">
+
+                        <label>Payable Amount</label>
+                        <input type="number" [max]="totalPayableAmount"  [min]="0"  (keypress)="omit_special_char($event)"
+                        class="form-control" [(ngModel)]="invoicePayload.PaidAmount">
+                    </div>
+                    <div class="col-3">
+                        <label>Mark as paid</label> <br>
+                        <button class="btn btn-primary" type="button" (click)="UpdateInvoice()">Save</button>
+                    </div>
+
+                    <div class="col-3">
+                        <label>Total Payable Amount </label> <br>
+                        {{totalPayableAmount}}
+                    </div>
+                    <div class="col-3">
+                        <label> Paid Amount </label> <br>
+                        {{invoicePayload.PaidAmount}}
+                    </div>
+                    <div class="col-3">
+                        <label> Remaining Amount </label> <br>
+                        {{totalPayableAmount - invoicePayload.PaidAmount}}
+                    </div>
+                </div>
+            </div> -->
+            <div *ngIf="actionTabs == 'Comments'" class="col p-2">
+
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Regional:</label>
+                    </div>
+                    <div class="col-8">
+                        <label
+                            *ngIf="selectedTransporterRow.RegionalComment">{{selectedTransporterRow.RegionalComment}}</label>
+                    </div>
+                </div>
+
+                <!-- <div class="row">
+                    <div class="col-4">
+                        <label>RegionalLead:</label>
+                    </div>
+                    <div class="col-8">
+                        <label
+                            *ngIf="selectedTransporterRow.RegionalLeadComment">{{selectedTransporterRow.RegionalLeadComment}}</label>
+                    </div>
+                </div> -->
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>HQ Ops Lead:</label>
+                    </div>
+                    <div class="col-8">
+                        <label
+                            *ngIf="selectedTransporterRow.HQOpsLeadComment">{{selectedTransporterRow.HQOpsLeadComment}}</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Account:</label>
+                    </div>
+                    <div class="col-8">
+                        <label
+                            *ngIf="selectedTransporterRow.AccountComment">{{selectedTransporterRow.AccountComment}}</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label>Account Lead:</label>
+                    </div>
+                    <div class="col-8">
+                        <label
+                            *ngIf="selectedTransporterRow.AccountLeadComment">{{selectedTransporterRow.AccountLeadComment}}</label>
+                    </div>
+                </div>
+
+
+            </div>
+            <div *ngIf="actionTabs == 'History'" class="col p-2">
+                <div class="container-fluid">
+                    <div class="row">
+                        <p-table [value]="paymentHistoryList" [scrollable]="true" scrollHeight="80vh">
+                            <ng-template pTemplate="header">
+
+                                <tr>
+                                    <th>S.No </th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                    <th>CreatedDate</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                <tr>
+                                    <td>{{i+1}}</td>
+                                    <td>{{rowData.DisplayName}}</td>
+                                    <td>{{rowData.Role}}</td>
+                                    <td>{{rowData.Action}}</td>
+                                    <td>{{rowData.CreatedDate | date:'medium'}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+
+<!-- details popup -->
+<p-dialog header="Action Panel" [(visible)]="detailsPopupOpen" positionTop="0" [modal]="true" appendTo="body"
+    [style]="{ width: '100vw', height: '100vh'}" positionTop="0" [draggable]="false" [resizable]="false">
+    <app-fleet-detail [doc]="docList" [fleetDetail]="fleetDetailList"></app-fleet-detail>
+</p-dialog>
+
+<!-- misc -->
+<p-confirmDialog appendTo="body" [style]="{width: '50vw'}"></p-confirmDialog>
+
+<p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+

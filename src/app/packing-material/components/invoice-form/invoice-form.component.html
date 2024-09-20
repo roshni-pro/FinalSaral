@@ -1,0 +1,328 @@
+
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="content-header">Invoice Form </div>
+    </div>
+</div>
+<button class="btn btn-raised btn-primary float-right"(click)="back()">Back</button>
+<br />
+<div class="mt-2 ">
+    <form class="form" name="infoForm" #infoForm="ngForm" autocomplete="off">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="Invoice">Type:<span style="color:red;"></span></label><br />
+                    <select class="form-control" id="site-name" name="Invoice" [(ngModel)]="data.Type" required="1"
+                        #UOM="ngModel">
+                        <option value="Orignal">Orignal</option>
+                        <option value="Duplicate">Duplicate</option>
+                        <option value="Triplicate">Triplicate</option>
+                        <option value="Extra OC">Extra OC</option>
+                    </select>
+                </div>
+            </div>
+            <!-- <div class="col-6">
+                <div class="form-group">
+                    <label for="name">City <span style="color:red"> *</span></label>
+                    <select id="city" class="form-control" name="city" [(ngModel)]="data.City"
+                        required="1" #city="ngModel">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let s of cityList" [ngValue]="s.Cityid">
+                            {{ s.CityName }}
+                        </option>
+
+                    </select>
+                </div>
+            </div> -->
+            <div class="col-6">
+                <div class="form-group">
+                    <label for="name">Warehouse<span style="color:red"> *</span></label>
+                    <select id="warehouse" class="form-control" name="warehouse" [(ngModel)]="data.WarehouseId"
+                        required="1" #warehouse="ngModel">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let s of warehouseList" [ngValue]="s.WarehouseId">
+                            {{ s.WarehouseName }}
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+            <!-- <div class="col-6">
+                <div class="form-group">
+                    <label for="name">Select Supplier<span style="color:red"> *</span></label>
+                    <select id="supplier" class="form-control" name="supplier" [(ngModel)]="data.SupplierId"
+                        required="1" #supplier="ngModel">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let s of supplierList" [ngValue]="s.SupplierId">
+                            {{ s.Name }}
+                        </option>
+
+                    </select>
+                </div>
+            </div> -->
+            <!-- <div class="col-6">
+                <div class="form-group">
+                    <label for="name">Select Buyer<span style="color:red"> *</span></label>
+                    <select id="Buyer" class="form-control" name="Buyer" [(ngModel)]="data.BuyerId"
+                        required="1" #Buyer="ngModel">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let s of buyerList" [ngValue]="s.PeopleID">
+                            {{ s.DisplayName }}
+                        </option>
+
+                    </select>
+                </div>
+            </div> -->
+            <div class="col-6">
+                <div class="form-group">
+                    <label for="UOM">Transport Mode:<span style="color:red;"></span></label><br />
+                    <input type="text"id="TransportMode" class="form-control" name="TransportMode" [(ngModel)]="data.TransportMode" required="1" #TransportMode="ngModel">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label for="UOM">Vehicle Number:<span style="color:red;"></span></label><br />
+                    <input type="text"id="Vehicle" class="form-control" name="Vehicle" [(ngModel)]="data.VehicleNumber" required="1" #Vehicle="ngModel">
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label for="name">Bill To Warehouse<span style="color:red"> *</span></label>
+                    <select id="Bill" class="form-control" name="Bill" [(ngModel)]="data.BillToWarehouseId"
+                        required="1" #Bill="ngModel">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let s of warehouseList" [ngValue]="s.WarehouseId">
+                            {{ s.WarehouseName }}
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+            
+            <!-- <div class="col-6">
+                <div class="form-group">
+                    <label for="UOM">Invoice Type:<span style="color:red;"></span></label><br />
+                    <input type="text"id="InvoiceType" class="form-control" name="InvoiceType" [(ngModel)]="data.InvoiceType" required="1" #Vehicle="ngModel">
+                </div>
+            </div> -->
+            <div class="ui-g col-md-6" style="width:250px;margin-bottom:10px">
+                <!-- <div class="ui-g-12">
+                    <p-radioButton name="group2"  value="1"  label="Supplier 1" [(ngModel)]="data.ShipToType" inputId="preopt1"></p-radioButton>
+                   
+                </div>
+                <div class="ui-g-12"><p-radioButton  value="2" label="Warehouse 2" [(ngModel)]="data.ShipToType" inputId="preopt2"></p-radioButton></div> -->
+                <div class="ui-g-12"><p-radioButton name="group2" [value]=1 label="Ship To Supplier" [(ngModel)]="data.ShipToType" inputId="preopt1"></p-radioButton></div>
+                <div class="ui-g-12"><p-radioButton name="group2" [value]=2 label="Ship To Warehouse" [(ngModel)]="data.ShipToType" inputId="preopt2"></p-radioButton></div>
+          
+            </div>
+            <!-- <div class="col-3 "style="margin-bottom: 10px;" >
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input class="custom-control-input" value="materialData.FromConversion" id="POUom1" name="POUom1" type="checkbox" [(ngModel)]="POUom1" (change)="onPOBoxChange(materialData.FromConversion , POUom1 , 'POUom1')">
+                  <label class="custom-control-label" for="POUom1"></label>
+                </div>
+              </div>
+              <div class="col-3 " style="margin-bottom: 10px; ">
+                <div class="custom-control custom-checkbox custom-control-inline">
+                  <input class="custom-control-input" value="materialData.ToConversion" id="POUom2" name="POUom2" type="checkbox" [(ngModel)]="POUom2"(change)="onPOBoxChange(materialData.ToConversion,POUom2 , 'POUom2')">
+                  <label class="custom-control-label" for="POUom2"></label>
+                </div>
+              </div> -->
+            <div class="col-6" *ngIf="data.ShipToType == 2">
+                <div class="form-group">
+                    <label for="name">Ship To Warehouse<span style="color:red"> *</span></label>
+                    <select id="ship" class="form-control" name="ship" [(ngModel)]="data.ShipToSupplierWarehouseId"
+                        required="1" #ship="ngModel">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let s of warehouseList" [ngValue]="s.WarehouseId">
+                            {{ s.WarehouseName }}
+                        </option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="col-6" *ngIf="data.ShipToType == 1" >
+                <div class="form-group">
+                    <label for="name">Select Ship To Supplier<span style="color:red"> *</span></label>
+                    <select id="supplier" class="form-control" name="supplier" [(ngModel)]="data.ShipToSupplierWarehouseId"
+                    required="1" #supplier="ngModel">
+                    <option value="">--Select--</option>
+                    <option *ngFor="let s of supplierList" [ngValue]="s.SupplierId">
+                        {{ s.Name }}
+                    </option>
+
+                </select>
+                </div>
+            </div>
+        </div>
+    </form>
+        <br/>
+            <!-- <div class="row float-right">
+                <!-- <h6 style="padding-top: 20px; padding-left: 20px"><b>Add Item</b></h6> -->
+                <!-- <button class="btn btn-raised btn-primary" style="margin-right: 50px; margin-top: 10px;"  (click)="Add(itemDetails)">Add Item</button>
+               </div>
+               <br/>
+               <br/> -->
+               <form  class="form" name="infodetail" #infodetail="ngForm">
+              <div class="row" >
+            <div class="form-group col-md-3">
+                <label for="name"> Item Name<span style="color:red"> *</span></label>
+                <span class="ui-fluid">
+                <p-autoComplete [(ngModel)]="selectedItem" [suggestions]="groupedItemList1" (completeMethod)="getCentralItems($event)" tyleClass="wid100"
+                [minLength]="1" placeholder="enter at least 3 chars" field="itemname" name="itemname" (onSelect)="onSelect()">
+                </p-autoComplete>
+            </span>  
+            </div>
+            <div class="form-group col-md-3">
+                <label for="UOM">Unit Of Measurement:<span style="color:red;"></span></label><br />
+                <input type="text" id="unit" class="form-control" name="unit" [(ngModel)]="itemDetails.Uom"
+                    required="1" #unit="ngModel" disabled />
+            </div>
+
+            <div class="form-group col-md-3">
+                <label for="name">Quantity<span style="color:red"> *</span></label>
+                <input type="number" id="Quantity" class="form-control" name="Quantity" [(ngModel)]="itemDetails.Qty" (ngModelChange)="onQuantityChange()"
+                    required="1" #Quant="ngModel" />
+                    <div *ngIf="itemDetails.Qty > itemDetails.CurrentInventory ">
+                        <code> Quantity is Not greater than Current Stock Quantity-({{itemDetails.CurrentInventory}} {{itemDetails.Uom}})</code>
+                      </div>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="name">Unit Price<span style="color:red"> *</span></label>
+                <input type="text" id="UnitPrice" class="form-control" name="UnitPrice" [(ngModel)]="itemDetails.UnitPrice" 
+                    required="1" #UnitPrice="ngModel" disabled/>
+                   
+            </div>
+            <div class="form-group col-md-1 float-right" >
+            <button class="btn btn-raised btn-primary" style=" margin-top: 30px;"  (click)="Add(itemDetails,infodetail)">Add</button>
+            </div>
+            <!-- <div class="form-group col-md-3">
+                <label for="name">Rate<span style="color:red"> *</span></label>
+                <input type="text" id="Rate" class="form-control" name="Rate" [(ngModel)]="itemDetails.Rate" 
+                    required="1" #Rate="ngModel" disabled/>
+            </div> -->
+            <!-- <div class="form-group col-md-3">
+                <label for="name">Cgst<span style="color:red"> *</span></label>
+                <input type="text" id="Cgst" class="form-control" name="Cgst" [(ngModel)]="itemDetails.Cgst" 
+                    required="1" #Cgst="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">Sgst<span style="color:red"> *</span></label>
+                <input type="number" id="Sgst" class="form-control" name="Sgst" [(ngModel)]="itemDetails.Sgst" 
+                    required="1" #Sgst="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">Igst<span style="color:red"> *</span></label>
+                <input type="number" id="Igst" class="form-control" name="Igst" [(ngModel)]="itemDetails.TotalTaxPercentage" 
+                    required="1" #Igst="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">Discount<span style="color:red"> *</span></label>
+                <input type="number" id="Discount" class="form-control" name="Discount" [(ngModel)]="itemDetails.Discount" 
+                    required="1" #Igst="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">Cgst Amount<span style="color:red"> *</span></label>
+                <input type="text" id="CgstAmount" class="form-control" name="CgstAmount" [(ngModel)]="itemDetails.CgstAmount" 
+                    required="1" #CgstAmount="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">Sgst Amount<span style="color:red"> *</span></label>
+                <input type="number" id="SgstAmount" class="form-control" name="SgstAmount" [(ngModel)]="itemDetails.SgstAmount" 
+                    required="1" #Sgst="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">Igst Amount<span style="color:red"> *</span></label>
+                <input type="number" id="IgstAmount" class="form-control" name="IgstAmount" [(ngModel)]="itemDetails.IgstAmount" 
+                    required="1" #Igst="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">Total Amount<span style="color:red"> *</span></label>
+                <input type="number" id="TotalAmount" class="form-control" name="TotalAmount" [(ngModel)]="itemDetails.Amount" 
+                    required="1" #TotalAmount="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">Total Tax<span style="color:red"> *</span></label>
+                <input type="number" id="Discount" class="form-control" name="Discount" [(ngModel)]="itemDetails.TotalTax" 
+                    required="1" #Igst="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">TaxableAmount<span style="color:red"> *</span></label>
+                <input type="number" id="TaxableAmount" class="form-control" name="TaxableAmount" [(ngModel)]="itemDetails.TaxableAmount" 
+                    required="1" #TaxableAmount="ngModel" disabled/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="name">Total Price<span style="color:red"> *</span></label>
+                <input type="number" id="TotalPrice" class="form-control" name="TotalPrice" [(ngModel)]="itemDetails.TotalPrice" 
+                    required="1" #TotalPrice="ngModel" disabled/>
+            </div> -->
+            <!-- <div class=" form-group col-md-12 " >
+                <button class="btn btn-raised btn-primary  float-right" style=" margin-right: 20px;"  (click)="Add(itemDetails)">Add</button>
+               </div>-->
+              
+          </div>
+          <!-- <div class="row" style="float: right; margin-right: 20px;">
+              <button class="btn btn-raised btn-warning" style="margin-right: 5px;" (click)="onCancel()">Cancel</button>
+              <button class="btn btn-raised btn-primary"  (click)="onSave()">save</button>
+          </div> -->
+            <div class=" form-actions right col-sm-12 p-3" *ngIf="getTableData.length > 0">
+                <button type="button" class="btn btn-raised btn-primary mr-1" (click)="onSave(infoForm)">
+                    <!-- <button type="submit" class="btn btn-raised btn-primary mr-1" (click)="onSave()" ng-disabled="editFormDisplay($event)"> -->
+                    <!-- <button type="submit" class="btn btn-raised btn-primary mr-1"  [disabled]="!people.PeopleFirstName ||!people.PeopleLastName||!people.Email|| !people.Desgination ||!people.Mobile ||!people.Cityid ||!people.Stateid ||!people.DOB ||!people.DataOfJoin ||!people.WarehouseId"
+                    (click)="onSave()"> -->
+                    Save
+                </button>
+                <!-- <button type="button" class="btn btn-raised btn-primary mr-1" (click)="back()">Back</button> -->
+            </div>
+      
+    </form>
+</div>
+
+<div class="row" style="margin-top:50px; margin-left: 10px;">
+      
+    <table>
+      <thead>
+        <tr style="background: lightgray">
+          <th>Item name</th>
+          <th>Unit Of Measurement</th>
+          <th>Quantity</th>
+          <th>Unit Price</th>
+          <th>Cgst</th>
+          <th>Sgst</th>
+          <th>Igst</th>
+          <th>Discount</th>
+          <th>Cgst Amount</th>
+          <th>Sgst Amount</th>
+          <th>Igst Amount</th>
+          <th>Total Amount</th>
+          <th>Total Tax</th>
+          <th>TaxableAmount</th>
+          <th>Total Price</th>
+
+          
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of getTableData"[ngStyle]="{'background-color':'#FFEBEE'}">
+          <td>{{i.itemname}}</td>
+          <td>{{i.Uom}}</td>
+          <td>{{i.Qty}}</td>
+          <td>{{i.UnitPrice}}</td>
+          <td>{{i.Cgst}}</td>
+          <td>{{i.Sgst}}</td>
+          <td>{{i.TotalTaxPercentage}}</td>
+          <td>{{i.Discount}}</td>
+          <td>{{i.CgstAmount}}</td>
+          <td>{{i.SgstAmount}}</td>
+          <td>{{i.IgstAmount}}</td>
+          <td>{{i.Amount}}</td>
+          <td>{{i.TotalTax}}</td>
+          <td>{{i.TaxableAmount}}</td>
+          <td>{{i.TotalPrice}}</td>
+
+        </tr>
+      </tbody>
+    </table>
+
+  
+  </div>

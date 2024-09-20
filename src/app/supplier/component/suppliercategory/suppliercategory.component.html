@@ -1,0 +1,72 @@
+
+<!-- <div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-sm-12">
+        <div class="content-header"> Supplier Category
+
+  <div class="row  float-right " style="height: 60px ; padding-right: 15px">
+      <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: auto;"
+        (click)="addPeoples()">
+        <i class="fa fa-plus-circle"></i> New Supplier Category
+
+      </button>
+    </div> -->
+    <p-toast [style]="{marginTop: '80px'}"></p-toast>
+    <section id="SupplierCategory" >
+        <div class="my-2 d-flex justify-content-between">
+            <div class="header">
+                <h3 class="m-2">Supplier Category</h3>
+            </div>
+            <div>
+                <button pButton type="button" label="New Supplier Category" (click)="addPeoples()"
+                    class="ui-button-raised m-2 shadow"></button>
+  </div>
+</div>
+
+
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+
+
+
+
+
+<div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+  <div class="position-relative">
+    <div class="position-absolute suppliercategory-details" *ngIf="isDetails">
+      <app-suppliercategory-details [details]="selectedRowDetails" [activeFields]="activeFields"
+        (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)"
+        class="d-flex justify-content-end"></app-suppliercategory-details>
+    </div>
+    <div class="position-relative">
+      <p-table #dt [columns]="cols" [value]="suppliercategoryList" [paginator]="true" [rows]="20" dataKey="SupplierCaegoryId"
+        [scrollable]="true" scrollHeight="70vh" text-align: center>
+
+        <ng-template pTemplate="header">
+          <tr>
+
+            <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="text-align: center">
+              {{col.header}}
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+          <tr (click)="openDetails(rowData,$event)">
+            <td *ngFor="let col of columns" style="text-align: center">
+              {{rowData[col.field]}}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+</section>

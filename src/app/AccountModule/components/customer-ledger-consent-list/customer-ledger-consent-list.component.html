@@ -1,0 +1,179 @@
+
+<p-toast [style]="{marginTop: '80px'}" ></p-toast>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left" style="margin-top: 20px;">
+      <div class="col-md-8 header">
+        <h3 class="m-2">Customer Ledger Consent List</h3>
+      </div>
+      <!-- <div class="col-md-2">
+        <button type="button" class="btn btn-raised btn-raised btn-primary pull-right" (click)="generateReport()">
+          Download Sample
+        </button>
+      </div> -->
+      <div class="col-md-4 text-right">
+        <button type="button" class="btn btn-raised btn-raised btn-primary pull-right" (click)="redirectConsent()">
+          Add Consent
+        </button>
+      </div>
+    </div>
+    <!-- <div class="row">
+      <div class="offset-6 col-6 ">
+        <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx" 
+        (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+          <code>*</code>
+        </p-fileUpload>
+      </div>
+    </div> -->
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Filters</h4>
+                  <div class="row" *ngIf="searchModel">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label class="col-md-12">&nbsp;</label>
+                        <input type="text" id="projectinput1" class="form-control" name="fname"
+                          [(ngModel)]="searchModel.Name">
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="fromDateInput">From Date</label>
+                        <p-calendar name="fromDateInput" [(ngModel)]="searchModel.FromDate" [showIcon]="true"
+                          name="fromDate"></p-calendar>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="toDateInput">To Date</label>
+                        <p-calendar name="toDateInput" [(ngModel)]="searchModel.ToDate" [showIcon]="true" name="toDate">
+                        </p-calendar>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label class="col-md-12" for="IsMessageSend">Is Consent</label>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<p-checkbox name="IsMessageSend" [(ngModel)]="searchModel.IsConsent" binary="true"></p-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="button" class="btn btn-raised btn-raised btn-warning mr-1" (click)="clear()">
+                    Reset
+                  </button>&nbsp;
+                  <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="searchByFilter()">
+                    Search
+                  </button>&nbsp;&nbsp;&nbsp;
+                  <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="exportExcel()">
+                    Excel Download
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+            <h4 class="card-title" id="basic-layout-colored-form-control">Customer Ledger Consent </h4>
+
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+
+              <form class="form">
+                <div class="position-relative ">
+                  <p-table #dt [value]="customerconsentList" [paginator]="true" [rows]="rowSize"
+                    dataKey="paymentRequestid" [scrollable]="true" scrollHeight="70vh" class="center" [lazy]="true"
+                    (onLazyLoad)="search($event)" [totalRecords]="totalRecordCount">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>SkCode</th>
+                        <th>Name</th>
+                        <th>MobileNo</th>
+                        <th>MessageSendDate</th>
+                        <th>IsMessageSend</th>
+                        <th>Consent</th>
+                        <th>ConsentStatus</th>
+                        <th>LedgerStartDate</th>
+                        <th>LedgerEndDate</th>
+                        
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                      <tr>
+                        <td>{{rowData.Skcode}}</td>
+                        <td>{{rowData.Name}}</td>
+                        <td>{{rowData.MobileNo}}</td>
+                        <td>{{rowData.MessageSendDate | date:'medium'}}</td>
+                        <td>{{rowData.IsMessageSend }}</td>
+                        <td>{{rowData.Consent }}</td>
+                        <td>{{rowData.ConsentStatus }}</td>
+                        <td>{{rowData.LedgerStartDate | date:'medium' }}</td>
+                        <td>{{rowData.LedgerEndDate | date:'medium' }}</td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+
+                </div>
+              </form>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+
+<div *ngIf="isOpenPopup">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '50%',height: '50%'}">
+    <p-header>
+      Customer Message Send List
+    </p-header>
+    <div class="form-actions">
+
+      <input type="text" id="projectinput1" class="form-actions" name="fname"
+        [(ngModel)]="customerLedgerMessagePager.Name">
+      <button type="button" class="btn btn-raised btn-raised btn-primary d1" (click)="msgCustomerList()">
+        Search
+      </button>
+
+    </div>
+    <p-table #dt [value]="customermegsendlist" [paginator]="true" [rows]="customerLedgerMessagePager.Take"
+      [scrollable]="true" scrollHeight="70vh" class="center" [lazy]="true" (onLazyLoad)="loadLazyMessageSend($event)"
+      [totalRecords]="totalRecordCountMsgSend">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Name</th>
+          <th>SkCode</th>
+          <th>MessageSend</th>
+          <th>MessageSendDate</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+        <tr>
+          <td>{{rowData.Name}}</td>
+          <td>{{rowData.Skcode}}</td>
+          <td>{{rowData.IsMessageSend}}</td>
+          <td>{{rowData.MessageSendDate | date:'medium'}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-dialog>
+</div>

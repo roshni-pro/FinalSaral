@@ -1,0 +1,107 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3> Approve Item Request <i class="icon-handbag" aria-hidden="true"></i> </h3>
+    </div>
+</div>
+<section>
+<div class="row">
+    <div class="col-md-12 mar-top d-flex mb-3">
+        <div class="col-md-3 bg-white rounded pt-2 pb-2">
+            <div class="form-group m-2">
+                <label for="a"> Choose Status </label>
+                <select id="sstatus" name="sstatus" class="form-control" [(ngModel)]="data.sstatus">
+                    <!-- <option [value]="">--select--</option> -->
+                    <option value="">Pending</option>
+                    <option value="true">Approved</option>
+                    <option value="false">Reject</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-9 bg-white rounded pt-1 pb-1">
+            <div class="form-group m-2 mblf ml-lef">
+                <label> &nbsp;</label><br>
+                <button type="button" class="btn btn-raised btn-primary mrrigt"  (click)="GetCheckerList(data)">
+                    <i class="fa fa-check-square-o"></i> Search
+                </button>
+                <button type="button" class="btn btn-raised btn-primary" (click)="ngOnInit()">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white pt-3 pb-3 rounded">
+<p-table #dt [columns]="cols" [value]="itemlist" dataKey="Id" [paginator]="true" [rows]="PageSize" [scrollable]="true"
+    [totalRecords]="totalRecords" (onLazyLoad)="load($event)" scrollHeight="65vh">
+
+    <ng-template pTemplate="caption">
+        <div style="text-align: right">
+            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+            <input type="text" pInputText size="50" placeholder="Search"
+                (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+        <tr style="text-align: center;">
+            <th *ngFor="let col of columns">
+                {{col.header}}
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr [ngClass]="{'apr': rowData.IsApproved, 'rej': rowData.IsReject}" style="text-align: center;">
+            <td *ngFor="let col of columns">
+                {{rowData[col.field]}}
+                <div style="align-content: center;" *ngIf="col.bool==true">
+                    <div class="row" *ngIf="!rowData.IsApproved && rowData.Reason==null">
+                        <button style="color: #009DA0" class="btn" (click)="edit(rowData, true)">Approve</button>
+                        <button style="color:red" class="btn" (click)="edit(rowData, false)">Reject</button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<div class="bgwhite" *ngIf="selectedQue">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '70%',height: 'auto', overflow: 'auto'}">
+        <p-header>
+            Reject Reason
+        </p-header>
+        <div class="ui-fluid">
+            <div class="ui-g">
+                <div class="ui-g-6">
+                    <div class="ui-g">
+                        <div class="col-md-8">
+                            <label for="input"><b> Enter Reason Here:</b></label>
+                            <textarea id="sellrequest" rows="4" class="txt-area form-control" name="comment"
+                                [(ngModel)]="data.reason" (ngModelChange)="onremarksChange(data.reason)"
+                                placeholder="Enter Text Here.."> </textarea> <br>
+                            <div *ngIf="isFormInvalid" style="font-size: 16px;">
+                                <code>Remark is required.</code>
+                            </div>
+                            <div *ngIf="isdisabled" style="font-size: 16px;">
+                                <code>Allow Only 150 Characters!!You exceeds Maximum length.</code>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <div class="bdry"> </div>
+                    <button class="btn btn-raised btn-raised btn-primary pull-right"
+                        (click)="Saveremarks(data)">Save</button>
+                </div>
+
+            </div>
+        </div>
+    </p-dialog>
+</div>
+</div>
+</section>

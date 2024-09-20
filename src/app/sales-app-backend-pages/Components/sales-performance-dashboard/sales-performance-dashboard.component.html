@@ -1,0 +1,143 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">!!!Sales Performance Dashboard</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="row mb-1">
+            <div class="col-md-3 ">
+                <label><b>Select City<span style="color: red;" class="required">*</span></b></label>
+                <p-multiSelect  [options]="cityList" placeholder="--Select a City--" [(ngModel)]="selectedCity" [filter]="true" 
+                optionLabel="label"  id="Cityid" name="CityName" optionValue="Cityid" (onChange)="getWarehouseList(selectedCity)"></p-multiSelect>
+            </div>
+            <div class="col-md-2 mb-2">
+                <label><b>Select Warehouse<span style="color: red;" class="required">*</span></b></label>
+                <p-multiSelect id="WarehouseId" name="WarehouseName"  [options]="warehouseList"   [filter]="true" 
+                [(ngModel)]="SelectedWarehouse" optionLabel="label" optionValue="value" placeholder="--Select Warehouse--">
+                </p-multiSelect>
+            </div>      
+            <div class="col-md-2 mb-2 ml-2">
+                <label><b>Select Store<span style="color: red;" class="required">*</span></b></label><br>
+                <p-multiSelect id="Store" name="Store" [options]="storeList" optionLabel="Name" appendTo="body" [(ngModel)]="selectedStore"
+                    placeholder="select Store" >
+                </p-multiSelect>
+            </div>               
+            <div class="col-md-sm-2 mb-2 ml-2">
+                <label><b>Month<span style="color: red;" class="required">*</span></b></label><br>
+                <p-dropdown [options]="ThisMonth" optionLabel="name" appendTo="body" [(ngModel)]="selectedMonth" placeholder="select Month" (onChange)="ChangeMonth(selectedMonth)" >
+                </p-dropdown>
+            </div>&nbsp;&nbsp;&nbsp;&nbsp;  
+            <div class="col-md-sm-2 mb-2 ml-2">
+                <div *ngIf="SeeCalen">
+                    <label><b>Select Calendar<span style="color: red;" class="required">*</span></b></label><br>
+                    <p-calendar  appendTo="body" [monthNavigator]="true" yearRange="2022:2099"  selectionMode="range" [readonlyInput]="true" inputId="range"
+                   [showIcon]="true" showButtonBar="true"  
+                    [showIcon]="true" [(ngModel)]="SelectedDate"  showButtonBar="true" >
+                    </p-calendar>
+                </div>
+            </div> 
+            <div class="mb-2 ml-2" style="margin-top: 4px;"><br>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="btn btn-primary" (click)="emp();searchHit($event)">Search</button>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<p-table [value]="SearchListView" [tableStyle]="{ 'min-width': '50rem' }"  text-align:center [scrollable]="true"  scrollHeight="70vh" 
+    scrollDirection="horizontal" scrollDirection="vertical"  >
+    <ng-template pTemplate="header" let-items>
+        <tr>
+            <th style="width: 20%;"> City</th>
+            <!-- <th style="width: 20%;"></th> -->
+            <th style="width: 20%;">Warehouse</th>
+            <th style="width: 20%; text-align: center;">Sales</th>
+            <th style="width: 20%;">Dispatch</th>
+            <th style="width: 20%;">BeatVisit%</th>
+            <th style="width: 20%; text-align: center;">TC</th>
+            <th style="width: 20%; text-align: center;">PC</th>
+            <th style="width: 20%;">Act Retailer</th>
+            <th style="width: 20%;">Avg LineItem</th>
+            <th style="width: 20%;">PerfOrder</th>
+            <th style="width: 20%;">Avg Range</th>
+            <th style="width: 20%;">Avg Store Time</th>
+            
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex">
+        <tr>
+            <td>{{rowData.CityName}}</td>
+            <td >{{rowData.WarehouseName}}</td>
+            <td > <div class="br-wthit" [ngStyle]="(rowData.SalesColour!=null)?{'background-color':rowData.SalesColour}:{'color':'black'}" >{{rowData.Sales}}</div></td>
+            <td >{{rowData.Dispatch}}</td>
+            <td >{{rowData.BeatVisitPercent}}</td>    
+            <td ><div class="br-wthit" [ngStyle]="(rowData.TCColour!=null)?{'background-color':rowData.TCColour}:{'color':'black'}" >{{rowData.TC}}</div></td>
+            <td ><div class="br-wthit" [ngStyle]="(rowData.PCColour!=null)?{'background-color':rowData.PCColour}:{'color':'black'}" >{{rowData.ProductiveCall}}</div></td>
+            <td >{{rowData.ActiveRetailer}}</td>
+            <td >{{rowData.AvgLineItem}}</td>
+            <td >{{rowData.PerfactOrder }}</td>
+            <td >{{rowData.Range}}</td>
+            <td >{{rowData.ActualTimeSpend}}</td>
+        </tr>
+    </ng-template>
+</p-table>
+<br>
+
+<p-table  [(first)]="first" (onLazyLoad)="load($event)" [totalRecords]="TotalRecords" [globalFilterFields]="['ExecutiveName']" 
+[value]="salesPerformanceDashbordListDCs" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }"  [paginator]="true" [scrollable]="true" 
+    scrollDirection="horizontal" scrollDirection="vertical" [lazy]="true"  scrollHeight="70vh" 
+     text-align: center 
+    >       
+    <ng-template pTemplate="caption">
+        <div style="text-align: right;">
+            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+            <input type="text" pInputText [minLength]="3" [size]="30" placeholder="Executive Name" [(ngModel)] = "key"  (input)="keysearch($event.target.value)"
+                style="border: solid 4px #ddd; ">
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-items>
+        <tr>
+            <th> Store</th>
+            <th>Warehouse</th>
+            <th>Cluster</th>
+            <th>Executive</th>     
+            <th style="text-align: center;">Sales</th>
+            <th>Dispatch</th>
+            <th>BeatVisit%</th>
+            <th style="text-align: center;">TC</th>
+            <th style="text-align: center;">PC</th>
+            <th>Act Retailer</th>
+            <th>Avg LineItem</th>
+            <th>Perf Orders</th>
+            <th>Range</th>
+            <th >Avg Store Time</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex">
+        <tr>
+            <td >{{rowData.StoreName}}</td>
+            <td >{{rowData.WarehouseName}}</td>
+            <td >{{rowData.ClusterName}}</td>
+            <td >{{rowData.ExecutiveName}}</td>
+            <td ><div class="br-wthit" [ngStyle]="(rowData.SalesColour!=null)?{'background-color':rowData.SalesColour}:{'color':'black'}" >{{rowData.Sales}}</div> </td>
+            <td >{{rowData.Dispatch}}</td>
+            <td >{{rowData.BeatVisitPercent}}</td>    
+            <td > <div class="br-wthit" [ngStyle]="(rowData.TCColour!=null)?{'background-color':rowData.TCColour}:{'color':'black'}" >{{rowData.TC}} </div>  </td>
+            <td > <div class="br-wthit" [ngStyle]="(rowData.PCColour!=null)?{'background-color':rowData.PCColour}:{'color':'black'}" >{{rowData.ProductiveCall}}</div>  </td>
+            <td >{{rowData.ActiveRetailer}}</td>
+            <td >{{rowData.AvgLineItem}}</td>
+            <td >{{rowData.PerfactOrder}}</td>
+            <td >{{rowData.Range}}</td>
+            <td >{{rowData.ActualTimeSpend}}</td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<!-- style="width: 10%; text-align: center; background-color: bisque !important;">
+                <div style="position: fixed;width: 10%; text-align: center; background-color: bisque !important;" -->

@@ -1,0 +1,43 @@
+<div class="ui-fluid">
+
+  <div class="row text-left">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header pb-2">
+        </div>
+        <div class="card-content">
+          <div class="px-3">
+            <div class="row">
+              <div class="col-sm-3">
+                <p-calendar [(ngModel)]="inputModel.StartDate" [showTime]="true"></p-calendar>
+              </div>
+              <div class="col-sm-3">
+                <p-calendar [(ngModel)]="inputModel.EndDate" [showTime]="true"></p-calendar>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <p-autoComplete [(ngModel)]="selectedItem" [suggestions]="itemList"
+                    (completeMethod)="getItemList($event)" field="ItemName" [size]="30"
+                    placeholder="enter at least 3 chars" [minLength]="1" name="Name" (ngModelChange)="onSelectItem()"
+                    name="Name" required="true" #Name="ngModel">
+                  </p-autoComplete>
+                  <div [hidden]="Name.valid">
+                    <code>Required!</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-3" style="height: 60px ; padding-right: 15px">
+                <button type="button" class="btn btn-raised btn-primary align-self-end" style="margin-top: auto;"
+                  (click)="getData()"> Update Chart
+                  <!-- <a [routerLink]="['/add']"></a> -->
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<nvd3 #nvd3 [options]="options" [data]="data"></nvd3>

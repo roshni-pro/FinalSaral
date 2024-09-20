@@ -1,0 +1,85 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<div class="ui-fluid">
+    <section id="basic-form-layouts">
+        <html>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <script src="https://www.w3schools.com/lib/w3.js"></script>
+        <body>
+            <div class="w3-container w3-center w3-animate-left">
+                <h1><b>Manage Zone List View</b></h1>
+            </div>
+            <div class="shadow bg-white py-2">
+                <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+                     (click)="toggleSearch()">
+                  <h5 class="m-0">Filters</h5>
+                         <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+                 </div>
+                <div id="search-content p-2" *ngIf="isSearch">
+    
+                <form class="ovelFieldForm form" name="form" #managezoneForm="ngForm" style="padding:0px 15px;">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="projectinput3"><b>Supplier<span style="color:red"> *</span></b></label>
+                            <select id="des" name="supplier" [(ngModel)]="CustomerId" class="form-control"
+                                 #supplier="ngModel" required="1">
+                                <option value="">Select Supplier </option>
+                                <option *ngFor="let supp of supplierList;" [value]="supp.CustomerId">
+                                    {{supp.CustomerName}}</option>
+                            </select>
+                            <div *ngIf="isInvalid && !supplier.valid && supplier.errors.required">
+                                <code>Supplier Name is required</code>
+                            </div>
+                        </div>
+                    
+                        <div class="col-md-3 text-right">
+                            <button class="btn btn-raised btn-raised btn-primary" style="margin-top: 25px;"
+                                (click)="search(managezoneForm,CustomerId)">Search </button>
+                        </div>
+                        
+                    </div>                  
+                </form>
+                </div>
+            </div>
+                <div class="row text-left" *ngIf="listView == true">
+                    <div class="col-md-12">
+                        <div class="card noneHoverRow">
+                            <p-table #dt [value]="zonesupplierList" [paginator]="true" [rows]="20"
+                                [scrollable]="true" scrollHeight="130vh" text-align: center>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>ZoneName</th>
+                                        <th>Created Date</th>
+                                        <th>Active </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-ir>
+                                    <tr>                                                    
+                                        <td>{{ir.Id}}</td>
+                                        <td>{{ir.ZoneName}}</td>
+                                        <td>{{ir.CreatedDate |  date:'medium'}}</td>
+                                        <td>{{ir.IsActive}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+           
+           
+            <p-blockUI [blocked]="blocked"></p-blockUI>
+            <p-progressSpinner *ngIf="blocked"
+                [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+                fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+        </body>
+
+        </html>
+    </section>
+</div>

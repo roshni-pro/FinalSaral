@@ -1,0 +1,122 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+
+<div class="my-2 d-flex justify-content-between">
+    <div class=" header">
+        <div class="col-12">
+            <h1 class="h11">Virtual Stock List
+            </h1>
+        </div>
+    </div>    
+</div>
+<div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+        (click)="toggleSearch()">
+        <h5 class="m-0">Filters</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+    <div id="search-content p-2" *ngIf="isSearch">
+        <div class="row ">
+            <div class="col-sm-12">
+                <form class="form" #virtualStockForm="ngForm">
+                    <div class="form-body">
+                        <div class="row p-3">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="projectinput3"><b>Warehouse Name<span style="color:red"> *</span></b></label>
+                                    <select type="text" id="warehouse" [(ngModel)]="data.WarehouseId" class="form-control" name="warehouse" (blur)="checkValid($event)" #warehouse="ngModel" required="1">
+                                        <option value="">Select</option>
+                                        <option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">
+                                        {{warehouse.WarehouseName}} {{warehouse.CityName}}</option>
+                                </select>
+                                    <div class="ui-g"></div>
+                                    <div *ngIf="isInvalid && !warehouse.valid && warehouse.errors.required">
+                                        <code>Warehouse Name is required</code>
+                                    </div>
+                                </div>
+                            </div>
+                         
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="startdate"><b>Start Date: </b></label><br>
+                                    <p-calendar [showIcon]="true" [(ngModel)]="data.StartDate" name="startDate" required = "1"
+                                        [readonlyInput]="true" required #dateRangeListInput>
+                                    </p-calendar>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="enddate"><b>End Date: </b></label><br>
+                                    <p-calendar [showIcon]="true" [(ngModel)]="data.EndDate" name="EndDate" required = "1"
+                                        [readonlyInput]="true" required #dateRangeListInput>
+                                    </p-calendar>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2" style="padding-top: 30px">
+                                <div class="form-group">   
+                                    <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="onSearchdata(data)">
+                                    Search
+                                </button> 
+                                </div>
+                            </div>
+                            <div class="col-md-1" style="padding-top: 30px">
+                                <div class="form-group"> 
+                                    <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24"
+                                    (click)="export(data) ">Export </button>
+                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row text-left">
+    <div class="col-md-12">
+        <div class="card noneHoverRow">
+            <p-table [value]="virtualStockList" [paginator]="true" [lazy]="true"
+            (onLazyLoad)="load($event,data)" [rows]="10"
+            [totalRecords]="totalRecords"  [scrollable]="true" scrollHeight="130vh" text-align: center>
+            <ng-template pTemplate="caption">
+                <div style="text-align: right">        
+                  <h5 style="color : blue; font-weight: initial;"><b>Total Records : {{totalRecords}}</b></h5>
+                </div>
+              </ng-template>
+            <ng-template pTemplate="header">
+                    <tr>
+                        <th>ItemName</th>
+                        <th>StockType</th>
+                        <th>WarehouseName</th>
+                        <th>InOutQty</th>
+                        <th>CreatedDate</th>
+                        <th>Reason</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-ir>
+                    <tr >                                                    
+                        <td>{{ir.ItemName}}</td>
+                        <td>{{ir.StockType}}</td>
+                        <td>{{ir.WarehouseName}}</td>
+                        <td >{{ir.InOutQty}}</td>
+                        <td>{{ir.CreatedDate |  date:'medium'}}</td>
+                        <td>{{ir.Reason}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

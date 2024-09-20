@@ -1,0 +1,148 @@
+<p-toast></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+
+<section id="basic-form-layouts">
+  <div class="row text-left">
+    <div class="col-sm-12">
+      <h1 class="h11">wudu Notification &nbsp;<i class="fa fa-envelope-o" style="font-size:38px;"></i> </h1>
+      <hr>
+    </div> 
+  </div>
+  <div class="row text-left">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header pb-2">
+          <h4 class="card-title" id="basic-layout-form">Message</h4>
+          <p class="mb-0">It is a way to directly
+            connecting
+            with End users.Creator is only responsible for this.</p>
+        </div>
+        <div class="card-content">
+          <div class="px-3 mr-b-20">
+            <form class="form" #masterForm="ngForm">
+              <h4 class="form-section">
+                <i class="fa fa-user-circle" aria-hidden="true"></i>Customer Message List</h4>
+              <div class="form-body">
+                <div class="row">
+                 
+                        <div class="col-md-12">
+                            <label for="projectinput2">Please Select Type*</label>
+                        </div>                   
+                        <div class="col-md-4">
+                            <p-radioButton name="groupname" value="message"   
+                            [(ngModel)]="message"                            
+                                (ngModelChange)="onEventTypeChange(message)"
+                                [disabled]="isNotification" label="Message">
+                            </p-radioButton>
+                        </div>
+                        <div class="col-md-4">
+                            <p-radioButton name="groupname" value="Notification" [(ngModel)]="Notification"                               
+                                (ngModelChange)="onEventTypeChange(Notification)"
+                                [disabled]="radiodisabled" label="Notification">
+                            </p-radioButton>
+                        </div>   
+                        <br>                       
+                  <div class="col-md-12">
+                    <div class="form-group" *ngIf="showcityandcategory">
+                      <label for="City"> <b>Select City:</b></label>
+                      <select id="city" name="city" class="form-control" [(ngModel)]="City" placeholder="Select City"
+                        (ngModelChange)="loadData(City)">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let city of cityLists" [ngValue]="city.City">
+                          {{ city.City }}
+                        </option>
+                      </select>
+                    </div>                 
+                    <div class="ui-g-10 scr">
+                      <div *ngFor="let cust of selectedList; let i=index;" class="btn-a">                       
+                      <span>{{cust.CustId}}</span>
+                      &nbsp;<a href="javascript:void(0);" (click)="removeCustomer(cust)"><i class="fa fa-times"
+                          aria-hidden="true"></i></a>                         
+                  </div>
+                  </div>
+                
+                  </div>
+                 
+                </div>
+                <br>
+                <div class="form-group">
+                  <label for="projectinput8"><b>To Enter Message (Optional)*</b></label><br>
+                  <button name="detail" class="btn btn" (click)="onSelection()" style="color: crimson;">Click
+                    Here</button>
+                  <!-- <p-checkbox [(ngModel)]="checked" binary="true" (ngModelChange)="onSelection()"></p-checkbox>&nbsp;
+                  <label for="projectinput8">Message</label>                             -->
+                </div>
+                <div class="form-actions" *ngIf="checked==true">
+                  <textarea id="projectinput8" rows="5" class="form-control" name="comment"
+                    [(ngModel)]="message"> </textarea><br>
+                  <button style="float: right;" type="button" class="btn btn-raised btn-raised btn-primary"
+                    (click)="sendMessages()" [disabled]="message==null"> Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header pb-2">
+          <h4 class="card-title" id="basic-layout-colored-form-control">Customer List </h4>
+        </div>
+        <div class="card-content">
+          <div class="px-3">
+            <div class="row">
+
+           
+              <div class="col-md-12">
+                <p-table #dt [columns]="cols" [value]="list" dataKey="Id" [paginator]="false"
+                [(selection)]="selectedList" [rows]="150" [lazy]="false" [scrollable]="true" scrollHeight="64vh"
+                  text-align: center>
+
+                  <ng-template pTemplate="caption">
+                    <div style="text-align: right;">
+                      <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                      <input type="text" pInputText size="50" placeholder="Search"
+                        (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                  </ng-template>
+
+                  <ng-template pTemplate="header" let-columns>
+                    <tr>
+                      <th style="width: 3em">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                      <th *ngFor="let col of columns">
+                        {{col.header}}
+                      </th>
+                    </tr>
+                  </ng-template>
+
+               
+
+                  <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                    <tr>
+                      <td  style="width: 3em">
+                        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                      </td>
+                      <td *ngFor="let col of columns">
+                        {{rowData[col.field]}}
+                      </td>
+                  
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- <p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> -->

@@ -1,0 +1,17 @@
+<div class=ui-g *ngIf="!isSelected">
+    <div class="ui-g-6">
+        <p-autoComplete [(ngModel)]="selectedCustomer" [suggestions]="CustomerList"
+            (completeMethod)="getCustomerList($event)" field="Name" [size]="30" placeholder="enter at least 3 chars"
+            [minLength]="1" name="custName" (onSelect)="onSelectCustomer($event)" required="true"
+            #CustomerName="ngModel">
+        </p-autoComplete>
+    </div>
+</div>
+<div class=ui-g *ngIf="isSelected">
+    <div class="ui-g-12">
+        <div class="ui-inputgroup">
+            <input class="form-control" [(ngModel)]="CustomerValue.Name" disabled>
+            <button pButton type="button" icon="pi pi-times" (click)="cancel()" class="ui-button-danger"></button>
+        </div>
+    </div>
+</div>

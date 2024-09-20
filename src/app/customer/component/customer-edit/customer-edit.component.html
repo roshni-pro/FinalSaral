@@ -1,0 +1,1297 @@
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form-inline" name="form" (ngSubmit)="onclick(testForm)" #testForm="ngForm"
+                autocomplete="off">
+                <!-- <fieldset [disabled]="testForm.valid && customer.CustomerVerify == 'Full Verified' && isFirstChange"> -->
+                <fieldset>
+
+
+                  <input autocomplete="false" name="hidden" type="text" style="display:none;">
+                  <div class="form-body">
+                    <h4 class="form-section"><i class="ft-user"></i>Customer Info</h4>
+                    <div class="row">
+
+                      <!-- <div class="col-md-6"></div>Empty Space -->
+
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="sname" class="col-md-6">Shop Name:<span style="color:red"> *</span></label>
+                          <input type="text" id="sname" class="form-control col-md-6" name="sname"
+                            placeholder="Shop Name" [(ngModel)]="customer.ShopName" required="1" maxlength="50"
+                            minlength="2" #ShopName="ngModel" />
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !ShopName.valid && ShopName.errors.required">
+                            <code>Shop Name is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !ShopName.valid && ShopName.errors.minlength">
+                            <code>Minlength 2</code>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="oname" class="col-md-6">Owner Name:<span style="color:red"> *</span></label>
+                          <!-- (keydown)="onKeydown($event)"  (input)="inputValidator($event)" -->
+                          <input type="text" id="oname" class="form-control col-md-6" name="oname"
+                            [(ngModel)]="customer.Name" required="1" maxlength="50" minlength="4" #Name="ngModel" />
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !Name.valid && Name.errors.required">
+                            <code>Owner Name is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !Name.valid && Name.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="Mobile" class="col-md-6">Mobile No.:<span style="color:red"> *</span></label>
+                          <input type="tel" id="Mobile" class="form-control col-md-6" name="Mobile"
+                            [(ngModel)]="customer.Mobile" required="1" (keypress)="keyPress($event)" minlength=10
+                            maxlength=10 #Mobile="ngModel" />
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !Mobile.valid && Mobile.errors.required">
+                            <code>Mobile No is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !Mobile.valid && Mobile.errors.minlength">
+                            <code>Minlength 10</code>
+                          </div>
+                          <div *ngIf="isInvalid && !Mobile.valid && Mobile.errors.maxlength">
+                            <code>Maxlength 10</code>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="GST" class="col-md-6">GST/TIN_No/Ref No:</label>
+                          <input type="text" id="GST" class="form-control col-md-6" name="GST" minlength="15"
+                            (blur)="gstPatternValidator(customer.RefNo)" [(ngModel)]="customer.RefNo" />
+                          <!-- {{gstPatternValidator(customer.RefNo)}} -->
+                          <label for="GST" class="col-md-6" style="color: red;">Name On GST:
+                            {{customer.NameOnGST}}</label>
+                          <span>
+
+                            <button type="button" class="btn btn-raised btn-primary "
+                              (click)="VarifiedCustomerGSTNO(customer.RefNo)">Gst Verify </button>
+
+                            <p-dialog appendTo="body" header="GSTN Info" [(visible)]="GSTdisplay"
+                              [style]="{width: '1040px', height: '300px'}">
+                              <div *ngIf="GSTdisplay">
+                                <table style="border: 1px solid rgb(48, 21, 21)">
+                                  <tr style="border: 1px solid rgb(48, 21, 21)">
+                                    <th>GSTN No. </th>
+                                    <th>Name on GSTN</th>
+                                    <th>ShopName</th>
+                                    <th>BillingAddress</th>
+                                    <th>Active </th>
+                                    <th>Zipcode</th>
+                                  </tr>
+                                  <tr style="border: 1px solid rgb(48, 21, 21)">
+                                    <td>{{GSTData.RefNo}} </td>
+                                    <td>{{GSTData.Name}} </td>
+                                    <td>{{GSTData.ShopName}}</td>
+                                    <td>{{GSTData.ShippingAddress}}</td>
+                                    <td>{{GSTData.Active}} </td>
+                                    <td>{{GSTData.Zipcode}}</td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </p-dialog>
+                            <p-blockUI [blocked]="blocked"></p-blockUI>
+                            <p-progressSpinner *ngIf="blocked"
+                              [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}"
+                              strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+                          </span>
+                          <!-- // for continuous check -->
+                          <code *ngIf="isInvalid && invalidgst  && customer.RefNo && customer.RefNo.length != 15">Your
+                            GST/TIN_No/Ref No should be of 15 characters</code>
+
+                          <code *ngIf="isInvalid && invalidgst && customer.RefNo && customer.RefNo.length == 15">Pls
+                            enter valid GST/TIN_No/Ref No. For eg. - 23AAVCS1981Q1ZE </code>
+
+
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="City" class="col-md-6">City:<span style="color:red"> *</span></label>
+                          <select id="state" name="state" class="form-control col-md-6" [(ngModel)]="customer.Cityid"
+                            (change)="getWarehouse(customer.Cityid)" placeholder="Select City" required="1"
+                            #state="ngModel">
+                            <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                              {{ city.CityName }}
+                            </option>
+                          </select>
+                        </div>
+                        <div *ngIf="isInvalid && !state.valid && state.errors.required">
+                          <code>City is required</code>
+                        </div>
+                      </div>
+                      <!-- <div class="col-md-6"></div>Empty Space -->
+                      <div class="col-md-6" *ngIf="customer.Active == false">
+                        <div class="form-group my-2">
+                          <label for="ware" class="col-md-6">Choose Warehouse:</label>
+                          <select id="ware" name="ware" class="form-control col-md-6" [(ngModel)]="customer.Warehouseid"
+                            (change)="getCluster(customer.Warehouseid)">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let w of warehouseList" [ngValue]="w.WareHouseId">
+                              {{ w.WareHouseName }} {{w.CityName}}
+                            </option>
+                          </select>
+                          <!-- <div *ngIf="isInvalid && !Warehouseid.valid && Warehouseid.errors.required">
+                          <code>Warehouse is required</code>
+                        </div> -->
+                        </div>
+                      </div>
+
+                      <div class="col-md-6" *ngIf="customer.Active == true">
+                        <div class="form-group my-2">
+                          <label for="Warehouseid" class="col-md-6">Choose Warehouse:<span style="color:red">
+                              *</span></label>
+                          <select id="Warehouseid" name="Warehouseid" class="form-control col-md-6"
+                            [(ngModel)]="customer.Warehouseid" (change)="getCluster(customer.Warehouseid)" required="1"
+                            #Warehouseid="ngModel">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let w of warehouseList" [ngValue]="w.WareHouseId">
+                              {{ w.WareHouseName }} {{w.CityName}}
+                            </option>
+                          </select>
+                          <div *ngIf="isInvalid && !Warehouseid.valid && Warehouseid.errors.required">
+                            <code>Warehouse is required</code>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- <div class="col-md-6"></div>Empty Space -->
+                      <div class="col-md-6" *ngIf="customer.Active == false">
+                        <div class="form-group my-2">
+                          <label for="cluster" class="col-md-6">Cluster:</label>
+                          <select id="cluster" name="cluster" class="form-control col-md-6"
+                            [(ngModel)]="customer.ClusterId" (change)="getAgent(customer.ClusterId)">
+                            <option value="">Out of Cluster Area</option>
+                            <option *ngFor="let w of clusterList" [ngValue]="w.ClusterId">
+                              {{ w.ClusterName }}
+                            </option>
+                          </select>
+                        </div>
+                        <!-- <div *ngIf="isInvalid && !ClusterId.valid && ClusterId.errors.required">
+                        <code>Cluster is required</code>
+                      </div> -->
+                      </div>
+
+                      <div class="col-md-6" *ngIf="customer.Active == true">
+                        <div class="form-group my-2">
+                          <label for="cluster" class="col-md-6">Cluster:<span style="color:red"> *</span></label>
+                          <select id="cluster" name="cluster" class="form-control col-md-6"
+                            [(ngModel)]="customer.ClusterId" (change)="getAgent(customer.ClusterId)" required="1"
+                            #ClusterId="ngModel">
+                            <option value="">Out of Cluster Area</option>
+                            <option *ngFor="let w of clusterList" [ngValue]="w.ClusterId">
+                              {{ w.ClusterName }}
+                            </option>
+                          </select>
+                        </div>
+                        <div *ngIf="isInvalid && !ClusterId.valid && ClusterId.errors.required">
+                          <code>Cluster is required</code>
+                        </div>
+                      </div>
+                      <!-- <div class="col-md-6"></div>Empty Space -->
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="area" class="col-md-6">Area:</label>
+                          <select id="area" name="area" class="form-control col-md-6" [(ngModel)]="customer.Areaid"
+                            (ngModelChange)="onAreaChange()">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let w of areaList" [ngValue]="w.areaId">
+                              {{ w.AreaName }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="agent" class="col-md-6">Agent:</label>
+                          <select id="agent" name="agent" class="form-control col-md-6"
+                            [(ngModel)]="customer.AgentCode">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let agent of agentList" [ngValue]="agent.AgentCode">
+                              {{ agent.AgentName }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <!-- <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="area" class="col-md-6">Executive:</label>
+                          <select id="Executive" name="Executive" class="form-control col-md-6"
+                            [(ngModel)]="customer.ExecutiveId">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let e of executiveList" [ngValue]="e.PeopleID">
+                              {{ e.DisplayName }}
+                            </option>
+                          </select>
+                        </div>
+                      </div> -->
+                      <!-- <div class="col-md-6"></div>Empty Space -->
+                      <!-- <div class="col-md-6">
+                      <div class="form-group my-2">
+                        <label for="Verified" class="col-md-6">Verified:</label>
+                        <select id="Verified" name="Verified" class="form-control col-md-6"
+                          [(ngModel)]="customer.CustomerVerify" required>
+                          <option value="">--Select--</option>
+                          <option value="Full Verified">Full Verified</option>
+                        
+                          <option value="Not Verified">Not Verified</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6" *ngIf="customer.CustomerVerify == 'Full Verified'">
+                      <div class="form-group my-2">
+                        <label for="area" class="col-md-6">SubType:</label>
+                        <select id="subtypeF" name="subtypeF" class="form-control col-md-6" [(ngModel)]="customer.StatusSubType" >
+                          <option value="">--Select--</option>
+                          <option *ngFor="let s of fullVarifiedSubType" [ngValue]="s.atype">
+                            {{ s.atype }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6" *ngIf="customer.CustomerVerify == 'Not Verified'">
+                      <div class="form-group my-2">
+                        <label for="area" class="col-md-6">SubType:</label>
+                        <select id="subtypeN" name="subtypeN" class="form-control col-md-6" [(ngModel)]="customer.StatusSubType" >
+                          <option value="">--Select--</option>
+                          <option *ngFor="let s of NotVarifiedSubType" [ngValue]="s.stype">
+                            {{ s.stype }}
+                          </option>
+                        </select>
+                      </div>
+                    </div> -->
+                      <!-- <div class="col-md-6"></div>Empty Space -->
+
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="PasswordInput" class="col-md-6">Password:</label>
+                          <input type="text" id="PasswordInput" class="form-control col-md-6" name="PasswordInput"
+                            [(ngModel)]="customer.Password" maxlength="50" minlength="2" placeholder="password" />
+                          <!--required="1" #Password="ngModel"-->
+                          <div class="col-md-6"></div>
+                          <!-- <div *ngIf="isInvalid && !Password.valid && Password.errors.required">
+                            <code>Password is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !Password.valid && Password.errors.minlength">
+                            <code>Minlength 2</code>
+                          </div> -->
+                        </div>
+                      </div>
+
+                      <!-- <div class="col-md-6"></div>Empty Space -->
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="des" class="col-md-6">Description</label>
+                          <textarea type="text" id="des" class="form-control col-md-6" name="des"
+                            [(ngModel)]="customer.Description" placeholder="Enter Description"></textarea>
+                          <!-- <div class="col-md-6"></div> -->
+                          <!-- <div *ngIf="isInvalid && !Description.valid && Description.errors.required">
+                        <code>Description is required</code>
+                      </div>
+                      <div *ngIf="isInvalid && !Description.valid && Description.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div>                              -->
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="Verified" class="col-md-6">Verified:<span style="color:red"> *</span></label>
+                          <select id="Verified" name="Verified" class="form-control col-md-6"
+                            (change)="change(customer.CustomerVerify); unedited = false"
+                            [(ngModel)]="customer.CustomerVerify" required="1" #Verified="ngModel">
+                            <option value="">--Select--</option>
+                            <option value="Full Verified">Full Verified</option>
+                            <!-- <option value="Partial Verified">Partial Verified</option> -->
+                            <option value="Not Verified">Not Verified</option>
+                            <option value="Pending For Activation">Pending For Activation</option>
+                            <option value="Pending For Submitted">Pending For Submitted</option>
+                            <option value="Temporary Active">Temporary Active</option>
+                            <!-- <option value="Address Not Found">Address Not Found</option> -->
+                          </select>
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !Verified.valid && Verified.errors.required">
+                            <code>Verification is required</code>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.CustomerVerify == 'Full Verified'">
+                        <div class="form-group my-2">
+                          <label for="area" class="col-md-6">SubType:<span style="color:red"> *</span></label>
+                          <select id="subtypeF" name="subtypeF" class="form-control col-md-6"
+                            [(ngModel)]="customer.StatusSubType" required="1" #subtypeverified="ngModel">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let s of fullVarifiedSubType" [ngValue]="s.atype">
+                              {{ s.atype }}
+                            </option>
+                          </select>
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !subtypeverified.valid && subtypeverified.errors.required">
+                            <code>SubType is required</code>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.CustomerVerify == 'Not Verified'">
+                        <div class="form-group my-2">
+                          <label for="area" class="col-md-6">SubType:<span style="color:red"> *</span></label>
+                          <select id="subtypeN" name="subtypeN" class="form-control col-md-6"
+                            [(ngModel)]="customer.StatusSubType" required="1" #subtypenotverified="ngModel">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let s of NotVarifiedSubType" [ngValue]="s.stype">
+                              {{ s.stype }}
+                            </option>
+                          </select>
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !subtypenotverified.valid && subtypenotverified.errors.required">
+                            <code>SubType is required</code>
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="Grabbed" class="col-md-6">Grabbed By:<span style="color:red"> *</span></label>
+                          <input type="text" [disabled]="true" id="Grabbed" class="form-control col-md-6" name="Grabbed"
+                            placeholder="Grabbed By" [(ngModel)]="customer.grabbedByName" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="CustomerType" class="col-md-6">Customer Type:<span style="color:red">
+                              *</span></label>
+                          <select id="CustomerType" name="CustomerType" class="form-control col-md-6"
+                            *ngIf="!customer.IsKPP"
+                            (change)="changeCustomerType(customer.CustomerType); unedited = false"
+                            [(ngModel)]="customer.CustomerType" required="1" #CustomerType="ngModel"
+                            [disabled]="customer.IsPermanentType">
+                            <option value="" disabled>--Select--</option>
+                            <option value="SKP Owner">SKP Owner</option>
+                            <option value="KPP">KPP</option>
+                            <option value="Retailer">Retailer</option>
+                            <option value="Agent">Agent</option>
+                            <option value="RDS">RDS</option>
+                            <option value="Wholesaler">Wholesaler</option>
+                            <option value="Distributor">Distributor</option>
+                            <option value="Super Stockist">Super Stockist</option>
+                            <option value="Direct Open Network">Direct Open Network</option>
+                            <option value="SKP Retailer">SKP Retailer</option>
+                            <option value="Trader">Trader</option>
+                            <option value="Consumer">Consumer</option>
+
+                            <!-- <option value="SellerStore">Seller Store</option> -->
+                          </select>
+                          <select id="CustomerType" name="CustomerType" class="form-control col-md-6"
+                            *ngIf="customer.IsKPP"
+                            (change)="changeCustomerType(customer.CustomerType); unedited = false"
+                            [(ngModel)]="customer.CustomerType" required="1" #CustomerType="ngModel">
+                            <option value="" disabled>--Select--</option>
+                            <option *ngIf="customer.CustomerAppType!=4" value="KPP">KPP</option>
+                            <option *ngIf="customer.CustomerAppType==4" value="RDS">RDS</option>
+                          </select>
+                          <div class="col-md-6"></div>
+                          <!-- <div *ngIf="isInvalid && !CustomerType.valid && CustomerType.errors.required">
+                            <code>Customer Type is required</code>
+                          </div> -->
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.CustomerType == 'SKP Retailer'">
+                        <div class="form-group my-2">
+                          <label for="area" class="col-md-6">SKP Owner:<span style="color:red"> *</span></label>
+                          <p-dropdown id="Owner" name="Owner" [options]="skp_kpplist" required="1"
+                            [(ngModel)]="customer.SKPOwnerId" optionLabel="Skcode" filter="true" [showClear]="true"
+                            placeholder="Select SKP Owner" #SKPOwnerId="ngModel">
+                          </p-dropdown>
+                          <!-- <label for="area" class="col-md-6">SKP Owner:<span style="color:red"> *</span></label>
+                          <select id="Owner" name="Owner" class="form-control col-md-6"
+                            [(ngModel)]="customer.SKPOwnerId"  required="1" #SKPOwnerId="ngModel">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let s of skp_kpplist" [ngValue]="s.CustomerId">
+                              {{ s.Skcode }}-({{s.Name}})
+                            </option>
+                          </select> -->
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !SKPOwnerId.valid && SKPOwnerId.errors.required">
+                            <code>SKP Owner is required</code>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="Brandss" class="col-md-6">Brands<span style="color:red"> *</span></label>
+                          <p-multiSelect [options]="BrandList" name="SubsubcategoryName" [(ngModel)]="selectedList"
+                            optionLabel="SubsubcategoryName" [style]="{minWidth:'18em'}" (onChange)="selectedBands()">
+                          </p-multiSelect>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="active" class="col-md-6"> Customer is Active</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1"
+                              type="checkbox" [(ngModel)]="customer.Active"
+                              [disabled]="customer.CustomerVerify=='Temporary Active'">
+                            <label class="custom-control-label" for="customCheckboxInline1"></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="IsKPP" class="col-md-6">Is KPP</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="customCheckboxInline3" name="customCheckboxInline3"
+                              type="checkbox" [(ngModel)]="customer.IsKPP" (change)="isKppChange(customer.IsKPP)"
+                              [disabled]="customer.CustomerVerify=='Temporary Active'">
+                            <label class="custom-control-label" for="customCheckboxInline3"></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.Active == false">
+                        <div class="form-group my-2">
+                          <label for="active" class="col-md-6"> Customer Hidden In Agent App</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="customCheckboxInline2" name="customCheckboxInline2"
+                              type="checkbox" [(ngModel)]="customer.IsHide"
+                              [disabled]="customer.CustomerVerify=='Temporary Active'">
+                            <label class="custom-control-label" for="customCheckboxInline2"></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.IsKPP">
+                        <div class="form-group my-2">
+                          <label for="iskppWarehouse" class="col-md-6">Is Kpp Warehouse :<span style="color:red">
+                              *</span></label>
+                          <select id="iskppWarehouse" name="iskppWarehouse" class="form-control col-md-6"
+                            [(ngModel)]="customer.KPPWarehouseId" required="1" #iskppWarehouse="ngModel">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let iskpp of isKppWarehouseList" [ngValue]="iskpp.WarehouseId">
+                              {{ iskpp.WarehouseName }} {{iskpp.CityName}}
+                            </option>
+                          </select>
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !iskppWarehouse.valid && iskppWarehouse.errors.required">
+                            <code>Kpp Warehouse required</code>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="IssignUp" class="col-md-6">Is Signup:</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="customCheckboxInline4" name="IsSignup"
+                              type="checkbox" [(ngModel)]="customer.IsSignup" #IsSignup="ngModel"
+                              [disabled]="customer.CustomerVerify=='Temporary Active'">
+                            <label class="custom-control-label" for="customCheckboxInline4"></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="IsFranchise" class="col-md-6">Is Franchise:</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="customCheckboxInline5" name="IsFranchise"
+                              type="checkbox" [(ngModel)]="customer.IsFranchise" #IsFranchise="ngModel"
+                              (change)="IsFranchiseAccept($event, customer.IsFranchise)"
+                              [disabled]="UserRole.indexOf('HQ Master login')>-1==false">
+                            <label class="custom-control-label" for="customCheckboxInline5"></label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="IsChequeAccept" class="col-md-6">Is Cheque Accepted:</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="customCheckboxInline5" name="IsChequeAccepted"
+                              type="checkbox" [(ngModel)]="customer.IsChequeAccepted"
+                              (change)="isChequeAccepted(customer.IsChequeAccepted)" #IsChequeAccepted="ngModel"
+                              [disabled]="customer.CustomerVerify=='Temporary Active'">
+                            <label class="custom-control-label" for="customCheckboxInline5"></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.IsChequeAccepted">
+                        <div class="form-group my-2">
+                          <label for="ChequeLimit" class="col-md-6">Cheque Limit:<span style="color:red">
+                              *</span></label>
+                          <input type="text" id="Limit" class="form-control col-md-6" name="ChequeLimit"
+                            [(ngModel)]="customer.ChequeLimit" required="1" #ChequeLimit="ngModel" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="AadharNo" class="col-md-6">Aadhar No:</label>
+                          <input type="number" id="AadharNo" class="form-control col-md-6" name="AadharNo"
+                            [(ngModel)]="customer.AadharNo" #AadharNo="ngModel" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="PanNo" class="col-md-6">Pan No:
+                            <span
+                              *ngIf="(customer.CustomerType=='RDS' ||  customer.CustomerType=='SKP Owner' ||  customer.CustomerType=='KPP')"
+                              style="color:red">*
+                            </span></label>
+
+
+
+                          <input type="text" id="PanNo" class="form-control col-md-6" name="PanNo"
+                            [disabled]="AP || customer.IsPanVerified" pattern="^[A-Za-z]{5}[0-9]{4}[A-Za-z]$"
+                            maxlength="10" [(ngModel)]="customer.PanNo" #PanNo="ngModel" />
+                          <label for="GST" class="col-md-6" style="color: red;"></label>
+
+                          <span>
+                            <button type="button" class="btn btn-raised btn-primary "
+                              (click)="VarifiedCustomerPanNO(customer.PanNo)">Pan Verify </button>
+
+                            <p-dialog appendTo="body" header="Pan Info" [(visible)]="PanDisplay"
+                              [style]="{width: '1040px', height: '300px'}">
+                              <div *ngIf="PanDisplay">
+                                <table class="custom-table">
+                                  <!-- Table header row -->
+                                  <tr>
+                                      <th>Name as per Pan</th>
+                                      <th>Customer Name</th>
+                                      <th>PanNo</th>
+                                      <th>DOB</th>
+                                  </tr>
+                                  <!-- Data row -->
+                                  <tr>
+                                      <td>{{PanData.Name}}</td>
+                                      <td>{{customer.Name}}</td>
+                                      <td>{{PanData.PanNo}}</td>
+                                      <td>{{PanData.DOB}}</td>
+                                  </tr>
+                              </table>
+                              <!-- <button class="btn btn-primary"  [(ngModel)]="customer.IsPanVerified">Verify</button> -->
+                              </div>
+                            </p-dialog>
+                            <p-blockUI [blocked]="blocked"></p-blockUI>
+                            <p-progressSpinner *ngIf="blocked"
+                              [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}"
+                              strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+                          </span>
+                        </div>
+
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="PanNo" class="col-md-6">VATM Data:</label>
+                          <input type="text" id="VATM" class="form-control col-md-6" name="VATM"
+                            [(ngModel)]="customer.VATM" #VATM="ngModel" />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="StoreType" class="col-md-6">Store Type:<span style="color:red">
+                              *</span></label>
+                          <select id="StoreType" name="StoreType" class="form-control col-md-6" required="1"
+                            [(ngModel)]="customer.StoreType" required="1" #StoreType="ngModel">
+                            <option value="" disabled>--Select--</option>
+                            <option value="Kirana Store">Kirana Store</option>
+                            <option value="Beauty Store">Beauty Store</option>
+                            <option value="Pharma Store">Pharma Store</option>
+                            <option value="General Store">General Store</option>
+                            <option value="Supermarket">Supermarket</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="IsTCSExemption" class="col-md-6">Is TCSExemption:</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="IsTCSExemption" name="IsTCSExemption"
+                              type="checkbox" [(ngModel)]="customer.IsTCSExemption" #IsTCSExemption="ngModel"
+                              (change)="TCSExemption($event, customer.IsTCSExemption)">
+                            <label class="custom-control-label" for="IsTCSExemption"></label>&nbsp;&nbsp;&nbsp;
+                            <button type="button" class="btn btn-raised btn-primary " *ngIf="customer.IsTCSExemption"
+                              (click)="ShowTCSDoc()">
+                              Show Doc
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- customer.IsPanVerify={{customer.IsPanVerify}} -->
+                      <!-- <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="IsPanVerify" class="col-md-6">Is PanVerify:</label>                          
+                          <div class="custom-control custom-checkbox custom-control-inline">
+          
+
+                              
+                            <input type="checkbox"  class="form-control" id="customCheckboxInline3" name="customCheckboxInline3"
+                            type="checkbox"  id="IsPanVerify" name="IsPanVerify"
+                            [(ngModel)]="customer.IsPanVerify"
+                             #IsPanVerify="ngModel">
+                          </div>
+                        </div>
+                      </div> -->
+
+                      <div class="col-md-6">
+                        <div class="form-group my-2">
+                          <label for="IsPanVerify" class="col-md-6"> IS PAN VERIFY:</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="IsPanVerified" name="IsPanVerified" type="checkbox" [disabled]="invalidPan"
+                              [(ngModel)]="customer.IsPanVerified" #IsPanVerified="ngModel">
+                            <label class="custom-control-label" for="IsPanVerified"></label>
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <div class="col-md-12 mt-4 ml-2">
+                        <label *ngIf="customer.IsKPP || customer.CustomerType=='RDS'"> Bank Details:-</label>
+                      </div>
+
+                      <div class="col-md-6" *ngIf="customer.IsKPP || customer.CustomerType=='RDS'||customer.CustomerType=='SKP Owner'" >
+                        <div class="form-group my-2">
+                          <label for="BankName" class="col-md-6">Bank Name:<span style="color:red"> *</span></label>
+                          <select id="BankName" name="BankName" class="form-control" [(ngModel)]="customer.BankName"
+                            #BankName="ngModel">
+                            <option [value]='null'>--Select BankName--</option>
+                            <ng-container *ngFor="let bank of bankList">
+                              <ng-container>
+                                <option [value]="bank.BankName">
+                                  {{bank.BankName}}
+                                </option>
+                              </ng-container>
+                            </ng-container>
+                          </select>
+
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.BankName=='OTHERS'">
+                        <div class="form-group my-2">
+                          <label for="OtherBankName" class="col-md-6">Other Bank Name:<span style="color:red">
+                              *</span></label>
+                          <input type="text" class="form-control col-md-6" id="OtherBankName" name="OtherBankName"
+                            [(ngModel)]="customer.OtherBankName" #OtherBankName="ngModel" />
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.IsKPP || customer.CustomerType=='RDS'|| customer.CustomerType=='SKP Owner'">
+                        <div class="form-group my-2">
+                          <label for="AC_HolderName" class="col-md-6">Customer's Name (as per the bank records):<span
+                              style="color:red"> *</span></label>
+                          <input type="text" id="AC_HolderName" class="form-control col-md-6" name="AC_HolderName"
+                            [(ngModel)]="customer.AC_HolderName" #AC_HolderName="ngModel" />
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.IsKPP || customer.CustomerType=='RDS'|| customer.CustomerType=='SKP Owner'">
+                        <div class="form-group my-2">
+                          <label for="AccountNumber" class="col-md-6">A/c Number:<span style="color:red">
+                              *</span></label>
+                          <input type="text" (keypress)="keyPress($event)" id="AccountNumber"
+                            class="form-control col-md-6" name="AccountNumber" [(ngModel)]="customer.AccountNumber"
+                            #AccountNumber="ngModel" />
+                          <!-- pattern="^[0-9]*$" -->
+                          <!-- <div  style="color: red" *ngIf="AccountNumber.invalid && (AccountNumber.dirty || AccountNumber.touched)">
+                              <div *ngIf="AccountNumber.errors?.['required']">*Account Number Required</div>
+                              <div *ngIf="AccountNumber.errors?.['pattern']">*Not a valid Account Number</div>
+                            </div> -->
+                        </div>
+                      </div>
+                      <div class="col-md-6" *ngIf="customer.IsKPP || customer.CustomerType=='RDS' || customer.CustomerType=='SKP Owner'">
+                        <div class="form-group my-2">
+                          <label for="IfscCode" class="col-md-6"> IFSC Code:<span style="color:red"> *</span></label>
+                          <input type="text" id="IfscCode" class="form-control col-md-6" name="IfscCode"
+                            [(ngModel)]="customer.IfscCode" #IfscCode="ngModel" />
+                          <!-- pattern="^[A-Z]{4}0[A-Z0-9]{6}$" -->
+                          <!-- <div  style="color: red" *ngIf="IFSC.invalid && (IFSC.dirty || IFSC.touched)">
+                              <div *ngIf="IFSC.errors?.['required']">*IFSC Number Required</div>
+                              <div *ngIf="IFSC.errors?.['pattern']">*Not a valid IFSC Number</div>
+                            </div> -->
+                        </div>
+                      </div>
+                      <!-- <div class="col-md-6"></div>Empty Space -->
+
+                      <!-- <div class="col-md-6"></div>Empty Space -->
+                      <!-- <div class="col-smy-2">
+                      <div class="form-group">
+                        <label for="Area">Area:</label>
+                        <input type="number" id="Area" class="form-control" name="Area">
+                      </div>
+                    </div> -->
+                      <!-- <div class="col-smy-2">
+                      <div class="form-group">
+                        <label for="state">Cluster:</label>
+
+                        <select id="state" name="state" class="form-control" [(ngModel)]="customer.ClusterId"
+                          placeholder="Select State">
+                          <option *ngFor="let state of stateList" [ngValue]="state.Stateid">
+                            {{ state.StateName }}
+                          </option>
+                        </select>
+
+                      </div>
+                    </div> -->
+                      <div class="col-md-12 mt-2 bg-grey50">
+                        <ngb-tabset type="pills">
+                          <ngb-tab title="Contact Details">
+                            <ng-template ngbTabContent>
+                              <!-- Mob No. -->
+                              <!-- <div class="col-md-6">
+                              <div class="form-group my-2">
+                                <label for="Mobile" class="col-md-6">Mobile No.:</label>
+                                <input type="tel" id="Mobile" class="form-control col-md-6" name="Mobile" [(ngModel)]="customer.Mobile"  required="1"
+                                (keypress)="keyPress($event)" minlength=10 maxlength=10 #Mobile="ngModel" />
+                              <div class="col-md-6"></div>
+                              <div *ngIf="isInvalid && !Mobile.valid && Mobile.errors.required">
+                                <code >Mobile No is required</code>
+                              </div>
+                              <div *ngIf="isInvalid && !Mobile.valid && Mobile.errors.minlength">
+                                <code >Minlength 10</code>
+                              </div>
+                              <div *ngIf="isInvalid && !Mobile.valid && Mobile.errors.maxlength">
+                                <code >Maxlength 10</code>
+                              </div>
+                              </div>
+                            </div> -->
+                              <!-- WhatsApp no. -->
+                              <div class="col-md-6">
+                                <div class="form-group my-2">
+                                  <label for="App" class="col-md-6">Whats App Mobile No.:</label>
+                                  <input type="tel" id="App" class="form-control col-md-6" name="App"
+                                    [(ngModel)]="customer.WhatsappNumber" (keypress)="keyPress($event)"
+                                    #WhatsappNumber="ngModel" />
+                                  <div class="col-md-6"></div>
+                                  <div *ngIf="isInvalid && !WhatsappNumber.valid && WhatsappNumber.errors.required">
+                                    <code>Whats App Mobile No. is required</code>
+                                  </div>
+                                  <div *ngIf="isInvalid && !WhatsappNumber.valid && WhatsappNumber.errors.minlength">
+                                    <code>Minlength 10</code>
+                                  </div>
+                                  <div *ngIf="isInvalid && !WhatsappNumber.valid && WhatsappNumber.errors.maxlength">
+                                    <code>Maxlength 10</code>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- Email -->
+                              <div class="col-md-6">
+                                <div class="form-group my-2">
+                                  <label for="exampleFormControlInput1" class="col-md-6">Email:</label>
+                                  <input type="text" id="exampleFormControlInput1" class="form-control col-md-6"
+                                    name="exampleFormControlInput1" [(ngModel)]="customer.Emailid" placeholder="Email">
+
+                                  <!-- <div class="col-md-6"></div> -->
+                                  <!-- <div *ngIf="isInvalid && !Emailid.valid && Emailid.errors.required">
+                                  <code>Email is required</code>
+                                </div> -->
+                                  <!-- <div *ngIf="isInvalid && !Emailid.valid && Emailid.errors.minlength">
+                                    <code>Minlength 2</code>
+                                  </div>                             -->
+                                </div>
+                              </div>
+                            </ng-template>
+                          </ngb-tab>
+                          <ngb-tab title="Address Details *">
+                            <ng-template ngbTabContent>
+
+                              <!-- Address -->
+                              <div class="row">
+                                <!-- Select City -->
+                                <div class="col-md-12">
+                                  <div class="form-group my-2">
+                                    <label for="City" class="col-md-3">City:</label>
+                                    <select id="C" name="C" class="form-control col-md-3" [(ngModel)]="customer.Cityid"
+                                      (change)="getWarehouse(customer.Cityid)" placeholder="Select City" required>
+                                      <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                                        {{ city.CityName }}
+                                      </option>
+                                    </select>
+                                  </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                  <div class="form-group my-2">
+                                    <label for="City" class="col-md-3">Latitude:</label>
+                                    <input type="number" id="lat" name="lat" class="form-control col-md-3"
+                                      [(ngModel)]="customer.lat">
+                                  </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                  <div class="form-group my-2">
+                                    <label for="City" class="col-md-3">Longitude:</label>
+                                    <input type="number" id="lg" name="lg" class="form-control col-md-3"
+                                      [(ngModel)]="customer.lg">
+                                  </div>
+                                </div>
+                                <!-- <div class="col-md-6"></div>Empty Space -->
+                                <!-- Billing Address -->
+                                <div class="col-md-12">
+                                  <div class="form-group my-2">
+                                    <label for="Billing" class="col-md-3">Billing Address:<span style="color:red">
+                                        *</span></label>
+                                    <input type="text" id="Billing" class="form-control col-md-6" name="Billing"
+                                      [(ngModel)]="customer.BillingAddress" required="1" minlength="2"
+                                      #BillingAddress="ngModel" [disabled]="IsBillingAddEditable">
+                                    <div class="col-md-4"></div>
+                                    <div *ngIf="isInvalid && !BillingAddress.valid && BillingAddress.errors.required">
+                                      <code>Billing Address is required</code>
+                                    </div>
+                                    <div *ngIf="isInvalid && !BillingAddress.valid && BillingAddress.errors.minlength">
+                                      <code>Minlength 2</code>
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <label class="col-md-3"></label>
+                                    <!-- <input type="text" id="BillingState" placeholder="BillingState"
+                                      class="form-control col-md-2" name="BillingState"
+                                      [(ngModel)]="customer.BillingState" required="1" minlength="2"
+                                      #BillingState="ngModel" [disabled]="IsBillingAddEditable">
+
+                                    <input type="text" id="BillingCity" placeholder="BillingCity"
+                                      class="form-control col-md-2" name="BillingCity"
+                                      [(ngModel)]="customer.BillingCity" required="1" minlength="2"
+                                      #BillingCity="ngModel" [disabled]="IsBillingAddEditable"> -->
+
+                                    <select name="BillingState" required="1" [(ngModel)]="customer.BillingState"
+                                      (change)="getSelectedState($event);cutomer.BillingCity ='';"
+                                      class="form-control col-md-2" #BillingState="ngModel"
+                                      [disabled]="IsBillingAddEditable" placeholder="BillingState">
+                                      <option value="" disabled selected>Select State</option>
+                                      <option *ngFor="let item of stateListDropdown" [value]="item.StateName">
+                                        {{item.StateName}}</option>
+                                    </select>
+
+                                    <select name="BillingCity" required="1" [(ngModel)]="customer.BillingCity"
+                                      (change)="getSelectedCity($event)" class="form-control col-md-2"
+                                      #BillingCity="ngModel" [disabled]="IsBillingAddEditable"
+                                      placeholder="BillingCity">
+                                      <option value="" selected disabled>Select City</option>
+                                      <option *ngFor="let item of cityListDropdown" [value]="item.CityName">
+                                        {{item.CityName}}</option>
+                                    </select>
+
+                                    <input type="text" id="BillingZipCode" placeholder="BillingZipCode"
+                                      class="form-control col-md-2" name="BillingZipCode"
+                                      [(ngModel)]="customer.BillingZipCode" required="1" minlength="2"
+                                      #BillingZipCode="ngModel" [disabled]="IsBillingAddEditable">
+
+                                  </div>
+                                  <div
+                                    *ngIf="IsBillingAddEditable && (customer.BillingState == null || customer.BillingCity == '')"
+                                    class="mt-2">
+                                    <!--customer.IsGSTCustomer-->
+                                    <button class="btn btn-sm btn-primary" (click)="editBillingAdress()"
+                                      type="button">edit adress</button>
+                                  </div>
+                                  <div *ngIf="isInvalid && !BillingCity.valid && BillingCity.errors.required">
+                                    <code>Billing City is required</code>
+                                  </div>
+                                  <div *ngIf="isInvalid && !BillingState.valid && BillingState.errors.required">
+                                    <code>Billing State is required</code>
+                                  </div>
+                                  <div *ngIf="isInvalid && !BillingZipCode.valid && BillingZipCode.errors.required">
+                                    <code>Billing ZipCode is required</code>
+                                  </div>
+                                </div>
+                                <!-- Shipping Address -->
+                                <div class="col-md-12">
+                                  <div class="form-group my-2">
+                                    <label for="Shipping" class="col-md-3">Shipping Address:<span style="color:red">
+                                        *</span></label>
+                                    <input type="text" id="Shipping" class="form-control col-md-6" name="Shipping"
+                                      [(ngModel)]="customer.ShippingAddress" required="1" minlength="2"
+                                      #ShippingAddress="ngModel">
+                                    <div class="col-md-4"></div>
+                                    <div *ngIf="isInvalid && !ShippingAddress.valid && ShippingAddress.errors.required">
+                                      <code>Shipping Address is required</code>
+                                    </div>
+                                    <div
+                                      *ngIf="isInvalid && !ShippingAddress.valid && ShippingAddress.errors.minlength">
+                                      <code>Minlength 2</code>
+                                    </div>
+                                  </div>
+
+                                  <div class="col-md-6">
+                                    <div class="form-group my-2">
+                                      <label for="sCity" class="col-md-6">Shipping City:<span style="color:red">
+                                          *</span></label>
+                                      <select id="sstate" name="sstate" class="form-control col-md-6"
+                                        [(ngModel)]="customer.ShippingCity" placeholder="Select City" required="1"
+                                        #ShippingCity="ngModel">
+                                        <option *ngFor="let city of cityList" [ngValue]="city.CityName">
+                                          {{ city.CityName }}
+                                        </option>
+                                      </select>
+                                    </div>
+                                    <div *ngIf="isInvalid && !ShippingCity.valid && ShippingCity.errors.required">
+                                      <code>Shipping City is required</code>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6">
+                                    <div class="form-group my-2">
+                                      <label for="sZipCode" class="col-md-6">Zipcode:<span style="color:red">
+                                          *</span></label>
+                                      <input id="sZipCode" name="sZipCode" class="form-control col-md-6"
+                                        [(ngModel)]="customer.ZipCode" placeholder="enter ZipCode" required="1"
+                                        #ZipCode="ngModel">
+                                    </div>
+                                    <div *ngIf="isInvalid && !ZipCode.valid && ZipCode.errors.required">
+                                      <code>ZipCode is required</code>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </ng-template>
+                          </ngb-tab>
+
+                          <ngb-tab title="Other Details">
+                            <ng-template ngbTabContent>
+                              <div class="row">
+                                <!-- DOB -->
+                                <div class="row col-md-12">
+                                  <div class="col-md-6">
+                                    <div class="form-group my-2">
+                                      <label for="DOB" class="col-md-6">DOB:</label>
+                                      <!-- <p-calendar id="dom" name="dom" showIcon="true">                                                                                                        </p-calendar> -->
+                                      <!-- <input type="date" id="DOB" class="form-control" name="DOB" [(ngModel)]="customer.DOB"> -->
+                                      <!-- <p-calendar name="dob" [(ngModel)]="customer.DOB" [showIcon]="true"
+                                      class="col-md-6"></p-calendar > -->
+                                      <p-calendar [(ngModel)]="customer.DOB" name="DOB" [monthNavigator]="true"
+                                        [yearNavigator]="true" yearRange="1900:2030" [showIcon]="true"
+                                        dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                  </div>
+
+                                  <!-- Anniversary Date -->
+                                  <div class="col-md-6">
+                                    <div class="form-group my-2">
+                                      <label for="dom" class="col-md-6">Anniversary Date:</label>
+                                      <!-- <p-calendar id="dom" name="dom" showIcon="true">                                                                                                    </p-calendar> -->
+                                      <!-- <input type="date" id="dom" class="form-control" name="dom" [(ngModel)]="customer.AnniversaryDate"> -->
+                                      <!-- <p-calendar name="dom" [(ngModel)]="customer.AnniversaryDate" [showIcon]="true"
+                                      class="col-md-6"></p-calendar> -->
+                                      <p-calendar [(ngModel)]="customer.AnniversaryDate" name="Anniversary"
+                                        [monthNavigator]="true" [yearNavigator]="true" yearRange="1900:2030"
+                                        [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Description -->
+                                <!-- <div class="col-md-6">
+                                        <div class="form-group my-2">
+                                          <label for="Description" class="col-md-6">Description:</label>
+                                          <input type="text" id="Description" class="form-control col-md-6" name="Description"
+                                            [(ngModel)]="customer.Description">
+                                        </div>
+                                      </div> -->
+
+                              </div>
+                            </ng-template>
+                          </ngb-tab>
+                          <ngb-tab title="Upload Image" *ngIf="details != null">
+                            <ng-template ngbTabContent>
+                              <form class="form" name="imageuploadform" #imageuploadform="ngForm">
+                                <div class="row">
+                                  <div class="col-md-6 col-12">
+                                    <div class="form-group">
+                                      <label for="uploadAdvertisements">GST Image:</label><br />
+                                      <div class="col-md-12 col-12"></div>
+                                      <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                                        (change)="upload($event.target.files)" />&nbsp;&nbsp;&nbsp;
+                                      <!-- &nbsp;&nbsp;&nbsp; -->
+                                      <!-- <br /> -->
+                                      <button type="button" class="btn btn-raised btn-primary " (click)="gstUpload()">
+                                        Upload
+                                      </button>
+                                      <br /><br />
+                                      <!-- <div class="form-group">
+                                          <img alt="" [src]="imgURL" height="100" *ngIf="imgURL">
+                                        </div> -->
+
+                                    </div>
+                                    <div class="row" style="margin-left : .2em" *ngIf="customer.UploadGSTPicture">
+                                      <img alt="" src="{{baseURL}}UploadedImages/{{customer.UploadGSTPicture}}"
+                                        class="img-square" *ngIf="finalGSTImage == undefined">
+                                      <img alt="" src="{{finalGSTImage}}" class="img-square"
+                                        *ngIf="finalGSTImage != undefined">
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 col-12">
+                                    <div class="form-group">
+                                      <label for="uploadAdvertisements">Shop Image:</label><br />
+                                      <div class="col-md-12 col-12"></div>
+                                      <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                                        (change)="upload($event.target.files)" />&nbsp;&nbsp;&nbsp;
+                                      <br />
+                                      <button type="button" class="btn btn-raised btn-primary " (click)="shopUpload()">
+                                        Upload
+                                      </button>
+                                      <br /><br />
+
+                                    </div>
+                                    <div class="row" style="margin-left : .2em" *ngIf="customer.Shopimage">
+                                      <img alt="" src="{{baseURL}}/UploadedImages/{{customer.Shopimage}}"
+                                        class="img-square" *ngIf="finalShopImage == undefined">
+                                      <img alt="" src="{{finalShopImage}}" class="img-square"
+                                        *ngIf="finalShopImage != undefined">
+                                    </div>
+                                  </div>
+
+                                  <!-- <div class="col-md-4"></div> -->
+                                  <div class="col-12">
+                                    <hr>
+                                  </div>
+                                  <div class="col-md-3 col-12">
+                                    <div class="form-group my-2">
+                                      <label for="TypeId">DocType:</label><br>
+                                      <div class="col-md-12 col-12"></div>
+                                      <select id="TypeId" name="TypeId" class="form-control"
+                                        [(ngModel)]="customer.TypeId" placeholder="Select DocType" required
+                                        style="width: 100%;">
+                                        <option value="null">Select DocType</option>
+                                        <option *ngFor="let doc of docList" [ngValue]="doc.Id">
+                                          {{ doc.DocType }}
+                                        </option>
+                                      </select>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3 col-12">
+                                    <div class="form-group my-2"
+                                      *ngIf="this.customer.GstExpiryDate == null && this.customer.LicenseExpiryDate == null && this.customer.Type == null">
+                                      <label for="TypeId" class="">Expiry Date:</label><br>
+                                      <div class="col-md-12 col-12"></div>
+                                      <p-calendar placeholder="Expiry Date" name="expiryDate" [(ngModel)]="expiryDate"
+                                        inputId="basic" [monthNavigator]="true" [yearNavigator]="true"
+                                        yearRange="2000:2050" dateFormat="dd/mm/yy" [style]="{'width':'145%'}"
+                                        [readonlyInput]="true" [minDate]="minDateValue" class="ab"></p-calendar>
+                                    </div>
+                                    <div class="form-group my-2"
+                                      *ngIf="this.customer.GstExpiryDate == null && this.customer.LicenseExpiryDate == null && this.customer.Type != 'GST' && this.customer.Type != null">
+                                      <label for="TypeId" class="">Expiry Date:</label><br>
+                                      <div class="col-md-12 col-12"></div>
+                                      <p-calendar placeholder="Expiry Date" name="LicenseExpiryDate" inputId="basic"
+                                        [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050"
+                                        [(ngModel)]="LicenseExpiryDate" dateFormat="dd/mm/yy" [style]="{'width':'145%'}"
+                                        [readonlyInput]="true" [minDate]="minDateValue" class="bc"></p-calendar>
+                                    </div>
+                                    <div class="form-group my-2"
+                                      *ngIf="this.customer.GstExpiryDate != null && this.customer.Type == 'GST'">
+                                      <label for="TypeId" class="">Expiry Date:</label><br>
+                                      <div class="col-md-12 col-12"></div>
+                                      <p-calendar name="expiryDate" [(ngModel)]="GstExpiryDate" dateFormat="dd/mm/yy"
+                                        inputId="basic" [monthNavigator]="true" [yearNavigator]="true"
+                                        yearRange="2000:2050" [style]="{'width':'145%'}" [readonlyInput]="true"
+                                        [minDate]="minDateValue" class="cd"></p-calendar>
+                                    </div>
+                                    <div class="form-group my-2"
+                                      *ngIf="this.customer.LicenseExpiryDate != null && this.customer.Type != 'GST' && this.customer.Type != null">
+                                      <label for="TypeId" class="">Expiry Date:</label><br>
+                                      <div class="col-md-12 col-12"></div>
+                                      <p-calendar name="expiryDate" [(ngModel)]="LicenseExpiryDate" inputId="basic"
+                                        [style]="{'width':'145%'}" [readonlyInput]="true" [minDate]="minDateValue"
+                                        [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2050" class="de">
+                                      </p-calendar>
+                                    </div>
+                                  </div>
+
+                                  <div class="col-md-3 col-12">
+                                    <div class="form-group my-2">
+                                      <label for="License">License Number:</label><br>
+                                      <div class="col-md-12 col-12"></div>
+                                      <input type="text" id="License" class="form-control" name="License"
+                                        [(ngModel)]="customer.LicenseNumber" style="width: 100%" />
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 col-12 mt-3">
+                                    <div class="form-group">
+                                      <label for="uploadAdvertisements">Registration Image:</label><br />
+                                      <div class="col-md-12 col-12"></div>
+                                      <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                                        (change)="upload($event.target.files)" />&nbsp;&nbsp;&nbsp;
+                                      <label></label>
+                                      <button type="button" class="btn btn-raised btn-primary" (click)="regupload()">
+                                        Upload
+                                      </button>
+                                      <br /><br />
+
+                                    </div>
+                                    <div class="row" style="margin-left : .2em" *ngIf="customer.UploadRegistration">
+                                      <img alt="" src="{{baseURL}}/UploadedImages/{{customer.UploadRegistration}}"
+                                        class="img-square" *ngIf="finalRegistrationImage == undefined">
+                                      <img alt="" src="{{finalRegistrationImage}}" class="img-square"
+                                        *ngIf="finalRegistrationImage != undefined">
+                                    </div>
+                                  </div>
+
+
+                                  <!-- <div class="col-md-6 col-12" *ngIf="((customer.UploadGSTPicture != null && customer.UploadGSTPicture !== '') && (customer.Shopimage != null  && customer.Shopimage !== '') && (customer.UploadRegistration != null && customer.UploadRegistration !== ''))">
+                                    <div class="form-group my-2" style="margin-left: -13px;">
+                                      <label for="Verification" class="col-md-3">Verification:</label><br>
+                                      <div class="col-md-12 col-12"></div>
+                                      <p-dropdown [options]="verificationList" name="name"  [(ngModel)]="selectedVerVal" optionLabel="name" placeholder="Select" class="col-md-6" ></p-dropdown>
+                                      <button type="button" class="btn btn-raised btn-primary mt-2" (click)="verifiedUploader(selectedVerVal)">
+                                        Update
+                                      </button>
+                                    </div>
+                                  </div> -->
+
+
+                                </div>
+
+                              </form>
+                            </ng-template>
+                          </ngb-tab>
+                        </ngb-tabset>
+                      </div>
+
+
+
+
+                      <!-- <div class="col-smy-2">
+                      <div class="form-group">
+                        <label for="permission">GST/TIN_No/Ref No:</label>
+                        <input type="text" id="permission" class="form-control" name="permission"
+                          >
+                      </div>
+                    </div>
+
+                    <div class="col-smy-2">
+                      <div class="form-group">
+                        <label for="wareid">Select Warehouse</label>
+                        <select id="wareid" name="wareid" class="form-control">
+                          <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                            {{ warehouse.WarehouseName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+
+                    <div class="col-smy-2">
+                      <div class="form-group">
+                        <label for="dept">Department</label> -->
+                      <!-- <p-dropdown [options]="departmentList" id="dept" name="dept" [(ngModel)]="selectedDepartment"
+                          (ngModelChange)="onChangeDepartment()" placeholder="Select a Department"
+                          optionLabel="Department"></p-dropdown> -->
+                      <!-- <select id="dept" name="dept" class="form-control">
+                          <option *ngFor="let dept of departmentList" [ngValue]="dept.Department">
+                            {{ dept.Department }}
+                          </option>
+                        </select> -->
+                      <!-- <input type="text" id="dept" class="form-control" name="dept" [(ngModel)]="people.Department"> -->
+                      <!-- </div>
+                    </div> -->
+
+
+                      <!-- <div class="col-smy-2">
+                      <div class="form-group">
+                        <label for="amt">Deposit Amount</label>
+                        <input type="text" id="amt" class="form-control" name="amt">
+                      </div>
+                    </div> -->
+                    </div>
+                  </div>
+                  <div class="form-actions right col-sm-12 p-3">
+                    <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                      <i class="ft-x"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-raised btn-primary">
+                      <i class="fa fa-check-square-o"></i> Save
+                    </button>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-toast [style]="{marginTop: '180px'}"></p-toast>
+    </div>
+
+  </section>
+
+
+  <p-dialog appendTo="body" header="Change Billing City" [(visible)]="changeBillingAddressPopup"
+    [style]="{width: '60vw', left: '440px', height: '400px'}" [draggable]="false" [modal]="true" [positionTop]="200">
+    <div class="container-fluid" style="height: 380px">
+      <div class="row">
+        <h3>Change Billing State and City Here</h3>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <!-- <select name="BillingState" required="1" [(ngModel)]="customer.BillingState"
+            (change)="getSelectedState($event);cutomer.BillingCity ='';" class="form-control col-md-2"
+            #BillingState="ngModel" [disabled]="IsBillingAddEditable" placeholder="BillingState">
+            <option value="" disabled selected>Select State</option>
+            <option *ngFor="let item of stateListDropdown" [value]="item.StateName">
+              {{item.StateName}}</option>
+          </select> -->
+          <p-dropdown [options]="stateListDropdown" [(ngModel)]="editedBillingState" optionLabel="StateName"
+            placeholder="Select" class="col-md-6" (onChange)="getCities()"></p-dropdown>
+        </div>
+        <div class="col-4">
+          <!-- <select name="BillingCity" required="1" [(ngModel)]="customer.BillingCity" (change)="getSelectedCity($event)"
+            class="form-control col-md-2" #BillingCity="ngModel" [disabled]="IsBillingAddEditable"
+            placeholder="BillingCity">
+            <option value="" selected disabled>Select City</option>
+            <option *ngFor="let item of cityListDropdown" [value]="item.CityName">
+              {{item.CityName}}</option>
+          </select> -->
+
+          <p-dropdown [options]="updateCityList" name="CityName" [(ngModel)]="updatedselectedCity"
+            optionLabel="CityName" placeholder="Select" class="col-md-6"></p-dropdown>
+        </div>
+        <div class="col-4">
+          <button class="btn btn-primary" type="button" (click)="updateCity()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+
+
+
+  <p-dialog appendTo="body" header="TCS Exemption Declaration" [(visible)]="TcsPopupShow" (onHide)="hide()"
+    [style]="{width: '30vw'}" [draggable]="false" [modal]="true" [positionTop]="200">
+    <br>
+    <div class="form-group">
+      <label for="TCSExemption">TCS Exemption Image:</label><br />
+      <div class="col-md-12 col-12"></div>
+      <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+        (change)="onUpload($event.target.files)" />&nbsp;&nbsp;&nbsp;
+
+      <button type="button" class="btn btn-raised btn-primary " (click)="UploadTCSExemptionDocument()">
+        Upload
+      </button>&nbsp;&nbsp;&nbsp;
+      <br />
+    </div>
+    <div class="row" style="margin-left : .2em" *ngIf="customer.TCSExemptionDeclarationDOC">
+      <img alt="" src="{{baseURL}}TCSExemptionDocument/{{customer.TCSExemptionDeclarationDOC}}" class="img-square"
+        *ngIf="finalTCSExemptionDeclarationDOC == undefined">
+
+    </div>
+    <br />
+  </p-dialog>
+
+  <p-dialog appendTo="body" header="Uploaded TCS Exemption " [(visible)]="IsShowTCSDoc" (onHide)="ohide()"
+    [style]="{width: '30vw'}" [draggable]="false" [modal]="true" [positionTop]="200">
+    <br>
+    <!-- <label for="TCSExemption">Uploaded TCS Exemption Image:</label><br /> -->
+    <img alt="" src="{{baseURL}}TCSExemptionDocument/{{finalTCSExemptionDeclarationDOC}}" class="img-square"
+      *ngIf="finalTCSExemptionDeclarationDOC != undefined">
+
+    <br>
+
+  </p-dialog>
+</div>

@@ -1,0 +1,187 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+    <div class="row m-0">
+        <div class="col-12">
+           
+            <div id="kick-start" class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Add Vendor</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <div class="px-3">
+                            <form class="form" #addvendoreForm="ngForm">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group">
+                                                <label for="Nameinput">Name </label><br>
+                                                <input type="text" name="vendorNameInput" class="form-control"
+                                                    [(ngModel)]="vendor.Name" #vendorNameInput="ngModel" required>
+                                                    <div *ngIf="isInvalid && !vendorNameInput.valid && vendorNameInput.errors.required">
+                                                        <code> Name is required</code>
+                                                    </div>
+
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group">
+                                                <label for="Nameinput">Code</label><br>
+                                                <input type="text" name="codeInputId" class="form-control"
+                                                    [(ngModel)]="vendor.Code" #codeInputId="ngModel" required>
+                                                    <div *ngIf="isInvalid && !codeInputId.valid && codeInputId.errors.required">
+                                                        <code> Code is required</code>
+                                                    </div>
+                                                    
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group"
+                                                *ngIf="departmentList && departmentList.length >0 ">
+                                                <label for="basicInput">Select department </label>
+                                                <select class="form-control" id="deptID" name="deptID" required
+                                                    [(ngModel)]="vendor.DepartmentId"  
+                                                     #deptID="ngModel" >
+                                                    <option [ngValue]="null">select</option>
+                                                    <option [ngValue]="dept.ID" *ngFor="let dept of departmentList;">
+                                                        {{dept.Label}}</option>
+                                                </select>
+                                                <div *ngIf="isInvalid && !deptID.valid && deptID.errors.required">
+                                                    <code> Department is required</code>
+                                                </div>
+                                                
+                                            </fieldset>
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group" >
+                                                <label for="basicInput">Select State </label>
+                                                <select class="form-control" id="stateIdInput" required
+                                                    [(ngModel)]="vendor.StateId" 
+                                                    name="stateTypeInput" #stateTypeInput="ngModel">
+                                                    <option [ngValue]="null">select</option>
+                                                    <option [ngValue]="state.Stateid" *ngFor="let state of stateList;">
+                                                        {{state.StateName}}</option>
+                                                </select>
+                                                <div *ngIf="isInvalid && !stateTypeInput.valid && stateTypeInput.errors.required">
+                                                    <code> State is required</code>
+                                                </div>
+                                               
+                                            </fieldset>
+
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group"
+                                                *ngIf="workingCompanyList && workingCompanyList.length >0 ">
+                                                <label for="basicInput">Select company </label>
+                                                <select class="form-control" id="compID" name="compID"
+                                                    [(ngModel)]="vendor.WorkingCompanyId"
+                                                     #compID="ngModel" required>
+                                                    <option [ngValue]="null">select</option>
+                                                    <option [ngValue]="comp.ID" *ngFor="let comp of workingCompanyList;">
+                                                        {{comp.Label}}</option>
+                                                </select>
+                                                <div *ngIf="isInvalid && !compID.valid && compID.errors.required">
+                                                    <code> Company is required</code>
+                                                </div>
+                                             
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group"
+                                                *ngIf="workingLocationList && workingLocationList.length >0 ">
+                                                <label for="basicInput">Select location </label>
+                                                <select class="form-control" id="locID" name="locID" required
+                                                    [(ngModel)]="vendor.WorkingLocationId"
+                                                    #locID="ngModel" >
+                                                    <option [ngValue]="null">select</option>
+                                                    <option [ngValue]="loc.ID" *ngFor="let loc of workingLocationList;">
+                                                        {{loc.Label}}</option>
+                                                </select>
+                                                <div *ngIf="isInvalid && locID && !locID.valid && locID.errors.required">
+                                                    <code> Location is required</code>
+                                                </div>
+                                               </fieldset>
+                                        </div>
+                                     </div>
+                                    
+                                    <div class="row">
+                                   
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group">
+                                                <label for="helpInputTop">Select Vendor Type</label>
+                                                <select class="form-control" id="vendorTypeInput" required
+                                                    [(ngModel)]="vendor.VendorType" 
+                                                    name="vendorTypeInput" #vendorTypeInput="ngModel">  
+                                                    <option [ngValue]="null">select</option>
+                                                    <option [ngValue]="'Employee'">Employee</option>
+                                                    <option [ngValue]="'GoodSupplier'">Good Supplier</option>  
+                                                </select>
+                                                <div *ngIf="isInvalid && !vendorTypeInput.valid && vendorTypeInput.errors.required">
+                                                    <code> Vendor is required</code>
+                                                </div>
+                                               
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group">
+                                                <label for="edate">Address One </label><br>
+                                                <input type="text" name="addressOneInput" class="form-control"
+                                                    [(ngModel)]="vendor.AddressOne" >
+                                               
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group">
+                                                <label for="edate">Address Two </label><br>
+                                                <input type="text" name="addressTwoInput" class="form-control"
+                                                    [(ngModel)]="vendor.AddressTwo">
+                                               
+                                            </fieldset>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                    <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                        <fieldset class="form-group">
+                                            <label for="basicInput">Is TDS Applied </label>
+                                            <p-inputSwitch id="isTDSAppliedInput" name="isTDSAppliedInput"
+                                            [(ngModel)]="vendor.IsTDSApplied" (ngModelChange)="onChangeIsTDSApplied(); vendor.ExpenseTDSMasterID = null">
+                                           
+                                        </p-inputSwitch>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-6 col-md-12 mb-1"  *ngIf="vendor.IsTDSApplied">
+                                        <fieldset class="form-group">
+                                            <label for="basicInput">Select ExpenseTDS</label>
+                                            <select class="form-control" id="expID" name="expID"
+                                            [(ngModel)]="vendor.ExpenseTDSMasterID"  
+                                            >
+                                            <option [value]="null">select</option>
+                                            <option [value]="tds.ID" *ngFor="let tds of expenseTDSList;">
+                                                {{tds.Name}}</option>
+                                        </select>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                           
+                                <div class="text-right">
+                                    <button type="button" (click)="onSaveVendor(addvendoreForm); " class="btn mr-1 btn-raised btn-primary">Save</button>
+                                    <button type="button" (click)="onCancelVendor()" class="btn mr-1 btn-raised btn-primary">Cancel </button>
+                                  </div>
+                                  
+
+                                    <div class="row">
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

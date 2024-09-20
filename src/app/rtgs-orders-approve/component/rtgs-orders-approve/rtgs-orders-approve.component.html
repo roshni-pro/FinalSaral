@@ -1,0 +1,153 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section >
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header">
+        <h3 class="m-2"><b>RTGS Order List</b></h3>
+      </div>
+    </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+  
+        <div class="col-md-8">
+          <form class="form" name="form" #rtgsForm="ngForm">
+                <div class="row">
+                  
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="projectinput3">Name/SkCode/Mobile No</label>
+                        <br>                        
+                        <p-autoComplete [(ngModel)]="selectedCust" [suggestions]="CustList" id="name"
+                          (completeMethod)="getLedgerList($event)" field="CustomerName" [size]="30"
+                          placeholder="enter at least 3 chars" [minLength]="3" 
+                            name="Name" required="true" #ledgerName="ngModel" >
+                        </p-autoComplete>
+                        <div *ngIf="isInvalid">                   
+                          <code>Name/SkCode/Mobile No is required</code>
+                      </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="projectinput3">RTGS/mPos Number</label>
+                        <input type="text" id="refno" name ="refno" class="form-control" [(ngModel)]="RefNo"  #refno="ngModel" required="1"/>
+                        <div *ngIf="isInvalid">                   
+                          <code>RTGS Number is required</code>
+                      </div>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label for="projectinput3">Order Id</label>
+                        <input type="text" id="refno" name ="orderid" class="form-control" [(ngModel)]="OrderId"  #orderid="ngModel" required="1"/>
+                        <div *ngIf="isInvalid">                   
+                          <code>Order Id is required</code>
+                      </div>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">                      
+                        <label for="name">Payment type*</label>                   
+                        <select class="form-control" id="status" name="Active" [(ngModel)]="Payment">   
+                          <option  value="RTGS/NEFT">RTGS/NEFT</option>
+                          <option value="mPos">mPos</option>
+                        </select>
+                        <div *ngIf="isInvalidPay">                   
+                          <code>Payment type required</code>
+                      </div>
+                      </div>
+                      </div>
+                  
+                    <div class="col-md-2 btn">
+                      <div class="form-group">
+                        <label for="projectinput3"></label>
+                        <button type="button" class="btn btn-raised btn-raised btn-primary"
+                        (click)="onSearch(RefNo,OrderId,Payment)" >
+                        Search
+                    </button>
+                    <button type="button" class="btn btn-raised btn-raised btn-primary new"
+                    (click)="ExportReport()" style="margin: 0 0 3px 7px;">
+                    Export
+                  </button>
+                      </div>
+                    </div>
+                  </div>
+
+            </form>
+        </div>
+  
+        <p-confirmDialog #cd appendTo="body" header="Confirmation">
+            <p-footer>
+              <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+              <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+            </p-footer>
+          </p-confirmDialog>
+  
+            <p-tabView (onChange)="onTabChange($event)">
+              <p-tabPanel header="Pending" [selected]="true">
+                <p-table #dt [value]="rtgsOrderList" [paginator]="true" [rows]="10">
+                  <ng-template pTemplate="header">
+                    <tr>
+                        <th>RefNo</th>   
+                        <th>OrderId</th>   
+                        <th>Skcode</th>   
+                        <th>Amount</th>  
+                        <th>WarehouseName</th> 
+                        <th>CustMobNo</th> 
+                        <th>Deliveryboy</th> 
+                        <th>Payment Type</th>
+                        <th>Action</th> 
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr > <!--(click)="openDetails(rowData,$event)" -->
+                        <td><input type="text" [(ngModel)]="rowData.RefNo"/> </td>    
+                        <td>{{rowData.OrderId}}</td>         
+                        <td>{{rowData.Skcode}}</td>    
+                        <td>{{rowData.amount}}</td>  
+                        <td>{{rowData.WarehouseName}}</td>      
+                        <td>{{rowData.CustMobNo}}</td>
+                        <td>{{rowData.Deliveryboy}}</td>   
+                        <td>{{rowData.PaymentFrom}}</td>   
+                        <td>
+                          <button name="IsActive" [(ngModel)]="rowData.IsActive" (click)="ActiveInactive(rowData)" class="btn-primary" > Approve
+                          </button>
+                        </td> 
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </p-tabPanel>
+         
+              <p-tabPanel header="Approved">  
+                <p-table #dt [value]="rtgsOrderList" [paginator]="true" [rows]="10">
+                  <ng-template pTemplate="header">
+                    <tr>
+                        <th>RefNo</th>   
+                          <th>OrderId</th>   
+                          <th>Skcode</th>   
+                          <th>Amount</th>  
+                          <th>WarehouseName</th> 
+                          <th>CustMobNo</th> 
+                          <th>Deliveryboy</th>      
+                          <th>Payment Type</th>           
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td>{{rowData.RefNo}}</td>    
+                        <td>{{rowData.OrderId}}</td>         
+                        <td>{{rowData.Skcode}}</td>    
+                        <td>{{rowData.amount}}</td>  
+                        <td>{{rowData.WarehouseName}}</td>      
+                        <td>{{rowData.CustMobNo}}</td>
+                        <td>{{rowData.Deliveryboy}}</td>   
+                        <td>{{rowData.PaymentFrom}}</td>   
+                    </tr>
+                  </ng-template>
+                </p-table>  
+              </p-tabPanel>
+            </p-tabView>
+    
+    </div>
+
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</section>

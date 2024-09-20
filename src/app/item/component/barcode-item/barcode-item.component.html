@@ -1,0 +1,146 @@
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<section id="Item">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2">Item Master Barcode Central</h3>
+        </div>
+    </div>
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+            (click)="toggleSearch()">
+            <h5 class="m-0">Search By</h5>
+            <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+        </div>
+
+        <div id="search-content p-2" *ngIf="isSearch">
+            <div class="row p-2 px-5">
+                <div class="col-md-4 border-right border-right-1">
+                    <div class="form-group m-2 form-inline">
+                        <label for="ab" class="col-md-4">Items</label>
+                        <input type="text" id="ab" class="form-control col-md-8" [(ngModel)]="searchKey" name="ab">
+                    </div>
+                    <div class=" d-flex justify-content-end col-12">
+                        <button type="button" class="btn btn-raised btn-warning " style="margin-right: 10px;"
+                            (click)="searchClear()">clear</button>
+                        <button type="submit" class="btn btn-raised btn-primary"
+                            (click)="searchResult()">Search</button>
+                    </div>
+                </div>
+                <div class="col-md-8 text-right">
+                    <button type="button" class="btn btn-raised btn-primary" (click)="Exportfile()">Export</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- table start -->
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="table-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+            <h5 class="m-0">Item-Table</h5>
+            <div><i class="fa fa-lg fa-angle-double-down"></i></div>
+        </div>
+        <div id="table-content">
+            <div id="supplier-table">
+                <div class="position-relative">
+                    <div class="position-relative text-center">
+                        <p-table [value]="itemlist" [paginator]="true" [rows]="10" [lazy]="true"
+                            (onLazyLoad)="load($event)" [totalRecords]="totalRecords" [scrollable]="true"
+                            scrollHeight="60vh" [(first)]="first">
+                            <ng-template pTemplate="header">
+                                <tr style="height: 10px;">
+                                    <th>Item Number</th>
+                                    <th>Item BaseName</th>
+                                    <!-- <th>Bar code </th> -->
+                                    <th>LogoUrl</th>
+                                    <th>Category</th>
+                                    <th>SubCategory</th>
+                                    <th>
+                                        BarCode
+                                    </th>
+                                </tr>
+                            </ng-template>
+
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>{{item.Number}}</td>
+                                    <td>{{item.itemBaseName}}</td>
+                                    <!-- <td>{{item.Barcode}}</td> -->
+                                    <td>
+                                        <img *ngIf="item.LogoUrl" [src]="item.LogoUrl" height="40px">
+                                    </td>
+                                    <td>{{item.CategoryName}}</td>
+                                    <td>{{item.SubcategoryName}}</td>
+                                    <td>
+                                        <button class="btn btn-primary" (click)="barcodePopup(item)" *ngIf="item.Barcode && item.Barcode.length > 0">Barcode</button>
+                                        <button class="btn btn-primary" (click)="barcodePopup(item)" *ngIf="item.Barcode == null || item.Barcode.length == 0">No Barcode</button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p-dialog header="BarCode Image" [modal]="true" appendTo="body" [(visible)]="popupDisplay" positionTop="20"
+        [style]="{width: '50vw',height:'80vh', 'overflow-y': 'auto', 'overflow-x': 'hidden' }" position="center"
+        [draggable]="false">
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 text-center" *ngIf="barcodeList.length>0 && !showBarcode">
+                    <p-table [value]="barcodeList" [rows]="20" [paginator]="true">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>
+                                    BarCode
+                                </th>
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr>
+                                <td>{{item.Barcode}}</td>
+                                <td>
+                                    <button class="btn btn-primary"
+                                        (click)="showBarcodeImage(item.Barcode)">Print</button>
+                                    <!-- <button class="btn btn-primary ml-2" (click)="confirm(item)">Delete</button> -->
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="col-12" *ngIf="barcodeList.length == 0">
+                    <p>barcode List Not Available</p>
+                </div>
+                <div class="col-12" *ngIf="showBarcode">
+                    <div class="row">
+                        <button (click)="backToShowList()" class="btn btn-primary" type="button">Barcode List</button>
+                    </div>
+                    <div class="row">
+                        <div class="div" id="print-section">
+                            <img src={{barcodeimage}}>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button pButton type="button" label="Print" printSectionId="print-section" ngxPrint
+                            (click)="printBarcode()"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- <div class="div" id="print-section">
+        </div> -->
+    </p-dialog>
+
+    <p-confirmDialog header="Confirmation" modal="false" appendTo="body" icon="pi pi-exclamation-triangle">
+    </p-confirmDialog>
+
+
+</section>

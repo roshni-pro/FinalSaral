@@ -1,0 +1,299 @@
+<div id="pot" *ngIf="isShowAnimation">
+    <div class="nk"></div>
+    <img class="trck" src="../../../../assets/lmd-img/deliver-truck.gif">
+</div>
+
+
+<div *ngIf="!isShowAnimation">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">LMD-Dashboard</h4>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title"></h4>
+        </div>
+        <div class="card-content">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Select Warehouse</label>
+                            <p-multiSelect [options]="warehouseList" appendTo="body" placeholder="Select Warehouse"
+                                name="whList" optionLabel="label" optionValue="value" [(ngModel)]="warehouseids"
+                                filter="true">
+                                <!-- (ngModelChange)="onChangeWarehouse(WarehouseIds)" -->
+                            </p-multiSelect>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="projectinput3">Start Date<span style="color:red"> *</span></label>
+                            <br>
+                            <p-calendar name="startDateInput" [(ngModel)]="startdate" dataType="string"></p-calendar>
+                            <!-- <p-calendar name="startDateInputExport" appendTo="body" [(ngModel)]="rangeDates" dateFormat="mm/dd/yy"
+                            selectionMode="range" [readonlyInput]="true" inputId="range"
+                            [monthNavigator]="true" [yearNavigator]="true" yearRange="2022:2050">
+                        </p-calendar> -->
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="projectinput3">End Date<span style="color:red"> *</span></label>
+                            <br>
+                            <p-calendar name="endDateInput" [(ngModel)]="enddate" dataType="string"></p-calendar>
+                            <!-- <p-calendar name="startDateInputExport" appendTo="body" [(ngModel)]="rangeDates" dateFormat="mm/dd/yy"
+                            selectionMode="range" [readonlyInput]="true" inputId="range"
+                            [monthNavigator]="true" [yearNavigator]="true" yearRange="2022:2050">
+                        </p-calendar> -->
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="projectinput3"></label>
+                            <br>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-top:7px"
+                                (click)="getOverallData()">
+                                View
+                            </button>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary "
+                                style="margin-top:7px; margin-left:5px;" (click)="exportVehicleReport()">
+                                Export
+                            </button>
+                        </div>
+                        <!-- (click)="export1()" -->
+                    </div>
+
+                </div>
+                <br>
+
+                <div class="row" *ngIf="orderData">
+                    <div class="col-sm-12">
+                        <div class="field-checkbox">
+                            <p-checkbox [(ngModel)]="isCalculateOnOrderCount" [binary]="true"
+                                inputId="binary"></p-checkbox> &nbsp;
+                            <label for="binary">
+                                {{isCalculateOnOrderCount?' Calculations on Order Count': ' Calculationson Order Amount'}}</label>
+                        </div>
+
+                    </div>
+                    <div class="my-bx">
+                        <div class="my-bx-brdr thrs-clr">
+                            <div>Threshold</div>
+                            <div>{{isCalculateOnOrderCount ? orderData.ThresholdCount : orderData.ThresholdAmount |
+                                currency:'INR':'symbol-narrow':'4.2-2'}}</div>
+                            <!-- <div>25%</div> -->
+
+                        </div>
+
+                    </div>
+                    <div class="my-bx">
+                        <div class="my-bx-brdr exe-clr">
+                            <div>Executed</div>
+                            <div>{{isCalculateOnOrderCount ? orderData.ExecutedOrderCount :
+                                orderData.ExecutedOrderAmount | currency:'INR':'symbol-narrow':'4.2-2'}}</div>
+                            <div>{{isCalculateOnOrderCount ? (orderData.ExecutedOrderPercentage| number : '1.2-2') :
+                                (orderData.ExecutedOrderOnAmountPercentage| number : '1.2-2')}}%</div>
+                            <img src="../../../../assets/lmd-img/ice.gif">
+                        </div>
+
+                    </div>
+                    <div class="my-bx">
+                        <div class="my-bx-brdr dlvr-clr">
+                            <div>Delivered</div>
+                            <div>{{isCalculateOnOrderCount ? orderData.DeliverdCount : orderData.DeliverdAmount |
+                                currency:'INR':'symbol-narrow':'4.2-2'}}</div>
+                            <div>{{isCalculateOnOrderCount ? (orderData.DeliverPercentage| number : '1.2-2') :
+                                (orderData.DeliverAmountPercentage| number : '1.2-2')}}%</div>
+                            <!-- <div>{{orderData.DeliverdCount}}</div>
+                            <div>{{orderData.DeliverPercentage| number : '1.2-2'}}%</div> -->
+                            <img class="sze" src="../../../../assets/lmd-img/happy.gif">
+
+                        </div>
+
+                    </div>
+                    <div class="my-bx">
+                        <div class="my-bx-brdr cncl-clr">
+                            <div>Canclled</div>
+                            <div>{{isCalculateOnOrderCount ? orderData.DCCount : orderData.DCAmount |
+                                currency:'INR':'symbol-narrow':'4.2-2'}}</div>
+                            <div>{{isCalculateOnOrderCount ? (orderData.DCCountPercentage| number : '1.2-2') :
+                                (orderData.DCAmountPercentage| number : '1.2-2')}}%</div>
+                            <!-- <div>{{orderData.DCCount}}</div>
+                            <div>{{orderData.DCCountPercentage| number : '1.2-2'}}%</div> -->
+                            <img class="sze-a" src="../../../../assets/lmd-img/can.webp">
+
+                        </div>
+
+                    </div>
+                    <div class="my-bx">
+                        <div class="my-bx-brdr dr-clr">
+                            <div>Redispatch</div>
+                            <div>{{isCalculateOnOrderCount ? orderData.RedispatchCount : orderData.RedispatchAmount |
+                                currency:'INR':'symbol-narrow':'4.2-2'}}</div>
+                            <div>{{isCalculateOnOrderCount ? (orderData.RedispatchCountPercentage| number : '1.2-2') :
+                                (orderData.RedispatchAmountPercentage| number : '1.2-2')}}%</div>
+                            <!-- <div>{{orderData.RedispatchCount}}</div>
+                            <div>{{orderData.RedispatchCountPercentage| number : '1.2-2'}}%</div> -->
+                            <img class="sze-a" src="../../../../assets/lmd-img/angry.gif">
+
+                        </div>
+
+                    </div>
+                    <div class="my-bx">
+                        <div class="my-bx-brdr rat-clr">
+                            <div>Reattempt</div>
+                            <div>{{isCalculateOnOrderCount ? orderData.ReattemptCount : orderData.ReattemptAmount |
+                                currency:'INR':'symbol-narrow':'4.2-2'}}</div>
+                            <div>{{isCalculateOnOrderCount ? (orderData.ReattemptCountPercentage| number : '1.2-2') :
+                                (orderData.ReattemptAmountPercentage| number : '1.2-2')}}%</div>
+                            <!-- <div>{{orderData.ReattemptCount}}</div>
+                            <div>{{orderData.ReattemptCountPercentage| number : '1.2-2'}}%</div> -->
+                            <img class="sze" src="../../../../assets/lmd-img/melt-ice.gif">
+
+                        </div>
+
+                    </div>
+                </div>
+                <br>
+                <div class="row" *ngIf="lmdVehicleList && lmdVehicleList.length>0">
+                    <div class="col-sm-12">
+                        <p-table [value]="lmdVehicleList" [scrollable]="true" scrollHeight="flex"
+                            [tableStyle]="{'min-width': '50rem'}">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Vehicle No</th>
+                                    <th>Vehicle Type</th>
+                                    <th>Date</th>
+                                    <th>Hub</th>
+                                    <th>TransportName</th>
+                                    <th>NumberOfTrips</th>
+                                    <th>TripNos</th>
+                                    <th>ThresholdOrderCount</th>
+                                    <th>OrderCount</th>
+                                    <th>UtilizationPercentageOnOrderCount</th>
+                                    <th>ThresholdOrderAmount</th>
+                                    <th>OrderValue</th>
+                                    <th>UtilizationPercentageOnOrderValue</th>
+                                    <th>InProcessOrderCount</th>
+                                    <th>InProcessOrderAmount</th>
+                                    <th>DeliverdCount</th>
+                                    <th>ThresholdVSDeliveryPercentageOnOrderCount</th>
+                                    <th>CarriedVSDeliveryPercentageOnOrderCount</th>
+                                    <th>DeliverdValue</th>
+                                    <th>RedispatchCount</th>
+                                    <th>RedispatchValue</th>
+                                    <th>DCCount</th>
+                                    <th>DCValue</th>
+                                    <th>ReattemptCount</th>
+                                    <th>ReattemptValue</th>
+                                    <th>WorkingDuration</th>
+                                    <th>Assignments</th>
+                                    <th>TotalKmExcludingRunningTrip</th>
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-vehicle>
+                                <tr>
+                                    <td>{{vehicle.VehicleNo}}</td>
+                                    <td>{{vehicle.VehicleType}}</td>
+                                    <td>{{vehicle.CreatedDate}}</td>
+                                    <td>{{vehicle.HubName}}</td>
+                                    <td>{{vehicle.TransportName}}</td>
+                                    <td>{{vehicle.NumberOfTrips}}</td>
+                                    <td>{{vehicle.TripNos}}</td>
+                                    <td>{{vehicle.ThresholdOrderCount}}</td>
+                                    <td>{{vehicle.OrderCount}}</td>
+                                    <td>{{vehicle.UtilizationPercentageOnOrderCount}}</td>
+                                    <td>{{vehicle.ThresholdOrderAmount}}</td>
+                                    <td>{{vehicle.OrderValue}}</td>
+                                    <td>{{vehicle.UtilizationPercentageOnOrderValue}}</td>
+                                    <td>{{vehicle.InProcessOrderCount}}</td>
+                                    <td>{{vehicle.InProcessOrderAmount}}</td>
+                                    <td>{{vehicle.DeliverdCount}}</td>
+                                    <td>{{vehicle.ThresholdVSDeliveryPercentageOnOrderCount}}</td>
+                                    <td>{{vehicle.CarriedVSDeliveryPercentageOnOrderCount}}</td>
+                                    <td>{{vehicle.DeliverdValue}}</td>
+                                    <td>{{vehicle.RedispatchCount}}</td>
+                                    <td>{{vehicle.RedispatchValue}}</td>
+                                    <td>{{vehicle.DCCount}}</td>
+                                    <td>{{vehicle.DCValue}}</td>
+                                    <td>{{vehicle.ReattemptCount}}</td>
+                                    <td>{{vehicle.ReattemptValue}}</td>
+                                    <td>{{vehicle.WorkingDuration}}</td>
+                                    <td>{{vehicle.Assignments}}</td>
+                                    <td>{{vehicle.TotalKmExcludingRunningTrip}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+                <div class="row m-brdr" *ngIf="overallData">
+                    <div class="col-sm-12" style="text-align: center;">
+
+
+                        <a class="my-lnk" (click)="exportOverAllData()">Export</a>
+                        <h3>Utilization Efficiency Chart</h3>
+
+                    </div>
+                    <div class="col-sm-12">
+                        <p-chart type="bar" [data]="overallData"></p-chart>
+                    </div>
+                </div>
+                <br>
+                <div class="row m-brdr" *ngIf="ftlData">
+                    <div class="col-sm-12" style="text-align: center;">
+                        <a class="my-lnk" (click)="exportFTLData()">Export</a>
+                        <h3>FTL Efficiency</h3>
+                    </div>
+                    <div class="col-sm-12">
+                        <table class="my-ftl-tbl">
+                            <tr>
+                                <th>Hub</th>
+                                <th>Total Vehicle Days</th>
+                                <th>FTL Vehicle Days</th>
+                                <th>FTL Vehicle Days %</th>
+                            </tr>
+                            <tr *ngFor="let ftl of ftlData">
+                                <td>{{ftl.HubName}}</td>
+                                <td>{{ftl.TotalVehicle}}</td>
+                                <td>{{ftl.FTLVehiclesOverAll}}</td>
+                                <td
+                                    [ngClass]="{ 'm-success': ftl.FTLVehiclesOverAllPerCentage > 90, 'm-yellow': ftl.FTLVehiclesOverAllPerCentage < 90 &&  ftl.FTLVehiclesOverAllPerCentage > 80 ,  'm-red': ftl.FTLVehiclesOverAllPerCentage < 80 }">
+                                    {{ftl.FTLVehiclesOverAllPerCentage}}%</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br>
+                </div>
+                <br>
+                <div class="row m-brdr" *ngIf="deliveryEfficienyData">
+                    <div class="col-sm-12" style="text-align: center;">
+                        <a class="my-lnk" (click)="exportOverAllData()">Export</a>
+                        <h3>Delivery Efficiency Chart</h3>
+                    </div>
+                    <div class="col-sm-12">
+                        <p-chart type="bar" [data]="deliveryEfficienyData" [options]="stackedOptions"></p-chart>
+                    </div>
+                </div>
+                <br>
+
+                <div class="row m-brdr" *ngIf="disciplinaryMatrixData">
+                    <div class="col-sm-12" style="text-align: center;">
+                        <a class="my-lnk" (click)="getDesciplineDataReport()">Export</a>
+                        <h3>Disciplinary Matrix</h3>
+                    </div>
+                    <div class="col-sm-12">
+                        <p-chart type="bar" [data]="disciplinaryMatrixData" ></p-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>

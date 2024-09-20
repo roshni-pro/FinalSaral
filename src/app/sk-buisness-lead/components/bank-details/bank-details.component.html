@@ -1,0 +1,373 @@
+<!-- <p>bank-details works!</p>
+{{bankDetailsDc | json}} -->
+<!-- <div #pnl> -->
+    <div class="card tp common-padding">
+        <div *ngIf="bankDetailsDc != null && bankDetailsDc?.DocumentName != null">
+            <!-- <div class="text-right">
+                <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" (click)="Onhistory()" >history</button>
+            </div> -->
+            <div class="row" >
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div><span> <b>This Bank account will be used for disbursement </b></span></div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12 text-right">
+                    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="AddDocuments()">Add Documents</button>
+                </div>
+            </div> 
+            <!-- <div class="row mb-2">
+          </div> -->
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Account Holder Name</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{bankDetailsDc.AccountHolderName!=null ? bankDetailsDc.AccountHolderName : '--'}}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Bank Name</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{bankDetailsDc.borro_bank_name}}</div>
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Account No</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{bankDetailsDc.borro_bank_acc_num}}</div>
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">IFSC Code</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{bankDetailsDc.borro_bank_ifsc}}</div>
+                </div>
+            </div>  
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Type Of Account</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">
+                        {{bankDetailsDc.AccountType!=null?bankDetailsDc.AccountType:'--'}}
+                    </div> 
+                </div>
+            </div>  
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Loan Request Amount</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{bankDetailsDc.EnquiryAmount}}</div>
+                </div>
+            </div>  
+
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">PDF Password</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{bankDetailsDc.PdfPassword!=null?bankDetailsDc.PdfPassword:'--'}}</div>
+                </div>
+            </div>  
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Status</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">
+                        <span *ngIf="isVerified" style="color:green;">
+                            Verified
+                        </span>
+                        <span *ngIf="isRejected" style="color:red;">
+                            Rejected
+                        </span>
+                    </div>
+                </div>
+            </div> 
+            <!-- NACH -->
+            <div class="row mt-2 mb-3" >
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div><span> <b>This Bank account will be used for NACH </b></span></div>
+                </div>
+            </div> 
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Same as Disbursement Bank account details</div>
+                </div>
+                <div class="col-md-6 col-sm-6 col-12">
+                    <div class="ml cl">
+                        <p-checkbox [(ngModel)]="checked" [binary]="true" (click)="sameAsbankDetails()"></p-checkbox>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Account Holder Name</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl"> 
+                         <input placeholder="Acc. Holder Name" style="padding: 6px; width: 30.3%;" type="text" [(ngModel)]="AccountHoldername" class="form-control inptBx">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Bank Name</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl"><input  placeholder="Bank Name" style="padding: 6px; width: 30.3%;"  type="text" [(ngModel)]="bankName" class="form-control inptBx"></div>
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Account No</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">
+                        <!-- <input style="padding: 6px; width: 30.3%;"  type="text" [(ngModel)]="accountNumber"> -->
+                        <input style="padding: 6px; width: 30.3%;"  type="tel" pattern="\d*" maxlength="17" (keypress)="decimalFilter($event)" (keydown)="onKeydown($event)"
+                        [(ngModel)]="accountNumber" placeholder="Bank Acc. No." class="form-control inptBx" >
+                    </div>
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">IFSC Code</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">
+                        <!-- <input style="padding: 6px; width: 30.3%;"  type="text" [(ngModel)]="ifsc"> -->
+                        <input style="padding: 6px; width: 30.3%;"  oninput="this.value = this.value.toUpperCase()" type="text" (keypress)="validateAlphaNumeric($event)"
+                        [(ngModel)]="ifsc" placeholder="IFSC Code" class="form-control inptBx">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Type Of Account</div>
+                </div>
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cl">
+                        <p-dropdown  [options]="AccountTypeList" placeholder="--Select type--" optionLabel="name" [(ngModel)]="Accounttype"></p-dropdown>&nbsp;&nbsp; &nbsp;&nbsp;
+                        <!-- <button type="button" class="btn btn-raised btn-danger mr-1" (click)="SaveNachDetails()">Save</button> -->
+                    </div> 
+                </div>
+                <div class="col-md-3 col-sm-3 col-12">
+                    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="SaveNachDetails()">Save</button>
+                </div>
+            </div>  
+
+            <!-- <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">borrower_id</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{bankDetailsDc.borrower_id}}</div>
+                </div>
+            </div>  
+
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">partner_borrower_id</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{bankDetailsDc.partner_borrower_id}}</div>
+                </div>
+            </div>  
+
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">cibil_score_borro</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{bankDetailsDc.cibil_score_borro}}</div>
+                </div>
+            </div> -->
+            
+            <!-- <div class="row" *ngIf="!isVerified && !isRejected">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Bank Statement</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">
+                        <div>
+                            <div class="p-img" *ngIf="bankDetailsDc && bankDetailsDc.FrontFileUrl">
+                                <app-image-upload type="Product" [frontImagePath]="bankDetailsDc.FrontFileUrl"
+                                    [isShowMyInputLogo]="true" [SequenceName]="'BankStatement'" [DocumentName]="bankDetailsDc.DocumentName" [LeadMasterId]="LeadMasterId"
+                                    [uploadImagePage]="bankDetailsDc.FrontFileUrl" [isRequired]="true" [showUploadedImage]="false"
+                                    (detectchange)="onUploadFrontimage($event)">
+                                    <div class="uploadImgShow" uploadLogo>
+                                        <i class="fa fa-file-pdf-o" style="font-size:30px;color:red" (click)="OpenPdf()"></i>
+                
+                                    </div>
+                                </app-image-upload>
+                            </div>
+                            <div class="p-img-nt" *ngIf="!bankDetailsDc || (bankDetailsDc && !bankDetailsDc.FrontFileUrl)">
+                                <app-image-upload type="Product" id="imageValid" [isShowMyInputLogo]="true" [DocumentName]="bankDetailsDc.DocumentName" [LeadMasterId]="LeadMasterId"
+                                    [isRequired]="true" [showUploadedImage]="false" [SequenceName]="'BankStatement'"
+                                    [uploadImagePage]="'bankDetailsDc'" (detectchange)="onUploadFrontimage($event)">
+                                    <div uploadLogo>
+                                
+                                      <i class="fa fa-file-pdf-o" style="font-size:30px;color:red"></i>
+                                        <div style="color: #E9754E;">Upload Bank Statement</div>
+                                        <div>Supports PDF</div>
+                                    </div>
+                                </app-image-upload>           
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>   -->
+            <!-- <div class="row" *ngIf="bankDetailsDc && bankDetailsDc.FrontFileUrl">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">View Bank Statement PDF</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">
+                        <div>
+                            <div class="p-img" *ngIf="bankDetailsDc && bankDetailsDc.FrontFileUrl">
+                               <i class="fa fa-file-pdf-o" style="font-size:48px;color:blue" (click)="OpenPdf()"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>   -->
+
+            <div class="row mt-3" >
+                <div>
+                <p-table [value]="BankStatementDc" >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 480px;">Documnet</th>
+                            <th>View Document</th>
+                            <th>Remark</th>
+                            <th>Action</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                        <tr>
+                            <td style="width: 480px;">{{rowData.StatementFile}}</td>
+                            <td><i class="fa fa-file-pdf-o" style="font-size:48px;color:blue" (click)="ViewUploadedDocument(rowData)"></i></td>
+                            <td>{{rowData.Remark}}</td>
+                            <td><i class="pi pi-trash ml-2" style="font-size: 2rem;color: maroon;" (click)="DeleteUploadedDocument(rowData)"></i></td>
+                        </tr>
+                     </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <h5 style="color: #186fe0;">Data Not Found</h5>
+                        </ng-template>
+                </p-table>
+            </div>
+            </div> 
+            <!-- *ngIf="!isVerified && !isRejected && rowData?.SequenceNo == 7" -->
+            <!-- && !isVerified && !isRejected -->
+            <div class="row" *ngIf="!loanPosted">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp"></div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl" style="float: right;">
+                    <i class="fa fa-times-circle" style="font-size:30px;color:red;float: right;margin-left: .5em;" (click)="onRejectDoc()"></i>
+                    <i class="fa fa-check-circle" style="font-size:30px;color:green;float: right;" (click)="onApproved()"></i>
+                    <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" *ngIf="isUpload" (click)="onUpdate()">Update</button>
+                </div>
+            </div>
+            </div> 
+            <div class="row" *ngIf="loanPosted">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp"></div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <i class="fa fa-times-circle" *ngIf="isRejected" style="font-size:30px;color:red;float: right;margin-left: .5em;"></i>
+                    <i class="fa fa-check-circle" *ngIf="isVerified" style="font-size:30px;color:green;float: right;"></i>                
+                </div>
+            </div>
+            </div> 
+
+        </div>
+        <div class="no-Txt" *ngIf="bankDetailsDc == null || bankDetailsDc?.DocumentName == null">* No Record Found</div>
+    </div>
+<!-- </div> -->
+<p-dialog [(visible)]="isRejectDoc" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: 'auto', overflow: 'auto'}">
+    <p-header>Reason For Reject</p-header>
+    <div class="ui-fluid">
+      <input type="text" id="_selfiecomment" name="_selfiecomment" class="form-control" [(ngModel)]="Comment" placeholder="Enter Reason For Reject">
+    </div>
+    <p-footer>
+        <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" (click)="onReject()">Reject</button>
+    </p-footer>
+</p-dialog>
+
+<p-dialog header="Add Document" [(visible)]="showAddDoc" [modal]="true" appendTo="body" positionTop="100"
+[style]="{width: '65vw',height:'60%', overflow: 'auto','box-shadow': 'none','max-width': '52%'}" [draggable]="false"
+[resizable]="false">
+<div class="container-fluid">
+<div class="row">
+    <div class="row ml-1" >
+        <div class="col-3 mt-2">
+           <label style="font-weight: 400;" >Comment</label>
+           <input type="text" class="form-control" [(ngModel)]="comment">
+        </div>
+        <div class="col-3 mt-2">
+           <!-- <p-fileUpload mode="basic" chooseLabel="Choose" name="myfile[]" [(ngModel)]="myURL" customUpload="true" accept=".xls,.xlsx,image/png, image/jpeg" #uploadCustom
+           (uploadHandler)="onUpload($event)"></p-fileUpload> -->
+           <label>Upload Document</label>
+           <input type="file"  #fileRef (change)="onFileSelected($event)" accept=".pdf">
+        </div>
+        <div class="col-6 mt-2">
+            <div class="text-right">
+
+                <button class="search_Button" (click)="onSave()">Add</button>
+            </div>
+        </div>
+       </div>
+       <div class="row mt-3" >
+            <div class="container">
+                <p-table [value]="tempArray">
+                 <ng-template pTemplate="header">
+                     <tr>
+                         <th>Comment</th>
+                         <th>file Name</th>
+                         <th>View Document</th>
+                         <th>Action</th>
+                     </tr>
+                 </ng-template>
+                 <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                     <tr>
+                         <td>{{rowData.comment}}</td>
+                         <td>{{rowData.file.name}}</td>
+                         <!-- <td><a (click)="ViewDocument(rowData)">View Document</a></td> -->
+                         <td> <i class="fa fa-file-pdf-o" style="font-size:30px;color:red" (click)="ViewDocument(rowData)"></i></td>
+                         <td><i class="pi pi-trash ml-2" style="font-size: 1.5rem;color: maroon;" (click)="Delete(rowData)"></i></td>
+                     </tr>
+                  </ng-template>
+                     <!-- <ng-template pTemplate="emptymessage">
+                         <h5 style="color: #186fe0;">Data Not Found</h5>
+                     </ng-template> -->
+             </p-table>
+             <div class="col-12 text-center">
+                 <button class="search_Button" [disabled]="tempArray.length==0" (click)="OnSaveDocument()">Save</button>
+               </div>
+            </div>
+       </div>
+       </div>
+       </div>
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

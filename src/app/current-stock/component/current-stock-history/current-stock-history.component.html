@@ -1,0 +1,39 @@
+<div class="m-2 ">
+  <!-- <div class="ui-helper-clearfix">
+    <button class="btn btn-primary btn-sm text-white float-left m-0" (click)="exportCSV()"><i
+      class="fa fa-file-o text-white"></i><span class="text-white">Export Data</span></button>
+    </div> -->
+  <p-table #dt [columns]="cols" [value]="stockHistoryList" [lazy]="true" [totalRecords]="totalRecords"
+    [(selection)]="exportList" (onLazyLoad)="load($event)" [paginator]="true" [rows]="20" [scrollable]="true"
+    scrollHeight="40vh">
+    <ng-template pTemplate="caption">
+      <div class="ui-helper-clearfix">
+        <button class="btn btn-primary btn-sm text-white float-left m-0" (click)="exportCSV({selectionOnly:true})"><i
+            class="fa fa-file-o text-white"></i><span class="text-white"> Export Data</span></button>
+        <!-- <button type="button" pButton icon="fa fa-file" iconPos="left" label="Selection Only"
+            (click)="dt.exportCSV({selectionOnly:true})" style="float:right"></button>-->
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let col of cols" style="text-align: center" [pSortableColumn]="col.field">
+          {{col.header}}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+      <tr class="classForHoverEffect">
+        <td *ngFor="let col of cols" style="text-align: center" class="ui-resizable-column"
+          (click)="openDetails(rowData,$event)" [ngStyle]="{'color': col.color}">
+          {{rowData[col.field]}}
+        </td>
+      </tr>
+
+      <!-- <tr class="edit"><td colspan="5"><app-addSupplier></app-addSupplier></td></tr>
+         -->
+    </ng-template>
+    <!-- <ng-template  *ngIf="isDetails" > -->
+
+    <!-- </ng-template> -->
+  </p-table>
+</div>

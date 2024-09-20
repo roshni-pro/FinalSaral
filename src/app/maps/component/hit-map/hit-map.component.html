@@ -1,0 +1,156 @@
+<div class="ui-fluid">
+  <p-toast></p-toast>
+  <p-blockUI [blocked]="isLoading"></p-blockUI>
+  <section id="basic-form-layouts">
+    <div class="card">
+      <div class="card-content">
+        <div class="mr-10">
+          <form #heatMapForm="ngForm">
+            <div class="row mb-3">
+              <div class="col-md-2">
+                <label class="col-md-12"><b>Store:</b></label>
+                <p-dropdown [options]="storeList" name="storeInput" [(ngModel)]="selStoreId" 
+                  [panelStyle]="{minWidth:'25em'}" optionLabel="Name"
+                  placeholder="Select Store"  required #storeListInput>
+                </p-dropdown>
+                <div *ngIf="isInvalid && (!storeListInput.value || storeListInput.value.length < 1)">
+                  <code>Store is required!</code>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <label for="ware" class="col-md-12"><b>City:</b></label>
+                <p-multiSelect [options]="CityList" name="cityInput" [(ngModel)]="selectedCity"
+                  [panelStyle]="{minWidth:'25em'}" optionLabel="CityName" (onPanelHide)="onSelectCityList()"
+                  onChange="CityName" required #cityListInput>
+                </p-multiSelect>
+                <div *ngIf="isInvalid && (!cityListInput.value || cityListInput.value.length< 1)">
+                  <code>City is required!</code>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label for="ware" class="col-md-12"><b>Warehouse:</b></label>
+                <p-multiSelect [options]="warehouseList" name="warehouseInput" [(ngModel)]="selectedwarehouse"
+                  [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName" (onPanelHide)="onSelectWarehouseList()"
+                  required #warehouseListInput>
+                </p-multiSelect>
+                <div *ngIf="isInvalid && (!warehouseListInput.value || warehouseListInput.value.length < 1)">
+                  <code>Warehouse is required!</code>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label for="ware" class="col-md-12"><b>Cluster:</b></label>
+                <p-multiSelect [options]="ClusterList" name="clusterInput" [(ngModel)]="selectedCluster"
+                  [panelStyle]="{minWidth:'25em'}" optionLabel="ClusterName" #clusterListInput>
+                </p-multiSelect>
+                <div *ngIf="isInvalid && (!clusterListInput.value || clusterListInput.value.length < 1)">
+                  <code>Cluster is required!</code>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label for="ware" class="col-md-12"><b>Date:</b></label>
+                <p-calendar [(ngModel)]="rangeDates" name="dateRangeInput" selectionMode="range" [readonlyInput]="true"
+                  required #dateRangeListInput>
+                </p-calendar>
+                <div *ngIf="isInvalid && (!dateRangeListInput.value || dateRangeListInput.value.length < 1)">
+                  <code>Date is required!</code>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label for="ware" class="col-md-12"><b>Map Type:</b></label>
+                <select name="mapTypeInput" [(ngModel)]="selectedMapType" class="form-control">
+                  <option value="heatMap">Heat Map</option>
+                  <option value="markerMap">Marker Map</option>
+                </select>
+              </div>
+              <div class="right col-md-2 p-3">
+
+                <button type="button" class="btn btn-raised btn-primary btn-mr" (click)="Show(heatMapForm)">
+                  Show
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="row">
+            <div class="col-md-2">
+              <label for="ware" class="col-md-8"><b>Base Category:</b></label>
+              <p-multiSelect [options]="BaseCategoryList" [(ngModel)]="selectedBaseCatregory"
+                [panelStyle]="{minWidth:'25em'}" optionLabel="BaseCategoryName"
+                (onPanelHide)="onSelectBaseCategoryList()" onChange="BaseCategoryName">
+              </p-multiSelect>
+            </div>
+            <div class="col-md-2">
+              <label for="ware" class="col-md-8"><b>Category:</b></label>
+              <p-multiSelect [options]="CategoryList" [(ngModel)]="selectedCatregory" [panelStyle]="{minWidth:'25em'}"
+                optionLabel="CategoryName" (onPanelHide)="onSelectCategoryList()" onChange="CategoryName ">
+              </p-multiSelect>
+            </div>
+            <div class="col-md-2">
+              <label for="ware" class="col-md-8"><b>Sub Category:</b></label>
+              <p-multiSelect [options]="SubCategoryList" [(ngModel)]="selectedSubCatregory"
+                [panelStyle]="{minWidth:'25em'}" optionLabel="SubCategoryName" (onPanelHide)="onSelectSubCategoryList()"
+                onChange="SubCategoryName ">
+              </p-multiSelect>
+            </div>
+            <div class="col-md-2">
+              <label for="ware" class="col-md-8"><b>Brand Name:</b></label>
+              <p-multiSelect [options]="SubsubCategoryList" [(ngModel)]="selectedSubsubCatregory"
+                [panelStyle]="{minWidth:'25em'}" optionLabel="BrandName" (onPanelHide)="onSelectSubCeategoryItem()"
+                onChange="SubCategoryName ">
+              </p-multiSelect>
+            </div>
+            <div class="col-md-2">
+              <label for="ware" class="col-md-8"><b>Item:</b></label>
+              <p-multiSelect [options]="ItemList" [(ngModel)]="selectedItem" [panelStyle]="{minWidth:'25em'}"
+                optionLabel="ItemName">
+              </p-multiSelect>
+            </div>
+            <div class="col-md-2 ">
+              <label for="ware" class="col-md-8" style=" margin-left: -16px;"><b>Show Skcode</b></label><br>
+              <p-inputSwitch id="cty" name="cty"  [(ngModel)]="ShowToolTip"  (onChange)="onClickToggle(ShowToolTip)" ></p-inputSwitch>
+              <label>{{ ShowToolTip ? 'On' : 'Off' }}</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <span>Note: Please do not select more than 4 options for any comparision filter</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="(selectedMapType == 'heatMap')">
+          <div *ngIf="showMap && !isGetComarisionMap">
+            <div *ngIf="details && details.length > 0">
+              <app-heat-map-child [point-list]="details" [selected-data-type]="SelectedDataType" [ShowTool-Tip]="ShowToolTip"
+                [selected-cluster]="selectedCluster" [selected-city]="selectedCity"></app-heat-map-child>
+            </div>
+            <div *ngIf="!details || details.length < 1" class="div-123">
+              No data found
+            </div>
+          </div>
+          <div class="row" *ngIf="showMap && isGetComarisionMap && comparisionData.FilteredList && comparisionData.FilteredList.length > 0">
+            <div class="col-md-6"  *ngFor="let mapData of comparisionData.FilteredList" >
+              <app-heat-map-child [point-list]="mapData.ClusterData" [selected-data-type]="SelectedDataType" [ShowTool-Tip]="ShowToolTip"
+                [selected-cluster]="selectedCluster" [selected-city]="selectedCity" [map-name]="mapData.MapName">
+              </app-heat-map-child>
+            </div>
+            <div class="col-md-6" 
+              *ngIf="!comparisionData || !comparisionData.FilteredList || (!comparisionData.FilteredList.length) > 0"
+              class="div-123">
+              No data foundddd
+            </div>
+          </div>
+        </div>
+        <div *ngIf="selectedMapType == 'markerMap' && showMap">
+          <div *ngIf="markerList && markerList.length > 0">
+            <app-marker-map-child [point-list]="markerList" [selected-city]="selectedCity" [ShowTool-Tip]="ShowToolTip"
+              [selected-cluster]="selectedCluster"></app-marker-map-child>
+          </div>
+          <div *ngIf="!markerList || markerList.length < 1" class="div-123">
+            No data found
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

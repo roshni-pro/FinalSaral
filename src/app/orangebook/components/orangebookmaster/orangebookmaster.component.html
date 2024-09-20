@@ -1,0 +1,112 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="row">
+  <h4 style="padding-top: 20px; padding-left: 10px"><b>Add Orange Book Version</b></h4>
+</div>
+<div class="row">
+
+  <div class="col-md-2">
+    <div class="form-group m-2">
+      <label for="a">Current Version </label>
+      <input type="text" name="a" id="b" class="form-control col-md-6" [(ngModel)]="OBLatestVersion" disabled>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="form-group m-2">
+      <label for="a"> Category </label>
+      <select id="desg" name="desg" class="form-control" [(ngModel)]="catid" (click)="onsearch(catid)">
+        <option value="">--select--</option>
+        <option *ngFor="let entity of OBCategory" [ngValue]="entity.Id">
+          {{ entity.CategoryName }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="form-group m-2">
+      <label for="a"> Sub-Category </label>
+      <select id="des" name="desg" class="form-control" [(ngModel)]="subcatid" >
+        <option value="">--select--</option>
+        <option *ngFor="let sub of OBSubCategory" [ngValue]="sub.Id">
+          {{ sub.SubCategoryName }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+
+  <div class="col-md-3">
+    <div class="form-group m-2">
+      <label for="b">Upload File (PDF Only)*</label>
+      <input class="btn btn-primary" id="file" type="file" (change)="upload($event.target.files)" />
+    </div>
+  </div>
+
+
+  <div class="col-md-1">
+    <div class="form-group m-1">
+      <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploader()" [disabled]="!IsExtension">
+        Upload
+      </button>
+    </div>
+  </div>
+
+
+  <div class="col-md-2">
+    <div class="form-actions right col-sm-12 p-3">
+      <button type="button" class="btn btn-raised btn-primary m-1" (click)="AddOrangeBookVersion()">
+        <i class="fa fa-check-square-o"></i> Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <div class="position-relative">
+      <div class="position-absolute orangebook-details">
+
+      </div>
+      <div class="position-relative">
+        <p-table #dt [columns]="cols" [value]="versionList" [paginator]="true" [rows]="20" dataKey="Id"
+          [scrollable]="true" scrollHeight="70vh" text-align: center>
+
+          <ng-template pTemplate="caption">
+            <!-- <div style="text-align: right">        
+                     <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                     <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                 </div> -->
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+
+              <th *ngFor="let col of cols" style="text-align: initial">
+                {{col.header}}
+
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+            <tr (click)="openDetails(rowData,$event)">
+              <td *ngFor="let col of columns" style="text-align: initial">
+                <div *ngIf="col.field!='FilePath'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col.field =='FilePath'">
+
+                  <a href="{{url}}{{rowData[col.field]}}" target="blank"> {{rowData[col.field]}} </a>
+                </div>
+                <!-- {{rowData[col.field]}} -->
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,248 @@
+<div class="row">
+    <div class="col-4">
+        <i class="pi pi-chevron-left mt-3 mb-2" (click)="CreateNew()" style="cursor: pointer;"><span>BACK</span></i></div>
+        <div class="col">
+            <h5 class="heading" >Attendance TA/DA configuration</h5>  
+        </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-md-12 ">
+            <div class="d-flex">
+                <div class="col-md-2">
+                    <label style="font-weight: 505;">Select Channel</label>
+                    <!-- <p-dropdown [options]="StoreList" [disabled]="true" [(ngModel)]="AttendanceConfigList.StoreObj" optionValue="Id" optionLabel="Name" placeholder="Select store"
+                     (onChange)="chageStore()"
+                    [filter]="true" [resetFilterOnHide]="true">
+                    </p-dropdown> -->
+                    <p-dropdown id="id" name="Name" [options]="ChannelTypeList"  [disabled]="true" [(ngModel)]="AttendanceConfigList.ChannelObj" optionValue="ChannelMasterId"
+                 optionLabel="ChannelType" placeholder="Select Channel" 
+                 [filter]="true" [resetFilterOnHide]="true">
+                    </p-dropdown>
+
+                </div>
+                <div class="col-md-2 mr-4">
+                    <label style="font-weight: 505;">Select City</label>
+                        <p-dropdown [options]="CityList" [disabled]="((Menu=='Edit') || (Menu=='GlobalEdit'))"  [(ngModel)]="AttendanceConfigList.CityObj" optionLabel="CityName" [style]=" {'margin-right': '60px'}" 
+                         placeholder="Select city" (onChange)="getWarehouseByCityId()"
+                        [filter]="true" [resetFilterOnHide]="true">
+                        </p-dropdown>
+                </div>
+                <div class="col-md-6 text-right mt-4">
+                    <button  class="btn btn-primary" [hidden]="((selectedMessage) || (Menu=='Duplicate'))" (click)="Editlog(true)">Edit Log</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<br>
+
+<div class="container-fluid mt-2 " style="height: 530px; border: 2px solid black;">
+    <div class="card-body">
+            <div class="row">
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-2"><label style="font-weight: 505;">Attendance:</label></div>
+                        <div class="col">
+                            <div class="row mb-2"><b>CheckIn (First CheckIn)</b></div> 
+                            <div class="row my-3">
+                                <b> Include</b>
+                                <div class="col-md-4 ml-3"  style="display: contents;" >
+                                    <p-radioButton name="CheckinBeatShop" value="true" [style]="{'margin-left':'13px'}"
+                                    [(ngModel)]="AttendanceConfigList.IsCheckinBeatShop"   label="Today Beat Shop"  >
+                                    </p-radioButton>
+                                </div>
+                                <div class="col-md-4" style="display: contents;">
+                                    <p-radioButton name="CheckinBeatShop" value="false" [style]="{'margin-left':'29px'}"
+                                    [(ngModel)]="AttendanceConfigList.IsCheckinBeatShop"  label="Any Shop in Cluster">
+                                    </p-radioButton>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                               <b>Time</b>  &nbsp;&nbsp;
+                                <div class="col-md-4 mr-3">
+                                    <input type="time" [(ngModel)]="AttendanceConfigList.CheckInTime">                             
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                               <b>Checkout (Last CheckOut)</b> 
+                            </div>
+                            <div class="row my-3">
+                                <b> Include</b>
+                                <div class="col-md-4 ml-3"  style="display: contents;" >
+                                    <p-radioButton name="IsCheckOutBeatShop" value="true" [style]="{'margin-left':'13px'}"
+                                      label="Today Beat Shop" [(ngModel)]="AttendanceConfigList.IsCheckOutBeatShop" >
+                                    </p-radioButton>
+                                </div>
+                                <div class="col-md-4" style="display: contents;">
+                                    <p-radioButton name="IsCheckOutBeatShop" value="false" [style]="{'margin-left':'29px'}"
+                                     label="Any Shop in Cluster" [(ngModel)]="AttendanceConfigList.IsCheckOutBeatShop">
+                                    </p-radioButton>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><label style="font-weight: 505;">Half/Full Day:</label></div>
+                        <div class="col">
+                            <div class="row mb-2"><b>Conditions for Full Day (Default Half Day unless fulfilled)</b> </div>
+                            <div class="row my-3">
+                               <b> Include</b>
+                                <div class="col-md-4 ml-3"  style="display: contents;" >
+                                    <p-radioButton name="IsFullDayBeatShop" value="true" [style]="{'margin-left':'13px'}"
+                                      label="Beat Shop" [(ngModel)]="AttendanceConfigList.IsFullDayBeatShop" >
+                                    </p-radioButton>
+                                </div>
+                                <div class="col-md-4" style="display: contents;">
+                                    <p-radioButton name="IsFullDayBeatShop" value="false" [style]="{'margin-left':'29px'}"
+                                      label="Any Shop in Cluster" [(ngModel)]="AttendanceConfigList.IsFullDayBeatShop">
+                                    </p-radioButton>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <p-checkbox binary="true" id="MinimumVisits" name="MinimumVisits" [(ngModel)]="AttendanceConfigList.IsMinimumVisit"
+                                 label="Minimum Visits"></p-checkbox>&nbsp;&nbsp;
+                                 <input type="number" min="1" id="MinimumVisit" name="MinimumVisit" style="width: 55px;"(keypress)="Check($event)" 
+                                 (keyup)="Checkvalue(ptr.value)" #ptr [(ngModel)]="AttendanceConfigList.DayMinVisits"
+                                 [disabled]="!AttendanceConfigList.IsMinimumVisit" required #MinimumVisit="ngModel">&nbsp;&nbsp;
+                                 <div *ngIf="MinimumVisit.invalid && (MinimumVisit.dirty || MinimumVisit.touched)">
+                                    <div *ngIf="MinimumVisit.errors.required" >
+                                       <span style="color:red" ><b> Minimum Visits is required.</b></span> 
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div>
+                                <label>
+                                    <input type="checkbox" [(ngModel)]="isChecked">
+                                    I agree to the terms and conditions.
+                                  </label>
+                                  <label for="name">Name:</label>
+                                  <input id="name" name="name" type="text" [(ngModel)]="userName" [disabled]="!isChecked" required #name="ngModel">
+                                  <div *ngIf="name.invalid && (name.dirty || name.touched)">
+                                    <div *ngIf="name.errors.required">
+                                      Name is required.
+                                    </div>
+                                  </div>                    
+                            </div> -->
+                        </div>                       
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><label style="font-weight: 505;">TA/DA Rule:</label></div>
+                        <div class="col">
+                            <div class="row mb-2"><b>Conditions for TA/DA (Default Unapproved unless fulfilled)</b> </div>
+                            <div class="row my-3">
+                                <b> Include</b>
+                                <div class="col-md-4 ml-3"  style="display: contents;" >
+                                    <p-radioButton name="IsTADABeatShop"  value="true" [style]="{'margin-left':'13px'}"
+                                      label="Beat Shop"  [(ngModel)]="AttendanceConfigList.IsTADABeatShop">
+                                    </p-radioButton>
+                                </div>
+                                <div class="col-md-4" style="display: contents;">
+                                    <p-radioButton name="IsTADABeatShop"  value="false" [style]="{'margin-left':'29px'}"
+                                     label="Any Shop in Cluster" [(ngModel)]="AttendanceConfigList.IsTADABeatShop">
+                                    </p-radioButton>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <p-checkbox binary="true" id="MinimumProductiveCalls" name="MinimumProductiveCalls"
+                                label="Minimum Productive Calls"  [(ngModel)]="AttendanceConfigList.IsTADARequired"></p-checkbox>&nbsp;&nbsp;
+                                <!-- oninput="validity.valid||(value='')" -->
+                                <input type="number" min="1" style="width: 55px;" (keypress)="Check($event)" id="MinimumProductiveCall" name="MinimumProductiveCall"
+                                (keyup)="Checkvalue(bsc.value)" #bsc [(ngModel)]="AttendanceConfigList.TADACalls" 
+                                [disabled]="!AttendanceConfigList.IsTADARequired" required #MinimumProductiveCall="ngModel">&nbsp;&nbsp;
+
+                                <div *ngIf="MinimumProductiveCall.invalid && (MinimumProductiveCall.dirty || MinimumProductiveCall.touched)">
+                                    <div *ngIf="MinimumProductiveCall.errors.required" >
+                                       <span style="color:red" ><b> Minimum Productive Call is required.</b></span> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label style="font-weight: 505;">Description:</label>
+                        <div class="d-flex justify-content-between  " >
+                            <textarea id="w3review" name="w3review" rows="10" cols="60" maxlength="500" [(ngModel)]="AttendanceConfigList.Description">
+                            </textarea>
+                        </div>
+                        <div>
+                            <span *ngIf="AttendanceConfigList.Description?.length >0"><b>{{AttendanceConfigList.Description.length}}/500</b>  
+                                <span  style="color:red" *ngIf="AttendanceConfigList.Description?.length >= 500" class="ml-2"><b> Maximum Charater Should be 500</b></span>
+                            </span>
+                        </div>
+                </div>
+            </div>
+    </div>
+</div>
+<div class="text-center"><button  class="btn btn-success my-2" (click)="save()">Save</button></div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<p-confirmDialog #cd [style]="{width: '45vw'}"  appendTo="body"	 >
+    <ng-template pTemplate="header">
+        <h3>Header Content</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog>
+
+<p-dialog [(visible)]="display" 
+[resizable]="false" [modal]="true" appendTo="body" positionTop="50" [style]="{width: '83%',height: '100%', left : '11px', overflow: 'auto'}">
+    <p-header>
+        <h4
+            style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+            <b>History</b>
+        </h4>
+    </p-header>
+    <div class="datascroll">
+    <div class="text-right mb-2"><button class="btn btn-primary mt-1" (click)="ExportLogHistory()">Export</button></div>
+    <p-table [value]="LogHistory" [paginator]="true" [rows]="5"  [lazy]="true" [totalRecords]="TotalHistryRecordCount" (onLazyLoad)="load($event)" [(first)]="first" [showCurrentPageReport]="true" class="center">
+        <ng-template pTemplate="header" >
+            <tr >
+                <th scope="col" ><b> Id</b></th>
+                <th scope="col"  ><b> Attendance Rule ConfigId</b></th>
+                <th scope="col" ><b>IsCheckin Beat Shop</b></th>
+                <th scope="col" ><b> Check In Time </b></th>
+                <th scope="col" ><b> IsCheckOut Beat Shop</b></th>
+                <th scope="col"  ><b> IsFullDay Beat Shop </b></th>
+                <th scope="col"  ><b> IsMinimum Visit </b></th>
+                <th scope="col"  ><b> Day Min Visits </b></th>
+                <th scope="col"  ><b> IsTADA Beat Shop </b></th>
+                <th scope="col"  ><b> IsTADA Required </b></th>
+                <th scope="col"  ><b> TADA Calls </b></th>
+                <th scope="col"  ><b> Description </b></th>
+                <th scope="col"  ><b> Remark </b></th>
+                <th scope="col"  ><b> Created Date </b></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData >
+            <tr>
+                <td >{{rowData.Id}}</td>
+                <td >{{rowData.AttendanceRuleConfigId}}</td>
+                <td [ngStyle]="rowData.IsCheckinBeatShopUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.IsCheckinBeatShop}}</td>
+                <td [ngStyle]="rowData.IsCheckInTimeUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.CheckInTime}}</td>
+                <td [ngStyle]="rowData.IsCheckOutBeatShopUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.IsCheckOutBeatShop}}</td>
+                <td [ngStyle]="rowData.IsFullDayBeatShopUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.IsFullDayBeatShop}}</td>
+                <td [ngStyle]="rowData.IsMinimumVisitUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.IsMinimumVisit}}</td>
+                <td [ngStyle]="rowData.DayMinVisitsUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.DayMinVisits==null?'--':rowData.DayMinVisits}}</td>
+                <td [ngStyle]="rowData.IsTADABeatShopUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.IsTADABeatShop}}</td>
+                <td [ngStyle]="rowData.IsTADARequiredUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.IsTADARequired}}</td>
+                <td [ngStyle]="rowData.TADACallsUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.TADACalls==null?'--':rowData.TADACalls}}</td>
+                <td [ngStyle]="rowData.DescriptionUpdated == true ? {'background-color':'#D32F2F','color':'white'} : {'background-color': 'transparent'}">{{rowData.Description}}</td>
+                <td >{{rowData.Remark==null?'--':rowData.Remark}}</td>
+                <td >{{rowData.CreatedDate}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    </div>
+</p-dialog>
+

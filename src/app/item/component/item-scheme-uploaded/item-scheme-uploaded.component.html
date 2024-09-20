@@ -1,0 +1,195 @@
+<p-toast></p-toast>
+<div class="row m-0">
+
+    <div class="col-12">
+        <div id="kick-start" class="kick-start card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="card-title">Uploaded Item Scheme</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <div>
+                                    <label for="SelectCity"><b>Select City: </b><b style="color: red;">*</b></label><br>
+                                    <select id="city" name="city" class="form-control" [(ngModel)]="Cityid">
+                                        <option [value]="">--Select City--</option>
+                                        <option *ngFor="let city of cities" [ngValue]="city.Cityid">{{city.CityName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="projectinput7">Brands<span style="color:red"> *</span></label>
+                                <br>
+                                <select id="brand" name="brand" class="form-control" [(ngModel)]="SubsubCategoryid"
+                                    (change)="onBrandChange()">
+                                    <option value="0" disabled>--select--</option>
+                                    <option *ngFor="let brand of BrandList" [ngValue]="brand.SubsubCategoryid">
+                                        {{ brand.SubsubcategoryName }}
+                                    </option>
+                                </select>
+                                <!-- <div *ngIf="isInvalid && !SubsubCategoryid.valid && SubsubCategoryid.errors.required">
+                                    <code>Brand is required</code>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group" style="margin-left: 20px;">
+                                <label> </label>
+                                <div>
+                                    <button type="button" class="btn btn-raised btn-raised btn-warning" pButton
+                                        (click)="Reset();" label="Reset" [disabled]="!Cityid"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label> </label>
+                            <!-- <div>
+                                <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                    (click)="exportToExcel();" label="Export To Excel" [disabled]="!Cityid"></button>
+                            </div> -->
+                        </div>
+                    </div>
+                    <hr style="margin-top: -13px;">
+                    <hr style="margin-top: -13px;">
+                    <div style="    margin-top: -14px;" *ngIf="Cityid>0 && SubsubCategoryid>0">
+                        <p-accordion [multiple]="true">
+                            <p-accordionTab header="Upload File" [selected]="false">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label> Download Sample File:</label>
+                                        <br>
+                                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                            (click)="DownLoadSampleFile();" label="Download Sample File"></button>
+                                    </div>
+
+
+
+                                    <div class="form-group col-md-2">
+                                        <div class="form-group">
+                                            <label for="projectinput3">Start Date<span style="color:red">
+                                                    *</span></label>
+                                            <br>
+                                            <p-calendar id="ssb" name="ssb" [minDate]="minimumDate"
+                                                [(ngModel)]="FromDate" [showTime]="true" hourFormat="12"></p-calendar>
+                                            <div *ngIf="isInvalid && !FromDate.valid && FromDate.errors.required">
+                                                <code>FromDate is required</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-2">
+                                        <div class="form-group">
+                                            <label for="projectinput4">End Date<span style="color:red"> *</span></label>
+                                            <br>
+                                            <p-calendar id="esb" name="esb" [minDate]="minimumDate" [(ngModel)]="ToDate"
+                                                [showTime]="true" hourFormat="12"></p-calendar>
+                                            <div *ngIf="isInvalid && !ToDate.valid && ToDate.errors.required">
+                                                <code>ToDate is required</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label> Upload File:</label>
+                                        <div class="col-md-6">
+                                            <input class="form-control" type="file" #file />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn btn-primary" accept=".xlsx"
+                                                (click)="uploadFile(Cityid,SubsubCategoryid);">Upload</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p-accordionTab>
+                        </p-accordion>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-table #table1 [paginator]="true" [rows]="20" [value]="itemschemeuploadedList" [lazy]="true" [columns]="columns"
+    [totalRecords]="TotalRecords" (onLazyLoad)="load($event);" [scrollable]="false" scrollHeight="70vh" text-align:
+    center>
+    <!-- <ng-template pTemplate="caption">
+        <div style="text-align: right">
+            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+            <input type="text" pInputText size="50" placeholder="Global Filter"
+                (input)="table1.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+    </ng-template> -->
+    <ng-container>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th style="text-align: center">
+                    Sno.
+                </th>
+                <ng-container *ngFor="let col of columns">
+
+                    <th style="text-align: center">
+
+                        {{col.header}}
+
+                    </th>
+
+
+                </ng-container>
+                <th>Details
+                <th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
+            <tr style="text-align: center">
+                <td>
+                    {{i+1}}
+                </td>
+                <ng-container *ngFor="let col of columns">
+                    <td style="text-align: center">
+                        <span
+                            *ngIf="(col.field=='StartDate') || (col.field=='CreatedDate')|| (col.field=='EndDate')|| (col.field=='ApprovedDate')">
+                            {{rowData[col.field] | date : "dd/MM/yyyy h:mm a"}}
+                        </span>
+                        <span
+                            *ngIf="(col.field!='StartDate') && (col.field!='CreatedDate')&& (col.field!='EndDate')&& (col.field!='ApprovedDate') &&  (col.field!='UploadedSheetUrl') ">
+                            {{rowData[col.field]}}
+                        </span>
+
+
+                        <span *ngIf="(col.field=='UploadedSheetUrl')">
+                            <a href="{{baseURL}}{{rowData[col.field]}}" target="_blank">
+                                <i class="fas fa-link">file</i></a>
+                        </span>
+
+
+                        <!-- <span *ngIf="(col.field=='ItemSchemeMasterId')">
+                            <button type="button" class="btn btn-raised btn-raised btn-default" pButton
+                                (click)="navigateToMaster(rowData,$event);" label="SchemeMaster"
+                                [disabled]="col.field==0"
+                                >
+                            </button>
+                        </span> -->
+                    </td>
+                </ng-container>
+                <td>
+                    <button type="button" class="btn btn-raised btn-raised btn-success" pButton
+                        (click)="navigateToDetail(rowData,$event);" label="Details">
+                    </button>
+                <td>
+            </tr>
+        </ng-template>
+
+    </ng-container>
+</p-table>
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

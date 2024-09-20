@@ -1,0 +1,81 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="customer-master">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Customer Wallet</h3>
+    </div>
+  </div>
+  
+  <div class="row ">
+    <div class="col-sm-12">
+        <form class="form" #custForm="ngForm">
+          <div class="form-body">
+            <div class="row">
+             
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="orderType">Customer Id</label>
+                  <input type="text" id="orderType" name="orderType" class="form-control"  [(ngModel)]="CustomerId">
+                </div>
+              </div>
+              
+
+              <div class="col-md-6" style="padding-top: 30px">
+                <div class="form-group">
+
+                  <button type="button" class="btn btn-raised btn-raised btn-primary  "
+                    (click)="search(CustomerId)">
+                     Search
+                  </button>
+                  <button type="button" class="btn btn-raised btn-raised btn-primary "style="margin-left:15px"
+                    (click)="clear()">
+                     Clear
+                  </button>  
+                  <button type="button" class="btn btn-raised btn-raised btn-primary " (click)="exportFullCustomer()"style="margin-left:15px">
+                    Export Customer Wallet List
+                  </button>
+                </div>
+              </div>              
+            </div>
+          </div>
+          
+        <div class="row text-left">
+            <div class="col-md-12">
+                <div class="card noneHoverRow">
+                    <table class="table table-stripped table-hover table-sm ">
+                        <thead>
+                            <th>SK Code</th>
+                            <th>Order Id</th>
+                            <th>New Out WAmount</th>
+                            <th> Name</th>
+                            <th>Created Date</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let row of export" >
+                                <!-- [ngStyle]="(row.DepId == 'Sales')?{'background-color': '#EB564F'}:{'background-color':'white'} || (row.DepId == 'HQ Purchase')?{'background-color': '#EB564F'}:{'background-color':'white'} || (row.DepId == 'HQ Operation')?{'background-color': '#EB564F'}:{'background-color':'white'}" -->
+                                <td>{{row.Skcode}}</td>
+                                <td>{{row.OrderId}}</td>
+                                <td>{{row.NewOutWAmount}}</td>
+                                <td>{{row.Name}}</td>
+                                <td>{{row.CreatedDate | date : 'short'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>                           
+                </div>
+            </div>
+        </div>
+        </form>
+      <!-- </div> -->
+
+    </div>
+  </div>
+ 
+
+
+ 
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+</section>

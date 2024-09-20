@@ -1,0 +1,161 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+    <div class="ui-g">
+        <div class="ui-g-12">
+            <section id="basic-form-layouts">
+                <div class="row text-left">
+                    <div class="col-sm-12">
+                        <div class="content-header">Manage Auto - Notification</div>
+                    </div>
+                </div>
+                <div class="row text-left">
+                    <div class="col-md-6 mr-b-20">
+                        <div class="card">
+                            <div class="card-header pb-2">
+                                <h4 class="card-title" id="basic-layout-form">Basic Details</h4>
+                                <p class="mb-0">Please create a required notification only. It is a way to directly
+                                    connect
+                                    with End users. Creator is only responsible for this.</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="px-3  mr-b-20">
+                                    <form class="form" #masterForm="ngForm">
+                                        <div class="form-body">
+                                            <h4 class="form-section"><i class="fa fa-desktop"
+                                                    aria-hidden="true"></i>Master
+                                                Selection</h4>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="projectinput2">Master Name</label>
+                                                    <fieldset *ngIf="autoNotification">
+                                                        <div class="input-group">
+                                                            <select class="form-control"
+                                                                [(ngModel)]="autoNotification.EntityName"
+                                                                (ngModelChange)="onEntityNameChange()"
+                                                                name="entityNameInput" required
+                                                                [disabled]="isNotificationMasterSelected">
+                                                                <option value=""> select</option>
+                                                                <option
+                                                                    *ngFor="let notificationMaster of anEntityMasterList"
+                                                                    [value]="notificationMaster.EntityName">
+                                                                    {{notificationMaster.Name}}
+                                                                </option>
+                                                            </select>
+                                                            <div class="input-group-append">
+                                                                <button
+                                                                    [ngClass]="{'btn':true, 'btn-raised': true, 'btn-primary': !isNotificationMasterSelected, 'btn-danger':isNotificationMasterSelected}"
+                                                                    type="button"
+                                                                    (click)="onSelectUnselectAutoNotification(masterForm)">
+                                                                    <i *ngIf="!isNotificationMasterSelected"
+                                                                        class="fa fa-check" aria-hidden="true"></i>
+                                                                    <i *ngIf="isNotificationMasterSelected"
+                                                                        class="fa fa-times" aria-hidden="true"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <code *ngIf="isMasterFormInvalid">Master Name Required</code>
+                                                    </fieldset>
+                                                </div>
+
+
+                                                <div class="col-md-6" *ngIf="isNotificationMasterSelected">
+                                                    <label for="projectinput2">Title<span style="color:red">
+                                                        *</span></label>
+                                                    <div class="input-group">
+                                                        <input type="text" id="ip2" name="Title" class="form-control"
+                                                            [(ngModel)]="autoNotification.AutoNotificationTitle" (ngModelChange)="TitleSearch(autoNotification.AutoNotificationTitle)"
+                                                            required="1" #AutoNotificationTitle="ngModel" />
+                                                      
+                                                        <div
+                                                            *ngIf="isInvalid && !AutoNotificationTitle.valid && AutoNotificationTitle.errors.required">
+                                                            <code
+                                                                *ngIf="isMasterFormInvalid">Title Name is required</code>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- [disabled]="IsExist" -->
+                                            <div class="row" *ngIf="isNotificationMasterSelected" >
+                                                <div class="col-md-12">
+                                                    <label for="projectinput2">On Action</label>
+                                                    <div class="row" *ngIf="actionEntity">
+                                                        <div class="col-md-4">
+                                                            <p-checkbox name="addInput" label="Add"
+                                                                [(ngModel)]="actionEntity.Add"
+                                                                (ngModelChange)="onChangeAction('Add')" binary="true">
+                                                            </p-checkbox>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p-checkbox name="editInput" label="Edit"
+                                                                [(ngModel)]="actionEntity.Edit"
+                                                                (ngModelChange)="onChangeAction('Edit')" binary="true">
+                                                            </p-checkbox>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p-checkbox name="deleteInput" label="Delete"
+                                                                [(ngModel)]="actionEntity.Delete"
+                                                                (ngModelChange)="onChangeAction('Delete')"
+                                                                binary="true"></p-checkbox>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <!-- city, warehouse, cluster starts -->
+                                    <div *ngIf="selectedANEntityMaster">
+                                        <app-auto-notification-location [anEntityMaster]="selectedANEntityMaster">
+                                        </app-auto-notification-location>
+                                    </div>
+                                    <!-- city, warehouse, cluster ends -->
+
+                                    <!-- Notification Type Starts -->
+                                    <form *ngIf="isNotificationMasterSelected && isNotificationMasterSelected"
+                                        class="form" #masterForm="ngForm">
+                                        <div class="form-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="projectinput2">Notification Type</label>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p-radioButton name="groupname" value="Promotional"
+                                                        label="Promotional" [(ngModel)]="autoNotification.ANType"
+                                                        (ngModelChange)="onEventTypeChange()">
+                                                    </p-radioButton>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p-radioButton name="groupname" value="Event" label="Event"
+                                                        [(ngModel)]="autoNotification.ANType"
+                                                        (ngModelChange)="onEventTypeChange()">
+                                                    </p-radioButton>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <!-- Notification Type Ends -->
+
+                                    <div
+                                        *ngIf="isNotificationMasterSelected && autoNotification.ANType == 'Promotional'">
+                                        <app-promotion-notification-base></app-promotion-notification-base>
+                                    </div>
+
+                                    <div *ngIf="isNotificationMasterSelected && autoNotification.ANType == 'Event'">
+                                        <app-event-notification-base></app-event-notification-base>
+                                    </div>
+
+                                    <div *ngIf="isNotificationMasterSelected">
+                                        <app-notification-details></app-notification-details>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" *ngIf="autoNotification && autoNotification.IsSupplierNotification || autoNotification && autoNotification.IsCustomerNotification || autoNotification && autoNotification.IsPeopleNotification" >
+                        <app-readable-auto-notification></app-readable-auto-notification>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

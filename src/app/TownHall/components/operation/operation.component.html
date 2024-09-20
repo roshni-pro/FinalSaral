@@ -1,0 +1,145 @@
+<app-town-hall-navigation></app-town-hall-navigation>
+
+<div *ngIf="townHallCommentsSection">
+<!-- Cancel Orders scope starts-->
+<section id="horizontal-examples">
+  <div class="row text-left">
+    <div class="col-12 mt-3 mb-1">
+      <!-- <h2 class="content-header"> -->
+     <div class="content-header">
+          <span>
+              <a href="javascript:void(0);" (click)="isEditable = !isEditable"> Cancel Order</a>
+              &nbsp;
+              <a href="javascript:void(0);" *ngIf="isEditable" (click)="updateComment()"><i
+                      class="fa fa-floppy-o" aria-hidden="true"></i></a>
+          </span>
+        </div>
+      <!-- <p class="content-sub-header">For a small places in place of hub kpp works.</p> -->
+    </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+    <div class="col-xl-12 col-lg-12">
+      <div class="card horizontal">
+        <div class="card-content d-flex justify-content-between">
+          <div class="card-img ttl-sl">
+            <div *ngIf="postCancellationChartData">
+              <canvas height="500" baseChart class="chart" [datasets]="postCancellationChartData"
+                [labels]="postCancellationDataLabel" [options]="postCancellationChartOptions"
+                [colors]="postCancellationChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+            </div>
+          </div>
+          <!-- <div class="card-stacked align-self-center xmr"> -->
+              <div
+                    [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallOperationComments.CancelOrder}">
+            <div class="px-3">
+              <div class="card-header">
+                <h4 class="card-title">Cancel Orders</h4>
+              </div>
+              <table class="table ">
+                <thead class="">
+                  <tr>
+                    <th>#</th>
+                    <th>Month</th>
+                    <th>Cancel Order (in percentages)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let order of postCancellationData; let i=index;">
+                    <td>{{i+1}}</td>
+                    <td>{{order.MonthName}}</td>
+                    <td>{{order.PostCancellation}} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-stacked align-self-center xmr bck rghtt"
+          *ngIf="!isEditable && townHallCommentsSection.TownHallOperationComments.CancelOrder">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="vtnt"
+                      [innerHTML]="townHallCommentsSection.TownHallOperationComments.CancelOrder"></div>
+              </div>
+          </div>
+      </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallOperationComments.CancelOrder" name="AgentKPPEditor"
+            [style]="{'height':'320px'}"></p-editor>
+    </div>
+  </div>
+</section>
+<!--Cancel Orders scope ends-->
+
+
+<!-- TAT scope starts-->
+<section id="horizontal-examples">
+  <div class="row text-left">
+    <div class="col-12 mt-3 mb-1">
+      <h2 class="content-header">Turn Around Time</h2>
+      <!-- <p class="content-sub-header">For a small places in place of hub kpp works.</p> -->
+    </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+    <div class="col-xl-12 col-lg-12">
+      <div class="card horizontal">
+        <div class="card-content d-flex justify-content-between">
+          <div class="card-img ttl-sl-2">
+            <div *ngIf="tatChartData">
+              <canvas height="500" baseChart class="chart" [datasets]="tatChartData"
+                [labels]="tatDataLabel" [options]="tatChartOptions"
+                [colors]="tatChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+            </div>
+          </div>
+          
+          <!-- <div class="card-stacked align-self-center xmr"> -->
+           <div
+              [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallOperationComments.TurnAroundTime}">
+            <div class="px-3">
+              <div class="card-header">
+                <h4 class="card-title">Turn Around Time</h4>
+              </div>
+              <table class="table ">
+                <thead class="">
+                  <tr>
+                    <th>#</th>
+                    <th>Month</th>
+                    <th>TAT (in hours)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of tatData; let i=index;">
+                    <td>{{i+1}}</td>
+                    <td>{{item.MonthName}}</td>
+                    <td>{{item.TATinHrs}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-stacked align-self-center xmr  bck rghtt"
+          *ngIf="!isEditable && townHallCommentsSection.TownHallOperationComments.TurnAroundTime">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="vtnt"
+                      [innerHTML]="townHallCommentsSection.TownHallOperationComments.TurnAroundTime"></div>
+              </div>
+          </div>
+      </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallOperationComments.TurnAroundTime" name="ActiveKPPEditor"
+            [style]="{'height':'320px'}"></p-editor>
+    </div>
+  </div>
+</section>
+<!--TAT scope ends-->
+
+</div>

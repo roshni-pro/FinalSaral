@@ -1,0 +1,42 @@
+<section id="supplier-details">
+  <div class="email-app-mail-content py-0 h-100 border-left border-left-2">
+    <div class="email-app-mail-content-detail h-100 overflow-hidden">
+      <div class="info-header">
+        <button type="button" class="close m-2" aria-label="Close" (click)="closeDetails(false)">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        
+        <h3 class="m-2">{{details.Name}}</h3>
+
+        <ul class="nav border-bottom">
+          <li class="nav-item" (click)="overviewDisplay($event)">
+            <a [ngClass]="activeTabClass[0].isActive==true? 'nav-link active' : 'nav-link' " id="overview-btn">Overview</a>
+          </li>
+          <li class="nav-item" (click)="pochatDisplay($event)">
+            <a [ngClass]="activeTabClass[1].isActive==true? 'nav-link active' : 'nav-link' ">PO Chat</a>
+          </li>
+          <li class="nav-item" (click)="chatDisplay($event)">
+            <a [ngClass]="activeTabClass[2].isActive==true? 'nav-link active' : 'nav-link' ">Chat</a>
+          </li>
+        </ul>
+      </div>
+      <div id="pochat" *ngIf="displayTabs[1].bool" class="info-div overflow-hidden h-100 m-2">
+        <app-supplier-chat [ChatThread]="GetChatThreads" [id]="details.SupplierId"
+          (refreshSupplierChat)="refreshSupplierChat()"></app-supplier-chat>
+      </div>
+      <div id="chat" *ngIf="displayTabs[2].bool" class="info-div m-2">
+        <app-chat-page  [id]="details.SupplierId"></app-chat-page>
+      </div>
+      <div id="overview" *ngIf="displayTabs[0].bool" class="info-div">
+        <div class="info-content">
+          <div class="row m-2 mx-4">
+            <div class="w-100 d-flex" *ngFor="let activeField of activeFields">
+              <div class="info-label font-weight-bold m-2">{{activeField.label}}</div>
+              <div class="info-value m-2">{{details[activeField.field]}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

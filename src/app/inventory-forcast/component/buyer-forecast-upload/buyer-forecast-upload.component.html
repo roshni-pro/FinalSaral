@@ -1,0 +1,321 @@
+<div *ngIf="sourceExecutiveRole || hqMasterRole || inventoryForecastingSeniorExecutive || inventoryForecastingExecutive">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">Buyer Forecast</h3>
+        </div>
+    </div>
+    <div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-sm-2 mt-2">
+                        <label><b> Select Group</b> </label>
+                        <p-dropdown  [options]="GroupData" [(ngModel)]="selectedGroup"
+                            [panelStyle]="{minWidth:'25em'}" optionLabel="Name">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-sm-3  mt-2">
+                        <label> <b> Upload Id/ Upload By </b> </label>
+                        <input type="text" placeholder="Upload Id/Upload By" class="form-control" [(ngModel)]="uploadby">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label><b>Select Date: </b></label>
+                        <p-calendar [showIcon]="true" [(ngModel)]="selectDate" >
+                        </p-calendar>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <button type="button" class="btn btn-primary" (click)="searchFinal()"
+                            style="margin-top: 27px; ">
+                            Search
+                        </button> &nbsp;
+                        <button type="button" class="btn btn-primary" (click)="clear()"
+                        style="margin-top: 27px; ">
+                        Clear
+                    </button>
+                    </div>
+                    <div class="col-md-3 text-right" *ngIf="regionSourcingRole || hqMasterRole || inventoryForecastingSeniorExecutive">
+                        <button class=" btn mt-4" type="submit" (click)="downloadSample()" style=" background-color: #119150;color: white;">Download Sample</button>
+                    </div>
+                </div>    
+            </div>
+        </div>
+        <div class="row" *ngIf="regionSourcingRole || hqMasterRole || inventoryForecastingSeniorExecutive">
+            <div class="col-sm-6 col-lg-4 mt-2">
+                <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                    (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+                    <code>*</code>
+                </p-fileUpload>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+        <!-- <div *ngIf="!data">
+            <h3>Please Enter Correct Info or No Data Found </h3>
+    </div> -->
+    <p-table [value]="newData" [scrollable]="true" [paginator]="true" [rows]="5" >
+            <ng-template pTemplate="header">
+                <tr style="height:40px">
+                    <th style="width: 40px;">Sr.No</th>
+                    <th style="width: 50px;">Upload Id</th>
+                    <th style="width: 60px;">Upload By</th>
+                    <th style="width: 100px;">Status</th>
+                    <th style="width: 100px;">Upload Time</th>
+                    <th style="width: 80px;">Validation Status</th>
+                    <th style="width: 100px;">Show Details</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body"  let-item let-rowIndex="rowIndex">
+                <tr>
+                    <td style="width: 40px;">{{rowIndex+1}}</td>
+                    <td style="width: 50px;">{{item.UploadID}} </td>
+                    <td style="width: 60px;">{{item.UploadedBy}}</td>
+                    <td style="width: 100px;">{{item.Status=='Upload Successful'?'Uploaded':item.Status}}</td>
+                    <td style="width: 100px;">{{item.uploadDate  | date:'medium'}}</td>
+                    <td style="width: 80px;font-weight: bold;" [ngClass]="item.ValidationStatus=='Successful' ? 'green' : 'red'" >{{item.ValidationStatus}}</td>            
+                    <td style="width: 100px;">
+                        <span>          
+                            <button type="button" class="btn1" (click)="DetailPop(item)" class="btn btn-primary">Details</button>&nbsp;
+                            <button type="button" (click)="summaryPop(item)" style="background-color:rgb(76, 159, 41);color: whitesmoke;" class="btn btn-raised">Summary</button>
+                        </span>
+                        <div>
+                        </div>            
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<p-dialog header="Brand Summary" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="SummaryDetails"  
+    [style]="{width: '70vw', left: '440px', height: '70%' , overflow:'scroll'}" [draggable]="false">
+    <!-- [styleClass]="wwii" -->
+    <div class="container-fluid">
+        <div class="row mt-2">
+            <div *ngIf="!buyerdata">
+              Buyer Data  N/A
+            </div>      
+            <div class="col-6 p-2" *ngIf="buyerdata">
+                <div class="row pl-2">
+                    <div class="col-8">
+                        <h4 style="font-weight:bold;">Buyers Summary</h4>
+                    </div>
+                    <div class="col-4 text-right" *ngIf="regionSourcingRole || hqMasterRole">
+                        <button type="button" class="btn btn-primary" *ngIf="!exportDisableBuyer" (click)="export('Buyers')">Export</button>
+                    </div>
+                </div>
+                <div class="mb-1" *ngIf="regionSourcingRole || hqMasterRole">
+                    <p-fileUpload *ngIf="!exportDisableBuyer" name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                        (uploadHandler)="onUploadBuyerSummary($event, uploadCustom)">
+                        <code>*</code>
+                    </p-fileUpload>
+                    <div class="mb-5" *ngIf="exportDisableBuyer">
+
+                    </div>
+                </div>
+                    <p-table [value]="buyerdata"  responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr class="text-center">
+                                <th>Buyers</th>
+                                <th></th>
+                                <th>Value</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-product>
+                            <tr (click)="buyerPop(product)" class="tr1 text-center" >
+                                <td >{{product.Buyers}}</td>
+                                <td></td>
+                                <td>{{product.Value}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <tr class="text-center">
+                                <td style="background-color: black;color: white;">Grand Total</td>
+                                <td style="background-color: black;color: white;"></td>   
+                                <td style="background-color: black;color: white;"><b>{{Sumbuyer | number : '1.0-2'}}</b></td> 
+                            </tr>
+                        </ng-template>
+                    </p-table>
+            </div>
+
+            <div class="col-6 p-2 mt-1" *ngIf="pdcadata">
+                <div class="row pl-2 mb-5">
+                    <div class="col-8">
+                        <h4 style="font-weight:bold;">PDCA Summary</h4>
+                    </div>
+                    <!-- <div class="col-7">
+                        <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                        (uploadHandler)="onUploadPdcaSummary($event, uploadCustom)" #uploadCustom>
+                        <code>*</code>
+                        </p-fileUpload>
+                    </div> -->
+                    <div class="col-4 text-right" *ngIf="regionSourcingRole || hqMasterRole">
+                        <button type="button" class="btn btn-primary" *ngIf="!exportDisablePdca" (click)="export('PDCA')">Export</button>
+                    </div>
+                </div>
+                    <p-table [value]="pdcadata" [(first)]="first">
+                        <ng-template pTemplate="header">
+                            <tr class="text-center">
+                                <th>Department</th>
+                                <th>Category</th>
+                                <th>Percentage</th>
+                                <th>Value</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-product>
+                            <tr (click)="pdcaPop(product)" class="tr1 text-center">
+                                <td >{{product.Department}}</td>
+                                <td>{{product.Category}}</td>
+                                <td>{{product.Percentage | number : '1.0-2'}}</td>
+                                <td>{{product.Value}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer" class="back">
+                            <tr class="text-center">
+                                <td style="background-color: black;color: white;">Grand Total</td>
+                                <td style="background-color: black;color: white"></td>   
+                                <td style="background-color: black;color: white">{{SumPDCAPercent| number : '1.0-0' }}</td>   
+                                <td style="background-color: black;color: white"><b>{{Sumpdca | number : '1.0-2'}}</b></td> 
+                            </tr>
+                        </ng-template>
+                    </p-table>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+<!-- dialog for detail pop up -->
+<p-dialog header="Brand Details" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="PopDetails"
+ [style]="{width: '70vw', left: '440px', height: '60%' , overflow:'scroll'}"[draggable]="false"  >
+
+    <!-- <i *ngIf="detailsLoader" class="pi pi-spin pi-spinner" style="font-size: 2rem"></i> -->
+    <div>
+        <h2 *ngIf="buyDetailCheck===false" class="text-center col-12"> No record Found</h2>
+    </div>
+    <div class="header col-md-2 ml-2" style="margin: top 2px;" *ngIf="buyDetailCheck===true">
+        <!-- buyDetailCheck  -->
+        <h4 class="m-2" style="font-weight:bold">Brand Details</h4>
+    </div>
+    <div class="header col-3 mt-4 ml-5">
+        <!--style="margin-left:800px;width:120px;"  -->
+        <button type="button" class="btn btn-primary export" style="margin-left:800px;width:120px;" (click)="DetailsExport()">Export</button>
+    </div>
+    <div class="row m-2 pt-2 mmt">
+        <div class="col-12 text-center">
+            <p-table [value]="details"  [scrollable]="true" [totalRecords]="totalrecords"
+            (onLazyLoad)="load($event)" [lazy]="true" [paginator]="true" [rows]="10">
+                <ng-template pTemplate="header">
+                    <tr >
+                        <th>Sr.No</th>
+                        <th>Group Name</th>
+                        <th>Upload ID</th>
+                        <th>Upload By</th> 
+                        <th>Category</th>
+                        <th>Brand Name</th>
+                        <th>Warehouse Name</th>
+                        <th>Date</th>
+                        <th>%</th>
+                        <th>Error Msg</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{rowIndex+1}}</td>
+                        <td>{{rowData.GroupName}}</td>
+                        <td>{{rowData.UplodeId}}</td>
+                        <td>{{rowData.UploadBy}}</td>
+                        <td>{{rowData.Category}}</td>
+                        <td>{{rowData.BrandName}}</td>
+                        <td>{{rowData.WarehouseName}}</td>
+                        <td>{{rowData.Month|date}}</td>
+                        <td>{{rowData.PercentValue}}</td>
+                        <td>{{rowData.ErrorMsg==''?'-':rowData.ErrorMsg}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <!-- <p-table  [value]="details1" (onLazyLoad)="load($event)" lazy="true" [totalRecords]="totalRecord" [paginator]="true" [rows]="10">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Sr.No</th>
+                        <th>Upload ID</th>
+                        <th>Upload By</th> 
+                        <th>Category</th>
+                        <th>Brand Name</th>
+                        <th>Warehouse Name</th>
+                        <th>Date</th>
+                        <th>%</th>
+                        <th>Error Msg</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-i="rowIndex">
+                    <tr>
+                        <td>{{i+1}}</td>
+                        <td>{{item.UplodeId}}<td>
+                        <td>{{item.UploadBy}}<td>
+                        <td>{{item.Category}}</td>
+                        <td>{{item.BrandName}}</td>
+                        <td>{{item.WarehouseName}}</td>
+                        <td>{{item.Month}}</td>   
+                        <td>{{item.PercentValue}}</td>
+                        <td>{{item.ErrorMsg}}</td>
+                    </tr>
+                 </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-dialog> -->
+
+<!-- pdca summary open dialog -->
+<p-dialog header="PDCA Summary" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="pdcadialog"
+    [style]="{width: '90vw', left: '440px', height: '90vh' ,overflow: 'scroll', positon:'absolute' }" [draggable]="false" [responsive]="true">
+    <div *ngIf="!pdcaDataCheck">
+        <h1>N/A</h1>
+    </div>
+    <div *ngIf="pdcaDataCheck">
+        <p-table [value]="pdcasummary" styleClass="p-datatable-gridlines">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 100px;" *ngFor="let data of pdcakeyname">{{data}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+                <tr>               
+                    <td *ngFor="let col of pdcakeyname">{{product[col]==null?'0':product[col]}}</td>               
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr>               
+                    <td *ngFor="let col of pdcakeyname"><b>{{totalWarehousepdca(pdcasummary,col)| number : '1.0-2'}}</b></td>               
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-dialog>
+<!-- buyers summary open dialog -->
+<p-dialog header="Buyer Summary" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="buyerdialog"
+    [style]="{width: '90vw', left: '440px', height: '90vh',overflow:'scroll'}" [draggable]="false">
+    <div *ngIf="!buyerDataCheckk">
+        <h1>N/A</h1>
+    </div>
+    <div *ngIf="buyerDataCheckk">
+        <p-table [value]="buyersummary" styleClass="p-datatable-striped p-datatable-gridlines" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th  style="width: 100px;" *ngFor="let data of buyerkeyname">{{data}}</th> 
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+                <tr>               
+                    <td *ngFor="let col of buyerkeyname">{{product[col]==null?'0':product[col]}}</td>               
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <tr>               
+                    <td *ngFor="let col of buyerkeyname"><b>{{totalWarehousebuyer(buyersummary,col) | number : '1.0-2'}}</b></td>               
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-dialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  

@@ -1,0 +1,282 @@
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+
+<div >
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2"><b>Order Concern</b></h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Warehouse</label>
+                        <p-multiSelect [options]="warehouselistData" name="hublabel" [(ngModel)]="selectedWarehouse" (onPanelHide)="onSelectHub(selectedWarehouse)"
+                        (onBlur)="onSelectHub(selectedWarehouse)"
+                        [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName">
+                      </p-multiSelect><!--#hublabel="ngModel" required="1"-->
+                        <!-- <p-dropdown [options]="warehouselistData" optionLabel="WarehouseName" placeholder="Select Warehouse" [(ngModel)]="selectedWarehouse"></p-dropdown> -->
+                      </div>
+                    <div class="form-group col-md-2">
+                        <label>Search by</label>
+                        <input type="text" id="txtname" [(ngModel)]="keyWord" name="name" class="form-control"
+                            placeholder="Search By SkCode,OrderId">
+                    </div>
+                    <div class="col-md-2">
+                        <label>Status</label>
+                        <select class="form-control" name="Status" [(ngModel)]="SelectedStatus">
+                            <option value=null>All</option>
+                            <option value='Pending'>Pending</option>
+                            <option value='In Progress'>In Progress</option>
+                            <option value='Resolved'>Resolved</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Date Range</label>
+                        <br>
+                        <p-calendar placeholder="Ordered Date" selectionMode="range" [readonlyInput]="true" 
+                        [minDate]="minDateValue" [maxDate]="TodayDate"  [(ngModel)]="selectedDate"
+                        [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"></p-calendar>
+                        <!-- <p-calendar [(ngModel)]="selectedMonth" view="month" dateFormat="mm/yy" [readonlyInput]="true" inputId="monthpicker"></p-calendar> -->
+                        <!-- <select class="form-control" name="Month" [(ngModel)]="Month">
+                            <option value="null">Select Month</option>
+                            <option [ngValue]="1">January</option>
+                            <option [ngValue]="2">February</option>
+                            <option [ngValue]="3">March</option>
+                            <option [ngValue]="4">April</option>
+                            <option [ngValue]="5">May</option>
+                            <option [ngValue]="6">June</option>
+                            <option [ngValue]="7">July</option>
+                            <option [ngValue]="8">August</option>
+                            <option [ngValue]="9">September</option>
+                            <option [ngValue]="10">October</option>
+                            <option [ngValue]="11">November</option>
+                            <option [ngValue]="12">December</option>
+                        </select> -->
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <span class="item-align-right float-right">
+                            <button type="button" (click)="load($event,true)"
+                                class="btn btn-raised btn-raised btn-success marginbtn">Search</button> &nbsp;
+                                <button type="button" (click)="onReset()"
+                                class="btn btn-warning marginbtn resetBtn">Reset</button> &nbsp;
+                                <button type="button" (click)="onExport()"
+                                class="btn btn-warning marginbtn resetBtn">Export</button> &nbsp;
+                        </span>
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <p-table [value]="customerlist" [paginator]="true" [rows]="10" [lazy]="true"
+                        (onLazyLoad)="load($event,false)" [(first)]="first" [style]="{width:'100%'}" scrollWidth="100%"
+                        [totalRecords]="totalRecords" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <!-- <th>S.No.</th> -->
+                                <th>Shop Name</th>
+                                <th>Skcode</th>
+                                <th>Warehouse Name</th>
+                                <th>Order Id</th>
+                                <th>Order Date</th>                                
+                                <th>Amount</th>
+                                <th>Deliverd Date</th>
+                                <!-- <th>Customer Id</th> -->
+                                <!-- <th>Customer Name</th> -->
+                                <th>Customer's Comment</th>
+                                <th>CD team Update</th>
+                                <!-- <th>Rating</th> -->
+                                <th>Issue Raised Date</th>
+                                <th>Last Updated Date</th>
+                                <th>Turn Around Time</th>
+                                <th>Status</th>
+                                <th>Modified By</th>
+                                <th>Edit Comment</th>
+                                <th>History</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-cust let-index="rowIndex">
+                            <tr [pSelectableRow]="rowData">
+                                <!-- <td>{{index + 1}}</td> -->
+                                <td>{{cust.ShopName}}</td>
+                                <td>{{cust.Skcode}}</td>
+                                <td>{{cust.WarehouseName}}</td>
+                                <td>{{cust.OrderId}}</td>
+                                <td>{{cust.OrderDate | date : 'medium'}}</td>
+                                <td>{{cust.Amount  | number:'1.0-2'}} &#8377;/-</td>
+                                <td>{{cust.Deliverydate | date : 'medium'}}</td>
+                                <!-- <td>{{cust.CustomerId}}</td> -->
+                                <!-- <td>{{cust.Name}}</td> -->
+                                <td>
+                                    <!-- {{cust.CustComment != null ? cust.CustComment : '-'}} -->
+                                    <a href="javascript:void(0);" (click)="onViewCustComment(cust)" *ngIf="cust.CustComment!=null">Comment</a>
+                                    <a href="javascript:void(0);" (click)="onViewCustComment(cust)" *ngIf="cust.CustComment==null">-</a>
+                                </td>
+                                <td>
+                                    <!-- {{cust.CDComment != null ? cust.CDComment : '-'}} -->
+                                    <a href="javascript:void(0);" (click)="onViewCDComment(cust)" *ngIf="cust.CDComment!=null">CD Comment</a>
+                                    <a href="javascript:void(0);" (click)="onViewCDComment(cust)" *ngIf="cust.CDComment==null">-</a>
+                                </td>
+                                <!-- <td>{{cust.rating}}</td> -->
+                                <td>{{cust.CreatedDate | date : 'medium'}}</td>
+                                <td>{{cust.ModifiedDate != null ? (cust.ModifiedDate | date : 'medium') : '-'}}</td>    
+                                <td>
+                                   <span class="rec-green" *ngIf="cust.TurnAroundTime != null && (cust.TurnAroundTime <= 96) && cust.Status != 'Pending'">
+                                    {{cust.TurnAroundTime}}Hr 
+                                    <!-- : {{cust.TurnAroundTime.minute}}Min  -->
+                                    <!-- : {{cust.TurnAroundTime.second}}Sec -->
+                                   </span>
+                                   <span class="rec-red" *ngIf="cust.TurnAroundTime != null && (cust.TurnAroundTime > 96) && cust.Status != 'Pending'">
+                                    {{cust.TurnAroundTime}}Hr 
+                                    <!-- : {{cust.TurnAroundTime.minute}}Min  -->
+                                    <!-- : {{cust.TurnAroundTime.second}}Sec -->
+                                   </span>
+                                   <span *ngIf="cust.TurnAroundTime == null && (cust.Status != 'Pending' || cust.Status == 'Pending')">
+                                    -
+                                   </span>
+                                    <!-- {{getTotalTurnAroundTime(tripInfoData[0].EstimatedTotalTimeInMin)}}Hr :
+                                        {{tripInfoData[0].EstimatedTotalTimeInMin%60}}Min -->
+                                </td>                          
+                                <td>
+                                    <!-- {{cust.Status != null ? cust.Status : '-'}} -->
+                                    <span class="pending" *ngIf="cust.Status == 'Pending'">{{cust.Status}}</span>
+                                    <span class="in_progress" *ngIf="cust.Status == 'In Progress'">{{cust.Status}}</span>
+                                    <span class="resolved" *ngIf="cust.Status == 'Resolved'">{{cust.Status}}</span>
+                                    <span class="resolved" *ngIf="cust.Status == null">-</span>
+                                </td>     
+                                <td>{{cust.ModifiedByName ? cust.ModifiedByName : 'N/A'}}</td>                           
+                                <td>
+                                    <button type="button" (click)="Check(cust)" *ngIf="cust.Status != 'Resolved'"
+                                    class="btn btn-raised btn-raised btn-success mt">Edit</button>
+                                    <button type="button" (click)="Check(cust)" *ngIf="cust.Status == 'Resolved'"
+                                    class="btn btn-warning mt resetBtn">View</button>
+                                </td>
+                                <td>
+                                    <button type="button" (click)="onClickHistory(cust)"
+                                    class="btn btn-raised btn-raised btn-success mt">History</button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <h5>* Data Not Found</h5>
+                        </ng-template>
+                    </p-table>
+                    </div>
+                </div>
+            </div>
+            </div>
+</div>
+<p-dialog header="Add Comment And Update Status" [(visible)]="isOpen"  [blockScroll]="true" appendTo="body" [modal]="true" [positionTop]="30" [style]="{width: '25vw', height:'95vh','overflow':'scroll'}">
+           <div class="row">
+            <div class="form-group col-md-12">
+                <label>SkCode</label>
+                <input type="text" id="skcode" [(ngModel)]="custdetail.Skcode" name="skcode" class="form-control"
+                    placeholder="Skcode" disabled>
+            </div>
+            <div class="form-group col-md-12">
+                <label>Shop name</label>
+                <input type="text" id="shopname" [(ngModel)]="custdetail.ShopName" name="shopname" class="form-control"
+                    placeholder="Shopname" disabled>
+            </div>
+            <div class="form-group col-md-12">
+                <label>Order Id</label>
+                <input type="text" id="orderId" [(ngModel)]="custdetail.OrderId" name="orderId" class="form-control"
+                    placeholder="OrderId" disabled>
+            </div>
+            <div class="col-md-12">
+                <label>Order Date</label>
+                <input type="date" id="doi" name="doi" class="form-control mb-4" placeholder="Select Date"
+                [ngModel]="custdetail.OrderDate | date:'yyyy-MM-dd'" #doi="ngModel" required="1" disabled>
+            </div>
+            <div class="col-md-12">
+                <label>Delivered Date</label>
+                <input type="date" id="doi" name="doi" class="form-control mb-4" placeholder="Select Date"
+                [ngModel]="custdetail.Deliverydate | date:'yyyy-MM-dd'" #doi="ngModel" required="1" disabled>
+            </div>
+            <div class="form-group col-md-12">
+                <label>Amount</label>
+                <input type="text" id="amt" [(ngModel)]="custdetail.Amount" name="amt" class="form-control"
+                    placeholder="Amount" disabled>
+            </div>
+            <div class="form-group col-md-12" *ngIf="custdetail && custdetail.Status != 'Resolved'">
+                <label>Comment</label>
+                <textarea class="form-control" id="manualComment" rows="3"  name="manualComment" [(ngModel)] = "Comment" 
+                 minlength="4" ></textarea><!-- (keydown)="space($event)" (input)="inputValidator($event)"-->
+                 <div *ngIf="Comment && Comment.length < 5">
+                   <code>minlength 5</code>
+                 </div>
+                 <div *ngIf="isInvalid  && !Comment">
+                    <code>Comment is required.</code>
+                  </div>
+                 
+            </div>
+            <div class="form-group col-md-12" *ngIf="custdetail && custdetail.Status == 'Resolved'">
+                <label>Comment</label>
+                <textarea class="form-control" id="manualComment" rows="3"  name="manualComment" [(ngModel)] = "Comment" 
+                maxlength="50" minlength="4" disabled></textarea>
+            </div>
+            <div class="col-md-12">
+                <label>Todays Date</label>
+                <input type="date" id="doi" name="doi" class="form-control mb-4" placeholder="Select Todays Date"
+                [ngModel]="TodayDate | date:'yyyy-MM-dd'" #doi="ngModel" required="1" disabled>
+            </div>
+            <div class="col-md-12"  *ngIf="custdetail && custdetail.Status != 'Resolved'">
+                <label>Status</label>
+                <select class="form-control" name="Status" [(ngModel)]="Status" >
+                    <option value=null>Select Status</option>
+                    <option value='Pending'>Pending</option>
+                    <option value='In Progress'>In Progress</option>
+                    <option value='Resolved'>Resolved</option>
+                </select>
+                <div *ngIf="isInvalid && (Status == 'null' || Status == null)">
+                    <code>Status is required.</code>
+                  </div>
+            </div>
+            <div class="col-md-12"  *ngIf="custdetail && custdetail.Status == 'Resolved'">
+                <label>Status</label>
+                <select class="form-control" name="Status" [(ngModel)]="Status" disabled>
+                    <option value=null>Select Status</option>
+                    <option value='Pending'>Pending</option>
+                    <option value='In Progress'>In Progress</option>
+                    <option value='Resolved'>Resolved</option>
+                </select>
+            </div>
+
+        </div>
+    <footer *ngIf="custdetail && custdetail.Status != 'Resolved'">
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end" name="btn" id="btn"
+            (click)="onUpdate()">Submit</button>
+    </footer>
+</p-dialog>
+<div *ngIf="isHistoryOpen">
+    <p-dialog header="History" [(visible)]="isHistoryOpen" [blockScroll]="true" appendTo="body"
+        [style]="{width: '75vw', height:'75vh'}" [modal]="true" [positionTop]="0" appendTo="body">
+        <div class="cnt">
+            <app-history [entity]="entity" [id]="selectedItem.Id"></app-history>
+        </div>
+    </p-dialog>
+</div>
+
+<div *ngIf="isOpenCustComment">
+    <p-dialog header="{{labelText}}" [(visible)]="isOpenCustComment" [blockScroll]="true" appendTo="body"
+       [modal]="true" appendTo="body"  [style]="{width: '45vw', height:'35vh'}">
+        <div class="cnt">
+            <label>Comment</label>
+            <textarea class="form-control" id="custcomment" rows="5"  name="custcomment" [(ngModel)] = "custComment" 
+             disabled></textarea>
+        </div>
+        <footer>
+            <button type="button" class="btn btn-raised btn-primary float-right align-self-end" name="btn" id="btn"
+                (click)="isOpenCustComment = false;">Close</button>
+        </footer>
+    </p-dialog>
+</div>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

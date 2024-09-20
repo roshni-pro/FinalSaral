@@ -1,0 +1,240 @@
+<!-- <p>warehousemap works! jjjjdj</p> -->
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="cardMap">
+    <br>
+    <h3>Executive Tracking</h3>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group m-2">
+               <label>Warehouse </label>
+              <select  class="form-control col-md-6" [(ngModel)]="WarehouseId"
+                (change)="onChange(WarehouseId)" placeholder="Select warehouse" required="1"
+                maxlength="50" minlength="2" >
+                <div class="col-md-6"></div>
+                <option value="">--Select--</option>
+                 <option  *ngFor="let data of warehouses"[value]="data.WarehouseId">{{data.WarehouseName}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group m-2">
+               <label>Executive </label>
+              <select id="Excutive" name="Excutive" class="form-control col-md-6"[(ngModel)]="excutiveModel.excutiveId"
+                (change)="onExcutiveChange()" placeholder="Select Excutive" required="1"
+                maxlength="50" minlength="2" #Excutive="ngModel">
+                <div class="col-md-6"></div>
+                <div *ngIf="isInvalid && !Excutive.valid && Excutive.errors.required">
+                  <code >Excutive is required</code>
+                </div>
+                <option value="">--Select--</option>
+                 <option  *ngFor="let data of excutiveData"[value]="data.ExecutiveId">{{data.ExecutiveName}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+        <div class="col-md-6">
+            <div class="form-group m-2">
+                    <label>Date</label><br>
+                    <p-calendar name="DateInput" dataType="string" [(ngModel)]="excutiveModel.CDate"
+                    dateFormat="dd/mm/yy" [showIcon]="true" name="CDate" required #fromDate="ngModel"
+                    [monthNavigator]="true" [yearNavigator]="true" [yearRange]="yearRangeForCalender"></p-calendar>
+               
+            </div>
+           
+           
+          
+        </div>
+        <div class="col-md-2">
+            <div class="form-group m-2">
+                <!-- <label></label> -->
+                <button type="submit" class="btn btn-primary searchbutton" (click)="search(excutiveModel)">Search</button>
+            </div>
+          
+        </div>
+        <div class="col-md-2">
+            <div class="form-group m-2">
+                <button type="submit" class="btn btn-primary searchbutton" (click)="exportexcel()">Export</button>
+            </div>
+           
+        </div>
+
+    </div>
+    <br><br>
+    <div class="row">
+        <div class="col-md-6" style="line-height: 153%">
+            <label><b class="bl"> Start Date Time - </b></label> &nbsp;
+            {{starttime | date:'medium'}}
+            <br>
+            <label><b class="bl">Start Address - </b></label>&nbsp;
+            {{startaddress}}
+            <br>
+            <label><b class="bl">First CheckIn - </b></label>&nbsp;
+            {{FirstCheckIn =='undefined' ? "" : FirstCheckIn }}
+            <br>
+            <label><b class="bl">Last CheckOut - </b></label>&nbsp;
+            {{LastCheckOut}}
+            <br>
+            <label><b class="bl">Attendance - </b></label>&nbsp;
+            {{Attendance}} <span *ngIf="status!=''"> | </span> {{status}}
+            <br>
+            <label><b class="bl">TA/DA - </b></label>&nbsp;
+            {{TADA}}
+            <br>
+
+        </div>
+        <div class="col-md-6" style="line-height: 209%;">
+            <table *ngIf="TodayData.length>0">
+                <thead>
+                    <tr style="text-align: start;">
+                        <th class="vertical-header" >KPI</th> 
+                        <th class="vertical1"  style="text-align: start;">Beat</th>
+                        <th class="vertical1"  style="text-align: start;">Extra</th>
+                        <th class="vertical1"  style="text-align: start;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th class="vertical-header">Visits Planned</th>
+                        <td> {{TodayData[0].TodayVisitPlanned}} </td>
+                        <td> 0 </td>
+                        <td> {{TodayData[0].TodayVisitPlanned }} </td>
+                    </tr>
+                    <tr>
+                        <th class="vertical-header">Total Calls</th> 
+                        <td> {{TodayData[0].TodayTotalCall}} </td>
+                        <td> {{TodayData[0].TodayExtraVisit}} </td>
+                        <td> {{TodayData[0].TodayTotalCall + TodayData[0].TodayExtraVisit}} </td>
+                    </tr>
+                    <tr>
+                        <th class="vertical-header">Productive Calls</th> 
+                        <td>{{TodayData[0].TodayProductiveCall}}</td>
+                        <td>{{TodayData[0].TodayExtraCall}}</td>
+                        <td>{{TodayData[0].TodayProductiveCall + TodayData[0].TodayExtraCall}}</td>
+                    </tr>
+                    <tr>
+                        <th class="vertical-header">Sales</th> 
+                        <td>{{TodayData[0].TodayBeatSales}} </td>
+                        <td>{{TodayData[0].TodayExtraSales}}</td>
+                        <td>{{TodayData[0].TodayBeatSales + TodayData[0].TodayExtraSales}}</td>
+                    </tr>
+                    <tr>
+                        <th class="vertical-header">Orders</th> 
+                        <td> {{TodayData[0].TodayBeatOrder}} </td>
+                        <td> {{TodayData[0].TodayExtraOrder}}</td>
+                        <td> {{TodayData[0].TodayBeatOrder +TodayData[0].TodayExtraOrder}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <br><br>
+    <div class="row pull-right">
+        <!-- <button type="button" class="btn btn-primary">Export</button> -->
+    </div>
+    <br><br>
+    <!--map statr here-->
+    <div class="row">
+        <div class="col-md-6">
+            <!-- {{}} -->
+            <h4><b>Planned Route</b></h4>
+         	<div class="mapcard">
+                <!--just start-->
+                <agm-map [latitude]="latAstart" [longitude]="lngAStart" [fullscreenControl]="true" [zoom]="zoom">
+                    <agm-marker *ngFor="let m of markers; let i = index" [latitude]="m.lat" [longitude]="m.lng">
+                      <agm-info-window>{{m.label}}</agm-info-window>
+                    </agm-marker>
+                    <agm-polyline [visible]="true" [strokeColor]="'#0066ff'" [strokeWeight]="3">
+                        <!-- <agm-polyline-point *ngFor="let test of PlannedRoutesdata" [latitude]="test.lat" [longitude]="test.lg" ></agm-polyline-point> -->
+                    </agm-polyline>
+        
+                  </agm-map>
+                  <br>
+                 <!-- <agm-map [latitude]="lat" [longitude]="lng">
+                    <agm-direction [origin]="originP" [destination]="destinationP" 
+                    [renderOptions]="renderOptions" [waypoints]="waypointsP"
+                    [markerOptions]="markerOptions"> 
+                   <agm-marker *ngFor="let m of markers; let i = index" [latitude]="m.lat" [longitude]="m.lng">
+                      <agm-info-window>{{m.label}}</agm-info-window>
+                    </agm-marker>
+                </agm-direction>
+                </agm-map> -->
+                <!---just end-->
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h4><b>Actual Route</b></h4>
+            <div class="mapcard">
+				<agm-map [latitude]="latAstart" [longitude]="lngAStart" [fullscreenControl]="true"  [zoom]="zoom">
+                    <agm-marker *ngFor="let m of actualmarkers; let i = index" [latitude]="m.lat" [longitude]="m.lng">
+                      <agm-info-window>{{m.label}}</agm-info-window>
+                    </agm-marker>
+                    <agm-polyline [visible]="true" [strokeColor]="'#0066ff'" [strokeWeight]="3">
+                        <agm-polyline-point *ngFor="let test of ActualRoutesdata" [latitude]="test.lat" [longitude]="test.lng" ></agm-polyline-point>
+                    </agm-polyline>
+        
+                </agm-map>
+                  <!-- <agm-map [latitude]="latAstart" [longitude]="lngAStart" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false"
+                  [style.height.px]="myInnerHeight" [fullscreenControl]="true">
+                  <agm-direction [origin]="originA" [destination]="destinationA"  [waypoints]="waypointsA" [markerOptions]="markerOptions">
+                    <agm-marker *ngFor="let m of actualmarkers; let i = index" [latitude]="m.lat" [longitude]="m.lng"
+                        [iconUrl]="m.icon" (mouseOver)="onMouseOver(infoWindow, $event)"(mouseOut)="onMouseOut(infoWindow, $event)" >
+                        <agm-info-window [disableAutoPan]="false" #infoWindow>
+                          <div>
+                            {{m.label}}
+                          </div>
+                        </agm-info-window>
+                      </agm-marker>
+                </agm-direction>
+                </agm-map> -->
+            </div>
+        </div>
+    </div>
+    <br><br><br><br>
+    <div class="row">
+        <table id="excel-table" class="table"> 
+            <thead>
+            <tr>
+                <th>S.No</th>
+               <th>Emp Code</th> 
+               <th>Emp Name</th>
+               <th> Warehouse name 	</th> 
+               <th>Cluster Name </th> 
+               <th>Sk code 	</th>  
+               <th>Shopname </th>
+               <th>Name </th>  
+               <th>Retailer Mob No.</th>
+               <!-- <th>Timing</th> -->
+               <th>Todays Beat Customer (yes / no)</th>
+               <th>CheckIn Time </th>
+               <th>CheckOut Time</th>
+               <th>Visit Duration</th>
+            </tr>  
+        </thead>
+        <tbody>  
+            <tr *ngFor="let sup of TableList ; let i = index;" >
+                <td>{{i+1}}</td>
+               <td>{{sup.ExecutiveId }}</td>  
+               <td *ngIf="sup.ExecutiveName!=undefined">{{sup.ExecutiveName}}</td> 
+               <td *ngIf="sup.ExecutiveName==undefined">{{ExecutiveName[0].ExecutiveName}}</td>
+               <td>{{sup.WarehouseName }}</td> 
+               <td>{{sup.ClusterName }}</td> 
+               <td>{{sup.Skcode }}</td> 
+               <td>{{sup.ShopName}}</td>
+               <td>{{sup.Name}}</td>
+               <td>{{sup.Mobile}}</td>
+               <!-- <td>{{ sup.VisitedOn==null?'--':sup.VisitedOn | date:'medium'}}</td> -->
+               <td *ngIf="sup.IsBeat==true || sup.IsVisited==false">Yes</td>
+               <td *ngIf="sup.IsBeat==false">No</td>
+               <td>{{sup.CheckIn==0?'--':sup.CheckIn  | date:'mediumTime'}}</td>
+               <td>{{sup.CheckOut==0?'--':sup.CheckOut | date:'mediumTime'}}</td>
+               <td>{{calculateDiff(sup)}}</td>
+            </tr> 
+            </tbody>
+        </table>
+    </div>
+        
+</div>

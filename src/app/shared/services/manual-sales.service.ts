@@ -1,0 +1,30 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'environments/environment';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ManualSalesService {
+  apiURL: string;
+  User: any;
+  comment: string;
+
+  constructor(private http: HttpClient) {
+
+    this.apiURL = environment.apiURL;
+  }
+
+
+
+
+  getAll(): Observable<any> {
+    return this.http.get<any>(this.apiURL + '/api/ManualSalesOrder/getAll');
+  }
+
+  PostOrder(msoDC): Observable<any> {
+    return this.http.post<any>(this.apiURL + '/api/ManualSalesOrder/postManualOrder', msoDC);
+  }
+ 
+}

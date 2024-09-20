@@ -1,0 +1,255 @@
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<section id="Item">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2">Item Master</h3>
+        </div>
+        <div>
+            <button *ngIf="isData && !isWarehouseId" label="Add Item" (click)="goToAddItem()"
+                class="btn btn-raised btn-primary m-2 shadow">Add Item</button>
+            <button *ngIf="isData && !isWarehouseId" label="Export Central Item List"
+                class="btn btn-raised btn-success m-2 shadow" (click)="exportCentral()">Export Central Item
+                List</button>
+            <button *ngIf="isWarehouseId" class="btn btn-raised btn-success m-2 shadow"
+                (click)="exportFullWarehouseList()">Export Full Warehouse Item List</button>
+            <button *ngIf="isWarehouseId" class="btn btn-raised btn-warning m-2 shadow"
+                (click)="exportDeactivatedList()">Export DeactivatedList</button>
+        </div>
+
+    </div>
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+            (click)="toggleSearch()">
+            <h5 class="m-0">Search By</h5>
+            <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+        </div>
+        <div id="search-content p-2" *ngIf="isSearch">
+            <div class="row p-2 px-5">
+                <div class="col-md-4 border-right border-right-1">
+                    <div class="form-group form-inline m-2">
+                        <label for="warehouse" class="col-md-4">Warehouse</label>
+                        <select type="text" id="warehouse" [(ngModel)]="warehouseID"
+                            (change)="onWarehouseChange($event.target.value)" class="form-control col-md-8"
+                            name="warehouse">
+                            <option [value]="All">Central</option>
+                            <option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">
+                                {{warehouse.WarehouseName}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4 border-right border-right-1">
+                    <form class="" name="form" (ngSubmit)="searchCentralItem(searchKey)" #testForm="ngForm"
+                        autocomplete="off" ngNativeValidate>
+                        <div class="form-group m-2 form-inline">
+                            <label for="ab" class="col-md-4">Items</label>
+                            <input type="text" id="ab" class="form-control col-md-8" [(ngModel)]="searchKey" name="ab">
+                        </div>
+                        <div class=" d-flex justify-content-end col-12">
+                            <button type="button" class="btn btn-raised btn-warning " style="margin-right: 10px;"
+                                (click)="searchClear()">clear</button>
+                            <button type="submit" class="btn btn-raised btn-primary ">Search</button>
+                        </div>
+                    </form>
+
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group form-inline m-2">
+                        <label for="a" class="col-md-4">Active Status</label>
+                        <select id="suppCat" name="suppCat" class="form-control col-md-8" [(ngModel)]="status"
+                            (change)="onStatusChange(status)">
+                            <option value="Default" selected>Default</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                            <option *ngIf="isWarehouseId" value="ZeroQty">ZeroQty</option>
+                            <option *ngIf="isWarehouseId" value="MaxToLow">MaxToLow</option>
+                            <option *ngIf="isWarehouseId" value="Item Limit">Item Limit</option>
+                        </select>
+                    </div>
+                    <div *ngIf="activeCountItem">
+                        <span style="float:right"> <strong style="color:orangered;font-size: medium;">
+                                Active Items for Warehouse: [{{activeCountItem}}]</strong>
+                        </span>
+                        <br />
+                    </div>
+                    <div class=" d-flex justify-content-end col-12" *ngIf="isWarehouseId">
+                        <button type="button" class="btn btn-raised btn-info "
+                            (click)="_exportCurrentWarehouse()">Export Warehouse Current Item List</button>
+                    </div>
+                </div>
+                <!-- <div class="col-md-12">
+                        
+                    </div> -->
+
+            </div>
+        </div>
+    </div>
+    <div class="ui-fluid shadow mb-2 bg-white rounded" *ngIf="isData">
+        <div class="table-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+            <h5 class="m-0">Item-Table</h5>
+            <div><i class="fa fa-lg fa-angle-double-down"></i></div>
+        </div>
+        <div id="table-content">
+            <div id="supplier-table">
+                <div class="position-relative">
+                    <div class="position-absolute supplier-details" *ngIf="isDetails">
+                        <app-item-details [details]="selectedItemDetails" [isWarehouse]="isWarehouseId" [type]='type' [storeType]="storeType"
+                            [activeFields]="activeFields" (isdetailsclose)="isDetailsFalse($event)"
+                            (refreshParent)="ngOnInit()" (activeStatus)="ToggleActivation($event)"
+                            (deleteInfo)="onDelete($event)" class="d-flex justify-content-end"></app-item-details>
+                    </div>
+
+
+                    <div class="position-relative" id="dataTable">
+                        <p-table #dt [value]="itemList" [paginator]="true" [rows]="20" [lazy]="true"
+                            [totalRecords]="totalRecords" (onLazyLoad)="load($event)" [scrollable]="true"
+                            scrollHeight="60vh">
+                            <ng-template pTemplate="header" >
+                                <tr>
+                                    <th *ngFor="let col of cols" style="text-align: center">
+                                        <!--[pSortableColumn]="col.field"--->
+                                        {{col.header}}
+
+                                        <!-- <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon> -->
+                                    </th>  
+                                    <!-- <th [hidden]="warehouseID != 'undefined' && warehouseID != ''" >
+                                        Barcode 
+                                    </th> -->
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData>
+                                <tr class="classForHoverEffect">
+                                    <td *ngFor="let col of cols" style="text-align: center" class="ui-resizable-column"
+                                        (click)="openDetails(rowData,$event)"
+                                        [ngStyle]="(rowData.active)?{'background-color':'#86E4A4'}:{'background-color':'#F296A2'}">
+                                        <div *ngIf="col.field!='LogoUrl'">
+                                            {{rowData[col.field]}}
+                                        </div>
+                                        <div *ngIf="col.field =='LogoUrl'">
+                                            <!-- {{rowData[col.field]}} -->
+                                            <img [src]="rowData[col.field]" height="40px">
+                                        </div>
+
+
+
+
+                                        <div class="d-flex flex-column align-items-center" *ngIf="col.field=='Actions'">
+                                            <!-- <div style="height:16px!important"></div> -->
+                                            <div class="d-flex">
+                                                <!-- <i class="btn text-warning m-1 fa fa-chain-broken" *ngIf = "rowData.Active" (click)="open(activationModal)" (mouseover)="nameOfActionButton($event)" (mouseleave)="removeName($event)" name="Deactivate"></i>
+                                                        <i class="btn text-warning m-1 fa fa-link" *ngIf = "!rowData.Active" (click)="open(activationModal)" (mouseover)="nameOfActionButton($event)" (mouseleave)="removeName($event)" name="Activate"></i> -->
+                                                <!-- Activation Modal Start -->
+                                                <ng-template #activationModal let-modal>
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" aria-label="Close"
+                                                            (click)="modal.dismiss('Cross click')">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body d-flex flex-column align-items-center">
+                                                        <h2>Are You Sure?</h2>
+                                                        <p class="m-2" style="text-align: center"><strong>Note:</strong>
+                                                            This will <strong><span
+                                                                    *ngIf="rowData.Active">Deactivate</span><span
+                                                                    *ngIf="!rowData.Active">Activate</span></strong> the
+                                                            supplier in the database.</p>
+                                                    </div>
+                                                    <div class="modal-footer d-flex p-0 justify-content-center">
+                                                        <button type="button"
+                                                            class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0"
+                                                            (click)="modal.close('No click')">Cancel</button>
+                                                        <button type="button"
+                                                            class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+                                                            (click)="ToggleActivation(rowData)"><span
+                                                                *ngIf="rowData.Active">Deactivate</span><span
+                                                                *ngIf="!rowData.Active">Activate</span></button>
+                                                    </div>
+                                                </ng-template>
+                                                <!-- Activation Modal End -->
+                                                <!-- <i class="btn text-danger m-1 fa fa-trash" (click)= "open(removeModal)" (mouseover)="nameOfActionButton($event)" (mouseleave)="removeName($event)" name="Remove"></i> -->
+                                                <!-- Remove Modal Start -->
+                                                <ng-template #removeModal let-modal>
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" aria-label="Close"
+                                                            (click)="modal.dismiss('Cross click')">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body d-flex flex-column align-items-center">
+                                                        <h2>Are You Sure?</h2>
+                                                        <p class="m-2" style="text-align: center"><strong>Note:</strong>
+                                                            This will permanently delete the supplier from the records.
+                                                        </p>
+                                                        <!-- <form class="col-12">
+                                                                        <div class="form-group col-12">
+                                                                            <label for="DeleteComment">Add Comments</label>
+                                                                            <textarea class="form-control" id="DeleteComment" rows="3"  name="DeleteComment" [(ngModel)] = "rowData.DeleteComment" ></textarea>
+                                                                        </div>
+                                                                    </form> -->
+                                                    </div>
+                                                    <div class="modal-footer d-flex p-0 justify-content-center">
+                                                        <button type="button"
+                                                            class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0"
+                                                            (click)="modal.close('No click')">Cancel</button>
+                                                        <button type="button"
+                                                            class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+                                                            (click)="onDelete(rowData.SupplierId)">Delete</button>
+                                                    </div>
+                                                </ng-template>
+                                                <!-- Remove Modal End -->
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                    <!-- <td [hidden]="warehouseID != 'undefined' && warehouseID != ''" 
+                                        [ngStyle]="(rowData.active)?{'background-color':'#86E4A4'}:{'background-color':'#F296A2'}">
+                                        <button class="Display:inline-table" pButton type="button" label="Barcode" 
+                                            (click)="barcodePopup(rowData.Barcode)"></button>
+                                    </td> -->
+                                </tr>
+
+                                <!-- <tr class="edit"><td colspan="5"><app-addSupplier></app-addSupplier></td></tr>
+                                         -->
+                            </ng-template>
+                            <!-- <ng-template  *ngIf="isDetails" > -->
+
+                            <!-- </ng-template> -->
+                        </p-table>
+
+                    </div>
+
+
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div *ngIf="!isData" style="margin-top: 25px;">
+        <h4><b>No Data Found , Please Select Warehouse</b></h4>
+
+    </div>
+</section>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-dialog header="BarCode Image" [(visible)]="popupDisplay" [style]="{width: '30vw',height:'35vh'}">
+    <br>
+    <br>
+    <div class="div" id="print-section">
+        <img src={{barcodeimage}}>
+    </div>
+    <br>
+    <br>
+    <button pButton type="button" label="Print" printSectionId="print-section" ngxPrint
+        (click)="printBarcode()"></button>
+
+</p-dialog>

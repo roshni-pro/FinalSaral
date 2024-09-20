@@ -1,0 +1,320 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<div class="card">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">GDN Detail</h3>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Purchase Order Id</label>
+                    <input type="text" class="form-control" name="POId" [(ngModel)]="group.POId">
+                    <!-- <span *ngIf="POId.invalid && (POId.dirty || POId.touched)" class="">Enter PO Id</span> -->
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">GDN No.</label>
+                    <input type="text" class="form-control" name="GDNNo" [(ngModel)]="group.GDNNo">
+                    <!-- <span *ngIf="POId.invalid && (POId.dirty || POId.touched)" class="">Enter PO Id</span> -->
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="projectinput3">From Date</label>
+                    <br>
+                    <p-calendar name="startDateInput" [(ngModel)]="group.FromDate" [showIcon]="true" name="fromDate">
+                    </p-calendar>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="projectinput4">To Date</label>
+                    <br>
+                    <p-calendar name="endDateInput" [(ngModel)]="group.ToDate" [showIcon]="true" name="toDate">
+                    </p-calendar>
+                </div>
+            </div>
+            <div class="col-md-3 POInput">
+                <button id="btnSubmti" name="submit" class="btn btn-raised btn-raised btn-primary"
+                    (click)="GetGDNMaster(group)">Search</button>
+                <button id="btnRefresh" (click)="Refresh()"
+                    class="btn btn-raised btn-raised btn-warning ml-1">Refresh</button>
+            </div>
+        </div>
+        <div class="row">
+            <p-table #dt [value]="ItemLists" [paginator]="true" [rows]="20" [scrollable]="true"
+                [totalRecords]="totalRecords" scrollHeight="130vh" text-align: center class="table table-bordered">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Sr.No.</th>
+                        <th>Purchase OrderId</th>
+                        <th>SupplierName</th>
+                        <th>GDN Number</th>
+                        <th>Status</th>
+                        <th>Created By</th>
+                        <th>Created Date</th>
+                        <th>Detail</th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{rowIndex+1}}</td>
+                        <td>{{item.PurchaseOrderId}}</td>
+                        <td>{{item.SupplierName}}</td>
+                        <td>{{item.GDNNumber}}</td>
+                        <td>{{item.Status}}
+                            <br />
+                            {{item.Comment}}
+                        </td>
+                        <td>{{item.CreatedBy}}</td>
+                        <td>{{item.CreatedDate | date:'dd-MM-yyyy'}}</td>
+                        <td><button id="btndetail" (click)="openDetails(item.id,item.Status)"
+                                class="btn btn-primary">Detail</button></td>
+                        <td><button id="btndetail" (click)="gDNNote(item.id)" class="btn btn-primary">GDN Note</button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <div *ngIf="isOpenPopup">
+                <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+                    [style]="{width: '80%',height: '80%', overflow: 'auto',left: '323px'}">
+                    <p-header>
+                        GDN Detail
+                    </p-header>
+                    <div class="ui-fluid">
+
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+
+                                <div class="ui-g">
+                                    <div class="ui-g-12">
+                                        <p-table #dt [value]="selectedRowDetailList" [scrollable]="true"
+                                            [totalRecords]="totalRecords" scrollHeight="130vh" text-align: center>
+                                            <ng-template pTemplate="header">
+                                                <tr>
+                                                    <th scope="col">Item Name</th>
+                                                    <th scope="col">Short Qty</th>
+                                                    <th scope="col">Damage Qty</th>
+                                                    <th scope="col">Expiry Qty</th>
+                                                    <th scope="col">Changed Short Qty</th>
+                                                    <th scope="col">Changed Damage Qty</th>
+                                                    <th scope="col">Changed Expiry Qty</th>
+                                                    <th scope="col">CreatedDate</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </ng-template>
+                                            <ng-template pTemplate="body" let-m>
+                                                <tr>
+                                                    <td>{{m.ItemName}}</td>
+                                                    <td>{{m.ShortQty}}</td>
+                                                    <td>{{m.DamageQty}}</td>
+                                                    <td>{{m.ExpiryQty}}</td>
+                                                    <td><input type="text" [(ngModel)]="m.ChangedShortQty"
+                                                            style="width: 100px;"></td>
+                                                    <td><input type="text" [(ngModel)]="m.ChangedDamageQty"
+                                                            style="width: 100px;"></td>
+                                                    <td><input type="text" [(ngModel)]="m.ChangedExpiryQty"
+                                                            style="width: 100px;"></td>
+                                                    <td>{{m.CreatedDate | date:'dd-MM-yyyy'}}</td>
+                                                    <td><button id="btnEdit" [disabled]="!btnstatus"
+                                                            (click)="UpdateQty(m)" class="btn btn-primary">Update Qty</button>
+                                                      
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                        <button id="btnSend" *ngIf="btnSendstatus" (click)="Send(selectedRowDetailList[0])"
+                                        class="btn btn-primary ml-1">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </p-dialog>
+            </div>
+            <div *ngIf="isGDNPopup">
+
+                <p-dialog [(visible)]="isGDNPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+                    [style]="{width: '80%',height: '80%', overflow: 'auto',left: '323px'}">
+                    <p-header>
+                        GDN Detail
+                    </p-header>
+                    <p-toast [style]="{marginTop: '80px'}"></p-toast>
+                    <div class="ui-fluid">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <div class="container-fluid table-bordered">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <table class="table table-bordered" style="font-size: 14px !important;"
+                                                width="100">
+                                                <tbody class="border">
+                                                    <tr>
+                                                        <td colspan="2" style="text-align: center;">
+                                                            <h3>Goods Descripancy Note</h3>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td height="60" width="33%"> <img src="assets/img/logo/Logo.png"
+                                                                height="100px" width="200px"
+                                                                style="padding-bottom: 20px;" /> <br /></td>
+
+                                                        <td height="60" width="33%">
+                                                            <p style="padding: 3px;">
+                                                                <span style="float: left">
+                                                                    {{ItemList[0].WarehouseName}} <strong>
+                                                                    </strong></span><br />
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <p>
+                                                                <span style="float: left">Vendor Name:
+                                                                    {{ItemList[0].suppliername}} </span>
+                                                                <br />
+                                                                <span style="float: left">Inoice No:
+                                                                    {{ItemList[0].InvoiceNumber}}</span>
+                                                                <br />
+                                                            </p>
+                                                        </td>
+                                                        <td>
+                                                            <p style="padding: 3px;">
+                                                                <span style="float: left">No.: {{ItemList[0].GDNNumber}}
+                                                                </span><br />
+                                                                <span style="float:left">Date:
+                                                                    {{ItemList[0].InvoiceDate}}
+                                                                </span><br />
+                                                                <span style="float: left">P.O.No:
+                                                                    {{ItemList[0].PurchaseOrderId}}
+                                                                </span><br />
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="row ml-0" style="width:100%">
+                                                <p-table #dt [value]="ItemList" [paginator]="false" [scrollable]="true"
+                                                    scrollHeight="130vh" text-align: center>
+                                                    <ng-template pTemplate="header">
+                                                        <tr>
+                                                            <th>SNo.</th>
+                                                            <th>SKU Description</th>
+                                                            <th>Short Qty</th>
+                                                            <th>Damage Qty</th>
+                                                            <th>Expiry Qty</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                                                        <tr>
+                                                            <td>{{rowIndex+1}}</td>
+                                                            <td>{{item.SKUDescription}}</td>
+                                                            <td>{{item.ShortQty }}</td>
+                                                            <td>{{item.DamageQty}}</td>
+                                                            <td>{{item.ExpiryQty}}</td>
+                                                            <td>{{item.ShortQty + item.DamageQty +item.ExpiryQty}}</td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </div>
+                                            <div class="col-md 12">
+                                                <hr>
+                                                <div class="row" style="height:60px;">
+                                                    This is a system generated statement, no signature is required.
+                                                    <!-- <div class="col-md 4 text-left"><span>
+                                                            <dt>Vendor Name & Signature:</dt>
+                                                        </span></div>
+                                                    <div class="col-md 4 text-center"><span>
+                                                            <dt>Receiver Signature :</dt>
+                                                        </span></div>
+                                                    <div class="col-md 4 text-right"><span>
+                                                            <dt>Security Seal & Signature:</dt>
+                                                        </span></div> -->
+                                                </div>
+                                            </div>
+                                           
+                                            <div class="row ml-0" style="width:100%">
+                                                <p-table #dt [value]="ItemList" [paginator]="false" [scrollable]="true"
+                                                    scrollHeight="130vh" text-align: center>
+                                                    <ng-template pTemplate="header">
+                                                       <tr>
+                                                           <td colspan="6" style="text-align: center;background-color: coral;" ><h3> Issue Qty</h3></td>
+                                                       </tr>
+                                                        <tr>
+                                                            <th>SNo.</th>
+                                                            <th>SKU Description</th>
+                                                            <th>Issue Short Qty</th>
+                                                            <th>Issue Damage Qty</th>
+                                                            <th>Issue Expiry Qty</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </ng-template>
+                                                    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                                                        <tr>
+                                                            <td>{{rowIndex+1}}</td>
+                                                            <td>{{item.SKUDescription}}</td>
+                                                            <td>{{item.IssueShortQty }}</td>
+                                                            <td>{{item.IssueDamageQty}}</td>
+                                                            <td>{{item.IssueExpiryQty}}</td>
+                                                            <td>{{item.IssueShortQty + item.IssueDamageQty +item.IssueExpiryQty}}</td>
+                                                        </tr>
+                                                    </ng-template>
+                                                </p-table>
+                                            </div>
+                                            <!-- public int IssueDamageQty { get; set; }
+                                            public int IssueExpiryQty { get; set; }
+                                            public int IssueShortQty { get; set; } -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md 12" *ngIf="GNDStatus">
+                        <hr>
+                        <div class="row" style="height:60px;">
+
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="comment"><span><b>Comment</b></span></label>
+                                    <input type="text" class="form-control" placeholder="Enter comment" name="POId"
+                                        [(ngModel)]="comment">
+                                </div>
+                            </div>
+
+                            <div class="col-md 3">
+                                <div class="form-group">
+                                    <label for="gDNCancel"></label>
+                                    <br>
+                                    <button id="btnSend" (click)="gDNCancel(comment,ItemList[0].GDNId)"
+                                        class="btn btn-primary ml-1">GDN Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p-dialog>
+
+            </div>
+
+        </div>
+    </div>
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

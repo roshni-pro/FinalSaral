@@ -1,0 +1,109 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+  <div class="m-1 d-flex justify-content-between align-items-center">
+    <div class="card" style="width: 150rem;">
+        <div id="RolePagePermission-table" class="ui-fluid  bg-white rounded">
+            <div class="position-relative">
+                <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group m-2">
+                        <label for="ware" ><b>Vehicle:</b></label>
+                        <p-multiSelect [options]="dataselect" [(ngModel)]="objRequest.selectedVehicle" [panelStyle]="{minWidth:'25em'}" optionLabel="label">
+                        </p-multiSelect>
+                    </div>
+                </div>
+                      <div class="form-actions right col-sm-12 p-3">
+                         <button type="button" class="btn btn-raised btn-primary float-right" (click)="SaveData(objRequest.selectedVehicle)">
+                           Save
+                            </button>
+                           <button type="button" class="btn btn-raised btn-warning mr-1 float-right" (click)="goToPage()">
+                           Back
+                            </button>
+                    </div>
+            </div>
+            <hr/>
+                <!-- <div class="col-md-6">
+                   <div class="card">
+                    <div class="pr-dv" *ngFor="let role of  rolePageList; let pindex = index;">
+                        <a href="javascript:void(0);" (click)="collapseParent(role)" *ngIf="role.ChildRolePagePermissionDcs && role.ChildRolePagePermissionDcs.length >0">
+                            <i *ngIf="!role.IsVisible" class="fa fa-caret-right fa-lg mr-10" aria-hidden="true"></i>
+                            <i  *ngIf="role.IsVisible" class="fa fa-caret-down fa-lg mr-10" aria-hidden="true"></i>
+                        </a>
+                        <p-checkbox  [ngClass]="{'nt-pr': !(role.ChildRolePagePermissionDcs && role.ChildRolePagePermissionDcs.length >0) }" name="pchk{{pindex}}" [label]="role.PageName" [(ngModel)]="role.IsChecked"
+                            binary="true"  (click)="onParentPageClick(role)" ></p-checkbox>
+                        <div *ngIf="role.IsVisible && role.ChildRolePagePermissionDcs && role.ChildRolePagePermissionDcs.length >0;">
+                            <div class="ch-div" *ngFor="let page of  role.ChildRolePagePermissionDcs; let cindex = index;">
+                                <p-checkbox (click)="onChildPageClick(role)" name="cchk{{cindex}}" [label]="page.PageName" [(ngModel)]="page.IsChecked"
+                                    binary="true"></p-checkbox>
+                            </div>                        
+                        </div>                       
+                    </div>
+                </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+  </div>
+  
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+  
+
+<!-- 
+
+   <p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+    <section id="basic-form-layouts">
+  
+      <div class="row text-left">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header pb-2">
+            </div>
+            <div class="card-content">
+              <div class="px-3">
+                <form class="form" name="form"  #vehicleForm="ngForm">
+                  <div class="form-body">
+                   
+                    <h4 class="form-section"><i class="ft-user"></i> <b>Vehicle</b></h4>
+                    <div class="row col-md-12" *ngIf="vehicle">
+                        
+                            <div class="col-md-6">
+                                    <div class="form-group m-2">
+                                      <label for="vehicle"> Select Vehicle:</label>
+                                      <select id="vehicle" name="vehicle" class="form-control col-md-6" [(ngModel)]="vehicle.VehicleID"
+                                        placeholder="Select Vehicle">
+                                        <div class="col-md-6"></div>
+                                        
+                                        <option value="">--Select--</option>
+                                        <option *ngFor="let vehicle of dataselect" [ngValue]="vehicle.VehicleId">
+                                          {{ vehicle.VehicleName }}
+                                        </option>
+                                      </select>
+                                    </div>
+                                  </div> 
+              
+                    </div>
+                  </div>
+                  
+                  <div class="form-actions right col-sm-12 p-3">                     
+                      <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                          Cancel
+                        </button>
+                      <button type="button" class="btn btn-raised btn-primary" (click)="update(vehicleForm)">
+                          Save
+                        </button>
+                    </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+  
+    </section>
+  
+  </div> -->

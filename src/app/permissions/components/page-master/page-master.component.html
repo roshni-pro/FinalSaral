@@ -1,0 +1,149 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="row">
+    <h4 style="padding-top: 20px; padding-left: 10px"><b>Add New Page</b></h4>
+
+</div>
+<hr>
+<form>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+
+            <label for="name" class="col-md-6">Page Name:<span class="reqError">*</span></label>
+            <input type="text" id="firstname" name=" firstname" class="form-control col-md-6"
+                [(ngModel)]="data.PageName" placeholder="Page Name">
+        </div>
+        <div class="form-group col-md-4">
+
+            <label for="Rname" class="col-md-6">Nav Url:<span class="reqError">*</span></label>
+            <input type="text" id="Rname" name="Rname " class="form-control col-md-6" [(ngModel)]="data.RouteName"
+                autocomplete="off" placeholder="Enter RouteName" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="Cname" class="col-md-6">Class Name:<span class="reqError">*</span></label>
+            <input type="text" id="Cname" name="Cname " class="form-control col-md-6" [(ngModel)]="data.ClassName"
+                autocomplete="off" placeholder="Enter ClassName" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="Iname" class="col-md-6">Icon Class Name:</label>
+            <input ng-required="true" type="text" id="Iname" name="Iname " class="form-control col-md-6"
+                [(ngModel)]="data.IconClassName" autocomplete="off" placeholder="Enter IconClassName" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="site-name" class="col-md-6">Parent:<span class="reqError"></span></label>
+            <select id="pageMasters" name="pageMasters" class="form-control col-md-6" [(ngModel)]="data.ParentId">
+                <option value="" selected>--Select--</option>
+                <option *ngFor="let pageMasters of getAllParent" [ngValue]="pageMasters.Id"> {{pageMasters.PageName}}
+                </option>
+
+            </select>
+        </div>
+
+    </div>
+    <!-- <br> -->
+    <div class="row" id="btn1">
+        <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onSave()"> Save
+        </button>
+        <button type="button" class="btn btn-raised btn-primary" (click)="refresh()"> Clear
+        </button>
+    </div>
+</form>
+<!-- <br> -->
+<p-tabView>
+    <p-tabPanel header="Parent">
+        <!-- <p-table [columns]="cols" [value]="cars" [rows]="10">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th>
+                        <h5>PARENT PAGE</h5>
+                    </th>
+                    <th>
+                    <div class="col-6 float-right">
+                        <button  type="button" class="btn btn-raised btn-primary" >Save Page Sequence</button>
+                   </div>
+                  </th>
+                </tr>
+               
+            </ng-template>
+            <ng-template pTemplate="body" let-car>
+            <tr>
+                <th>
+                    <h5>PARENT PAGE</h5>
+                </th>
+             </tr>
+           </ng-template>
+        </p-table> -->
+        <div class="row pad">
+            <div class="col-md-6">
+                <h6 class="pad">PARENT PAGE</h6>
+            </div>
+            <div class="col-md-6">
+                <button type="button" class="btn btn-raised btn-primary float-right"
+                    (click)="onUpdateList(getAllParent,null)">Save Page Sequence</button>
+            </div>
+        </div>
+        <hr />
+        <div class="setScroll">
+            <div class="col-md-12" cdkDropList (cdkDropListDropped)="onDrop($event)">
+                <div class="row text-left" *ngFor="let pageMasters of getAllParent; index as i" cdkDrag>
+                    <div class="col-md-6">
+                        {{i+1}} - {{pageMasters.PageName}}
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-raised btn-primary"
+                            (click)="GetUpdateParent(pageMasters)">Edit</button>&nbsp;&nbsp;
+                        <button class="btn btn-raised btn-warning" (click)="onParentDelete(pageMasters.Id)"> <i
+                                class="ft-x"></i>Remove</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </p-tabPanel>
+
+    <p-tabPanel header="Child">
+
+
+        <h6>PARENT :</h6>
+
+        <div class="row pad">
+            <div class="form-group col-md-4">
+                <select id="pageMasters" name="pageMasters" class="form-control col-md-4" [(ngModel)]="data.ParentId"
+                    (change)="getChild(data.ParentId)">
+                    <option value="" selected>--Select--</option>
+                    <option *ngFor="let pageMasters of getAllParent" [ngValue]="pageMasters.Id">
+                        {{pageMasters.PageName}}</option>
+                </select>
+
+            </div>
+            <div class="col-md-8">
+                <button type="button" class="btn btn-raised btn-primary float-right"
+                    (click)="onUpdateList(getChildList,data.ParentId)">Save Page Sequence</button>
+            </div>
+        </div>
+        <hr>
+        <div class="setScroll">
+            <div class="col-md-12" cdkDropList (cdkDropListDropped)="onDropChild($event)">
+                <div class="row text-left" *ngFor="let pageMasters of getChildList; index as i" cdkDrag>
+                    <div class="col-md-6">
+                        {{i+1}} - {{pageMasters.PageName}}
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button class="btn btn-raised btn-primary"
+                            (click)="GetUpdateParent(pageMasters)">Edit</button>&nbsp;&nbsp;
+                        <button class="btn btn-raised btn-warning" (click)="onDelete(pageMasters.Id)">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </p-tabPanel>
+</p-tabView>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>

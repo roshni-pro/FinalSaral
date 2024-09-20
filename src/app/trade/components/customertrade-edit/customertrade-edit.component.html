@@ -1,0 +1,186 @@
+<div class="row">
+  <h4 style="padding-top: 20px; padding-left: 20px"><b>Customer</b></h4>
+</div>
+<hr>
+<p-toast [style]="{marginTop: '10px'}"></p-toast>
+
+<p-tabView (onChange)="onTabChange($event)">
+  <p-tabPanel header="Basic Details" [selected]="true">
+    <form class="form " name="form" #CustomerEditForm="ngForm">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="name">Sk Code*</label>
+            <input type="text" name="SkCode" class="form-control" id="SkCode" [(ngModel)]="customer.SkCode"
+              placeholder="SkCode" required #SkCode="ngModel">
+            <div *ngIf="!SkCode.valid && isInvalid">
+              <code> Please enter skcode</code> {{SkCode.valid}}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label for="name">Customer Name*</label>
+          <input type="text" name="CustomerName" class="form-control" id="CustomerName"
+            [(ngModel)]="customer.CustomerName" placeholder="Customer Name" required="1" maxlength="50" minlength="2"
+            required #CustomerName="ngModel">
+          <div *ngIf="!CustomerName.valid && isInvalid">
+            <code> Please enter customer name </code>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label for="name">Gst Number:</label>
+          <input type="text" name="GstNo" class="form-control" id="GstNo" [(ngModel)]="customer.GstNo"
+            placeholder="Gst Number" #GstNo="ngModel" disabled>
+        </div>
+        <div class="col-md-6">
+          <label for="name">Email Id:</label>
+          <input type="email" name="Email" class="form-control" id="Email" [(ngModel)]="customer.Email"
+            placeholder="Email Id" required #Email="ngModel" disabled>
+        </div>
+        <div class="col-md-6">
+          <label for="name">Account Number:</label>
+          <input type="text" name="accountNo" class="form-control" id="accountNo" [(ngModel)]="customer.AccountNumber"
+            placeholder="Account Number" required #accountNo="ngModel" disabled>
+        </div>
+
+        <div class="col-md-6">
+          <label for="name"><b>Zone List:</b></label>
+          <p-scrollPanel [style]="{width: '100%', height: '200px'}" styleClass="custombar1">
+            <div style="padding:1em;line-height:1.5">
+              <table class="table table-stripped table-hover table-sm ">
+                <thead>
+                  <th style="text-align: center;">Zone Name</th>
+                  <th style="text-align: center;">Seller Name</th>
+                  <th style="text-align: center;">SkCode</th>
+                  <th style="text-align: center;">Mobile</th>
+                </thead>
+                <tbody>
+                  <tr style="text-align: center;" *ngFor="let row of zoneList">
+                    <td>{{row.ZoneName}}</td>
+                    <td>{{row.ZoneOwnerName}}</td>
+                    <td>{{row.ZoneOwnerSkCode}}</td>
+                    <td>{{row.ZoneOwnerMobile}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </p-scrollPanel>
+        </div>
+
+
+
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="name">Registration Date*</label>
+            <p-calendar [(ngModel)]="customer.CreatedDate" name="regdate" [showIcon]="true" #CreatedDate="ngModel"
+              required>
+            </p-calendar>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="name">Buyer Rating</label>
+          <input type="number" name="BuyerRating" class="form-control" id="BuyerRating"
+            [(ngModel)]="customer.BuyerRating" placeholder="Rating" #BuyerRating="ngModel">
+          <div *ngIf="!BuyerRating.valid && isInvalid">
+            <code> Please enter buyer rating </code>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="name">Seller Rating</label>
+          <input type="number" name="SellerRating" class="form-control" id="SellerRating"
+            [(ngModel)]="customer.SellerRating" placeholder="Rating" #SellerRating="ngModel">
+          <div *ngIf="!SellerRating.valid && isInvalid">
+            <code> Please enter seller rating </code>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <label for="name">Allow Trade <span style="color: red;">*</span></label><br>
+          <p-inputSwitch [(ngModel)]="customer.AllowTrade" id="allowTrade" name="allowTrade"></p-inputSwitch>
+        </div>
+        <div class="col-md-2" *ngIf="isSellerRole">
+          <label for="name">Is Trade Seller <span style="color: red;">*</span></label><br>
+          <p-inputSwitch [(ngModel)]="customer.IsSeller" id="isSeller" name="isSeller" ></p-inputSwitch>
+        </div>
+        <div class="col-md-2" *ngIf="isSellerRole">
+          <label for="name">Is Zaruri Seller <span style="color: red;">*</span></label><br>
+          <p-inputSwitch [(ngModel)]="customer.IszaruriSeller" id="zaruriSeller" name="zaruriSeller" ></p-inputSwitch>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <label for="name"><b> Referral SKCode: </b></label><br>
+          <div class="btn-a" *ngIf="customer.ReferralSkCode != null">
+            <span>{{customer.ReferralSkCode}}</span>
+            &nbsp;<a href="javascript:void(0);"></a>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="name" style="margin-top: 9px;"><b> Is Referral: </b><span style="color: red;">*</span></label><br>
+          <p-checkbox name="Referral" value="{{customer.IsReferral}}" [(ngModel)]="customer.IsReferral" binary="true"
+            disabled></p-checkbox>
+        </div>
+      </div>
+
+
+      <div class="form-actions right col-sm-12 p-3">
+        <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-raised btn-primary" (click)="update(CustomerEditForm)">
+          Save
+        </button>
+      </div>
+    </form>
+  </p-tabPanel>
+  <p-tabPanel header="Seller Request">
+    <table class="table table-responsive-sm text-center" *ngIf="sellRequestList">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Id</th>
+          <th>Created Date</th>
+          <th>IsApproved</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let req of sellRequestList; let i = index;">
+          <td>{{i+1}}</td>
+          <td>{{req.Id}}</td>
+          <td>{{req.CreatedDate| date}}</td>
+          <td>{{req.IsApproved? "YES": "NO"}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </p-tabPanel>
+  <p-tabPanel header="Rating">
+    <table class="table table-responsive-sm text-center" *ngIf="customerRating">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Rated By</th>
+          <th>Rating</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rate of customerRating; let i = index;">
+          <td>{{i+1}}</td>
+          <td>{{rate.CreatorName}} -{{rate.CreatorSkCode}} ({{(rate.RatingType == 1)? 'Buyer' : 'Seller'}})</td>
+          <td>{{rate.Rating}}</td>
+          <td>{{rate.Comments}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </p-tabPanel>
+  <p-tabPanel header="Coupons">
+    <div *ngIf="showCoupon">
+      <app-customer-coupon-code [customerId]="customerId"></app-customer-coupon-code>
+    </div>
+    
+  </p-tabPanel>
+</p-tabView>

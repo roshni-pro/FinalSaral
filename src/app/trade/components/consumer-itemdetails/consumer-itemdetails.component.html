@@ -1,0 +1,64 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="Consumer-Itemdetails">
+  <div class="email-app-mail-content px-2 py-0 h-100 border-left border-left-2">
+    <div class="email-app-mail-content-detail h-100 overflow-hidden">
+      <div class="info-header">
+        <button type="button" class="close" aria-label="Close" (click)="closeDetails(false)">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 style="padding-top: 20px; padding-left: 20px"><b>Consumer Item Details</b></h4>
+        <ul class="nav border-bottom">
+          <li class="nav-item">
+            <a class="nav-link active" id="overview-btn">Overview</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Depo End -->
+
+      <div id="overview" *ngIf="displayTabs[0].bool" class="info-div text-sm">
+        <div class="info-content">
+          <div class="row m-2 mx-4">
+            <table class="table table-responsive-sm text-center">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Item Name</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>
+                    <div *ngIf="details.CartStatus=='Pending'">
+                      Edit/Line Item
+                    </div>
+                    </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cart of ShoppingCartItems; let i = index;">
+                  <td>{{i+1}}</td>
+                  <td>{{cart.ItemName}}</td>
+                  <td>{{cart.Qty}}</td>
+                  <td>{{cart.Price}}</td>
+                  <td>{{cart.OrderStatus}}</td>
+                  <td style="text-align: center">
+                    <div *ngIf="(details.CartStatus=='Pending' && cart.OrderStatus!='Payment Pending') 
+                                  && cart.OrderStatus != 'Cancelled' && details.PaymentMode != 'UPI'">
+                      <button style="color: #009DA0" class="btn" (click)="CutlineItem(cart)">Cut lineItem</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</section>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,107 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+<app-add-trade-item [ID]="itemID" (refreshParent)="reLoad()" (isdetailsclose)="CancelV1($event)" *ngIf="istrue">
+</app-add-trade-item>
+<div *ngIf="!istrue">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">Trade Item Master <i class="icon-handbag" aria-hidden="true"></i></h3>
+        </div>
+        <button type="button" class="btn btn-raised btn-raised btn-primary c1" style="margin-top:10px; margin-left:490px"
+            (click)="exportItem()">
+            Export Item List
+        </button>
+        <div>
+            <button type="button" class="btn btn-raised btn-primary align-self-end" style="margin-top:10px" (click)="addItems()">
+                <i class="fa fa-plus-circle"></i> Add Item </button>
+        </div>
+    </div>
+    <div class="container text-left">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="name">Status</label>
+                    <select class="form-control" id="status" name="status" [(ngModel)]="Active" (ngModelChange)="onStatusChange(Active)">
+                        <option value='null'>All Items</option>
+                        <option value=true>Active</option>
+                        <option value=false>Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="Category"><b> Category Name: </b></label>
+                    <select id="Category" name="Catlist" class="form-control" [(ngModel)]="CategoryId" (ngModelChange)="onCategoryChange(CategoryId)">
+                        <option value="">Select</option>
+                        <option *ngFor="let Catlist of CategoryList" [ngValue]="Catlist.CategoryId">
+                            {{ Catlist.CategoryName }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="Category"><b>Trade/Zaruri Items: </b></label>
+                    <select class="form-control" id="Itemstatus" name="Itemstatus" [(ngModel)]="IsConsumerItem" (ngModelChange)="onChange(IsConsumerItem)">
+                        <option value="">All Items</option>
+                        <option value=false>Trade Items</option>
+                        <option value=true>Zaruri Items</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="itemType">Global Search</label>
+                    <input type="text" id="Search" [(ngModel)]="paginator.SearchKeyWords"
+                    (ngModelChange)="dynamicSearch()" placeholder="Enter Item Name or Brand Name" name="itemType"
+                    class="form-control">
+                </div>
+            </div>
+            <div class="col-md-3" style="padding-top: 30px">
+                <div class="form-group">
+                    <button type="button" class="btn btn-raised btn-raised btn-warning" style="margin-left:10px"
+                    (click)="onReset()">
+                    Reset
+                    </button>
+                </div>
+            </div>             
+        </div>
+    </div>
+
+    <p-table #dt [columns]="cols" [value]="Items" dataKey="Id" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="load($event)"
+           [paginator]="true" [rows]="pageSize" [scrollable]="true" scrollHeight="75vh">
+    
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns">
+                    {{col.header}}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td *ngFor="let col of columns">
+                    {{rowData[col.field]}}
+
+                    <div style="align-content: center;" *ngIf="col.bools">
+                        <p-inputSwitch name="isActive" [(ngModel)]="rowData.IsActive" (ngModelChange)="Activeitemlist(rowData)"></p-inputSwitch>                     
+                    </div>
+                    <div style="align-content: center;" *ngIf="col.bool">
+                        <!-- <button type="button" class="btn btn-raised btn-primary float-left align-self-end"
+                        (click)="addItems()">
+                            <i class="fa fa-plus-circle"></i> Edit Item
+                        </button> -->
+                        <button style="color: #009DA0" class="btn" (click)="Edit(rowData.Id)">Edit Item</button>
+                    </div>
+                </td>
+                <!-- <td style="align-content: center;">
+                        <p-inputSwitch name="isActive"  (ngModelChange)="PublishSurvey(rowData)"></p-inputSwitch>
+                </td> -->
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

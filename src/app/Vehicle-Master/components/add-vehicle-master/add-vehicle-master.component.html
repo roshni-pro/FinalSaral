@@ -1,0 +1,419 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section>
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2" *ngIf="!Iseditable"><b>Add Vehicle master</b></h3>
+      <h3 class="m-2" *ngIf="Iseditable"><b>Edit Vehicle master</b></h3>
+      
+    </div>
+    <button type="button" class="btn btn-raised btn-warning" style="height: 50px;" (click)="backtoListPage()">
+      Back
+    </button>
+  </div>
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <form class="form " name="form" #vehicleForm="ngForm">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput3">City</label>
+            <br>
+            <select id="desg" name="desg" class="form-control" [(ngModel)]="data.CityId" #cityId="ngModel"
+            (change)="getWarehouse(data.CityId)">
+              <option value="" disabled>--select--</option>
+              <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                {{ city.CityName }}
+              </option>
+            </select>
+            <div *ngIf="isInvalid && !cityId.valid && cityId.errors.required">
+              <code>City is required</code>
+            </div>
+            <div class="col-md-4"></div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput3">Warehouse</label>
+            <br>
+            <select id="Warehouseid" name="Warehouseid" class="form-control"
+            [(ngModel)]="data.Warehouseid"  required="1"
+            #Warehouseid="ngModel">
+            <option value="" disabled>--Select--</option>
+            <option *ngFor="let w of warehouseList" [ngValue]="w.WareHouseId">
+              {{ w.WareHouseName }}
+            </option>
+          </select>
+          <div *ngIf="isInvalid && !Warehouseid.valid && Warehouseid.errors.required">
+            <code>Warehouse is required</code>
+          </div>
+            <div class="col-md-4"></div>
+          </div>
+        </div>
+        <!-- <div class="col-md-3">
+          <label for="lbFleettype">Fleet Type</label>
+          <select id="fleetType" name="fleetType" class="form-control" [(ngModel)]="data.FleetType"
+            placeholder="Select Fleet Type" required="1" maxlength="50" minlength="4"
+            (change)="getTransportList(data.FleetType)" #fleetType="ngModel">
+            <option value="" disabled>-----Select-----</option>
+            <option value="SK-Fix">SK-Fix</option>
+            <option value="SK-Adhoc">SK-Adhoc</option>
+            <option value="Agent">Agent</option>
+          </select>
+          <div *ngIf="isInvalid && !fleetType.valid && fleetType.errors.required">
+            <code>Vehicle Type is required</code>
+          </div>
+          <div class="col-md-4"></div>
+        </div> -->
+        <div class="col-md-3" *ngIf="!Iseditable">
+          <label for="transportname">Transport Name</label>
+          <select id="transportname" name="transportname" class="form-control" [(ngModel)]="data.transportId"
+            placeholder="Select Transport Name" required="1" maxlength="50" minlength="4"
+            (change)="getVehicleType(data.transportId)" #transportname="ngModel">
+            <option value="" disabled>-----Select-----</option>
+            <option *ngFor="let list of transportList" [ngValue]="list.Id">
+              {{ list.TransportName }}
+            </option>
+          </select>
+          <div *ngIf="isInvalid && !transportname.valid && transportname.errors.required">
+            <code>Vehicle Type is required</code>
+          </div>
+          <div class="col-md-4"></div>
+        </div>
+        <div class="col-md-3" *ngIf="!Iseditable">
+          <label for="lbVehicleType">Vehicle Type</label>
+          <select id="vehicleType" name="vehicleType" class="form-control selectType" [(ngModel)]="data.VehicleType"
+            placeholder="Select Vehicle Type" required="1" maxlength="50" minlength="4" #vehicleType="ngModel"
+            (change)="onSelectvehicle($event)">
+            <option value="" disabled>-----Select-----</option>
+            <option *ngFor="let list of VehicleList" [ngValue]="list.Id">
+              {{ list.VehicleType }}
+            </option>
+          </select>
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !vehicleType.valid && vehicleType.errors.required">
+            <code>Vehicle Type is required</code>
+          </div>
+         
+        </div>
+<!-- edit  -->
+        <div class="col-md-3" *ngIf="Iseditable">
+          <label for="lbVehicleType">Vehicle Type</label>
+          <br>
+         <b> {{data.VehicleType}}</b>               
+            <button type="button" class="btn btn-raised btn-primary" style="
+            margin: 0px 0px 0px 200px;" (click)="EditVehicleType(data)">
+              change
+            </button>         
+        </div>
+<!-- edit end  -->
+        <div class="col-md-3">
+          <label for="lbVehicleNo">Vehicle No.</label>
+          <input type="text" placeholder="Vehicle No." [(ngModel)]="data.VehicleNo" id="vehicleNo" name="vehicleNo"
+            class="form-control" required="1" maxlength="50" minlength="4" #vehicleNo="ngModel">
+          <div *ngIf="isInvalid && !vehicleNo.valid && vehicleNo.errors.required">
+            <code>Vehicle No. is required</code>
+          </div>
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !vehicleNo.valid && vehicleNo.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+          <!-- </div> -->
+        </div>
+        <div class="col-md-3 form-group">
+          <!-- <div class="form-group"> -->
+          <label for="lbModel">Model</label>
+          <input type="text" placeholder="Model" [(ngModel)]="data.Model" id="model" name="model" class="form-control"
+            required="1" maxlength="50" minlength="4" #model="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !model.valid && model.errors.required">
+            <code>Model is required</code>
+          </div>
+          <div *ngIf="isInvalid && !model.valid && model.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+          <!-- </div> -->
+        </div>
+        <div class="col-md-3 form-group">
+          <!-- <div class="form-group"> -->
+          <label for="lbregistrationNo">Registration No.</label>
+          <input type="text" placeholder="Registration No." [(ngModel)]="data.RegistrationNo" id="registrationNo"
+            name="registrationNo" class="form-control selectType" required="1" maxlength="50" minlength="4"
+            #registrationNo="ngModel">
+          <div class="col-md-12"></div>
+          <div *ngIf="isInvalid && !registrationNo.valid && registrationNo.errors.required">
+            <code>Registration No. is required</code>
+          </div>
+          <div *ngIf="isInvalid && !registrationNo.valid && registrationNo.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+          <!-- </div> -->
+        </div>
+        <div class="col-md-3 form-group">
+          <!-- <div class="form-group"> -->
+          <label for="lbOwnerName">Owner Name</label>
+          <input type="text" placeholder="Owner Name" [(ngModel)]="data.OwnerName" id="ownerName" name="ownerName"
+            class="form-control selectType" required="1" maxlength="50" minlength="4" #ownerName="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !ownerName.valid && ownerName.errors.required">
+            <code>Owner Name is required</code>
+          </div>
+          <div *ngIf="isInvalid && !ownerName.valid && ownerName.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+          <!-- </div> -->
+        </div>
+
+        <!-- 2ndrow -->
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbchassisNo">Chassis No. (Optional)</label>
+            <input type="text" placeholder="Chassis No." [(ngModel)]="data.ChasisNo" id="chassisNo" name="chassisNo"
+              class="form-control selectType" maxlength="50" minlength="4" #chassisNo="ngModel">
+            <div class="col-md-4"></div>
+            <div *ngIf="isInvalid && !chassisNo.valid && chassisNo.errors.required">
+              <code>Offer Name is required</code>
+            </div>
+            <div *ngIf="isInvalid && !chassisNo.valid && chassisNo.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbVehicleType">Ownership Type</label>
+            <select id="ownershipType" name="ownershipType" class="form-control selectType"
+              [(ngModel)]="data.OwnershipType" placeholder="Select Ownership Type" required="1" maxlength="50"
+              minlength="4" #ownershipType="ngModel">
+              <option value="">-----Select-----</option>
+              <option value="SK-Fix">SK-Fix</option>
+              <option value="SK-Adhoc">SK-Adhoc</option>
+              <option value="Agent">Agent</option>
+            </select>
+
+            <div *ngIf="isInvalid && !ownershipType.valid && ownershipType.errors.required">
+              <code>Ownership Type is required</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbMakerName">Maker name</label>
+            <input type="text" placeholder="Maker Name" [(ngModel)]="data.MakerName" id="makerName" name="makerName"
+              class="form-control selectType" required="1" maxlength="50" minlength="4" #makerName="ngModel">
+            <!-- <div class="col-md-4"></div> -->
+            <div *ngIf="isInvalid && !makerName.valid && makerName.errors.required">
+              <code>Maker Name is required</code>
+            </div>
+            <div *ngIf="isInvalid && !makerName.valid && makerName.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbVehiclepermit">PUC NO (Optional)</label>
+            <input type="text" placeholder="PUC NO" [(ngModel)]="data.PUCNo" id="vehiclepermit"
+              name="vehiclepermit" class="form-control selectType" maxlength="50" minlength="4"
+              #vehiclepermit="ngModel">
+            <!-- <div class="col-md-4"></div> -->
+            <div *ngIf="isInvalid && !vehiclepermit.valid && vehiclepermit.errors.required">
+              <code>PUCNo is required</code>
+            </div>
+            <div *ngIf="isInvalid && !vehiclepermit.valid && vehiclepermit.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbengineNo">Engine No. (Optional)</label>
+            <input type="text" placeholder="Engine No." [(ngModel)]="data.EngineNo" id="engineNo" name="engineNo"
+              class="form-control selectType" maxlength="50" minlength="4" #engineNo="ngModel">
+            <!-- <div class="col-md-4"></div> -->
+            <div *ngIf="isInvalid && !engineNo.valid && engineNo.errors.required">
+              <code>Engine No. is required</code>
+            </div>
+            <div *ngIf="isInvalid && !engineNo.valid && engineNo.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbInsuranceNoNo">InsuranceNo No. (Optional)</label>
+            <input type="text" placeholder="InsuranceNo No." [(ngModel)]="data.InsuranceNo" id="insuranceNo"
+              name="insuranceNo" class="form-control selectType" maxlength="50" minlength="4"
+              #insuranceNo="ngModel">
+            <div class="col-md-12"></div>
+            <div *ngIf="isInvalid && !insuranceNo.valid && insuranceNo.errors.required">
+              <code>Insurance No. is required</code>
+            </div>
+            <div *ngIf="isInvalid && !insuranceNo.valid && insuranceNo.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbUnloadedWeight">Unloaden Weight (KG)</label>
+            <input type="number" placeholder="Unloaden Weight (KG)" [(ngModel)]="data.VehicleWeight" id="unloadedWeight"
+              name="unloadedWeight" class="form-control selectType" required="1" maxlength="50" minlength="4"
+              #unloadedWeight="ngModel">
+            <!-- <div class="col-md-4"></div> -->
+            <div *ngIf="isInvalid && !unloadedWeight.valid && unloadedWeight.errors.required">
+              <code>Unloaded Weight is required</code>
+            </div>
+            <div *ngIf="isInvalid && !unloadedWeight.valid && unloadedWeight.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <form class="form " name="form" #vehicleDateForm="ngForm">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbinsurancevalid">Insurance validity</label>
+            <p-calendar [showIcon]="true" [(ngModel)]="data.InsuranceValidity" id="insurancevalid" name="insurancevalid"
+              [readonlyInput]="true" required #insurancevalid="ngModel">
+            </p-calendar>
+            <div *ngIf="isInvalid && !insurancevalid.valid && insurancevalid.errors.required">
+              <code>Insurance Validity is required</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbpucvalidity">PUC validity</label>
+            <p-calendar [showIcon]="true" [(ngModel)]="data.PUCValidTill" id="pucvalidity" name="pucvalidity"
+              [readonlyInput]="true" required #pucvalidity="ngModel">
+            </p-calendar>
+            <div *ngIf="isInvalid && !pucvalidity.valid && pucvalidity.errors.required">
+              <code>PUC Validity is required</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <form class="form " name="form" #vehicleImgForm="ngForm">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="uploadAdvertisements">Registration Copy Front(Upload):</label>
+            <input class="btn btn-raised btn-info" id="registerfile" type="file" accept="image/*"
+              (change)="uploadRegistrationFile($event.target.files)" />
+            <button type="button" class="btn btn-raised btn-primary" (click)="UploadRegistrationImage()">
+              Upload
+            </button>
+            <div class="form-group">
+              <img *ngIf="RegistrationImage" src="{{baseURL}}{{RegistrationImage}}" style="height: 75px;width: 75px;" class="wcr">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="uploadAdvertisements">Registration Copy Back(Upload):</label>
+            <input class="btn btn-raised btn-info" id="registerfile" type="file" accept="image/*"
+              (change)="uploadRegistrationFileBack($event.target.files)" />
+            <button type="button" class="btn btn-raised btn-primary" (click)="UploadRegistrationImageBack()">
+              Upload
+            </button>
+            <div class="form-group">
+              <img *ngIf="RegistrationImageBack" src="{{baseURL}}{{RegistrationImageBack}}" style="height: 75px;width: 75px;" class="wcr">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="insurancevalidityfile">Insurance Vailidity Copy (Upload):</label>
+            <input class="btn btn-raised btn-info" id="insurancevalidityfile" type="file" accept="image/*"
+              (change)="uploadInsuranceValidityFile($event.target.files)" />
+            <button type="button" class="btn btn-raised btn-primary" (click)="UploadInsuranceVaildityImage()">
+              Upload
+            </button>
+            <div class="form-group">
+              <img *ngIf="InsuranceImage" src="{{baseURL}}{{InsuranceImage}}" style="height: 75px;width: 75px;" class="wcr">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="pucvalidityfile">PUC Validity Copy (Upload):</label>
+            <input class="btn btn-raised btn-info" id="pucvalidityfile" type="file" accept="image/*"
+              (change)="uploadPUCValidityFile($event.target.files)" />
+            <button type="button" class="btn btn-raised btn-primary" (click)="UploadPUCValidityImage()">
+              Upload
+            </button>
+            <div class="form-group">
+              <img *ngIf="PUCimage" src="{{baseURL}}{{PUCimage}}" style="height: 75px;width: 75px;" class="wcr">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+
+  <div class="ui-fluid shadow mb-2 bg-white rounded form-actions right p-3">
+    <button type="button" class="btn btn-raised btn-warning" (click)="backtoListPage()">
+      Back
+    </button>
+    <button type="button" class="btn btn-raised btn-primary" (click)="save(data,vehicleForm)">
+      Save
+    </button>
+  </div>
+</section>
+  <div *ngIf="Iseditable">
+    <p-dialog [(visible)]="isOpenVehicletype" [style]="{width: '40vw',height: '40%'}" appendTo="body">
+      <p-header>
+        change Vehicle type </p-header>
+      <div class="row">
+        <div class="col-md-6">
+          <label for="transportname">Transport Name</label>
+          <select id="transportname" name="transportname" class="form-control" [(ngModel)]="data.transportId"
+            placeholder="Select Transport Name" required="1" maxlength="50" minlength="4"
+            (change)="getVehicleType(data.transportId)" #transportname="ngModel">
+            <option value="" disabled>-----Select-----</option>
+            <option *ngFor="let list of transportList" [ngValue]="list.Id">
+              {{ list.TransportName }}
+            </option>
+          </select>
+          <div class="col-md-4"></div>
+        </div>
+        <div class="col-md-6">
+          <label for="lbVehicleType">Vehicle Type</label>
+          <select id="vehicleType" name="vehicleType" class="form-control selectType" [(ngModel)]="data.VehicleType"
+            placeholder="Select Vehicle Type" required="1" maxlength="50" minlength="4" #vehicleType="ngModel"
+            (change)="onSelectvehicleType($event)">
+            <option value="" disabled>-----Select-----</option>
+            <option *ngFor="let list of VehicleList" [ngValue]="list.Id">
+              {{ list.VehicleType }}
+            </option>
+          </select>
+          <div class="col-md-4"></div>
+        </div>
+      </div>
+      <p-footer>
+        <button type="button" pButton (click)="isOpenVehicletype=false;showTable=true;" label="Close"></button>
+      </p-footer>
+    </p-dialog>
+  </div>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

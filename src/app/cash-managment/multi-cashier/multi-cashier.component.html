@@ -1,0 +1,345 @@
+<div>
+    <div class="row" >
+        <div class="col-sm-12">
+          <div class="content-header head" >Warehouse Cash History</div>
+        </div>
+      </div>  
+</div>
+
+<div class="container-fluid ">
+    <div class="card mt-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4">
+                    <p-dropdown  placeholder="Select a Warehouse"  [options]="name" optionLabel="WarehouseName" optionValue="WarehouseId" [(ngModel)]="selected.Id" (onChange)="getData()">
+                         
+                    </p-dropdown>
+                </div>
+                <div class="col-4">
+                    <!-- <input id="dat" type='date' title="Select Date" autocomplete="off" class="form-control" [(ngModel)]="selected.Date"/> -->
+                    <!-- <p-calendar name="startDateInput" [(ngModel)]="selected.Date" [showIcon]="true" name="fromDate" ></p-calendar> -->
+                    <label><h3><b>{{selected.Date | date :'short'}}</b></h3></label>
+                </div>                
+                <div class="col-2">
+                    <button type="button" class="btn btn-primary" (click)="search(selected.Id.WarehouseId)">Search</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <!-- <button type="button" class="btn btn-warning"  >Back</button> -->
+                    <button class="btn btn-raised btn-raised btn-primary" (click)="back()">Back</button>&nbsp;&nbsp;&nbsp;&nbsp; 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row" *ngIf="BODCashData"><!--&& OtherCasherDataDcs[0].OtheCasherPeopleName != ''-->
+    <div class="col-3"></div>
+    <div class="col-3">
+        <div class="btn-br">
+            <button class="btn" >Cashier-{{BODCashData.CasherPeopleName ? BODCashData.CasherPeopleName : 'Not Found'}}</button>
+        </div>
+        <div class="container-fluid ">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div style="text-align:center ;" >
+                        <!-- <button icon="pi pi-info-circle"  label="">Cashier-1</button> -->
+                       
+                        <!-- <span *ngIf="request==true && acceptrequest==false && cashverified==false && verified==false">
+                            <button pButton type="button" class="p-button-info text-center" (click)="showDialogRequest()"><h4><b>REQUEST</b></h4></button>
+                        </span> -->
+                    </div>
+                    <p-table  [value]="todaysCollection">
+                        <ng-template pTemplate="caption">
+                        <h3> CASH COLLECTION   </h3><!--{{BODCashData && BODCashData.BOD | date : 'dd/MM/yyyy'}}-->
+                        <div class="text-right" *ngIf="(selected.Date | date: 'shortDate') == (todayDate | date: 'shortDate')">                           
+                            <span *ngIf="cashiermsg=='RequestBtn' && ( totalCurrencyList.length > 0 ? totalCurrencyList[0].TotalNotes-TotalSubmittedAmountCashAmt != 0 : 0)">
+                                <button type="button" class="btn btn-primary p-button-info" (click)="showDialogRequest()"><b>REQUEST</b></button>
+                            </span>
+                            <span *ngIf="cashiermsg=='AcceptBtn' ">
+                                <button  type="button" class="btn btn-primary p-button-info2" (click)="showDialogRequestAccept()">REQUEST ACCEPT</button>
+                            </span>
+                            <span *ngIf="cashiermsg=='VerifyBtn'" >
+                                <button type="button" class="btn btn-primary p-button-info1" (click)="showDialogVerify()">Verify</button>
+                            </span>
+                            <span *ngIf="cashiermsg.indexOf('Btn') ==-1" >
+                                <button type="button" class="btn btn-primary p-button-info" ><b>{{cashiermsg}}</b></button>
+                            </span>
+                        <!--
+                        <span *ngIf="ButtonShowRequestPeople == true && ButtonShowAcceptPeople == false && (totalCurrencyList.length > 0 ? totalCurrencyList[0].TotalNotes == 0 : 0) && BODCashData.CasherPeopleName == ''">
+                            <button type="button" class="btn btn-primary p-button-info" (click)="showDialogRequest()" disabled="totalCurrencyList[0].TotalNotes == 0"><b>REQUEST</b></button>
+                        </span>
+                        <span *ngIf="ButtonShowRequestPeople == true && ButtonShowAcceptPeople == false && (totalCurrencyList.length > 0 ? totalCurrencyList[0].TotalNotes > 0 : 0) && BODCashData.CasherPeopleName != ''">
+                            <button type="button" class="btn btn-primary p-button-info" (click)="showDialogRequest()" ><b>REQUEST</b></button>
+                        </span>
+                        <span *ngIf="requestSend == true && ButtonShowRequestPeople == false">
+                            <button type="button" class="btn btn-primary p-button-info" disabled="requestSend == true" ><b>REQUEST Sent</b></button>
+                        </span>
+                            <span *ngIf="ButtonShowAcceptPeople == true">
+                                <button  type="button" class="btn btn-primary p-button-info2" (click)="showDialogRequestAccept()">REQUEST ACCEPT</button>
+                            </span>
+                            <span *ngIf="ButtonShowVerifiePeople == true" >
+                                <button type="button" class="btn btn-primary p-button-info1" (click)="showDialogVerify()">Verify</button>
+                            </span>
+                            <span *ngIf="verified == true">
+                                <button type="button" class="btn-primary" (click)="showDialogVerified()">Verified</button>
+                            </span>
+                        -->
+                    </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Denomination</th>
+                                <th >Quantity</th>
+                                <th >Amount</th>
+                            </tr>
+                            <br>                            
+                            <tr colspan="3"><b>Notes</b></tr>
+                            <!-- <tr colspan="3"><b>Coins</b></tr> -->
+                        </ng-template>
+                        <ng-template pTemplate="body" let-r >
+                            <tr *ngIf="r.CashCurrencyType=='Notes'">       
+                                <td>₹ {{r.CurrencyDenominationTitle}}</td>                  
+                                <td > {{r.CurrencyCount}}</td>
+                                <td>{{r.CurrencyDenominationTotal}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <p-table  [value]="todaysCollection ">
+                        <ng-template pTemplate="header">
+                            <tr><b>Coins</b></tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-r >                       
+                            <tr *ngIf="r.CashCurrencyType=='Coins'">
+                                <td>{{r.CurrencyDenominationTitle}}</td>
+                                <td>{{r.CurrencyCount}}</td>
+                                <td>{{r.CurrencyDenominationTotal}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    
+                    <p-table  [value]="totalCurrencyList">
+                        <ng-template pTemplate="body" let-r >
+                            
+                            <tr  colspan="1.5">                         
+                                <td> <b> Notes</b> </td>
+                                <td> {{r.NotesAmount}}</td>
+                            </tr>
+                            <tr  colspan="1.5"> 
+                                <td> <b>Coins</b></td>                        
+                                <td> {{r.CoinsAmount}}</td>
+                            </tr>
+                            <tr  colspan="1.5">                         
+                                <td><b>Total</b></td>
+                                <td>{{r.TotalNotes}}</td>
+                            </tr>
+                            <tr  colspan="1.5" *ngIf="TotalSubmittedAmountCashAmt>0">                         
+                                <td><b>Submitted:</b></td>
+                                <td>{{TotalSubmittedAmountCashAmt}}</td>
+                            </tr>
+                            <tr  colspan="1.5" *ngIf="TotalSubmittedAmountCashAmt>0">                         
+                                <td><b>Remainning:</b></td>
+                                <td>{{r.TotalNotes-TotalSubmittedAmountCashAmt}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <hr>
+                    <div class="col-md-12 br">
+                        <span class="ctr">Cheque Summary</span>
+                    </div>
+                    <table style="width:55%">
+                        <thead>
+                            <th></th>
+                             <th></th>
+                        </thead>
+                        <tbody >
+                        <tr>
+                            <td colspan="1.5"><b>Total Cheque</b></td>
+                            <td style="float: right;"> {{BODCashData.WarehouseTotalTodayChequeCount}}</td>
+                        </tr>
+                        <br>
+                        <tr>
+                            <td colspan="1.5"><b>Total Cheque Amount</b></td>
+                            <td style="float: right;"> {{BODCashData.WarehouseTotalChequeAmount}}</td>
+                        </tr>
+                        <tr *ngIf="TotalSubmittedAmounttChequeAmt>0">
+                            <td colspan="1.5"><b>Total Cheque Submitted</b></td>
+                            <td style="float: right;"> {{TotalSubmittedAmounttChequeAmt}}</td>
+                        </tr>
+                        <tr *ngIf="TotalSubmittedAmounttChequeAmt>0">
+                            <td colspan="1.5"><b>Remainning Cheque Amount</b></td>
+                            <td style="float: right;"> {{BODCashData.WarehouseTotalChequeAmount-TotalSubmittedAmounttChequeAmt}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- --------------------------------------------- -->
+    <ng-container *ngFor="let c of OtherCasherDataDcs" >
+        <div class="col-3" >
+            <div class="btn-br">
+                <button class="btn" >Cashier-{{c.OtheCasherPeopleName ? c.OtheCasherPeopleName : 'Not Found'}}</button>
+                </div>
+            <div class="container-fluid ">
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <div style="text-align:center ;" > 
+                                <!-- <button   icon="pi pi-info-circle" label="">REQUEST</button> -->
+                        </div>
+
+                        <p-table  [value]="c.WarehouseTodayCash">
+                            <ng-template pTemplate="caption">
+                            <h3> CASH COLLECTION </h3><!--{{BODCashData && BODCashData.BOD | date : 'dd/MM/yyyy'}} -->
+                                <!-- <div >
+                                    <span *ngIf="ButtonShowAcceptPeople == true">
+                                        <button  type="button" class="btn btn-warning p-button-info2" (click)="showDialogRequestAccept(c)" disabled="c.OtherPeopleId != userId">REQUEST ACCEPT</button>
+                                    </span>
+                                    <span *ngIf="ButtonShowAcceptPeople == false && ButtonShowRequestPeople == true">
+                                        <button  type="button" class="btn btn-warning p-button-info2" (click)="showDialogRequestAccept(c)" disabled="c.OtherPeopleId != userId && ButtonShowRequestPeople == true">REQUEST ACCEPT</button>
+                                    </span>
+                                </div> -->
+                                <div class="text-right">
+                                    <label *ngIf="ButtonShowAcceptPeople == true">
+                                        <span class="vrfy">Request Send</span>
+                                    </label>
+                                    <span *ngIf="ButtonShowAcceptPeople == false"><br></span>
+                                    <!-- <span *ngIf="ButtonShowVerifiePeople == true" >
+                                        <button type="button" class="btn btn-primary p-button-info1" (click)="showDialogVerify(c)">Verify</button>
+                                    </span> -->
+                                </div>
+                                <!-- <div>
+                                    <span *ngIf="verified == true">
+                                        <button pButton pRipple type="button" class="p-button-help" (click)="showDialogVerified()">Verified</button>
+                                    </span>
+                                </div> -->
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Denomination</th>
+                                    <th >Quantity</th>
+                                    <th >Amount</th>
+                                </tr>
+                                <br>
+                                <tr><b> Notes</b></tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-r >
+                                <tr *ngIf="r.CashCurrencyType=='Notes'">    
+                                    <td>₹ {{r.CurrencyDenominationTitle}}</td>                     
+                                    <td > {{r.CurrencyCount}}</td>
+                                    <td>{{r.CurrencyDenominationTotal}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <p-table  [value]="c.WarehouseTodayCash ">
+                            <ng-template pTemplate="header">
+                                <tr><b>Coins</b></tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-r >                       
+                                <tr *ngIf="r.CashCurrencyType=='Coins'">
+                                    <td>{{r.CurrencyDenominationTitle}}</td>
+                                    <td>{{r.CurrencyCount}}</td>
+                                    <td>{{r.CurrencyDenominationTotal}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <p-table  [value]="totalotherCurrencyList">
+                            <ng-template pTemplate="body" let-r >
+                                <tr  colspan="1.5">                         
+                                    <td> <b> Notes</b> </td>
+                                    <td> {{r.NotesAmount}}</td>
+                                </tr>
+                                <tr  colspan="1.5"> 
+                                    <td> <b>Coins</b></td>                        
+                                    <td> {{r.CoinsAmount}}</td>
+                                </tr>
+                                <tr  colspan="1.5">                         
+                                    <td><b>Total</b></td>
+                                    <td>{{r.TotalNotes}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <hr>
+                        <div class="col-md-12 br">
+                            <span class="ctr">Cheque Summary</span>
+                        </div>
+                        <table style="width:55%">
+                            <thead>
+                                <th></th>
+                                 <th></th>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><b>Total Cheque Submitted</b></td>
+                                <td style="float: right;"> {{c.OtherCasherTotalTodayChequeCount}}</td>
+                            </tr>
+                            <br>
+                            <tr>
+                                <td><b>Total Cheque Amount</b></td>
+                                <td style="float: right;"> {{c.OtherCasherTotalChequeAmount}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+<!-- --------------------------------------------- -->
+</div>
+
+<p-dialog header="Alert"  [(visible)]="display">
+    <div class="text-center mt-1">
+        <h4>Accept Handover From Cashier- {{OtherCasherDataDcs && OtherCasherDataDcs.length > 0 ? OtherCasherDataDcs[0].OtheCasherPeopleName : 'Not Found'}}?</h4>
+    </div>
+    <div class="text-center mt-3">
+        <p-button label="Yes" (click)="reqAccptBtnEnable()"></p-button>
+        <p-button label="No" (click)="display = false;" class="ml-3"></p-button>
+    </div>
+</p-dialog>
+
+<!-- cash collection Start -->
+<p-dialog header="Alert"  [(visible)]="cashDisplay">
+    
+    <div class="text-center mt-1">
+        <h4>   Request CASHIER-{{OtherCasherDataDcs && OtherCasherDataDcs.length > 0 ? OtherCasherDataDcs[0].OtheCasherPeopleName : 'Not Found'}} for Handover ?</h4>
+    </div>
+    <div class="text-center mt-3">
+        <p-button label="Yes" (click)="reqAccptBtnEnable()"></p-button>
+        <p-button label="No" (click)="reqaccptclose()" class="ml-3"></p-button>
+    </div>
+</p-dialog>
+
+<!-- <p-dialog header="Alert"  [(visible)]="dialogReqAcc">
+    
+    <div class="text-center mt-1">
+        <h4>Cash verified from Cashier-{{OtherCasherDataDcs.length > 0 ? OtherCasherDataDcs[0].OtheCasherPeopleName : 'Not Found'}}?</h4>
+    </div>
+    <div class="text-center mt-3">
+        <p-button label="Yes" (click)="verifybtnenable()"></p-button>
+        <p-button label="No" class="ml-3" (click)="dialogReqAcc = false;"></p-button>
+    </div>
+</p-dialog> -->
+
+
+<p-dialog header="Alert"  [(visible)]="dialogVerify">    
+    <div class="text-center mt-1">
+        <h4>Cash verified with Cashier-{{OtherCasherDataDcs && OtherCasherDataDcs.length > 0 ? OtherCasherDataDcs[0].OtheCasherPeopleName : 'Not Found'}}</h4>
+    </div>
+    <div class="text-center mt-3">
+        <p-button label="Yes" (click)="verifiedbtnenb()"></p-button>
+        <p-button label="No" class="ml-3" (click)="dialogVerify = false;"></p-button>
+    </div>
+</p-dialog>
+
+<!-- verified btn-->
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+
+
+
+

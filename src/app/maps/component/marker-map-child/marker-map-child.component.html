@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-md-12">
+    <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false"
+      [style.height.px]="myInnerHeight">
+      <agm-marker *ngFor="let m of markers; let i = index" [latitude]="m.lat" [longitude]="m.lng" [iconUrl]="m.icon"
+        (mouseOver)="onMouseOver(infoWindow, $event)" (mouseOut)="onMouseOut(infoWindow, $event)">
+        <agm-info-window #infoWindow>
+          <div style="text-align: center;">
+            <strong>{{m.Skcode}} - {{m.Mobile}}</strong>
+          </div>
+          <table class="table table-dark table-bordered">
+            <tr>
+              <td>
+                Total Orders
+              </td>
+              <td>
+                {{m.TotalOrders}}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Total Sales
+              </td>
+              <td>
+                {{m.TotalSales}}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                KK Sales
+              </td>
+              <td>
+                {{m.KisanKiranaSales}}
+              </td>
+            </tr>
+            
+          </table>
+        </agm-info-window>
+      </agm-marker>
+      <agm-polygon [fillColor]="item.fillColor" *ngFor="let item of zonesPath; let i=index" [polyDraggable]="false"
+        [paths]="item.ZonePaths" fillOpacity="0.2" strokeOpacity="0.1">
+        <!-- (polyMouseOver)="polyMouseUp(item, polygon, infoWindow, true)"
+      (polyMouseOut)="polyMouseUp(item, polygon, infoWindow, false)"  -->
+      </agm-polygon>
+    </agm-map>
+  </div>
+
+</div>

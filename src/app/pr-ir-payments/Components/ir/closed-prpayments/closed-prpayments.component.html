@@ -1,0 +1,131 @@
+<p-toast [style]="{marginTop: '50px'}"  appendTo="body" ></p-toast>
+<p-blockUI [blocked]="isLoading"  appendTo="body" ></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"  appendTo="body" 
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+
+
+<div class="my-2 d-flex justify-content-between">
+    <!-- <div class="ui-g-2">
+        <button pButton type="button" label="Redirect To PR" (click)="redirectiroutstanding()"
+            class="btn btn-raised btn-primary mr-1 shadow mr-24 a1"></button>
+    </div> -->
+</div>
+<div class="ui-fluid">
+    <section id="basic-form-layouts">
+        <div class="shadow bg-white py-2">
+            <div class="ui-g">
+                <div class="ui-g-12" *ngIf="showTable">
+                    <p-table #dt [value]="pageList" [paginator]="true" [totalRecords]="totalRecords" [lazy]="true"
+                        (onLazyLoad)="onLoadPage($event)" [rows]="filter.Take" text-align: center>
+
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Supplier Name</th>
+                                <th>Supplier Code</th>
+                                <th>PurchaseOrderId</th>
+                                <th>CreationDate</th>
+                                <th>PaymentDate</th>
+                                <th>PaidAmount</th>
+                                <th>RemainingAmount</th>
+                            </tr>
+                        </ng-template>
+
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td>{{row.SupplierName}}</td>
+                                <td>{{row.SupplierCode}}</td>
+                                <td>{{row.PurchaseOrderId}}</td>
+                                <td>{{row.CreationDate | date}}</td>
+                                <td>{{row.PaymentDate | date}}</td>
+                                <td>{{row.PaidAmount}}</td>
+                                <td>
+                                    <a href="javascript:void(0);" pTooltip="Settle Payment" tooltipPosition="top"
+                                        (click)="settlePayment(row)">
+                                        {{row.RemainingAmount}}
+                                    </a>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+<div *ngIf="isOpenPaymentDialog">
+    <p-dialog header="Payment Settlement" appendTo="body" [(visible)]="isOpenPaymentDialog" [style]="{width: '90vw'}"
+        [baseZIndex]="10000">
+        <div class="row">
+            <div *ngIf="irList" class="col-8">
+                <p-table #tt [value]="irList" [paginator]="true" [rows]="5"
+                    [globalFilterFields]="['InvoiceNumber', 'PurchaseOrderId']">
+                    <ng-template pTemplate="caption">
+                        <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+                        <input type="text" pInputText size="50" placeholder="Global Filter"
+                            (input)="tt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Select</th>
+                            <th *ngFor="let col of irPopupColumnList">
+                                {{col.header}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row>
+                        <tr>
+                            <td>
+                                <a href="javascript:void(0);" class="a-hrf" (click)="onCheckUnCheckIR(row)">
+                                    <i class="fa fa-check-square-o fa-2x" *ngIf="row.IsSelected" aria-hidden="true"></i>
+                                    <i class="fa fa-square-o fa-2x" *ngIf="!row.IsSelected" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                            <td *ngFor="let col of irPopupColumnList">
+                                {{col.isDate ? (row[col.field] | date) : row[col.field]}}
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+            <div class="col-4" *ngIf="selectedIRList" >
+                <p-table [value]="selectedIRList" [paginator]="true" [rows]="5">
+                    <ng-template pTemplate="caption">
+                        <span>Total Outstanding Amount : {{selectedPayment.RemainingAmount}}</span>
+                        <br>
+                        <span>Unsettled Amount : {{selectedPayment.AfterSettleRemainingAmount}}</span>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>POId</th>
+                            <th>InvoiceNumber</th>
+                            <th>SettleAmount</th>
+                            <th>PayingAmount</th>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row>
+                        <tr>
+                            <td> {{row.PurchaseOrderId}} </td>
+                            <td>{{row.InvoiceNumber}}</td>
+                            <td>{{row.SettleAmount}}</td>
+                            <td>{{row.PayingAmount}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+
+        <br>
+        <p-footer>
+            <button type="button" pButton (click)="savePayment()" label="Save"></button>
+            <button type="button" pButton (click)="cancelPayment()" label="Cancel" class="ui-button-secondary"></button>
+        </p-footer>
+    </p-dialog>
+</div>

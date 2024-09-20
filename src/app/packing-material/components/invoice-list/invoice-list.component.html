@@ -1,0 +1,231 @@
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<section *ngIf="!isClick">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="content-header">Invoices</div>
+        </div>
+    </div>
+    <br />
+    <div class="row float-right" style="margin-right: 15px;">
+        <button type="button" class="btn btn-raised btn-primary" (click)="AddInvoice()">AddInvoice</button>
+    </div>
+    <br /><br />
+    <div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover">
+        <div class="position-relative">
+            <p-table #dt [globalFilterFields]="cols" [value]="invoiceList" [paginator]="true" [rows]="10" [lazy]="true"
+                [totalRecords]="totalRecords" (onLazyLoad)="load($event)" dataKey="InvoiceChallanNo" [scrollable]="true"
+                scrollHeight="70vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <!-- <th>Edit</th> -->
+                        <th *ngFor="let col of cols" style="text-align: center">
+                            {{col.header}}
+                            <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                    <tr>
+                        <td *ngFor="let col of cols" style="text-align: center" (click)="open(rowData)">
+                            <!--(click)="open(rowData)"-->
+                            {{rowData[col.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+
+    </div>
+
+</section>
+
+<section class="invoiceSection" *ngIf="isClick">
+    <div class="cont container">
+        <div class="buttonSection">
+            <button class="btn btn-raised btn-primary" (click)="back()">Back</button>
+            <button class="btn btn-raised btn-primary" (click)="print()">Print</button>
+        </div>
+
+
+        <div class="card " id='print-section'>
+            <div>
+                <div class="row">
+                    <div class="col-10">
+                        {{data.GetRawMaterialMstDetails.CompanyName}}<br>
+                        Address : {{data.GetRawMaterialMstDetails.Address}}<br>
+                        GST NO. {{data.GetRawMaterialMstDetails.WareHouseGSTin}}
+                    </div>
+                    <div class="col-2 text-left">
+                        {{data.GetRawMaterialMstDetails.Type}}
+                    </div>
+                </div>
+
+
+                <table style="margin-top:15px;" border="1" cellpadding="0px" cellspacing="0px" width="95.9%">
+                    <thead style="background:#f6f6f6;">
+                        <tr>
+                            <th colspan="2" style="padding:20px; text-align: center;">
+                                {{data.GetRawMaterialMstDetails.InvoiceType}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 10px;">INVOICE NO. -: {{data.GetRawMaterialMstDetails.InvoiceChallanNo}}
+                            </td>
+                            <td style="padding: 10px;">Transport Mode: {{data.GetRawMaterialMstDetails.TransportMode}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">INVOICE DATE -:
+                                {{data.GetRawMaterialMstDetails.CreatedDate | date: 'dd/MM/yyyy' }}</td>
+                            <td style="padding: 10px;">Vehicle number :{{data.GetRawMaterialMstDetails.VehicleNumber}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">State :{{data.GetRawMaterialMstDetails.State}}</td>
+                            <td style="padding: 10px;">Date :
+                                {{data.GetRawMaterialMstDetails.CreatedDate | date: 'dd/MM/yyyy' }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">Code : {{WareHouseGSTin}}</td>
+                            <td style="padding: 10px;">Place : {{data.GetRawMaterialMstDetails.WareHouseCity}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h6 style="margin-top:15px;">BILL TO</h6>
+                <h6>Name : {{data.GetRawMaterialMstDetails.BilltoCompanyName}} </h6>
+                <h6 style="max-width: 850px;">Address :
+                    {{data.GetRawMaterialMstDetails.BilltoAddress}},{{data.GetRawMaterialMstDetails.BillToState}}</h6>
+                <h6>GSTIN : {{data.GetRawMaterialMstDetails.BilltoGSTin}}</h6>
+                <h6>SHIP TO ADDRESS : {{data.GetRawMaterialMstDetails.ShippedtoAddress}}</h6>
+                <h6>GSTIN : {{data.GetRawMaterialMstDetails.ShippedtoGSTin}} </h6>
+                <h6>State: {{data.GetRawMaterialMstDetails.ShippedToState}} <span
+                        style="vertical-align: top;float: right;width: 50%;">Code-{{ShippedtoGSTin}}</span></h6>
+
+                <table style="margin:50px 0px;" border="1" cellpadding="0px" cellspacing="0px" width="95.9%">
+                    <thead style="background:#f6f6f6;">
+                        <tr>
+                            <!-- <th style="padding:20px 0px;">S. No.</th> -->
+                            <th style="padding:20px 10px;">Description of Goods</th>
+                            <th style="padding:20px 10px;">HSN code</th>
+                            <th style="padding:20px 10px;">UOM</th>
+                            <th style="padding:20px 10px;">Qty</th>
+                            <th style="padding:20px 10px;">Rate</th>
+                            <th style="padding:20px 10px;">Amount</th>
+                            <th style="padding:20px 10px;">Tax Rate</th>
+                            <th style="padding:20px 10px;">Discount</th>
+                            <th style="padding:20px 10px;">Value</th>
+                        </tr>
+
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let i of data.GetRawMaterialDetails">
+                            <!-- <td style="padding: 10px;">1</td> -->
+                            <td style="padding: 10px;">{{i.ItemName}} </td>
+                            <td style="padding: 10px;">{{i.HsnCode}}</td>
+                            <td style="padding: 10px;">{{i.Uom}}</td>
+                            <td style="padding: 10px;">{{i.Qty}}</td>
+                            <td style="padding: 10px;">{{i.Rate}}</td>
+                            <td style="padding: 10px;">{{i.Amount}}</td>
+                            <td style="padding: 10px;">{{i.TotalTax}}%</td>
+                            <td style="padding: 10px;">{{i.Discount}}</td>
+                            <td style="padding: 10px;">{{i.Amount}}</td>
+                        </tr>
+
+                        <!-- <tr>
+                            <td style="padding: 10px;">2</td>
+                            <td style="padding: 10px;">LAMINATION PRINTD MATERIAL (500 gm pouch)</td>
+                            <td style="padding: 10px;">3923</td>
+                            <td style="padding: 10px;">KG</td>
+                            <td style="padding: 10px;">0</td>
+                            <td style="padding: 10px;">130.00</td>
+                            <td style="padding: 10px;">0</td>
+                            <td style="padding: 10px;">18%</td>
+                            <td style="padding: 10px;">0</td>
+                            <td style="text-align:right;padding: 10px;">0.00</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding: 10px;">3</td>
+                            <td style="padding: 10px;">LAMINATION PRINTD MATERIAL (1kg pouch) </td>
+                            <td style="padding: 10px;">3923</td>
+                            <td style="padding: 10px;">PCS</td>
+                            <td style="padding: 10px;">0</td>
+                            <td style="padding: 10px;">6.5</td>
+                            <td style="padding: 10px;">0</td>
+                            <td style="padding: 10px;">18%</td>
+                            <td style="padding: 10px;">0</td>
+                            <td style="text-align:right;padding: 10px;">0.00</td>
+                        </tr>
+            
+                        <tr>
+                            <td style="padding: 10px;">4</td>
+                            <td style="padding: 10px;">LAMINATION PRINTD MATERIAL (1kg pouch) </td>
+                            <td style="padding: 10px;">3923</td>
+                            <td style="padding: 10px;">PCS</td>
+                            <td style="padding: 10px;">0</td>
+                            <td style="padding: 10px;">7.5</td>
+                            <td style="padding: 10px;">0</td>
+                            <td style="padding: 10px;">18%</td>
+                            <td style="padding: 10px;">0</td>
+                            <td style="text-align:right;padding: 10px;">0.00</td>
+                        </tr> -->
+                    </tbody>
+                    <tfoot style="background-color: #eee;font-weight: 600;">
+                        <tr>
+                            <td colspan="4" style="padding: 10px;">&nbsp;</td>
+                            <td colspan="4" style="padding: 10px;text-align:right;">TAXABLE AMOUNT</td>
+                            <td style="padding: 10px;">{{data.GetRawMaterialMstDetails.TaxableAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="padding: 10px;">Freight</td>
+                            <td colspan="4" style="padding: 10px;text-align:right;">SGST</td>
+                            <td style="padding: 10px;">{{data.GetRawMaterialMstDetails.SgstAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="padding: 10px;">Insurance</td>
+                            <td colspan="4" style="padding: 10px;text-align:right;">CGST</td>
+                            <td style="padding: 10px;">{{data.GetRawMaterialMstDetails.CsgtAmount}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="padding: 10px;">Packing and Forwarding Charges</td>
+                            <td colspan="4" style="padding: 10px;text-align:right;">IGST</td>
+                            <td style="padding: 10px;">{{data.GetRawMaterialMstDetails.IgstAmount}}</td>
+                        </tr>
+                        <!-- <tr>
+                            <td colspan="4" style="padding: 10px;">&nbsp;</td>
+                            <td colspan="4" style="padding: 10px;text-align:right;">ROUND OFF</td>
+                            <td style="padding: 10px;text-align:right;">00.00</td>
+                        </tr> -->
+                        <tr>
+                            <td colspan="4" style="padding: 10px;text-align: center;">
+                                <h3>Total</h3>
+                            </td>
+                            <td colspan="4" style="padding: 10px;text-align:right;">TOTAL AMOUNT</td>
+                            <td style="padding: 10px;">{{data.GetRawMaterialMstDetails.TotalAmount}}</td>
+                        </tr>
+                        <!-- <tr>
+                            <td colspan="4" style="padding: 10px;">Total Invoice amount in words</td>
+                            <td colspan="5" style="padding: 10px;text-align:center; font-size: 12px;font-weight: 300;">Ceritified that the particulars given above are true and correct</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="padding: 10px;">Forty eight thousand three hundread eighty only</td>
+                            <td colspan="5" style="padding: 10px;text-align:center;">For SHOPKIRANA E TRADING PVT LTD</td>
+                        </tr> -->
+                        <tr>
+                            <td colspan="4" style="padding: 10px;text-align:center;background: #fff;">&nbsp;</td>
+                            <td colspan="5"
+                                style="padding: 10px;text-align:center;background: #fff;height: 70px;vertical-align:bottom;">
+                                Authorised signatory</td>
+                        </tr>
+
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</section>

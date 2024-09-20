@@ -1,0 +1,284 @@
+<!-- <p>outbound-delivery works!</p> -->
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="container">
+    <div class="row">
+        <br>
+        
+    </div>
+    <div class="row">
+      <h3 class="m-2" *ngIf="!isEditOpen"><b>Add Out Bound Delivey Mapping master </b></h3>
+    <h3  class="m-2" *ngIf="isEditOpen">Edit Out Bound Delivey Mapping master</h3>
+    </div>
+    <hr>
+    
+<form class="form" name="fform" #mappingForm="ngForm">
+    <div class="row">
+        <div class="col-4">
+            <label for="ware"><b>Warehouse:</b></label>
+            <select name="warehouse" id="warehouse" value="" class="form-control col md-3" required [(ngModel)]="data.WarehouseId"
+            (change)="getCluster(data.WarehouseId)"  #WarehouseInput="ngModel" [disabled]="isEditOpen">
+                <option [ngValue]="0" disabled>--Select--</option>
+                <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WarehouseId">{{item.WarehouseName}}
+                </option>
+            </select>
+            <div *ngIf="isInvalid && !WarehouseInput.valid && WarehouseInput.errors.required">
+                <code>Warehouse is required</code>
+            </div>
+        </div>
+        <div class="col-4">
+            <label for="clust"><b>Cluster:</b></label>
+            <select  name="cluster" id="cluster" class="form-control col md-3" required
+              [(ngModel)]="data.ClusterId"  (change)="getAgent(data.ClusterId)" #ClusterInput="ngModel" [disabled]="isEditOpen">
+              <option [ngValue]="0" disabled>--Select--</option>
+              <option *ngFor="let w of clusterList" [ngValue]="w.ClusterId">
+                {{ w.ClusterName }}
+              </option>
+            </select>
+            <div *ngIf="isInvalid && !ClusterInput.valid && ClusterInput.errors.required">
+                <code>Cluster is required</code>
+            </div>
+        </div>
+        <div class="col-4">
+            <label for="age"><b>Agent:</b></label>
+                          <select name="agent" id="agent" class="form-control col md-3" required
+                            [(ngModel)]="data.AgentId" #AgentInput="ngModel" (ngModelChange)="getOutBoundDetails(data)" [disabled]="isEditOpen" >
+                            <option value="" disabled>--Select--</option>
+                            <option *ngFor="let agent of agentList" [ngValue]="agent.AgentId">
+                              {{ agent.AgentName }}
+                            </option>
+                          </select>
+                          <div *ngIf="isInvalid && !AgentInput.valid && AgentInput.errors.required">
+                            <code>Agent is required</code>
+                        </div>        
+        </div>
+    </div>
+<br>
+    <div class="row" *ngIf="!isEditOpen">
+        <div class="col-2">
+            <button class="btn btn-primary btn-sm" (click)="openNew(mappingForm)">Add Row</button>
+        </div>
+        <div class="col-8">
+
+        </div>
+        <div class="col-2">
+
+        </div>
+    </div>
+</form>
+
+   <div class="row card" *ngIf="showTable">
+        <br>
+      <div *ngIf="!isEditOpen">     
+        <p-table [value]="outBoundDeliveryDetails" [columns]="coldata" dataKey="Id" >
+    
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Sr No</th>
+                  <th *ngFor="let col of coldata" style="text-align: center">{{col.header}}</th>
+                  
+                  <th>Remove</th> 
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-config let-rowIndex="rowIndex">
+                <tr>
+                    <td>
+                        {{rowIndex+1}}
+                        
+                       
+                    </td>
+                    <td>
+                        <span>
+                            <select id="Id" name="RegistrationNo" class="form-control col-md-6"
+                            [(ngModel)]="config.VehicleMasterId" disabled>
+                            <option value="" disabled>--Select--</option>
+                            <option *ngFor="let item of vehicleRegistrationNoLIst" [ngValue]="item.Id">
+                              {{ item.RegistrationNo }}
+                            </option>
+                          </select>
+                          
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            <select id="Id" name="Name" class="form-control col-md-6"
+                            [(ngModel)]="config.DriverMasterId" disabled>
+                            <option value="" disabled>--Select--</option>
+                            <option *ngFor="let driver of driverList" [ngValue]="driver.Id">
+                              {{ driver.Name }}
+                            </option>
+                          </select>
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            <select id="Id" name="Name" class="form-control col-md-6"
+                            [(ngModel)]="config.DboyMasterId" disabled>
+                            <option value="" disabled>--Select--</option>
+                            <option *ngFor="let dboy of dboyList" [ngValue]="dboy.Id">
+                              {{ dboy.Name }}
+                            </option>
+                          </select>
+                        </span>
+                    </td>
+                    <td>
+                      <button class="btn btn-primary btn-sm" (click)="deleteSelectedRow(config)" >Remove</button>
+                    </td>
+                </tr>
+              </ng-template>
+
+                     
+        </p-table>
+      </div>
+
+      <div *ngIf="isEditOpen">    
+        <p-table [value]="outBoundDeliveryDetails" #dt [columns]="coldata" dataKey="Id" >
+    
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Sr No</th>
+                  <th *ngFor="let col of coldata" style="text-align: center">{{col.header}}</th>
+                  
+                  <th>Remove</th> 
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-config let-rowIndex="rowIndex">
+                <tr>
+                    <td>
+                        {{rowIndex+1}}
+                        
+                       
+                    </td>
+                    <td>
+                        <span>
+                            <select id="Id" name="RegistrationNo" class="form-control col-md-12"
+                            [(ngModel)]="config.VehicleMasterId" >
+                            <option value="" >--Select--</option>
+                            <option *ngFor="let data of vehicleRegistrationNoLIst" [ngValue]="data.Id">
+                              {{ data.RegistrationNo }}
+                            </option>
+                          </select>
+                          
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            <select id="Id" name="Name" class="form-control col-md-12"
+                            [(ngModel)]="config.DriverMasterId" >
+                            <option value="" >--Select--</option>
+                            <option *ngFor="let data of driverList" [ngValue]="data.Id">
+                              {{ data.Name }}
+                            </option>
+                          </select>
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            <select id="Id" name="Name" class="form-control col-md-12"
+                            [(ngModel)]="config.DboyMasterId" >
+                            <option value="" >--Select--</option>
+                            <option *ngFor="let data of dboyList" [ngValue]="data.Id">
+                              {{ data.Name }}
+                            </option>
+                          </select>
+                        </span>
+                    </td>
+                    <td>
+                      <button class="btn btn-primary btn-sm" (click)="deleteSelectedRow(config)" >Remove</button>
+                    </td>
+                </tr>
+              </ng-template>                     
+        </p-table>
+      </div>
+
+    </div>
+  
+    <div class="row" >
+      <div class="col-2">
+        <button type="submit" class="btn btn-primary btn-sm pull-left" (click)="gotolistpage()">Back</button>
+
+      </div>
+        <div class="col-8">
+        </div>
+        <div class="col-2" *ngIf="showTable">
+            <button type="submit" class="btn btn-primary btn-sm pull-right"  (click)="onSave(data)">Submit</button>
+
+        </div>
+    </div>
+   
+
+
+<div *ngIf="!isEditOpen">
+    <form class="form" name="fform" #popupForm="ngForm">
+    <p-dialog [(visible)]="productDialog" [style]="{width: '850px'}" header="Add Row" [resizable]="false" [modal]="true" appendTo="body" positionTop="100">
+         <p-table [value]="mapplist"  [columns]="coldata" >
+    
+            <ng-template pTemplate="header">
+                <tr>
+                  <th *ngFor="let col of coldata" style="text-align: center">{{col.header}}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body">
+                <tr>
+                  <td>
+                    <select id="Id" name="RegistrationNo" class="form-control col-md-12"
+                            [(ngModel)]="data.VehicleMasterId" required #RegiInput="ngModel">
+                            <option value="" disabled>--Select--</option>
+                            <option *ngFor="let data of vehicleRegistrationNoLIst" [ngValue]="data.Id">
+                              {{ data.RegistrationNo }}
+                            </option>
+                          </select>
+                          <div *ngIf="isInvalid && !RegiInput.valid && RegiInput.errors.required">
+                            <code>RegistrationNo is required</code>
+                        </div> 
+                  </td>
+                  <td>
+                    <select id="Id" name="DriverName" class="form-control col-md-12"
+                    [(ngModel)]="data.DriverMasterId" required #Drivername="ngModel">
+                    <option value="" disabled>--Select--</option>
+                    <option *ngFor="let data of driverList" [ngValue]="data.Id">
+                      {{ data.Name }}
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !Drivername.valid && Drivername.errors.required">
+                    <code>Drivername is required</code>
+                </div> 
+                  </td>
+                  <td>
+                    <select id="Id" name="DboyName" class="form-control col-md-12"
+                    [(ngModel)]="data.DboyMasterId" required #Dboyname="ngModel">
+                    <option value="" disabled>--Select--</option>
+                    <option *ngFor="let data of dboyList" [ngValue]="data.Id">
+                      {{ data.Name }}
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !Dboyname.valid && Dboyname.errors.required">
+                    <code>Dboyname is required</code>
+                </div> 
+                </td>
+                  
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+               &nbsp; <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveAddedRowdata(popupForm)"></button>
+            </ng-template>
+        </p-table> 
+        
+         </p-dialog>
+    </form>
+</div>
+
+
+
+</div>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+  
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+
+

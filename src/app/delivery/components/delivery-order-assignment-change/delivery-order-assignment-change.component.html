@@ -1,0 +1,522 @@
+<div class="my-2 mb-0 mt-4 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>Delivery Assignment Summary</b></h3>
+    </div>
+</div>
+    <!-- <p-dialog [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}"> -->
+<div class="mt-0">
+    <div class="ui-fluid p-3 shadow m-2 bg-white rounded table table-hover">  
+        <div class="row mb-4">
+            <div class="col-md-12">  
+                <div class="ovelFieldForm" id="print-section" style="position: relative;z-index: 9;">
+                    <div class="summeryHeader"
+                        style="display: block; border-bottom: 1px solid #eee; margin-top: 20px; margin-bottom: 20px;">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-12">
+                                <span style="display: block; margin-bottom: 10px;"><strong>ASSIGNMENT ID : </strong>
+                                    {{getListAllData.DeliveryIssuanceId}}</span>
+                                <span style="display: block; margin-bottom: 10px;"><strong>Delivery Boy : </strong>
+                                    {{getListAllData.DisplayName}}</span>
+                                <span style="display: block; margin-bottom: 10px;"><strong>TOTAL AMOUNT: RS :
+                                    </strong>{{getListAllData.TotalAssignmentAmount}}/-</span>
+                                <!-- <span *ngIf="getListAllData.UploadedFileName!=null">
+                                    <img src='{{hostUrl}}/images/AssigmentImages/{{getListAllData.UploadedFileName}}' />
+                                </span> -->
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-12 text-align-end text-right">
+                                <div class="hiddenDiv text-align-end text-right float-right"
+                                    style="width:250px;height: 150px; text-align: right;float: right;margin-top: -100px;">
+                                    <span class="text-align-end text-right" *ngIf="AssignmentBarcodeImage!=null"
+                                        style="width:250px;height: 150px; text-align: right;float: right;">
+                                        <img src="data:image/png;base64,{{AssignmentBarcodeImage}}"
+                                            style="width:250px;height: 150px; text-align: right;">
+                                    </span><br /><br /><br />
+                                </div>
+                                <div class="text-align-end text-right float-right">
+                                    <span style="display: block; margin-bottom: 10px;">Date:
+                                        {{getListAllData.CreatedDate|date:'medium'}}</span>
+                                    <span style="display: block; margin-bottom: 10px;">Mobile : {{DboyMobileNo}}</span>
+                                </div>
+                            </div>            
+                        </div>
+                    </div>
+                    <div class="summerySubHeader"
+                        style="display: block; border-bottom: 1px solid #eee; margin-top: 20px; margin-bottom: 20px;">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <span>Delivered Amount : {{TotalDeliveredOrderAmount}}</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span>Cancelled Amount : {{TotalCanceledOrderAmount}}</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span>Delivery Canceled Amount : {{TotalDeliveryCanceledRequestAmount}}</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <span>ReDispatch Amount : {{TotalRedispatchOrderAmount}}</span>
+                                </div>   
+                            </div>
+                    </div>
+                    <div style="margin-top: 5px;">
+                        <h4 class="totalCount"> Delivered Count({{TotalDeliveredOrder}}) Amount: {{TotalDeliveredOrderAmount}}/-
+                        </h4>
+                        <h4 class="totalCount">Delivered <span class="badge badge-danger ml-2">{{TotalDeliveredOrder}}</span>
+                        </h4>
+                        <div class="table-responsive borderTable" *ngIf="delivereddata?.length != 0">
+                            <table style="border: 1px solid black; width: 100%;border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <!-- <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            S No.</th> -->
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            OrderId</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Skcode</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Cash Amount <span
+                                                class="badge badge-primary ml-2">{{TotalDeliveredCashAmount}}</span></th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Cheque Amount <span
+                                                class="badge badge-info ml-2">{{TotalDeliveredChequeAmount}}</span></th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Cheque No</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Online Amount <span
+                                                class="badge badge-success ml-2">{{TotalDeliveredElectronicAmount}}</span>
+                                        </th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Gullak Amount <span class="badge badge-success ml-2">{{TotalDeliveredGullak}}</span>
+                                        </th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            mPos <span class="badge badge-success ml-2">{{TotalDeliveredmPos}}</span></th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            EpayLater Amount <span
+                                                class="badge badge-success ml-2">{{TotalDeliveredEpayLater}}</span></th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Comment</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Total <span class="badge badge-danger ml-2">{{TotalDeliveredOrderAmount}}</span>
+                                        </th>
+                                        <th class="noprint" *ngIf="DeliveryIssuanceStatus=='Submitted'"
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let trade of delivereddata; index as i">
+                                        <!-- <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{i + 1}}</td> -->
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trade.OrderId}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trade.Skcode}}</td>
+                                        <!--//nerw  payment-->
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <span class="badge badge-success ml-2">{{trade.CashAmount}}</span>
+                                        </td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <span class="badge badge-success ml-2">{{trade.ChequeAmount}} </span>
+                                        </td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trade.ChequeNo}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <span class="badge badge-success ml-2">{{trade.ElectronicAmount}} </span>
+                                            ({{trade.ElectronicTransId}})
+                                        </td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <span class="badge badge-success ml-2">{{trade.GullakAmount}}</span>
+                                            ({{trade.GatewayOrderId}})
+                                        </td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <span class="badge badge-success ml-2">{{trade.mPosAmount}}</span>
+                                            ({{trade.mPosTransId}})
+                                        </td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <span class="badge badge-success ml-2">{{trade.EpayLaterAmount}}
+                                            </span>({{trade.EpayLaterTransId}})
+                                        </td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trade.comments}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trade.GrossAmount}}</td>
+                                        <td class="noprint" *ngIf="DeliveryIssuanceStatus=='Submitted'"
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+
+                                            <span *ngIf="trade.IsTripAssignment" style="color:red">
+                                                Trip order status can't be changed.
+                                            </span>
+
+                                            <button *ngIf="trade.OrderRejectStatus!=true && !trade.IsTripAssignment" class="btn-sm btn-primary"
+                                                style="float:right; margin-right: 15px;"
+                                                (click)="orderStatusUpdate(trade,1)">Reject</button>
+                                            <button *ngIf="trade.OrderRejectStatus==true && !trade.IsTripAssignment" class="btn-sm btn-primary"
+                                                style="float:right; margin-right: 15px;"
+                                                (click)="orderStatusUpdate(trade,0)">Accept</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="recordnot_fount" *ngIf="delivereddata?.length == 0">
+                            Record not found
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 5px;">
+                        <h4 class="totalCount">Cancelled Count({{TotalCanceledOrder}}) Amount:
+                            {{TotalCanceledOrderAmount}}/-
+                        </h4>
+        
+                        <div class="table-responsive borderTable" *ngIf="cancelddata?.length != 0">
+                            <table style="border: 1px solid black; width: 100%;border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Total canceld order<span class="badge badge-danger ml-2">
+                                                <!-- {{TotalCancelOrder}}</span> -->
+                                                {{TotalCanceledOrder}}</span>
+                                            </td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <!-- Total canceld Qty {{TotalCanceledOrderqty}} -->
+                                            Total canceld Qty
+                                        </td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Total canceld Amount {{TotalCanceledOrderAmount}} </td>
+                                    </tr>
+                                    <tr>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            S.No</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            OrderId</th>
+        
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Skcode</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Status</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Comments</th>
+                                        <th class="noprint" *ngIf="DeliveryIssuanceStatus=='Submitted'"
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <div class="th">
+                                                ChangeStatus
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let trades of cancelddata; index as i">
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{i +1}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trades.OrderId}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trades.Skcode}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trades.Status}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trades.comments}}</td>
+                                        <td class="noprint"
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "
+                                            *ngIf="DeliveryIssuanceStatus=='Submitted'">
+
+                                            <span *ngIf="trades.IsTripAssignment" style="color:red">
+                                                Trip order status can't be changed.
+                                            </span>
+
+
+                                            <button *ngIf="trades.OrderRejectStatus!=true && !trades.IsTripAssignment" class="btn-sm btn-primary"
+                                                style="float:right; margin-right: 15px;"
+                                                (click)="orderStatusUpdate(trades,1)">Reject</button>
+                                            <button *ngIf="trades.OrderRejectStatus==true && !trades.IsTripAssignment" class="btn-sm btn-primary"
+                                                style="float:right; margin-right: 15px;"
+                                                (click)="orderStatusUpdate(trades,0)">Accept</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="recordnot_fount" *ngIf="cancelddata?.length == 0">
+                            Record not found
+                        </div>
+        
+                    </div>
+        
+                    <div style="margin-top: 5px;">
+                        <h4 class="totalCount">Delivery Canceled Request Count({{TotalDeliveryCanceledRequestOrder}}) Amount:
+                            {{TotalDeliveryCanceledRequestAmount}}/-
+                        </h4>
+                        <div class="table-responsive borderTable" *ngIf="DeliveryCanceledRequest?.length != 0">
+                            <table style="border: 1px solid black; width: 100%;border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Total canceld order<span class="badge badge-danger ml-2">
+                                                {{TotalCancelOrder}}</span></td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Total canceld Qty {{TotalCanceledOrderqty}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Total canceld Amount {{TotalDeliveryCanceledRequestAmount}} </td>
+                                    </tr>
+                                    <tr>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            S.No</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            OrderId</th>
+        
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Skcode</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Status</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Comments</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            DCR Comment</th>
+                                        <th class="noprint" *ngIf="DeliveryIssuanceStatus=='Submitted'"
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <div class="th">
+                                                ChangeStatus
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let trades of DeliveryCanceledRequest; index as i">
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{i +1}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trades.OrderId}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trades.Skcode}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trades.Status}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trades.comments}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{trades.DeliveryCanceledComments}}</td>
+                                        <td class="noprint"
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "
+                                            *ngIf="DeliveryIssuanceStatus=='Submitted'">
+
+                                            <span *ngIf="trades.IsTripAssignment" style="color:red">
+                                                Trip order status can't be changed.
+                                            </span>
+
+
+                                            <button *ngIf="trades.OrderRejectStatus!=true && !trades.IsTripAssignment" class="btn-sm btn-primary"
+                                                style="float:right; margin-right: 15px;"
+                                                (click)="orderStatusUpdate(trades,1)">Reject</button>
+                                            <button *ngIf="trades.OrderRejectStatus==true && !trades.IsTripAssignment" class="btn-sm btn-primary"
+                                                style="float:right; margin-right: 15px;"
+                                                (click)="orderStatusUpdate(trades,0)">Accept</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="recordnot_fount" *ngIf="DeliveryCanceledRequest?.length == 0">
+                            Record not found
+                        </div>
+                    </div>
+        
+                    <div style="margin-top: 5px;">
+                        <h4 class="totalCount">ReDispatch Count({{TotalRedispatchOrder}}) Amount:
+                            {{TotalRedispatchOrderAmount}}/-
+                        </h4>
+                        <div class="table-responsive borderTable" *ngIf="redispatcheddata?.length != 0">
+                            <table style="border: 1px solid black; width: 100%;border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            S.No</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            OrderId</th>
+        
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Skcode</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Status</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Comments</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            RD Comment</th>
+        
+                                        <th class="noprint" *ngIf="DeliveryIssuanceStatus=='Submitted'"
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            <div class="th">
+                                                ChangeStatus
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let r of redispatcheddata; index as i">
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{i +1}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{r.OrderId}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{r.Skcode}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{r.Status}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{r.comments}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{r.DeliveryCanceledComments}}</td>
+                                        <td class="no-print"
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "
+                                            *ngIf="DeliveryIssuanceStatus=='Submitted'">
+
+                                            <span *ngIf="r.IsTripAssignment" style="color:red">
+                                                Trip order status can't be changed.
+                                            </span>
+
+
+                                            <button *ngIf="r.OrderRejectStatus!=true && !r.IsTripAssignment" class="btn-sm btn-primary"
+                                                style="float:right; margin-right: 15px;"
+                                                (click)="orderStatusUpdate(r,1)">Reject</button>
+                                            <button *ngIf="r.OrderRejectStatus==true && !r.IsTripAssignment" class="btn-sm btn-primary"
+                                                style="float:right; margin-right: 15px;"
+                                                (click)="orderStatusUpdate(r,0)">Accept</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="recordnot_fount" *ngIf="redispatcheddata?.length == 0">
+                            Record not found
+                        </div>
+                    </div>
+        
+                    <div style="margin-top: 5px;">
+                        <h4 class="totalCount">UNDER SHIPPMENT ORDER</h4>
+                        <div class="table-responsive borderTable" *ngIf="shippedData?.length != 0">
+                            <table style="border: 1px solid black; width: 100%;border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            S.No</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            OrderId</th>
+                                        <th
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            Skcode</th>
+        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let r of shippedData; index as i">
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{i +1}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{r.OrderId}}</td>
+                                        <td
+                                            style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                            {{r.Skcode}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="recordnot_fount" *ngIf="shippedData?.length == 0">
+                            Record not found
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3"
+                    *ngIf="DeliveryIssuanceStatus=='Freezed' || DeliveryIssuanceStatus=='Payment Accepted' || DeliveryIssuanceStatus=='Payment Submitted' ">
+                    <!-- <button printSectionId="print-section" ngxPrint class="btn-sm btn-primary">Print</button> -->
+                    <button class="print_btn" printSectionId="print-section" ngxPrint
+                        [printStyle]="{hiddenDiv : {'opacity': '100%', 'display':'block'}}">Print</button>
+                </div>
+
+                <div class="recordnot_fount mt-3 mb-3">
+                    <h3 *ngIf="DeliveryIssuanceStatus!='Freezed' || DeliveryIssuanceStatus!='Payment Accepted' ||DeliveryIssuanceStatus!='Payment Submitted'"
+                        class="no-print" style="color:green; font-size: 15px;font-weight: 500;">Print Button will available
+                        after click Assignment Payment button
+                        or Freezed
+                        Status</h3>
+                    <h3 class="no-print" style="color:red; font-size: 15px;">*If you do any change in status of Assignment
+                        order
+                        then final
+                        Changes in
+                        ordermaster will be reflected after clicking on Assignment Payment button.</h3>
+                </div>
+                <button class="cancel_btn" (click)="cancel()">Cancel</button>
+                <button *ngIf="(DeliveryIssuanceStatus=='Submitted') && AssignmentPaymentEnable==true" type="button"
+                    id="AssignmentPayment" class="assignment_payment"
+                    (click)="AssignmentPayment(DeliveryIssuanceId)">Assignment
+                    Payment</button>
+            </div>
+        </div>        
+    </div>
+</div>        
+    <!-- </p-dialog> -->

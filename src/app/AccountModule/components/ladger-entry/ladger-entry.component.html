@@ -1,0 +1,126 @@
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-sm-12">
+        <div class="content-header">Ladger Entry
+          <div class="row  float-right " style="height: 60px ; padding-right: 15px">
+            <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: auto;"
+              (click)="add()"> Add LadgerEntry
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row text-left">
+      <div class="col-sm-12">
+
+        <div class="px-3">
+          <form class="form">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="projectinput3">From Date</label>
+                    <br>
+                    <p-calendar name="startDateInput" [(ngModel)]="exportToExcel.FromDate" [showIcon]="true"
+                      dateFormat="yy/mm/dd"></p-calendar>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="projectinput4">To Date</label>
+                    <br>
+                    <p-calendar name="endDateInput" [(ngModel)]="exportToExcel.ToDate" [showIcon]="true"></p-calendar>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="projectinput4">Credit/Debit</label>
+                    <br>
+                    <select id="type" name="status" class="form-control" data-toggle="tooltip" data-trigger="hover"
+                      data-placement="top" data-title="type" placeholder="Select Type" [(ngModel)]="exportToExcel.type">
+                      <option value="Select">--Select--</option>
+                      <option value="Credit">Credit</option>
+                      <option value="Credit">Debit</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-3" style="padding-top: 30px">
+                  <div class="form-group">
+
+                    <button type="button" class="btn btn-raised btn-raised btn-primary pull-right" (click)="export()">
+                      Export To Excel
+                    </button>
+                  </div>
+                </div>
+                <!-- </div> -->
+                <!-- </div> -->
+              </div>
+
+            </div>
+
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<br><br>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+<div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover" style="overflow: scroll">
+  <div calss=row style="height: 40px ">
+    
+  </div>
+  <div class="position-relative">
+      <div class="position-absolute country-details" *ngIf="isDetails">
+          <app-ladger-entry-details [details]="selectedRowDetails" [activeFields]="activeFields"
+            (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)"
+            class="d-flex justify-content-end"></app-ladger-entry-details>
+        </div>
+        <div class="position-relative">
+  <p-table [value]="ladgerEntryList" [lazy]="true" [totalRecords]="totalRecords" [loading]="isLoading"
+    [paginator]="true" [rows]="10" dataKey="ID" text-align: center>
+    <ng-template pTemplate="header">
+      <tr>
+        
+        <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="text-align: center">
+          {{col.header}}
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+        </th>
+        <!-- <th>Action</th> -->
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+      <tr (click)="openDetails(rowData,$event)">
+        
+
+        <td *ngFor="let col of cols" style="text-align: center">
+          {{rowData[col.field]}}
+        </td>
+        <td style="text-align:center">
+          <!-- <a href="javascript:void(0)" (click)="onDelete(rowData.ID)"><i class="fa fa-trash fa-lg"
+              aria-hidden="true"></i></a> -->
+        </td>
+      </tr>
+    </ng-template>
+    <!-- <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+      <tr>
+        <td colspan="9">
+          <app-add-ladger-entry [ID]="rowData.ID"></app-add-ladger-entry>
+        </td>
+      </tr>
+    </ng-template> -->
+  </p-table>
+</div>
+</div>
+</div>

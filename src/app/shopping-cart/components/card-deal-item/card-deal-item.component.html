@@ -1,0 +1,158 @@
+<div class="card">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">Cart Deal Item</h3>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="form-group">
+                <label for="ware"><b>Warehouse:</b></label>
+                <select name="" value="" class="form-control col md-3" [(ngModel)]="selectedWarehouseId"
+                    (change)="onSelect(selectedWarehouseId)">
+                    <option [ngValue]="0">--Select--</option>
+                    <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WarehouseId">{{item.WarehouseName}}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group date">
+                <label for="ware"><b>Item:</b></label><br>
+                <input type="text" name="Item" class="form-control col md-3" [(ngModel)]="Item">
+            </div>
+
+            <div class="form-group srch">
+                <button type="button" class="btn btn-raised btn-raised btn-success"
+                    (click)="search(Item)">Search</button>
+                <button id="btnAdd" (click)="AddItem()" class="btn btn-raised btn-raised btn-danger ml-1">Add Item</button>
+            </div>
+
+            <div class="col md-9"></div>
+        </div>
+        <p-table #dt [value]="ItemList" [paginator]="true" [lazy]="true" [rows]="20" [scrollable]="true"
+            [totalRecords]="totalRecords" (onLazyLoad)="load($event)" text-align: center>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Sr.No.</th>
+                    <th>Warehouse</th>
+                    <th>Item</th>
+                    <th>Item MultiMRP Id</th>
+                    <th>Min Order Qty</th>
+                    <th>Deal Price</th>
+                    <th>Total Limit</th>
+                    <th>Per Order Limit</th>
+                    <th>Total Consumer</th>
+                    <th>Per Customer Limit</th>
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                <tr>
+                    <td>{{rowIndex+1}}</td>
+                    <td>{{item.WarehouseName}}</td>
+                    <td>{{item.ItemName}}</td>
+                    <td>{{item.ItemMultiMRPId}}</td>
+                    <td>{{item.MinOrderQty}}</td>
+                    <td>{{item.DealPrice}}</td>
+                    <td>{{item.TotalLimit}}</td>
+                    <td>{{item.OrderLimit}}</td>
+                    <td>{{item.TotalConsume}}</td>
+                    <td>{{item.CustomerLimit}}</td>
+                    <td><button id="btnActive" *ngIf="item.IsActive==false"
+                            (click)="StatusChange(item.Id,item.IsActive)" class="btn btn-primary">Active</button>
+                        <button id="btnInActive" *ngIf="item.IsActive==true"
+                            (click)="StatusChange(item.Id,item.IsActive)" class="btn btn-primary">InActive</button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <div *ngIf="isOpenPopup">
+            <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+                [style]="{width: '65%',height: '80%',left: '323px'}">
+                <p-header>
+                    Merge Deal Item
+                </p-header>
+                <div class="ui-fluid">
+                    <div class="row">
+                    <div class="col-md 4">
+                        <label for="ware"><b>Warehouse:</b></label>
+                        <select name="" value="" class="form-control col md-3" [(ngModel)]="data.WarehouseId"
+                            (change)="onSelect(data.WarehouseId)">
+                            <option [ngValue]="0">--Select--</option>
+                            <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WarehouseId">
+                                {{item.WarehouseName}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md 4">
+                        <label>Item Name:</label>
+                        <input type="text" class="form-control" id="Item_Name" placeholder="Enter Item" name="Item_Name"
+                            [(ngModel)]="data.Item_Name">
+                    </div>
+                <div class="col-md 4 mt">
+                <button type="button" class="btn btn-raised btn-raised btn-success"
+                    (click)="searchForItem(data.WarehouseId,data.Item_Name)">Search</button>
+                </div>
+            </div>
+            </div>
+            <div class="col-md 12">
+                    <label>Select Item :</label>
+                    <select name="" value="" class="form-control col md-3" [(ngModel)]="selectedId"
+                        (change)="onSelectchange()">
+                        <option [ngValue]="0">--Select--</option>
+                        <option *ngFor="let item of UnitPriceList" [ngValue]="item.Itemid">{{item.Name}}
+                    </select>
+            </div>
+
+            <div class="row mt">
+                        <div class="col-md 4">
+                            <label>Min Order Qty :</label>
+                            <label id="txtmoq" name="moq" [(ngModel)]="MOQ">{{MOQ}}</label>
+                            <!-- <input type="text" [disabled]="true" id="moq" [(ngModel)]="MOQ" > -->
+                        </div>
+                        <div class="col-md 4">
+                            <label>Is Active : </label>
+                            <input type="checkbox" [(ngModel)]="isActive" [checked]="isActive" (change)="CheckChange($event)" />
+                        </div>
+                       
+                        <div class="col-md 4">
+                            <label>Unit Price : </label><label>{{UnitPrice}}</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md 4">
+                            <label>Deal Price : </label>
+                            <input type="text" id="dealprice" [(ngModel)]="DealPrice"
+                                (change)="onChangeDealPrice(DealPrice)">
+                        </div>
+                        <div class="col-md 4">
+                            <label>Customer Limit : </label>
+                            <input type="text" id="CustomerLimit" [(ngModel)]="data.CustomerLimit">
+                        </div>
+                        <!-- <div class="col-md 4">
+                            <label>Start Date : </label>
+                            <p-calendar [(ngModel)]="data.StartDate" [showIcon]="true"></p-calendar>
+                        </div> -->
+                    </div>
+               
+                    <div class="row">
+                <div class="col-md 6">
+                    <label>Total Limit:</label>
+                    <input type="text" class="form-control" id="totlimit" placeholder="Enter Number"
+                        (change)="onChangeTotLimit(data.totlimit)" name="totlimit" [(ngModel)]="data.totlimit">
+                </div>
+                <div class="col-md 6">
+                    <label>Order Limit:</label>
+                    <input type="text" class="form-control" id="orderlimit" placeholder="Enter Number"
+                        (change)="onChangeOrderLimit(data)" name="orderlimit" [(ngModel)]="data.orderlimit">
+                </div>
+                    </div>
+                <div class="form-group srch">
+                    <button type="button" class="btn btn-raised btn-raised btn-success"
+                        (click)="SaveDealItem(data,DealPrice,MOQ)">Submit</button>
+                    <button id="btnAdd" (click)="cancle()"
+                        class="btn btn-raised btn-raised btn-danger ml-1">Cancel</button>
+                </div>
+            </p-dialog>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,109 @@
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<div class="ui-fluid" >
+    <section>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="content-header">Refund Dashboard (Return)</div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="name">Select City</label>
+                <p-dropdown [options]="cityList" name="city" optionLabel="label" 
+                    [(ngModel)]="CityId" [filter]="true" placeholder="Select City" (ngModelChange)="onChangeWarehouse(CityId.value)">
+                </p-dropdown>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="name">Select Warehouse</label>
+                <p-dropdown [options]="warehouseList" name="warehouse" optionLabel="label" 
+                    [(ngModel)]="SelectedWarehouseId" [filter]="true" placeholder="Select Warehouse">
+                </p-dropdown>
+            </div>
+            <div class="form-group col-md-2">
+                <label>&nbsp;</label>
+                <div></div>
+                <input id="searchKeyword" name="searchKeyword" placeholder="Search By OrderId" [(ngModel)]="orderIdKeyword" class="form-control ht">
+            </div>
+
+            <div class=" col-md-2">
+                <label>&nbsp;</label>
+                <div></div>
+                <button type="button" class="btn btn-raised btn-primary" (click)="onSearch()">Search</button>
+            </div>
+            <div class=" col-md-4 text-right">
+                <label>&nbsp;</label>
+                <div></div>
+                <button type="button" class="btn btn-raised btn-success" (click)="onExport()">Export</button>
+            </div>
+
+        </div>
+
+        <div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover">
+            <div class="position-relative">
+                <p-table #dt [value]="returnDashboardList" [paginator]="true" [rows]="20"
+                     [scrollable]="true" scrollHeight="70vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>OrderId</th>
+                            <th>Skcode</th>
+                            <th>RequestIds</th>
+                            <th>CreditNoteNumber</th>
+                            <th>RefundAmount</th>
+                            <th>History</th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr>
+                            <td>{{rowData.OrderId}}</td>
+                            <td>{{rowData.Skcode}}</td>
+                            <td>{{rowData.RequestIds}}</td>
+                            <td>{{rowData.CreditNoteNumber}}</td>
+                            <td>{{rowData.RefundAmount | number : '2.0-2'}}</td>
+                            <td>
+                                <a style="color: rgb(46, 12, 240);" (click)="onClickHistory(rowData)"><b> History <i class="fa fa-history" ></i></b></a> 
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </section>
+    <section  *ngIf="isOpenHistory">
+        <p-dialog header="History" [(visible)]="isOpenHistory" [blockScroll]="true" appendTo="body"[modal]="true" [positionTop]="0" appendTo="body">
+
+            <p-table #dt [value]="returnHistoryList" [paginator]="true" [rows]="20"
+            [scrollable]="true" scrollHeight="70vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>OrderId</th>
+                        <th>RequestId</th>
+                        <th>Status</th>
+                        <th>Comment</th>
+                        <!-- <th>Buyer_Comment</th> -->
+                        <th>UserName</th>
+                        <!-- <th>BuyerByName</th> -->
+                        <!-- <th>CustomerName</th> -->
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-rowData>
+                    <tr>
+                        <td>{{rowData.OrderId}}</td>
+                        <td>{{rowData.RequestId}}</td>
+                        <td>{{rowData.Status}}</td>
+                        <td>{{rowData.Comment}}</td>
+                        <!-- <td>{{rowData.Buyer_Comment}}</td> -->
+                        <td>{{rowData.UserName}}</td>
+                        <!-- <td>{{rowData.BuyerByName}}</td> -->
+                        <!-- <td>{{rowData.CustomerName}}</td> -->
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-dialog>
+    </section>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

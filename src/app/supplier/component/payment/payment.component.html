@@ -1,0 +1,214 @@
+<p-toast [style]="{marginTop: '10px'}"></p-toast>
+<div class="ui-fluid" id="sp">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-sm-5">
+        <div class="content-header">Payment </div>
+      </div>
+
+    </div>
+    <hr>
+    <div class="row text-left">
+      <div class="col-sm-12">
+
+        <div class="px-3">
+          <form class="form" #ledgerForm="ngForm">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput3">Supplier Name*</label>
+                    <br>
+                    <p-autoComplete [(ngModel)]="selectedSupplier" [suggestions]="supplierList"
+                      (completeMethod)="getSupplierList($event)" field="Name" [size]="30"
+                      placeholder="enter at least 3 chars" [minLength]="1" name="supplierName"
+                      [disabled]="inputModel.SupplierId" (ngModelChange)="onSelectSupplier()" name="supplierName"
+                      required="true" #supplierName="ngModel">
+                    </p-autoComplete>
+                    <button class="btn btn-danger bt-2" *ngIf="inputModel.SupplierId" (click)="discardSupplier()">
+                      <i class="fa fa-times" aria-hidden="true" (click)="discardSupplier()"></i>
+                    </button>
+
+                    <div [hidden]="!(isInvalid && !supplierName.valid)">
+                      <code>Required!</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4" style="padding-top: 30px">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-raised btn-raised btn-primary mr-l-10"
+                      (click)="generateReport(true, ledgerForm)">
+                      Download Sample
+                    </button>
+                    <button type="button" class="btn btn-raised btn-raised btn-primary mr-l-10" style="margin-left: .5em"
+                    (click)="manualLager()">
+                    Manual Ladger
+                  </button>
+                  </div>
+                </div>
+
+               
+
+              </div>
+              <div class="row" *ngIf="inputModel.SupplierId && (!paymentList || paymentList.length < 1)">
+                <div class="col-md-3 float-right">
+                  <p-fileUpload name="myfile[]" customUpload="true" (uploadHandler)="onUpload($event)"></p-fileUpload>
+                </div>
+
+              </div>
+
+            </div>
+
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="ui-fluid shadow p-3 m-2 mt-4 bg-white rounded table" *ngIf="sucessList && sucessList.length > 0">
+      <div class="row">
+        <div class="col-sm-12">
+          <h4>
+            Success List
+          </h4>
+        </div>
+
+        <div class="col-xs-12">
+          <p-table *ngIf="sucessList && sucessList.length > 0" [value]="sucessList" dataKey="Date" [scrollable]="true"
+            scrollHeight="70vh" text-align: center>
+            <ng-template pTemplate="header">
+              <tr class="su">
+                <th>
+                  Date
+                </th>
+                <th>
+                  Particulars
+                </th>
+                <th>
+                  VchType
+                </th>
+                <th>
+                  VchNo
+                </th>
+                <th>
+                  Debit
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr class="su">
+                <td>
+                  {{rowData.Date | date:'short' }}
+                </td>
+                <td>
+                  <select id="type" name="status" class="form-control" data-toggle="tooltip" data-trigger="hover"
+                    data-placement="top" data-title="type" placeholder="Select Type"
+                    [(ngModel)]="rowData.AffectedLadgerID" [disabled]="true">
+                    <option value="">--Select--</option>
+                    <option *ngFor="let bankType of bankTypeLedgerList" [value]="bankType.ID">{{bankType.Name}}</option>
+                  </select>
+                </td>
+                <td>
+                  <select id="type" name="status" class="form-control" data-toggle="tooltip" data-trigger="hover"
+                    data-placement="top" data-title="type" placeholder="Select Type"
+                    [(ngModel)]="rowData.VouchersTypeID" [disabled]="true">
+                    <option value="">--Select--</option>
+                    <option *ngFor="let vchType of voucherTypeList" [value]="vchType.ID">{{vchType.Name}}</option>
+                  </select>
+                </td>
+                <td>
+                  {{rowData.Particulars}}
+                </td>
+                <td>
+                  {{rowData.Debit}}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ui-fluid shadow p-3 m-2 mt-4 bg-white rounded table" *ngIf="paymentList && paymentList.length > 0">
+
+      <div class="row " style="padding-left: 20px">
+        <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="save()">
+          Upload
+        </button>
+      </div>
+      <p-table [value]="paymentList" dataKey="Date" [scrollable]="true" scrollHeight="70vh" text-align: center>
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="ac">
+              Action
+            </th>
+            <th>
+              Date
+            </th>
+            <th>
+              Particulars
+            </th>
+            <th>
+              VchType
+            </th>
+            <th>
+              VchNo
+            </th>
+            <th>
+              Debit
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr  [ngClass]="{'fail': (!rowData.isEditable && rowData.class) , 'edit': rowData.isEditable}">
+            <td class="ac">
+              <a href="javascript:void(0);" (click)="editRow(rowData)">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+              </a>
+            </td>
+            <td>
+              <p-calendar *ngIf="rowData.isEditable" [(ngModel)]="rowData.Date" [showIcon]="true"></p-calendar>
+              <p *ngIf="!rowData.isEditable">{{rowData.Date | date:'short' }}</p>
+            </td>
+            <td>
+              <select id="type" name="status" class="form-control" data-toggle="tooltip" data-trigger="hover"
+                data-placement="top" data-title="type" placeholder="Select Type" [(ngModel)]="rowData.AffectedLadgerID"
+                [disabled]="!rowData.isEditable">
+                <option value="">--Select--</option>
+                <option *ngFor="let bankType of bankTypeLedgerList" [value]="bankType.ID">{{bankType.Name}}</option>
+              </select>
+
+            </td>
+            <td>
+              <select id="type" name="status" class="form-control" data-toggle="tooltip" data-trigger="hover"
+                data-placement="top" data-title="type" placeholder="Select Type" [(ngModel)]="rowData.VouchersTypeID"
+                [disabled]="!rowData.isEditable">
+                <option value="">--Select--</option>
+                <option *ngFor="let vchType of voucherTypeList" [value]="vchType.ID">{{vchType.Name}}</option>
+              </select>
+            </td>
+            <td>
+              <input [disabled]="!rowData.isEditable" class="form-control" type="text"
+                [(ngModel)]="rowData.Particulars">
+            </td>
+            <td>
+              <input [disabled]="!rowData.isEditable" class="form-control" type="number" [(ngModel)]="rowData.Debit">
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </section>
+</div>
+
+
+
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>

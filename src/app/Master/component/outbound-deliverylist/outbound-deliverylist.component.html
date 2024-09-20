@@ -1,0 +1,109 @@
+<!-- <p>outbound-deliverylist works!</p> -->
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3><b>Out Bound Mapping List</b> </h3>
+        </div>
+         <div>
+            <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: 10px;"(click)="addVechile()">
+              <i class="fa fa-plus-circle"></i> Add Mapping
+            </button>
+          </div>
+    </div>
+    <div class="container">
+        <form class="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>City</label>
+                        <!-- <select id="city" name="city" class="form-control" (change)="getWarehouse(searchModel.Cityid)"
+                            [(ngModel)]="searchModel.Cityid">
+                            <option value="" disabled>--select--</option>
+                            <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                                {{ city.CityName }}
+                            </option>
+                        </select> -->
+
+                        <p-dropdown [options]="cityList" name="city" optionLabel="label" 
+                        (onChange)="getWarehouse(searchModel.Cityid.value)"  [(ngModel)]="searchModel.Cityid" [filter]="true" placeholder="select city">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Warehouse</label>
+                        <!-- <select id="Warehouse" name="Warehouse" class="form-control" [(ngModel)]="searchModel.WarehouseId">
+                            <option value="0">--select--</option>
+                            <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WareHouseId">
+                                {{ item.WareHouseName }}
+                            </option>
+                        </select> -->
+                        <p-dropdown [options]="masterwarehouseList" name="Warehouse" optionLabel="label" 
+                          [(ngModel)]="searchModel.WarehouseId" [filter]="true" placeholder="select Warehouse">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-md-3" style="padding-top: 30px">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                (click)="search()">Search</button>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px"
+                                (click)="clear()">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <p-table [value]="outBoundList" #dt 
+    [totalRecords]="totalRecords" (onLazyLoad)="load($event)" [lazy]="true" [paginator]="true" [rows]="10">
+
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">
+                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Global Filter"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+
+            <tr>
+                <th>Sr No</th>
+                <th>WarehouseName</th>
+                <th>Cluster Name</th>
+                <th>Agent Name</th>
+                <!-- <th>Dboy Name</th> -->
+                <th>Edit</th>
+                <th>Active/InActive</th>
+            </tr>
+
+        </ng-template>
+
+        <ng-template pTemplate="body" let-config let-rowIndex="rowIndex">
+
+            <tr>
+                <td>{{rowIndex+1}}</td>
+                <td>{{config.WarehouseName}}</td>
+                <td>{{config.ClusterName}}</td>
+                <td>{{config.AgentName}}</td>
+                <!-- <td>{{config.}}</td> -->
+                <td>
+                    <button class="btn btn-primary btn-sm" (click)="gotoEditpage(config)">Edit</button>
+                </td>
+                <td>
+                    <p-inputSwitch name="IsActive"   [(ngModel)]="config.IsActive" (ngModelChange)="ActiveInactive(config,config.IsActive)">
+                    </p-inputSwitch>&nbsp;&nbsp;
+                  </td>  
+            </tr>
+
+        </ng-template>
+
+    </p-table>
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+      <p-confirmDialog #cd appendTo="body" header="Confirmation">
+        <p-footer>
+      
+          <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+          <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+        </p-footer>
+      </p-confirmDialog>

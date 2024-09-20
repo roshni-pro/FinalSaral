@@ -1,0 +1,167 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">MTD Collection Screen</h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-3 mt-2">
+                    <label><b>Select WareHouse<span class="required">*</span></b></label>
+                    <!-- <p-dropdown 
+                    placeholder="Select WareHouse"  [options]="WareHouseList"[panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName" [(ngModel)]="selectedWareHouseId">
+                    </p-dropdown> -->
+                    <p-multiSelect id="Category" name="Category" [options]="WareHouseList"
+                            [(ngModel)]="selectedWareHouse" [panelStyle]="{minWidth:'25em'}"
+                            optionLabel="WarehouseName">
+                        </p-multiSelect>
+                </div>
+                <div class="col-sm-3  mt-2">
+                    <label><b> Select Date</b></label>
+                    <!-- <p-calendar [showIcon]="true" [(ngModel)]="selectDate"></p-calendar> -->
+                    <p-calendar [showIcon]="true" [(ngModel)]="selectDate" selectionMode="range" [readonlyInput]="true" inputId="range"></p-calendar>
+                </div>
+                <div class="col-md-2 mt-2">
+                    <button type="button" class="btn btn-primary"
+                        style="margin-top: 27px;" (click)="MTDData()">
+                        Search
+                    </button> &nbsp;
+                    <button type="button" class="btn btn-primary ml-2"
+                    style="margin-top: 27px;" (click)="click()">
+                    Clear
+                   </button> &nbsp;
+                    <button type="button" class="btn btn-primary"
+                    style="margin-top: 27px; " (click)="back()">
+                    Back
+                   </button>
+                </div>
+                <div class="col-md-3 text-right" >
+                    <button class=" btn btn-primary mt-4" type="submit" style="background-color: #119150;color: white;" (click)="export()">Export</button>
+                </div>
+            </div>    
+        </div>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <!-- <div *ngIf="!data">
+        <h3>Please Enter Correct Info or No Data Found </h3>
+</div> -->
+<p-table [scrollable]="false" [value]="MTDdata"  [paginator]="true" [rows]="5" >
+        <ng-template pTemplate="header">
+            <tr style="height:40px">
+                <th rowspan="2">
+                    <div class="th">
+                        Warehouse Name
+                    </div>
+                </th>
+                <th rowspan="2">
+                    <div class="th">
+                        No of Assingement
+                    </div>
+                </th>
+                <th rowspan="2">
+                    <div class="th">
+                        Total Assingement Amount
+                    </div>
+                </th>
+                <th rowspan="2">
+                    <div class="th">
+                        Total Cash Amount
+                    </div>
+
+                </th>
+                <th rowspan="2">
+                    <div class="th">
+                        Total Cheque Amount
+                    </div>
+                </th>
+                <th rowspan="2">
+                    <div class="th">
+                        Total Online Amount
+                    </div>
+                </th>
+                <th rowspan="2">
+                    <div class="th">
+                        Total Collection Amount
+                    </div>
+                </th>
+                <th rowspan="2">
+                    <div class="th">
+                        Total Due Amount
+                    </div>
+                </th>
+
+                <th colspan="2">
+                    <div class="th text-center">
+                        Bank Deposit
+                    </div>
+                </th>
+            </tr>
+            <tr>
+
+                <th>
+                    <div class="th">
+                        Total Cash Amount
+                    </div>
+                </th>
+                <th>
+                    <div class="th">
+                        Total Cheque Amount
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.WarehouseName}}</td>
+                <td>{{item.TotalAssignmentCount}}</td>
+                <td>{{item.TotalCashAmt+item.TotalCheckAmt+item.TotalOnlineAmt}}</td>
+                <td>{{item.TotalCashAmt}}</td>
+                <td>{{item.TotalCheckAmt}}</td>
+                <td>{{item.TotalOnlineAmt}}</td>
+                <td>{{item.TotalCashAmt+item.TotalCheckAmt+item.TotalOnlineAmt}}</td>
+                <td>{{item.TotalDueAmt}}</td>
+                <!-- <td>{{item.BOD | date:'medium'}}</td>
+                <td>{{item.EOD}}</td> -->
+                <!-- <td>{{EODData}}</td> -->
+                <!-- <td>{{item.TotalBankDepositDate  | date:'medium'}}</td> -->
+                <!-- <td>{{depositDate}}</td> -->
+                <td>{{item.TotalBankCashAmt}}</td>
+                <td>{{item.TotalBankChequeAmt}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mt-3 bg-white rounded" *ngIf="ShowBox==true">
+    <div class="row" *ngIf="Flag1==true">
+        <div class="col-6 div1">
+            <div class="container p-2 cont">
+           <span><h5 style="font-weight:bold">MTD Collection : {{mtdCollection}}</h5></span> 
+            <h5 style="font-weight:bold">MTD Bank Cash Deposit : {{mtdCashDeposit}}</h5>
+            <h5 style="font-weight:bold">MTD Bank Cheque Deposit : {{mtdChequeDeposit}}</h5>
+        </div>
+    </div>
+        <div class="col-6 div1">
+            <div class="container p-2 cont">
+            <h5 style="font-weight:bold">Today's Collection : {{todayCollection}}</h5>
+            <h5 style="font-weight:bold">Today's Bank Cash Deposit : {{todayCash}}</h5>
+            <h5 style="font-weight:bold">Today's Bank Cheque Deposit : {{todayCheque}}</h5>
+        </div>
+    </div>
+    </div>
+        <div class="row" *ngIf="Flag2==true">
+            <div class="col-12 mt-2 cont">
+                <div class="container text-center p-2">
+                <h5 style="font-weight:bold">Total Collection :{{TotalCollection}}</h5>
+                <h5 style="font-weight:bold">Total Bank Cash Deposit : {{TotalCash}}</h5>
+                <h5 style="font-weight:bold">Total Bank Cheque Deposit : {{TotalCheque}}</h5>
+            </div>
+        </div>
+        </div>
+        </div>
+        <p-blockUI [blocked]="blocked"></p-blockUI>
+        <p-progressSpinner *ngIf="blocked"
+            [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+            fill="#EEEEEE" animationDuration=".5s">
+        </p-progressSpinner>

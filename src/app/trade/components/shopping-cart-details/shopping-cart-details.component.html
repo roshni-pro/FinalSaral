@@ -1,0 +1,91 @@
+<div class="row">
+    <h4 style="padding-top: 20px; padding-left: 20px"><b>Shopping Cart</b></h4>
+  </div>
+  <hr>
+  <p-toast [style]="{marginTop: '10px'}"></p-toast>
+  
+  <p-tabView (onChange)="onTabChange($event)">
+    <p-tabPanel header="Basic Details" [selected]="true">
+      <div id="cartDetails" *ngIf="isNodata" class="info-div h-100 text-sm">
+        <h4 style="text-align: center;margin-top: 40px;">Cart is not created for given Customer.</h4>
+      </div>
+      <form class="form " name="form" *ngIf="!isNodata" #ShoppkinfCartForm="ngForm">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="name">Cart Id</label>
+              <input type="text" name="CartId" class="form-control" id="Cartid" [(ngModel)]="customerCart.CartId"
+                placeholder="CartId" disabled>         
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="name">Seller Name*</label>
+            <input type="text" name="SellerName" class="form-control" id="SellerName"
+              [(ngModel)]="customerCart.SellerName" placeholder="Seller Name"  maxlength="50" minlength="2">                      
+          </div>
+          <div class="col-md-6">
+            <label for="name">Invoice Number:</label>
+            <input type="text" name="InvoiceNo" class="form-control" id="InvoiceNo"
+              [(ngModel)]="customerCart.InvoiceNo" placeholder="Invoice Number" disabled>                       
+          </div>
+          <div class="col-md-6">
+            <label for="name">Buyer Id:</label>
+            <input type="text" name="BuyerId" class="form-control" id="BuyerId"
+              [(ngModel)]="customerCart.BuyerId" placeholder="Buyer Id" disabled>                        
+          </div>
+          <div class="col-md-6">
+            <label for="name">Seller Id:</label>
+            <input type="text" name="SellerId" class="form-control" id="SellerId"
+              [(ngModel)]="customerCart.SellerId" placeholder="Seller Id" disabled>                     
+          </div>
+        </div>                          
+        
+          <!-- <button type="button" class="btn btn-raised btn-primary" (click)="update(CustomerEditForm)">
+            Save
+          </button> -->
+       
+      </form>
+      <div class="form-actions col-sm-12 p-3" style="margin-left: 1360px;">
+        <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+          Cancel
+        </button>
+      </div>
+    </p-tabPanel>
+    <p-tabPanel header="Shopping CartItem List">
+      <div id="cartDetails" *ngIf="isNodata" class="info-div h-100 text-sm">
+        <h4 style="text-align: center;margin-top: 40px;">Cart Item is not available.</h4>
+      </div>
+      <table class="table table-responsive-sm text-center" *ngIf="!isNodata">
+        <thead>
+          <tr>
+            <th>#</th>
+            <!-- <th>Seller bidId</th>
+            <th>Buyer bidId</th> -->
+            <th>Seller Id</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Item Id</th>
+            <th>Item Name</th>
+            <th>Order Status</th>
+            <th>Orde rId</th>
+            <th>Created Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cart of ShoppingCartItems; let i = index;">
+            <td>{{i+1}}</td>
+            <!-- <td>{{cart.SellerBidId}}</td>
+            <td>{{cart.BuyerBidId}}</td> -->
+            <td>{{cart.SellerId}}</td>
+            <td>{{cart.Qty}}</td>
+            <td>{{cart.Price}}</td>
+            <td>{{cart.ItemId}}</td>
+            <td>{{cart.ItemName}}</td>
+            <td>{{cart.OrderStatus}}</td>
+            <td>{{cart.OrderId}}</td>
+            <td>{{cart.CreatedDate| date}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </p-tabPanel>
+  </p-tabView>

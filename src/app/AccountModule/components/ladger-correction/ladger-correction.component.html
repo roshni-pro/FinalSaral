@@ -1,0 +1,207 @@
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<div class="ui-fluid" id="sp">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-sm-5">
+        <div class="content-header">Ledger Correction </div>
+      </div>
+
+    </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table">
+
+      <div class="row">
+        <div class="col-sm-4">
+          <input class="form-control" [(ngModel)]="orderID">
+        </div>
+        <div class="col-sm-2">
+          <button class="btn btn-raised btn-raised btn-primary" (click)="search()">Search</button>
+        </div>
+        <div class="col-sm-6">
+          <button type="button" class="btn btn-raised btn-raised btn-primary pull-right" (click)="save()">
+            Save
+          </button>
+        </div>
+
+      </div>
+      <table class="table table-stripe table-bordered" *ngIf="obj">
+        <tr>
+          <th>Source</th>
+          <th>Cash Amount</th>
+          <th>Cheque Amount</th>
+          <th>Electronic Amountc</th>
+          <!-- <th>Mpos</th> -->
+        </tr>
+        <tr *ngIf="obj && obj.OrderDispatchedMasterInfo">
+          <td>
+            OrderDispatchedMaster
+          </td>
+          <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.OrderDispatchedMasterInfo.CashAmount" disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.OrderDispatchedMasterInfo.CashAmount"
+                  (ngModelChange)="onCashAmountChange($event)">
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.OrderDispatchedMasterInfo.CheckAmount" disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.OrderDispatchedMasterInfo.CheckAmount"
+                  (ngModelChange)="onChequeAmountChange($event)">
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.OrderDispatchedMasterInfo.ElectronicAmount"
+                  disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.OrderDispatchedMasterInfo.ElectronicAmount"
+                  (ngModelChange)="onElectronicAmountChange($event)">
+              </div>
+            </div>
+          </td>
+          <!-- <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.OrderDispatchedMasterInfo.BillDiscountAmount"
+                  disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.OrderDispatchedMasterInfo.BillDiscountAmount">
+              </div>
+            </div>
+          </td> -->
+        </tr>
+        <tr *ngIf="obj && obj.OrderDeliveryMasterInfo">
+          <td>
+            OrderDeliveryMaster
+          </td>
+          <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.OrderDeliveryMasterInfo.CashAmount" disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.OrderDeliveryMasterInfo.CashAmount"
+                  (ngModelChange)="onCashAmountChange($event)">
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.OrderDeliveryMasterInfo.CheckAmount" disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.OrderDeliveryMasterInfo.CheckAmount"
+                  (ngModelChange)="onChequeAmountChange($event)">
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.OrderDeliveryMasterInfo.ElectronicAmount" disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.OrderDeliveryMasterInfo.ElectronicAmount"
+                  (ngModelChange)="onElectronicAmountChange($event)">
+              </div>
+            </div>
+          </td>
+          <!-- <td>
+            <input class="form-control" [(ngModel)]="obj.OrderDeliveryMasterInfo.BillDiscountAmount">
+          </td> -->
+        </tr>
+        <tr *ngIf="obj && obj.FinalOrderDispatchedMasterInfo">
+          <td>
+            FinalOrderDispatchedMaster
+          </td>
+          <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.FinalOrderDispatchedMasterInfo.CashAmount"
+                  disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.FinalOrderDispatchedMasterInfo.CashAmount"
+                  (ngModelChange)="onCashAmountChange($event)">
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.FinalOrderDispatchedMasterInfo.CheckAmount"
+                  disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.FinalOrderDispatchedMasterInfo.CheckAmount"
+                  (ngModelChange)="onChequeAmountChange($event)">
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="row">
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="objCopy.FinalOrderDispatchedMasterInfo.ElectronicAmount"
+                  disabled="1">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control" [(ngModel)]="obj.FinalOrderDispatchedMasterInfo.ElectronicAmount"
+                  (ngModelChange)="onElectronicAmountChange($event)">
+              </div>
+            </div>
+          </td>
+          <!-- <td>
+            <input class="form-control" [(ngModel)]="obj.FinalOrderDispatchedMasterInfo.BillDiscountAmount">
+          </td> -->
+        </tr>
+
+      </table>
+
+
+    </div>
+
+    <div class="ui-fluid shadow p-3 m-2 mt-4 bg-white rounded table"
+      *ngIf="PaymentResponseRetailerAppList && PaymentResponseRetailerAppList.length > 0">
+      <div class="col-sm-5">
+        <div class="content-header">Payment Response Retailer AppList </div>
+      </div>
+      <br />
+      <table class="table table-stripe">
+        <tr>
+          <th>
+            Type
+          </th>
+          <th>
+            OrderID
+          </th>
+          <th>
+            Amount
+          </th>
+        </tr>
+        <tr *ngFor="let i of PaymentResponseRetailerAppList">
+          <td>
+            {{i.PaymentFrom}}
+          </td>
+          <td>
+            {{i.OrderId}}
+          </td>
+          <td>
+            {{i.amount}}
+          </td>
+        </tr>
+      </table>
+    </div>
+  </section>
+</div>

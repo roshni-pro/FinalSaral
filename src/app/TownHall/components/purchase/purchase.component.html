@@ -1,0 +1,175 @@
+<app-town-hall-navigation></app-town-hall-navigation>
+
+
+
+<div *ngIf="townHallCommentsSection">
+
+  <section id="groups">
+    <div class="row text-left">
+      <div class="col-12 mt-3 mb-1">
+        <div class="content-header">
+          <span>
+            <a href="javascript:void(0);" (click)="isEditable = !isEditable">Fill Rate Analysis</a>
+            &nbsp;
+            <a href="javascript:void(0);" *ngIf="isEditable" (click)="updateComment()"><i class="fa fa-floppy-o"
+                aria-hidden="true"></i></a>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="row text-left">
+      <div class="col-12">
+        <div class="card-group">
+          <div class="card  lft-or-fill-rate">
+            <div class="card-content">
+              <div class="px-3">
+                <div class="hd-br">
+                  <h4>Order Fill Rate</h4>
+                </div>
+                <table class="table">
+                  <thead class="">
+                    <tr>
+                      <th>#</th>
+                      <th>Month</th>
+                      <th>Percentage</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let orderFillRate of orderFillrateList; let i=index;">
+                      <td>{{i+1}}</td>
+                      <td>{{orderFillRate.MonthName}}</td>
+                      <td>{{orderFillRate.fillrates}}%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card chrt rt">
+            <div class="card-content">
+              <div *ngIf="fillRateChartData">
+                <canvas height="500" baseChart class="chart" [datasets]="fillRateChartData"
+                  [labels]="fillRateChartLables" [options]="fillRateChartOptions" [colors]="fillRateChartColor"
+                  [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="card   rght-po-fill-rate">
+            <div class="card-content">
+              <div class="px-3">
+                <div class="hd-br">
+                  <h4>PO Fill Rate</h4>
+                </div>
+                <table class="table">
+                  <thead class="">
+                    <tr>
+                      <th>#</th>
+                      <th>Month</th>
+                      <th>Percentage</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let poFillRate of poFillrateList; let i=index;">
+                      <td>{{i+1}}</td>
+                      <td>{{poFillRate.MonthName}}</td>
+                      <td>{{poFillRate.fillrates}}%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="row" >
+
+      <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <br>
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallPurchaseComments.FillRateAnalysis" name="AgentKPPEditor"
+          [style]="{'height':'320px'}"></p-editor>
+      </div>
+
+      <div class="col-xl-12 col-lg-12"
+        *ngIf="!isEditable && townHallCommentsSection.TownHallPurchaseComments.FillRateAnalysis">
+        <div class="card horizontal">
+          <div class="card-content d-flex justify-content-between">
+            <div class="vtnt" [innerHTML]="townHallCommentsSection.TownHallPurchaseComments.FillRateAnalysis"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="row text-left">
+    <div class="col-12 mt-3 mb-1">
+      <div class="content-header">Inventory Days</div>
+
+    </div>
+  </div>
+  <div class="row" matchHeight="card">
+    <div class="col-xl-8 col-lg-12 col-12">
+      <div class="card  clr-inv">
+        <div class="card-header">
+          <h4 class="card-title"></h4>
+        </div>
+        <div class="card-content">
+          <div id="bar-bar1" class="height-500" *ngIf="inventoryDayChartData && inventoryDayChartData.length >0">
+            <canvas baseChart class="chart" [datasets]="inventoryDayChartData" [labels]="inventoryDayChartLabels"
+              [options]="inventoryDayChartOptions" [colors]="inventoryDayChartColors" [legend]="inventoryDayChartLegend"
+              [chartType]="inventoryDayChartType"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-12 col-12">
+      <div class="card inv-rght">
+        <div class="card-header">
+          <h4 class="card-title">MONTH INVENTORY</h4>
+        </div>
+        <div class="card-content rght-inv">
+
+          <table class="table table-responsive-sm text-center">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Month</th>
+                <th>Inventory (In Lakh)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let invetory of inventoryData; let i = index;">
+                <td>{{i+1}}</td>
+                <td>{{invetory.MonthName}}</td>
+                <td>{{invetory.Values}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="col-xl-12 col-lg-12"  *ngIf="isEditable">
+      <br>
+      <p-editor [(ngModel)]="townHallCommentsSection.TownHallPurchaseComments.InventoryDays" name="AgentKPPEditor"
+        [style]="{'height':'320px'}"></p-editor>
+    </div>
+
+    <div class="col-xl-12 col-lg-12"
+      *ngIf="!isEditable && townHallCommentsSection.TownHallPurchaseComments.InventoryDays">
+      <div class="card horizontal">
+        <div class="card-content d-flex justify-content-between">
+          <div class="vtnt" [innerHTML]="townHallCommentsSection.TownHallPurchaseComments.InventoryDays"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

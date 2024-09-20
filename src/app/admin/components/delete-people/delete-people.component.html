@@ -1,0 +1,43 @@
+<!-- <div calss = row style="height: 40px "> -->
+<div class="row float-right  " style="height: 60px ; padding-right: 50px">
+  <button type="button" class="btn btn-raised btn-primary "  (click) = "active()" >
+    <i class="fa fa-plus-circle"></i> Active
+  </button>
+</div>
+
+<div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover">
+  <p-table [value]="deletepeopleList" [paginator]="true" [rows]="10"  [(selection)]="Deletepeoples"  text-align: center>
+    <ng-template pTemplate="header">
+      <div style="text-align: right">
+        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+      </div>
+      
+      <tr>
+        <th style="width: 3em"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>          
+        <th class="body">PeopleID</th>
+        <th>PeopleName</th>
+        <th>UpdateBy</th>
+        <th>UpdatedDate</th>
+        <!-- <th>Active</th> -->
+      </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="body" let-rowData>
+      <tr [pSelectableRow]="rowData">
+        <td><p-tableCheckbox [value]="rowData"></p-tableCheckbox></td>
+        <td>{{rowData.PeopleID}}</td>
+        <td>{{rowData.PeopleFirstName}}-{{rowData.PeopleLastName}}</td>
+        <td>{{rowData.UpdateBy}}</td>
+        <td>{{rowData.UpdatedDate}}</td>
+        <!-- <td>{{rowData.Active}}</td> -->
+      </tr>
+    </ng-template>
+    <!-- <ng-template pTemplate="summary">
+        <ul>
+            <li *ngFor="let d of Deletepeoples" style="text-align: left">
+                {{d.PeopleID + ' - ' + d.PeopleFirstName + ' - ' + d.UpdateBy + ' - ' + d.Active}}
+            </li>
+        </ul>
+    </ng-template> -->
+  </p-table>
+</div>

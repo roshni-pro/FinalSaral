@@ -1,0 +1,438 @@
+<!-- 
+<p-toast position="top-right"></p-toast> -->
+
+<!-- App Home Selector Starts-->
+
+      <div class="row">
+      
+        <div class="head-content mt-3">
+          <h3>App Home</h3>
+        </div>
+      
+      </div>
+
+      <div class=" bg-white rounded">
+<div class="row"  *ngIf="isAppHomeEdit">
+  <div class="col-md-12 mt-2  d-flex  pt-2 pb-2">
+  <div class="col-md-3">
+    <label for="Warehouse"> Select Application Type:</label>
+    <div>
+ 
+      <select [disabled]="SectionData.WarehouseId" id="Warehouse" name="WarehouseName" class="form-control"
+        (change)=" SectionData.WarehouseId = null;accordionSectionsList = [];getSectionTile()" 
+        [(ngModel)]="SectionData.AppType">
+        <option value="">--Select App Type--</option>
+        <option value="Retailer App">Retailer App</option>
+        <option value="Sales App">Sales App</option>
+        <option value="Consumer">Consumer</option>
+      </select>
+
+
+    </div>
+  </div>
+  <div class="col-md-3">
+    <label for="Warehouse"> Select Warehouse:</label>
+      <div>
+   
+          <select id="Warehouse" name="WarehouseName" class="form-control"
+          [(ngModel)]="SectionData.WarehouseId" (change)="getSectionsByWarehouseId(SectionData.WarehouseId);" [disabled]="SectionData.AppType==''">
+          <option [value]='null'>--Select Warehouse--</option>
+          <option *ngFor="let WareHouse of warehouseList" [value]="WareHouse.WarehouseId">
+            {{WareHouse.WarehouseName}} {{WareHouse.CityName}}
+          </option>
+        </select>
+        </div>
+  </div>
+</div>
+</div>
+   
+
+<!--  bg-white rounded -->
+<div class="row pt-3" *ngIf="SectionData.WarehouseId"> 
+  <div class="col-md-12   pt-2 pb-2  d-flex justify-content-between">
+  <div>
+    
+        <button class="btn cle" (click)="resetAppHome()">Reset App Home</button>
+
+        <button class="btn cle" (click)="addNewSection()" [disabled]="!SectionData.WarehouseId || SectionData.WarehouseId == 0 || SectionData.WarehouseId == 'null'
+        || SectionData.WarehouseId == ''">Create New Section</button>
+
+        <button class="btn cle" (click)="deleteCompleteAppHome()" [disabled]="!SectionData.WarehouseId || SectionData.WarehouseId == 0 || SectionData.WarehouseId == 'null' || SectionData.WarehouseId == '' || appHomeDeleted">
+          Delete App Home</button>
+
+        
+
+          <button class="btn cle" (click)="saveCompleteAppHome()"[disabled]="!SectionData.WarehouseId || SectionData.WarehouseId == 0 || SectionData.WarehouseId == 'null' || SectionData.WarehouseId == '' || appHomeDeleted && accordionSectionsList==undefined ||accordionSectionsList && accordionSectionsList.length==0"
+          disabled>Save App Home</button>
+
+          <button class="btn cle" (click)="publishCompleteAppHome()" style="font-size:12px;" [disabled]="!SectionData.WarehouseId || SectionData.WarehouseId == 0 || SectionData.WarehouseId == 'null' || SectionData.WarehouseId == '' || !isAppHomeSaved || appHomeDeleted" disabled >
+            Publish App Home</button>
+
+            <button class="btn cle" (click)="openClonePopup()" [disabled]="!SectionData.WarehouseId || SectionData.WarehouseId == 0 || SectionData.WarehouseId == 'null' || SectionData.WarehouseId == '' || appHomeDeleted && accordionSectionsList==undefined ||accordionSectionsList && accordionSectionsList.length==0">
+              Clone App Home</button>
+
+  </div>
+  <div *ngIf="SectionData.WarehouseId">
+    <p-toggleButton [style]="{'background':'#ff5b1e','color':'white','width': '100%','border-radius': '3px','height':'82%','margin':'4px 2px','padding-top':'0px','border': '#FF6363','font-weight':'bold'}"  (onChange)="showMobileView != !showMobileView" onLabel="Hide Mobile View"
+    offLabel="Show Mobile View" 
+    [(ngModel)]="showMobileView"></p-toggleButton>
+  </div>
+   </div>
+</div>
+</div>
+<!-- App Home Selector ends-->
+
+
+
+
+<!-- Accordion start -->
+
+
+
+
+<!-- bg-white rounded -->
+<div class="row">
+  <div class="col-md-12 mt-4 ">
+<div class="row editedAccordionChange">
+  <div [ngClass]="{'col-md-12': !showMobileView, 'col-md-8' : showMobileView }" style="position: relative;">
+    <div  cdkDropList (cdkDropListDropped)="drop($event)" class="panel card panel-default"
+      *ngIf="accordionSectionsList && accordionSectionsList.length > 0">
+
+      <div *ngFor="let item of accordionSectionsList; let i = index;" 
+        cdkDragBoundary=".panel-default" cdkDrag>
+        <p-accordion (onOpen)="openAcc(i)" (onClose)="closeAcc(i)" [activeIndex]="index" #accordion class="accordian">
+          <ng-container *ngIf="!item.Deleted">
+            <ng-container *ngIf="item.IsBanner">
+             <div class="deleteAccordionChange" style="cursor: pointer;">
+                <i class="fa fa-trash" style="color: #787474" aria-hidden="true" (click)="removeSection(item)"></i>
+             </div>
+
+              <p-accordionTab class="pane">
+                <p-header style="cursor: pointer;">
+                  <div class="numbr">
+                    <span class="index">{{i+1}} </span> <span class="title">BANNER | {{item.SectionSubType}} |
+                      {{item.SectionName}}</span>
+                  </div>
+                </p-header>
+           
+                <ng-container *ngIf="item.itemOpen">
+                  <apphome-banner [itemOpen]='item.itemOpen' [currentToggleIndex]="currentToggleIndex"
+                    [showMobileView]="showMobileView" [item]="item" [BaseCategories]="BaseCategories" [subcategory]="subcategory"
+                    [categorys]="categorys" [subsubcats]="subsubcats" (addSection)="addSection($event)" [Items]="Items"
+                    [indexOfItem]="i+1" (addNewSection)="openpopup = true" (disablePublish)="disablePublish($event)"
+                    (removeBanner)="removeSection($event)" (refreshAppHome)="getSectionsByWarehouseId($event)"
+                    (clearMobileBanner)="clearBanner()" (IsBannerValid)="onbannerloaded($event)"
+                    >
+                    <!-- clearMobileBanner -->
+                  </apphome-banner>
+                </ng-container>
+              </p-accordionTab>
+            </ng-container>
+            <ng-container *ngIf="item.IsPopUp">
+
+              <div class="deleteAccordionChange" style="cursor: pointer;">
+                <i class="fa fa-trash" style="color: #787474" aria-hidden="true" (click)="removeSection(item)"></i>
+
+              </div>
+              <p-accordionTab>
+                <p-header>
+                  <div class="numbr">
+                    <span class="index">{{i+1}} </span> <span class="title">POPUP | {{item.SectionSubType}} |
+                      {{item.SectionName}}</span>
+                  </div>
+                </p-header>
+            
+                <ng-container *ngIf="item.itemOpen">
+                  <apphome-popup [itemOpen]='item.itemOpen' [currentToggleIndex]="currentToggleIndex" (IsPopupValid)="onpoploaded($event)"
+                    [showMobileView]="showMobileView" [item]="item" [BaseCategories]="BaseCategories"
+                    [categorys]="categorys" [subsubcats]="subsubcats" (addSection)="addSection($event)" [Items]="Items"
+                    [indexOfItem]="i+1" (addNewSection)="addNewSection($event)"
+                    (disablePublish)="disablePublish($event)" (removePopup)="removeSection($event)" (refreshAppHome)="getSectionsByWarehouseId($event)"
+                    >
+                  </apphome-popup>
+                </ng-container>
+              </p-accordionTab>
+            </ng-container>
+            <ng-container *ngIf="item.IsTile">
+
+              <div class="deleteAccordionChange" style="cursor: pointer;">
+                <i class="fa fa-trash" style="color: #787474" aria-hidden="true" (click)="removeSection(item)"></i>
+
+              </div>
+              <p-accordionTab>
+                <p-header>
+                  <div class="numbr">
+                    <span class="index">{{i+1}} </span> <span class="title">TILE | {{item.SectionSubType}} |
+                      {{item.SectionName}}</span>
+                  </div>
+                </p-header>
+
+  
+                <ng-container *ngIf="item.itemOpen" class="accordionTab">
+                  <apphome-tile [itemOpen]='item.itemOpen' #AppHomeTileComponent
+                    [currentToggleIndex]="currentToggleIndex" [showMobileView]="showMobileView" [item]="item"
+                    [BaseCategories]="BaseCategories" [categorys]="categorys" [subsubcats]="subsubcats" [subcategory]="subcategory"
+                    (addSection)="addSection($event)" [Items]="Items" [indexOfItem]="i+1"
+                    (addNewSection)="addNewSection($event)" (disablePublish)="disablePublish($event)"
+                    (removeTile)="removeSection($event)" (refreshAppHome)="getSectionsByWarehouseId($event)" (IsTileValid)="onTileloaded($event)"
+                    >
+                  </apphome-tile>
+                </ng-container>
+              </p-accordionTab>
+            </ng-container>
+          </ng-container>
+        </p-accordion>
+      </div>
+
+    </div>
+  </div>
+
+  <div *ngIf="showMobileView && SectionData.WarehouseId" class="col-md-4 mt-3 main-height">
+    <div class="pic">
+    <div class="top-brdr">
+      <div class="btm-brdr">
+    
+        <!-- <h1>mobile view</h1> -->
+<div class="content">
+        <div class="row">
+          <ng-container *ngFor="let section of accordionSectionsList">
+            <ng-container *ngIf="section.IsBanner == true">
+              <div class="col-md-12 mt-1">
+                <ng-container *ngIf="section.AppItemsList && section.AppItemsList.length">
+                  <app-mobile-banner [section]="section.AppItemsList" [bannerType]="section.SectionSubType">
+                  </app-mobile-banner>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="section.IsTile == true">
+              <div class="col-md-12 mt-1">
+                <ng-container *ngIf="section.AppItemsList && section.AppItemsList.length">
+                  <app-mobile-tile [section]="section.AppItemsList" [tileType]="section.SectionSubType"
+                    [ColumnCount]="section.ColumnCount"></app-mobile-tile>
+                </ng-container>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="section.IsPopUp == true">
+              <ng-container *ngIf="section.AppItemsList && section.AppItemsList.length">
+                <div *ngIf="section.AppItemsList && section.AppItemsList[0] && section.AppItemsList[0].displayPopup"
+                  class="col-md-12 mt-1 pop-up-layout">
+                  <app-mobile-popup [popupType]="section.SectionSubType" [section]="section.AppItemsList">
+                  </app-mobile-popup>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+      </div>
+      <div class="footr row">
+        <div class="col-md-4">
+          <ng-container *ngFor="let section of accordionSectionsList; let i = index">
+            <ng-container *ngIf="section.IsPopUp == true">
+              <div style=" display: inline-block;">
+                <ng-container *ngFor="let item of section.AppItemsList; let j = index">
+                  <ng-container *ngIf="!item.Deleted || item.Deleted == 'false'">
+                    <div style="background-color: dodgerblue; border: 2px solid black; margin-left: 2px;">
+                      <input type="checkbox" style="height: 30px; width: 20px;" [(ngModel)]="item.displayPopup">
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+        <!-- <div class="col-md-4 text-right">
+          <i class="fa fa-eye-slash fa-2x" (click)="closeAllMobilePopups()" aria-hidden="true"></i>
+        </div> -->
+        <!-- <div class="col-md-4 text-right">
+          <i class="fa fa-refresh fa-2x" (click)="resetState()" aria-hidden="true"></i>
+        </div> -->
+      </div>
+  
+
+  </div>
+</div>
+
+<br><br>
+</div>
+</div>
+
+<div *ngIf="openpopup">
+  <form #newAppHomeForm="ngForm">
+    <p-dialog [(visible)]="openpopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '50%', overflow: 'auto'}">
+      <p-header>
+        Add New Section
+      </p-header>
+      <div class="row text-center">
+        <div class="col-md-4 tiles-slider">
+          <div class="shadowBox">
+            <h4>Tiles</h4>
+            <div class="col-md-12">
+              <i class="fa fa-list-alt fa-3x" aria-hidden="true"></i>
+            </div>
+            <div class="col-md-12">
+              <label for="checkbox" class="round">
+                <input checked="checked" type="checkbox" id="checkbox" name="tile" [(ngModel)]="data.IsTile"
+                  (click)="data.IsTile = !data.IsTile; data.IsBanner = false; data.IsPopUp = false; data.SectionType = 'Tile'; SubSectionType = SubSectionTypeForTile"
+                  class="ng-pristine ng-valid">
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 tiles-slider">
+          <div class="shadowBox">
+            <h4>Banner</h4>
+            <div class="col-md-12">
+              <i class="fa fa-map fa-3x" aria-hidden="true"></i>
+            </div>
+            <div class="col-md-12">
+              <label for="checkboxtwo" class="round">
+                <input type="checkbox" id="checkboxtwo" name="banner" [(ngModel)]="data.IsBanner"
+                  (click)="data.IsTile = false; data.IsBanner = !data.IsBanner; data.IsPopUp = false; data.SectionType = 'Banner' ; SubSectionType = SubSectionTypeForBanner"
+                  class="ng-pristine ng-valid">
+                <span class="checkmark"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 tiles-slider">
+          <div class="shadowBox">
+            <h4>Pop-Up</h4>
+            <div class="col-md-12">
+              <i class="fa fa-sticky-note-o fa-3x" aria-hidden="true"></i>
+            </div>
+            <div class="col-md-12 round">
+              <label for="checkboxthree" class="round">
+                <input type="checkbox" id="checkboxthree" name="checkboxthreepopup" [(ngModel)]="data.IsPopUp"
+                  (click)="data.IsTile = false; data.IsBanner = false; data.IsPopUp = !data.IsPopUp; data.SectionType = 'PopUp'; SubSectionType = sectionSubTypeforPopUp"
+                  class="ng-pristine ng-valid">
+                <span class="checkmark"></span>
+              </label>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <section class="section_type">
+        <div class="row">
+          <div class="col-md-6 mt-3">
+            <label> Select Section Subtype </label>
+            <select class="selectSection" name="sectionsubtype" [(ngModel)]="data.SectionSubType" (change)="getviewType($event)">
+              <option value="">--select--</option>
+              <option value="{{subtype.type}}" *ngFor="let subtype of SubSectionType">{{subtype.type}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-6 mt-3">
+            <label> Enter Section Name </label>
+            <input class="inputSection" type="text" name="sctype" [(ngModel)]="data.SectionName"
+              placeholder="Enter Section Name" /><br />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mt-2">
+            <label> Enter Section Hindi Name </label>
+            <input class="inputSection" type="text" name="sctionHindiName" [(ngModel)]="data.sectionHindiName"
+              placeholder="Enter Section Name" />
+          </div>
+
+
+          <div class="col-md-6 mt-2">
+            <label> Select View Type </label>
+            <select class="selectSection" name="vwtype" [(ngModel)]="data.ViewType">
+              <option value="">--select--</option>
+              <option value="AppView">AppView</option>
+              <option value="WebView" >Web View</option>
+            </select>
+          </div>
+          <div class="col-md-12" *ngIf="data.ViewType == 'WebView'">
+            <label> Enter Web View Name </label>
+            <input class="inputSection" type="text" name="webvwurl" [(ngModel)]="data.WebViewUrl"
+              placeholder="Enter Web View URL" /><br />
+          </div>
+        </div>
+
+      </section>
+
+      <p-footer>
+        <div class="col-md-12">
+          <div class="form-group">
+            <!-- {{data.IsBanner}} {{data.IsPopUp}} {{data.IsTile}} -->
+              <button class="btn cle" [disabled]="data.SectionSubType == '' && ( data.IsBanner == false || data.IsPopUp == false || data.IsTile == false)" (click)="createNewSection();newSectionForm.reset();" disabled>Create New Section</button>
+          </div>
+        </div>
+      </p-footer>
+    </p-dialog>
+  </form>
+</div>
+
+<div *ngIf="openclonepopup">
+  <form #cloneForm="ngForm">
+    <p-dialog [(visible)]="openclonepopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '50%', overflow: 'auto'}">
+      <p-header>
+        Clone App Home
+      </p-header>
+      <section class="section_type">
+        <div class="row">
+          <div class="col-md-6">
+            <label> Select Application Type </label>
+            <select id="Warehouse" name="WarehouseName" class="form-control" [(ngModel)]="cloneSectionData.appType">
+              <option value="null">--Select App Type--</option>
+              <option value="Retailer App">Retailer App</option>
+              <option value="Sales App">Sales App</option>
+              <option value="Consumer">Consumer</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="Warehouse"> Select Warehouse:</label>
+            <div>
+              <select id="Warehouse" name="WarehouseName" class="form-control" [(ngModel)]="cloneSectionData.wId">
+                <option [value]='null'>--Select Warehouse--</option>
+                <ng-container *ngFor="let WareHouse of warehouseList">
+                  <ng-container *ngIf="WareHouse.WarehouseId != SectionData.WarehouseId">
+                    <option [value]="WareHouse.WarehouseId">
+                      {{WareHouse.WarehouseName}} {{WareHouse.CityName}}
+                    </option>
+                  </ng-container>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <p-footer>
+        <div class="col-md-12">
+          <div class="form-group">
+            <button class="btn cle"  type="button" label="Clone App Home" 
+            [disabled]="cloneSectionData.appType == 'null' || cloneSectionData.wId == 'null'" value="Clone App Home"
+             (click)="cloneAppHome();openclonepopup = false;" disabled>clone App Home</button>
+
+
+       
+          </div>
+        </div>
+      </p-footer>
+    </p-dialog>
+  </form>
+</div>
+
+
+
+<!-- <input type="button" value="checkTileExist" (click)="checkTileExist()"> -->
+
+<p-blockUI *ngIf="blocked" [blocked]="blocked"></p-blockUI>
+<p-progressSpinner  *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  <!-- <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '58%', top: '48%'}"></p-progressSpinner> -->

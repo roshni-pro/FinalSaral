@@ -1,0 +1,130 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <div *ngIf="conditionNew!=false">
+    <section id="basic-form-layouts" *ngIf="show && conditionNew!=false">
+      <div class="row text-left">
+        <div class="col-md-12">
+          <br>
+          <br>
+          <div class="center header">
+            <h4><b>ShopKirana</b></h4>
+          </div>
+          <div class="center header">
+            <h4><b>Customer Upload Document</b></h4>
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form-inline" name="form" #basecategoryForm="ngForm">
+                <div class="row col-md-12">
+                  <div class="col-md-6">
+                    <div class="form-group m-2">
+                      <label for="projectinput3" class="col-md-6">Select Upload Document<span style="color:red">*
+                        </span></label>
+                      <select id="desg" name="desg" class="form-control col-md-6" [(ngModel)]="value"
+                        (change)="onChange()">
+                        <option value="">--select--</option>
+                        <option value="1">Shop image</option>
+                        <option value="2">GST image</option>
+                        <option value="3">License image</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6" *ngIf="!value==1">
+                    <div class="form-group m-2">
+                      <label for="uploadAdvertisements" class="col-md-6">Upload Image:<span
+                          style="color:red">*</span></label><br />
+                      <input class="btn btn-raised btn-info col-md-6" id="file" type="file" accept="image/*"
+                        (change)="upload($event.target.files)" />
+                      <div class="col-md-6"></div>
+                      <label class="col-md-6">image Formate (.jpg,.png,.jpeg)</label>
+                      <br />
+                      <div class="form-group">
+                        <img alt="" [src]="imgURL" height="100" *ngIf="imgURL">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6" *ngIf="value==1">
+                    <div class="form-group m-2">
+                      <label for="uploadAdvertisements" class="col-md-6">Upload Image:<span
+                          style="color:red">*</span></label><br />
+                      <input class="btn btn-raised btn-info col-md-6" id="file" type="file" accept="image/*"
+                        (change)="upload($event.target.files)" />
+                      <div class="col-md-6"></div>
+                      <label class="col-md-6">image Formate (.jpg,.png,.jpeg)</label>
+                      <br />
+                      <div class="form-group">
+                        <img alt="" [src]="imgURL" height="100" *ngIf="imgURL">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6" *ngIf="value==2">
+                    <div class="form-group m-2">
+                      <label for="uploadAdvertisements" class="col-md-6">Upload Image:<span
+                          style="color:red">*</span></label><br />
+                      <input class="btn btn-raised btn-info col-md-6" id="file" type="file" accept="image/*"
+                        (change)="upload($event.target.files)" />
+                      <div class="col-md-6"></div>
+                      <label class="col-md-6">image Formate (.jpg,.png,.jpeg)</label>
+                      <br />
+                      <div class="form-group">
+                        <img alt="" [src]="imgURL" height="100" *ngIf="imgURL">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6" *ngIf="value==3">
+                    <div class="form-group m-2">
+                      <label for="uploadAdvertisements" class="col-md-6">Upload Image:<span
+                          style="color:red">*</span></label><br />
+                      <input class="btn btn-raised btn-info col-md-6" id="file" type="file" accept="image/*"
+                        (change)="upload($event.target.files)" />
+                      <div class="col-md-6"></div>
+                      <label class="col-md-6">image Formate (.jpg,.png,.jpeg)</label>
+                      <br />
+                      <div class="form-group">
+                        <img alt="" [src]="imgURL" height="100" *ngIf="imgURL">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group m-2">
+                      <div class="col-md-6"></div>
+                      <button type="button" class="btn btn-raised btn-primary " (click)="uploadDocust(value)">
+                        Upload
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-blockUI [blocked]="blocked"></p-blockUI>
+      <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+    </section>
+  </div>
+</div>
+<div class="centername" *ngIf="show==false && condition==false">
+  <div class="header">
+    <h3 class="m-2">Customer Not Found</h3>
+  </div>
+</div>
+<div class="centername" *ngIf="condition==true">
+  <div class="header">
+    <h3 class="m-3">Thankyou For Uploading</h3>
+  </div>
+</div>
+<div class="centername" *ngIf="condition==true">
+  <div class="header" style="margin-top: -35px">
+    <h3 class="m-3">image</h3>
+  </div>
+</div>
+<div class="centername" *ngIf="condition==true">
+  <div class="header" style="margin-top: -35px">
+    <button type="button" class="btn btn-raised btn-primary" style=" margin-top: 130px;" (click)="Back()">
+      Back
+    </button>
+  </div>
+</div>

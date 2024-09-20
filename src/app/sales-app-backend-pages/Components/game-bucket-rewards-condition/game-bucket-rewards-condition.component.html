@@ -1,0 +1,95 @@
+<p-toast></p-toast>
+<h3 class=" heading mt-4 abb" >Game Bucket Rewards Condition</h3>
+    <div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-sm-3 mt-2">
+                        <label><b>Bucket No<span class="required">*</span></b></label>
+                        <input type="number" placeholder="Enter Bucket No" class="form-control" [(ngModel)]="selectBucketNo">
+                    </div>     
+                    <div class="col-sm-3 mt-2">
+                        <button class="btn btn-primary" style="margin-top: 30px;"  (click)="load()">Search</button>
+                        <!-- <button class="btn btn abc ml-3" style="margin-top: 14px;" (click)="showDialog()">History</button> -->
+                    </div>
+                    <div  class="col-sm-6 mt-4 text-right">
+                        <button type="button" class="btn btn-raised float-right align-self-end" style="margin-bottom: 0;background-color: green;color: white;" (click)="AddNewConditions()">
+                            <i class="fa fa-plus-circle"></i> Add new Condition
+                        </button>
+                    </div>
+                   
+                </div>    
+            </div>
+        </div>
+    </div>
+   <div class="card">
+    <div class="card-body">
+        <p-table [value]="gameBucketConditions" [(first)]="first" [paginator]="true" [rows]="10" >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:6rem"></th>
+                    <th >Sno.</th>
+                    <th>Bucket No</th>
+                    <th>App Desc</th>
+                    <th style="width:6rem"></th>
+                    <th>App Value</th>
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+                <tr>
+                    <td style="width:6rem"></td>
+                    <td>{{rowIndex+1}}</td>
+                   <td>{{data.BucketNo}}</td>
+                   <td>{{data.AppDesc}}</td>
+                   <td style="width:6rem"></td>
+                   <td>{{data.AppValue}}</td>
+                    <td><i class="pi pi-trash ml-2" (click)="confirm1(data)"style="font-size: 2rem;color:orangered;"></i></td>
+                </tr>
+            </ng-template>
+            </p-table>
+            </div>
+            </div>
+    <p-dialog header="Add New Condition" [(visible)]="showAddCondition" [resizable]="false" positionTop="50" [modal]="true"
+    appendTo="body" [draggable]="false" [style]="{width: '70%', top: '70px'}">
+    <div class="row">
+    <div class="col-4">
+        <label for="">Bucket No:</label><br>
+        <p-dropdown  [(ngModel)]="selectedBucketNo"
+        optionLabel="BucketNo" [options]="BucketListData"
+        placeholder="Select Bucket No" (onChange)="OnchangeBucket(selectedBucketNo)" [filter]="true"></p-dropdown>
+    </div>
+    <div class="col-4">
+        <label for="">Value</label><br>
+        <input type="text" class="form-control"  [(ngModel)]="selectedvalue" disabled>
+    </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-4">
+                <label for="">App Description</label><br>
+                <p-dropdown  [(ngModel)]="selectedAppDesc"
+                optionLabel="AppDesc"
+                placeholder="Select App Description" [options]="AppDescriptionListData" (onChange)="OnchangeAPP(selectedAppDesc)"></p-dropdown>
+            </div>
+            <div class="col-4">
+                <label for="">Name</label><br>
+            <input type="text" class="form-control"  [(ngModel)]="conditionMasterName" disabled>
+            </div>
+            <div class="col-4">
+                <label for="">Value</label><br>
+                <input type="text" class="form-control"  [(ngModel)]="conditionMasterValue" >
+                </div>
+        </div>
+<div class="row mt-4">
+    <div class="col-12 text-right">
+<button class="btn btn" style="background-color: darkgreen;color: white;" (click)="OnSaveBucket()">Save</button>
+<button class="btn btn ml-2" style="background-color: orange;color: white;" (click)="OnCancel()">Cancel</button>
+    </div>
+
+</div>
+    </p-dialog>
+    <p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}"
+        strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

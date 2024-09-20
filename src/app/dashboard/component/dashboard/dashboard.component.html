@@ -1,0 +1,463 @@
+<!-- <div class="header">STATISTICS!!</div> -->
+<div class="container-fluid">
+
+    <!-- <div class="row">
+        <div class="col-12">
+            <div class="card border-dark" style="max-width: 100%">
+                <div class="card-header">ORDERFILLRATE:
+                </div>
+                <div class="card-body text-dark">
+                    <p>Warehouse: </p>
+                    <p-dropdown [options]="cities" [(ngModel)]="selectedCity1" placeholder="Select a City"
+                        optionLabel="name" [showClear]="true"></p-dropdown>
+                    
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- <hr> -->
+    <!-- <div class="row mt-2">
+        <div class="col-12" >
+            <div class=" border-dark shadow text-center" > Dashboard - Shopkirana </div>
+        </div>
+    </div> -->
+
+    <div class="row pt-2">
+        <div class="col-12">
+            <h3 class="headerSk pt-4">DASHBOARD - STATISTICS </h3>
+        </div>
+        <div class="col-sm-2 col-md-6 col-lg-2 order-1 order-md-1 order-lg-1">
+            <div class="card shadow  p-2"> Today's Sale - {{currentDate | date : 'mediumDate'}} </div>
+
+            <div class="card shadow  mb-3 " style="max-width: 100%;">
+                <div class="card-header">TODAYS SALE (CENTRAL)</div>
+                <div class="card-body text-center px-1 py-3">
+                    <!-- <p>₹ {{monthSales?.TSale | number : '0.0-0'}}</p> -->
+                    <span class="label label-primary ng-binding">₹ {{monthSales?.TSale | number : '0.0-0'}}</span>
+                </div>
+                <!-- <div class="card-footer bg-transparent border-success">Footer</div> -->
+            </div>
+
+            <div class="card border-success shadow mb-3" style="max-width: 100%;">
+                <div class="card-header">TODAYS SALE (DIGITAL)</div>
+                <div class="card-body text-center px-1 py-3 text-success">
+                    <!-- <P>₹ {{monthSales?.DTSale | number : '0.0-0'}}</P> -->
+                    <span class="label label-primary ng-binding">₹ {{monthSales?.DTSale | number : '0.0-0'}}</span>
+                </div>
+                <!-- <div class="card-footer bg-transparent border-success">Footer</div> -->
+            </div>
+
+            <div class="card border-info mb-3 shadow" style="max-width: 100%;">
+                <div class="card-header">TODAY SALE <br> (DIGITAL+SK)</div>
+                <div class="card-body text-center px-1 py-3 text-info">
+                    <!-- <p>₹ {{monthSales?.DSKTSale | number : '0.0-0'}}</p> -->
+                    <span class="label label-primary ng-binding">₹ {{monthSales?.DSKTSale | number : '0.0-0'}}</span>
+                </div>
+                <!-- <div class="card-footer bg-transparent border-success">Footer</div> -->
+            </div>
+            <!-- <div class="card border-secondary shadow mb-3" style="max-width: 100%;">
+                <div class="card-header ">TODAYS SALE(KK):</div>
+                <div class="card-body text-secondary ">
+                    <p>₹ {{monthSales?.KKTodSale | number : '0.0-0'}}</p>
+                </div>
+                
+            </div> -->
+            <!-- <div class="card border-warning shadow mb-3" style="max-width: 100%;">
+                <div class="card-header">TODAYS SALE(SAFOYA):</div>
+                <div class="card-body text-warning">
+                    <p>₹ {{monthSales?.TSafoyaSale | number : '0.0-0'}}</p>
+                </div>
+                
+            </div> -->
+            <!-- <div class="card border-danger shadow mb-3" style="max-width: 100%;">
+                <div class="card-header">TODAYS SALE(C&B):</div>
+                <div class="card-body text-danger">
+                    <p>₹ {{monthSales?.CBTodSale | number : '0.0-0'}}</p>
+                </div>
+                
+            </div> -->
+
+        </div>
+        <div class="col-sm-8 col-md-12 col-lg-8 order-3 order-md-3 order-lg-2">
+
+            <div class="row">
+                <!-- daily chart -->
+                <div class="col-sm-12 col-md-12 col-lg-6">
+                    <div class=" card shadow  mb-3">
+                        <div class="card-header">
+                            <h4>Todays Sales Graph</h4>
+                        </div>
+                        <div class="card-body">
+                            <p-chart type="bar" [data]="graphTodaySale" height="40vh"></p-chart>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- monthly chart -->
+                <div class="col-sm-12 col-md-12 col-lg-6">
+
+                    <div class=" card shadow  mb-3">
+                        <div class="card-header">
+                            <h4>Monthly Sales Graph</h4>
+
+                        </div>
+                        <div class="card-body">
+                            <p-chart type="bar" [data]="graphMonthlySale" height="40vh"></p-chart>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- table -->
+            <div class="row p-1">
+                <div class=" col-sm-12 col-md-12">
+                    <div class="card shadow">
+                        <!-- <p-accordion>(onClose)="onTabClose($event)" (onOpen)="onTabOpen($event)" -->
+                        <!-- <p-accordionTab header="Store" [selected]="true"> -->
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <h3 class="d-flex">Sales Chart (All Stores)</h3>
+                                </div>
+                                <div class="col-md-1 mt-2">
+                                    <i class="fa fa-refresh " style="font-size: large;" (click)="onTabOpens()"></i>
+                                </div>
+                            </div>                            
+                        </div>
+                        <div class="card-body" style="text-align: right;">
+                            <p-table [value]="storeMonthSales">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>S.No.</th>
+                                        <th>Store Name</th>
+                                        <th>Today Sale</th>
+                                        <th>Today Dispatch</th>
+                                        <th>Month Sale</th>
+                                        <th>Month Dispatch</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-row let-i="rowIndex">
+                                    <tr>
+                                        <td>{{i+1}}</td>
+                                        <td>{{row.Name}}</td>
+                                        <td>{{row.TSale | number : '1.2-2'}}</td>
+                                        <td>{{row.TDispatchValues | number : '1.2-2'}}</td>
+                                        <td>{{row.MSale | number : '1.2-2'}}</td>
+                                        <td>{{row.MDispatchValues | number : '1.2-2'}}</td>
+                                    </tr>
+                                   
+                            
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>  
+                                        <td colspan="1"></td>  
+                                        <td colspan="1"><b>Total:</b> </td>  
+                                        <td colspan="1"><b>₹{{totalSale  | number : '1.2-2'}}</b> </td>  
+                                        <td colspan="1"><b>₹{{totalDispatchValue  | number : '1.2-2'}}</b> </td>  
+                                        <td colspan="1"><b>₹{{monthSalesValue  | number : '1.2-2'}}</b> </td>  
+                                        <td colspan="1"><b>₹{{monthDispatchValue  | number : '1.2-2'}}</b> </td>  
+                                    </tr>  
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <!-- </p-accordionTab> -->
+                        <!-- </p-accordion> -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-2 col-md-6 col-lg-2 order-2 order-md-2 order-lg-3">
+            <div class="card shadow  p-2"> Monthly Sale - {{currentDate | date : 'mediumDate'}}</div>
+
+            <div class="card border-primary shadow  mb-3" style="max-width: 100%;">
+                <div class="card-header ">MONTHLY SALE (CENTRAL)</div>
+                <div class="card-body text-primary text-center px-1 py-3">
+                    <!-- <p>₹ {{monthSales?.MSale | number : '0.0-0'}}</p> -->
+                    <span class="label label-primary ng-binding">₹ {{monthSales?.MSale | number : '0.0-0'}}</span>
+                </div>
+                <!-- <div class="card-footer bg-transparent border-success">Footer</div> -->
+            </div>
+
+            <div class="card border-success shadow mb-3" style="max-width: 100%;">
+                <div class="card-header ">MONTHLY SALE (DIGITAL)</div>
+                <div class="card-body text-success text-center px-1 py-3">
+                    <!-- <P>₹ {{monthSales?.DMSale | number : '0.0-0'}}</P> -->
+                    <span class="label label-primary ng-binding">₹ {{monthSales?.DMSale | number : '0.0-0'}}</span>
+                </div>
+                <!-- <div class="card-footer bg-transparent border-success">Footer</div> -->
+            </div>
+
+            <div class="card mb-3 shadow" style="max-width: 100%;">
+                <div class="card-header">MONTHLY SALE (DIGITAL+SK)</div>
+
+                <div class="card-body text-center px-1 py-3">
+                    <!-- <p>₹ {{monthSales?.DSKMSale | number : '0.0-0'}}</p> -->
+                    <span class="label label-primary ng-binding">₹ {{monthSales?.DSKMSale | number : '0.0-0'}}</span>
+                </div>
+                <!-- <div class="card-footer bg-transparent border-success">Footer</div> -->
+            </div>
+
+            <!-- <div class="card border-secondary shadow  mb-3" style="max-width: 100%;">
+                <div class="card-header ">MONTHLY SALE(KK):</div>
+                <div class="card-body text-secondary ">
+                    <p>₹ {{monthSales?.KKMSale | number : '0.0-0'}}</p>
+                </div>
+                
+            </div> -->
+            <!-- <div class="card border-warning shadow mb-3" style="max-width: 100%;">
+                <div class="card-header ">MONTHLY SALE(SAFOYA):</div>
+                <div class="card-body text-warning">
+                    <p>₹ {{monthSales?.MSafoyaSale | number : '0.0-0'}}</p>
+                </div>
+                
+            </div> -->
+            <!-- <div class="card border-danger shadow mb-3" style="max-width: 100%;">
+                <div class="card-header ">MONTHLY SALE(C&B):</div>
+                <div class="card-body text-danger">
+                    <p>₹ {{monthSales?.CBMSale | number : '0.0-0'}}</p>
+                </div>
+               
+            </div> -->
+            <!-- Order refill rate -->
+            <div class="card card-stats">
+                <div class="card-header card-header-success card-header-icon">
+                    <label>OrderFillRate Warehouse</label>
+                    <!-- <select id="des" name="warehouse" class="form-control" [(ngModel)]="WarehouseId"
+                        (change)="onChangeWarehouse(WarehouseId)">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                            {{warehouse.WarehouseName}} {{warehouse.CityName}}
+                        </option>
+                    </select> -->
+                    <p-dropdown [options]="warehouseList" name="warehouse" optionLabel="label" 
+                            (onChange)="onChangeWarehouse(WarehouseId.value)" [(ngModel)]="WarehouseId" [filter]="true" placeholder="----select----">
+                    </p-dropdown>
+                    <div class="row card-footer">
+                        <div class="col-lg-6 col-md-6 col-sm-6 stats">
+                            {{fillRate | number : '0.0-0'}} %
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6" style="text-align: right;">
+                            <i class="fa fa-refresh" (click)="onChangeWarehouse(WarehouseId)"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+<!-- devider -->
+<hr>
+
+
+
+
+
+
+<!-- old Dash -->
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<div style="margin-bottom: 1em;">
+<div class="rtl">
+    CENTRAL
+</div>
+<div class="card">
+    <div class="row">
+        <div class="col-md-4 col-12">
+            <div class="boxx lft">
+                <div class="lb">Month Sale</div>
+                <div class="txt">Rs {{monthSales?.MSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx lft">
+                <div class="lb">Todays Sale</div>
+                <div class="txt">Rs {{monthSales?.TSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx rt">
+                <img src="assets/img/gallery/1.jpg">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rtl">
+    Direct
+</div>
+<div class="card">
+    <div class="row">
+        <div class="col-md-4 col-12">
+            <div class="boxx lft">
+                <img src="assets/img/gallery/30.jpg">
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx rt">
+                <div class="lb">Month Sale</div>
+                <div class="txt">Rs {{monthSales?.DMSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx rt">
+                <div class="lb">Todays Sale</div>
+                <div class="txt">Rs {{monthSales?.DTSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rtl">
+    Direct + SK
+</div>
+<div class="card">
+    <div class="row">
+        <div class="col-md-4 col-12">
+            <div class="boxx tp">
+                <div class="lb">Month Sale</div>
+                <div class="txt">Rs {{monthSales?.DSKMSale  | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx tp">
+                <div class="lb">Todays Sale</div>
+                <div class="txt">Rs {{monthSales?.DSKTSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx tp">
+                <img src="assets/img/gallery/bg-glass-1.jpg">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rtl">
+    KK
+</div>
+<div class="card">
+    <div class="row">
+        <div class="col-md-4 col-12">
+            <div class="boxx btm">
+                <img src="assets/img/gallery/33.jpg">
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx btm">
+                <div class="lb">Month Sale</div>
+                <div class="txt">Rs {{monthSales?.KKMSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx btm">
+                <div class="lb">Todays Sale</div>
+                <div class="txt">Rs {{monthSales?.KKTodSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rtl">
+    Safoya
+</div>
+<div class="card">
+    <div class="row">
+        <div class="col-md-4 col-12">
+            <div class="boxx lft">
+                <div class="lb">Month Sale</div>
+                <div class="txt">Rs {{monthSales?.MSafoyaSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx lft">
+                <div class="lb">Todays Sale</div>
+                <div class="txt">Rs {{monthSales?.TSafoyaSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx rt">
+                <img src="assets/img/photos/09.jpg">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rtl">
+    C&B
+</div>
+<div class="card">
+    <div class="row">
+        <div class="col-md-4 col-12">
+            <div class="boxx lft">
+                <img src="assets/img/photos/02.jpg">
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx rt">
+                <div class="lb">Month Sale</div>
+                <div class="txt">Rs {{monthSales?.CBMSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="boxx rt">
+                <div class="lb">Todays Sale</div>
+                <div class="txt">Rs {{monthSales?.CBTodSale | number : '0.0-0'}}/-</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="row mb">
+        <div class="col-md-4 col-12">
+            <div class="boxx tp">
+                <div class="lb">
+                    <label>OrderFillRate Warehouse</label>
+                    <select id="des" name="warehouse" class="form-control" [(ngModel)]="WarehouseId"
+                    (change)="onChangeWarehouse(WarehouseId)">
+                    <option value="">--Select--</option>
+                    <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                      {{warehouse.WarehouseName}} {{warehouse.CityName}}
+                    </option>
+                  </select>
+                </div>
+                <div class="txt">{{fillRate | number : '0.0-0'}} %</div>
+            </div>
+        </div>
+    </div>
+</div>
+</div> -->

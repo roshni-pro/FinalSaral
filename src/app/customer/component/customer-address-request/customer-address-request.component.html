@@ -1,0 +1,82 @@
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">Change Location Request</h4>
+    </div>
+    <div class="col-xl-12 col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title"></h4>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row mr">
+                        <div class="col-md-3">
+                            <label for="cityid">City</label>
+                            <select id="cityid" name="cityid" class="form-control" [(ngModel)]="data.CityId"
+                                (ngModelChange)="onChangeCity(data.CityId)">
+                                <option [ngValue]="null" disabled>--select--</option>
+                                <option *ngFor="let city of cityList" [ngValue]="city.value">
+                                    {{ city.label }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cityid">Hub</label>
+                            <select id="cityid" name="cityid" class="form-control" [(ngModel)]="data.warehouseId"
+                                (ngModelChange)="onChangeHub()">
+                                <option [ngValue]="null" disabled>--select--</option>
+                                <option *ngFor="let hub of warehouseList" [ngValue]="hub.value">
+                                    {{ hub.label }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                   
+                        <div class="col-md-12">
+                            <p-table [value]="requestList" [lazy]="true" (onLazyLoad)="loadData($event)"
+                                [paginator]="true" [rows]="take" [totalRecords]="totalRecords" [loading]="isloading">
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th>SkCode</th>
+                                        <th>Requested By</th>
+                                        <th>Billing Address</th>
+                                        <th>Request Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData>
+                                    <tr>
+                                        <td>{{rowData.Skcode}}</td>
+                                        <td>{{rowData.CreatedBy}}</td>
+                                        <td>{{rowData.BillingAddress}}</td>
+                                        <td>{{rowData.CreatedDate | date : 'dd/MM/yyyy'}}</td>
+                                        <td>
+                                            {{rowData.IsApproved?'Approved':null}}
+                                            {{rowData.IsRejected?'Rejected':null}}
+                                            {{!rowData.IsRejected && !rowData.IsApproved?'Pending':null}}
+                                        </td>
+                                        <td>
+                                            <button *ngIf="!rowData.IsRejected && !rowData.IsApproved" type="button" class="btn btn-primary" (click)="verify(rowData)">
+                                                Verify
+                                            </button>
+                                            <button *ngIf="(!rowData.IsRejected && rowData.IsApproved) || (rowData.IsRejected && !rowData.IsApproved)" type="button" class="btn btn-warning cl" (click)="view(rowData)">
+                                                Veiw
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="viewSingleRequest">
+    <app-customer-address-request-partial (onHide)="closeSingleRequest($event)" [selectedData]="selectedData"></app-customer-address-request-partial>
+</div>

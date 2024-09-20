@@ -1,0 +1,63 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form inline" name="form" #cityForm="ngForm">
+                <div class="form-body m-2">
+                  <!-- <h4 class="form-section"><i class="ft-user"></i> <b>Edit Document</b></h4> -->
+                  <!-- <h4 class="form-section"><i class="ft-user"></i> <b>City</b></h4> -->
+                  <div class="row col-md-12" *ngIf="cityList && cityList.length > 0">
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="City"> <b>Select City:</b></label>
+                        <select id="city" name="city" class="form-control col-md-6" [(ngModel)]="cityid"
+                          placeholder="Select City">
+                          <option value="">--Select--</option>
+                          <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                            {{ city.CityName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions right col-sm-12 p-3">
+                  <!-- <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                        <i class="ft-x"></i> Cancel
+                      </button> -->
+                  <!-- <button type="button" class="btn btn-raised btn-primary" (click) = "onclick()">
+                        <i class="fa fa-check-square-o"></i> Save
+                      </button> -->
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    Cancel
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="update(cityForm)">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,174 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 header mt-4">
+            <h3> Order Process Reports</h3>
+        </div>
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="row  m-2 d-flex justify-content-between align-items-center ">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="row align-items-center">
+                            <div class="col-lg-10 col-md-12 col-sm-12">
+                                <label for="">Select Warehouse</label><br>
+                                <p-multiSelect [options]="allWarehouses" [(ngModel)]="selectedWarehouse" optionLabel="WarehouseName">
+                                </p-multiSelect>
+                            </div>
+                            <div class="col-lg-2 col-md-12 col-sm-12 mt-2">
+                                <button type="button" pButton class="btn btn-raised btn-raised p-1 btn-primary c1"
+                            label="Search" (click)="searchByWarehouses()"> <i class="pi pi-search"></i> </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-3 col-sm-12 mt-2">
+                        <button type="button" [disabled]="!isReportsAvailable" class="btn btn-raised btn-raised btn-primary c1" (click)="export('exportALL')"
+                            label="Export List"> <i class="pi pi-download"></i> <span> Export List</span> </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 text-center" *ngIf="isReportsAvailable">
+            <div class="card p-1 shadow">
+                <p-table responsiveLayout="scroll" >
+                    <ng-template pTemplate="header">
+                        <!-- <tr>
+                            <th rowspan="3">Product</th>
+                        </tr> -->
+                        <tr>
+                            <th colspan="1"></th>
+                            <th colspan="2">LTD</th>
+                            <th colspan="2">MTD</th>
+                            <th colspan="2">Today</th>
+                            <th colspan="1"></th>
+                        </tr>
+                        <tr>
+                            <th>Order Status</th>
+                            <th>Order Value</th>
+                            <th>Order Count</th>
+                            <th>Order Value</th>
+                            <th>Order Count</th>
+                            <th>Order Value</th>
+                            <th>Order Count</th>
+                            <th>Export</th>
+                        </tr>
+                        <tr>
+                            <th>Failed</th>
+                            <td>{{OPReports.TotFailedAmnt}}</td>
+                            <td>{{OPReports.Failed}}</td>
+                            <td>{{OPReports.MTDTotalFailedAmnt}}</td>
+                            <td>{{OPReports.MTDFailed}}</td>
+                            <td>{{OPReports.TodayTotalFailedAmnt}}</td>
+                            <td>{{OPReports.TodayFailed}}</td>
+                            <td><button type="button" class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('Failed')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <th>Payment Pending</th>
+                            <td>{{OPReports.TotPaymentPendingAmnt}}</td>
+                            <td>{{OPReports.PaymentPending}}</td>
+                            <td>{{OPReports.MTDTotalPaymentPendingAmnt}}</td>
+                            <td>{{OPReports.MTDPaymentPending}}</td>
+                            <td>{{OPReports.TodayTotalPaymentPendingAmnt}}</td>
+                            <td>{{OPReports.TodayPaymentPending}}</td>
+                            <td><button type="button"  class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('PaymentPending')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <th>Pending</th>
+                            <td>{{OPReports.TotPendingAmnt}}</td>
+                            <td>{{OPReports.Pending}}</td>
+                            <td>{{OPReports.MTDTotalPendingAmnt}}</td>
+                            <td>{{OPReports.MTDPending}}</td>
+                            <td>{{OPReports.TodayTotalPendingAmnt}}</td>
+                            <td>{{OPReports.TodayPending}}</td>
+                            <td><button type="button" class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('Pending')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <th>Ready To Pick</th>
+                            <td>{{OPReports.TotReadyToPick}}</td>
+                            <td>{{OPReports.ReadyToPick}}</td>
+                            <td>{{OPReports.MTDTotalReadyToPick}}</td>
+                            <td>{{OPReports.MTDReadyToPick}}</td>
+                            <td>{{OPReports.TodayTotalReadyToPick}}</td>
+                            <td>{{OPReports.TodayReadyToPick}}</td>
+                            <td><button type="button" class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('ReadyToPick')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <th>Ready to dispatch</th>
+                            <td>{{OPReports.TotReadytodispatchAmnt}}</td>
+                            <td>{{OPReports.Readytodispatch}}</td>
+                            <td>{{OPReports.MTDTotalReadytodispatchAmnt}}</td>
+                            <td>{{OPReports.MTDReadytodispatch}}</td>
+                            <td>{{OPReports.TodayTotalReadytodispatchAmnt}}</td>
+                            <td>{{OPReports.TodayReadytodispatch}}</td>
+                            <td><button type="button" class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('ReadyToDispatch')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <th>Issued</th>
+                            <td>{{OPReports.TotIssuedAmnt}}</td>
+                            <td>{{OPReports.Issued}}</td>
+                            <td>{{OPReports.MTDTotalIssuedAmnt}}</td>
+                            <td>{{OPReports.MTDIssued}}</td>
+                            <td>{{OPReports.TodayTotalIssuedAmnt}}</td>
+                            <td>{{OPReports.TodayIssued}}</td>
+                            <td><button type="button" class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('Issued')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <th>Shipped</th>
+                            <td>{{OPReports.TotShippedAmnt}}</td>
+                            <td>{{OPReports.Shipped}}</td>
+                            <td>{{OPReports.MTDTotalShippedAmnt}}</td>
+                            <td>{{OPReports.MTDShipped}}</td>
+                            <td>{{OPReports.TodayTotalShippedAmnt}}</td>
+                            <td>{{OPReports.TodayShipped}}</td>
+                            <td><button type="button" class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('Shipped')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <th>Delivery Cancelled</th>
+                            <td>{{OPReports.TotDeliveryCancelledAmnt}}</td>
+                            <td>{{OPReports.DeliveryCancelled}}</td>
+                            <td>{{OPReports.MTDTotalDeliveryCancelledAmnt}}</td>
+                            <td>{{OPReports.MTDDeliveryCancelled}}</td>
+                            <td>{{OPReports.TodayTotalDeliveryCancelledAmnt}}</td>
+                            <td>{{OPReports.TodayDeliveryCancelled}}</td>
+                            <td><button type="button" class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('DeliveryCancelled')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <th>Delivered Re-Dispatch</th>
+                            <td>{{OPReports.TotDeliveredRedispatchedAmnt}}</td>
+                            <td>{{OPReports.DeliveredRedispatched}}</td>
+                            <td>{{OPReports.MTDTotalDeliveredRedispatchedAmnt}}</td>
+                            <td>{{OPReports.MTDDeliveredRedispatched}}</td>
+                            <td>{{OPReports.TodayTotalDeliveredRedispatchedAmnt}}</td>
+                            <td>{{OPReports.TodayDeliveredRedispatched}}</td>
+                            <td><button type="button" class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('DeliveredRe-Dispatch')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                        <tr>
+                            <th>Delivered</th>
+                            <td>{{OPReports.TotDeliveredAmnt}}</td>
+                            <td>{{OPReports.Delivered}}</td>
+                            <td>{{OPReports.MTDTotalDeliveredAmnt}}</td>
+                            <td>{{OPReports.MTDDelivered}}</td>
+                            <td>{{OPReports.TodayTotalDeliveredAmnt}}</td>
+                            <td>{{OPReports.TodayDelivered}}</td>
+                            <td><button type="button" class="btn btn-raised btn-primary "
+                                label="Export" (click)="export('Delivered')"> <i class="pi pi-download"></i> </button></td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+
+        <div class="col-12 text-center" *ngIf="!isReportsAvailable">
+            <p>Reports not available, please try selecting different warehouse.</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,192 @@
+<div class="card tp common-padding">
+    <div *ngIf="offerdetails?.loan_amount" class="row">
+        <div class="col-md-3 col-sm-3 col-12">
+            <div class="ml cp"><b> Loan Offer Information  </b></div>
+        </div>
+        <div class="col-md-9 col-sm-9 col-12">
+            <div class="ml cl"></div>
+        </div>
+    </div>
+    <div style="margin-left: 36px;" *ngIf="offerdetails?.loan_amount">
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Loan Amount</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{offerdetails?.loan_amount | currency:'INR':'symbol-narrow':'4.2-2' }}</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Rate of Interest</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{offerdetails?.pricing}}</div>
+            </div>
+        </div> 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Loan Tenure</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{offerdetails?.tenure}}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Monthly EMI</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{EMI  | currency:'INR':'symbol-narrow':'4.2-2' }}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Loan Interest Amt</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{loanIntAmt | currency:'INR':'symbol-narrow':'4.2-2' }}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Sanction Amount</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{offerdetails?.SanctionAmount | currency:'INR':'symbol-narrow':'4.2-2' }}</div>
+            </div>
+        </div>
+    </div> 
+    <br>
+    <div class="ctr">
+        <span class="success-msg">Make Sure All User Data Is Approved Before Generating Lead!</span> <br>
+        <!-- <span *ngIf="!(checkCompleteDocument &&  !rowData.loan_app_id && !rowData.borrower_id)"  style="color: rgb(199, 15, 15);">Please approve all document before generating Lead</span> -->
+        <div class="tp">
+            <button class="btn btn-primary" *ngIf="checkCompleteDocument && !rowData?.loan_app_id && !rowData?.borrower_id" (click)="onClickApproved()">Generate Lead</button>
+            <button class="btn btn-primary" *ngIf="ButtonActive == 1" (click)="onClickAscorerequest()">A-Score</button>
+            <button class="btn btn-primary" *ngIf="ButtonActive == 2" (click)="onClickCeplar()">Ceplar</button>
+            <button class="btn btn-primary" *ngIf="ButtonActive == 3" [hidden]="offerdetails?.loan_amount>0 && offerdetails?.pricing>0" (click)="onClickGenerateOffer()">Generate Offer</button>
+            <!-- <button class="btn btn-info sp" (click)="onClickReject()">Reject</button> -->
+        </div>
+        <!-- <div class="tp" *ngIf="Msg">
+            <span class="success-msg">{{Msg}}</span>
+        </div> -->
+        <div>
+            <span *ngIf="ButtonActive == 1"> Lead Generated Successfully<i class="fa fa-check-circle" style="font-size:30px;color:green;float: right;" ></i></span>            
+            <span *ngIf="ButtonActive == 2">A-Score Completed<i class="fa fa-check-circle" style="font-size:30px;color:green;float: right;" ></i></span>
+            <span *ngIf="ButtonActive == 3  && getgeneratedleadofferdetails?.SanctionAmount<=0">Ceplar Completed<i class="fa fa-check-circle" style="font-size:30px;color:green;float: right;" ></i></span>            
+            <span (click)="onClickRejectPopup()"><i class="fa fa-times-circle" style="margin-right: .5em; font-size:30px;color:red;float: right;" ></i></span>
+            <!-- <span>Offer Generated</span> -->
+        </div>
+        <div *ngIf="!AScoreResponse">{{rowData?.Msg}}</div>
+        <div *ngIf="AScoreResponse">{{AScoreResponse}}</div>
+        <button *ngIf="getgeneratedleadofferdetails" type="button" class="btn btn-primary" (click)="showRes()">Response</button> <br>
+        <span style="color: rgb(199, 15, 15);"><div  *ngIf="showResponse">{{getgeneratedleadofferdetails.RequestResponseMsg}}</div></span> <br>
+        <span *ngIf="offerdetails?.loan_amount>0"> Offer Generated</span>
+        
+        <span *ngIf="rowData?.SequenceNo==9 && offerdetails?.loan_amount==0" style="color: rgb(199, 15, 15);">you are not eligible for offer</span>
+    </div>
+</div>
+<!-- rowData.SequenceNo>8 && rowData.SequenceNo<10  -->
+<p-dialog [(visible)]="isOpenRejectPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: 'auto', overflow: 'auto'}">
+    <p-header>Reason For Reject</p-header>
+    <div class="row">
+        <div class="col-md-6">
+            <select class="form-control"  [(ngModel)]="DocumentName">
+                <option value="">--Select--</option>
+                <option value="PanCard" >PAN Detail</option>
+                <option value="selfie" >Selfie</option>
+                <option value="AadharCard" >Aadhar Card Detail </option>
+                <option value="PersonalDetail" >Personal Info </option>
+                <option value="BusinessDetail" >Buisness Info </option>
+                <option value="BankDetail" >Bank Detail </option>
+                <option value="MSME" >MSME Cerrificate </option>
+            </select> 
+        </div>
+        <div class="col-md-6">
+            <input type="text" id="_selfiecomment" name="_selfiecomment" class="form-control" [(ngModel)]="Comment" placeholder="Enter Reason For Reject">
+        </div>
+    </div>
+    <!-- <div class="ui-fluid">
+      <input type="text" id="_selfiecomment" name="_selfiecomment" class="form-control" [(ngModel)]="Comment" placeholder="Enter Reason For Reject">
+    </div> -->
+    <p-footer>
+        <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" (click)="onClickReject()">Reject</button>
+    </p-footer>
+</p-dialog>
+
+<!-- 
+<div class="col-md-6">
+    <select class="form-control"  [(ngModel)]="DocumentName">
+        <option value="">--Select--</option>
+        <option value="PanCard" *ngIf="ButtonActive != 1 || ButtonActive == 2">PAN Detail</option>
+        <option value="selfie" *ngIf="ButtonActive != 1 || ButtonActive == 2">Selfie</option>
+        <option value="AadharCard" *ngIf="ButtonActive != 1 || ButtonActive == 2">Aadhar Card Detail</option>
+        <option value="PersonalDetail" *ngIf="ButtonActive == 1 || ButtonActive == 2">Personal Info</option>
+        <option value="BusinessDetail" *ngIf="ButtonActive != 1 || ButtonActive == 2">Buisness Info</option>
+        <option value="BankDetail" *ngIf="ButtonActive == 1 || ButtonActive == 2">Bank Detail</option>
+        <option value="MSME" *ngIf="ButtonActive != 1 || ButtonActive == 2">MSME Cerrificate</option>
+    </select> 
+</div> -->
+
+<!-- <div class="card tp common-padding">
+    <div> 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"><h5>Request</h5></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl"><h5>Response</h5></div>
+            </div>
+        </div>
+<hr>
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">
+                    <button class="btn btn-primary" (click)="onClickApproved()" [disabled]="isLeadResponse">Generate Lead</button>
+                </div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{LeadResponse}}</div>
+            </div>
+        </div>
+
+        <div class="row" >
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">
+                    <button class="btn btn-primary" (click)="onClickAscorerequest()" [disabled]="!isAScoreResponse">Ascore request</button>
+                </div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{AScoreResponse}}</div>
+            </div>
+        </div> 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">
+                    <button class="btn btn-primary" (click)="onClickCeplar()" [disabled]="!isCeplarResponse">Ceplar</button>
+                </div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{CeplarResponse}}</div>
+            </div>
+        </div>  
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">
+                    <button class="btn btn-primary" (click)="onClickColender()" [disabled]="!isColenderResponse">Colender</button>
+                </div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{ColenderResponse}}</div>
+            </div>
+        </div>  
+</div>
+</div> -->
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

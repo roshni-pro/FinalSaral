@@ -1,0 +1,131 @@
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>DBoy Master</b></h3>
+    </div>
+    <div>
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: 10px;"
+            (click)="AddItem()">
+            <i class="fa fa-plus-circle"></i> Add DBoy Master
+        </button>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Search by</label>
+                    <input type="text" id="txtname" name="name" class="form-control"
+                        placeholder="Name or Mobile or Aadhar No" [(ngModel)]="name">
+                </div>
+                <div class="col-md-2">
+                    <label>Status</label>
+                    <select class="form-control" name="Status" [(ngModel)]="statusValue" (change)="StatusChange(statusValue)">
+                        <option value="0">--Select--</option>
+                        <option value="1">Active</option>
+                        <option value="2">InActive</option>
+                        <option value="3">IsBlocked</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>City</label>
+                    <!-- <select id="city" name="city" class="form-control" (change)="getWarehouse(SelectedCityId)" [(ngModel)]="SelectedCityId">
+                      <option value="0">--select--</option>
+                      <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                        {{ city.CityName }}
+                      </option>
+                    </select> -->
+                    <p-dropdown [options]="cityList" name="cityList" optionLabel="label"
+                    (onChange)="getWarehouse(SelectedCityId.value)"  [(ngModel)]="SelectedCityId" [filter]="true" placeholder="Select city">
+                    </p-dropdown>
+                  </div>
+                  <div class="col-md-2">
+                    <label>Warehouse</label>
+                    <!-- <select id="Warehouse" name="Warehouse" class="form-control" [(ngModel)]="SelectedWarehouseId">
+                      <option value="0">--select--</option>
+                      <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WareHouseId">
+                        {{ item.WareHouseName }}
+                      </option>
+                    </select> -->
+                    <p-dropdown [options]="masterwarehouseList" name="masterwarehouseList" optionLabel="label"
+                      [(ngModel)]="SelectedWarehouseId" [filter]="true" placeholder="Select warehouse">
+                    </p-dropdown>
+                  </div>
+                <div class="form-group">
+                    <button type="button" (click)="Search(name)"
+                        class="btn btn-raised btn-raised btn-success mt">Search</button>
+                        <button type="button" (click)="Refresh()"
+                        class="btn btn-raised btn-raised btn-primary mt ml-2">Refresh</button>
+                    <button id="btnExport" (click)="ExportDboy()"
+                        class="btn btn-raised btn-raised btn-info mt ml-2">Export</button>
+                </div>
+                <p-table #dt [value]="dboyList" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" [lazy]="true"
+                    [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <!-- <th *ngFor="let col of cols">
+                                {{col.header}}
+                            </th> -->
+                            <th>Warehouse</th>
+                            <th>Name</th>
+                            <th>Address</th>
+                            <th>MobileNo</th>
+                            <th>AadharNo</th>
+                            <th>Type</th>
+                            <!-- <th>Trip Type</th>     -->
+                            <th>AgencyName</th>
+                            <th>AgentOrTransport</th>
+                            <th>Valid From</th>
+                            <th>Valid Till</th>
+                            <th>Status</th>
+                            <!-- <th>IsBlocked</th>
+                            <th>Action</th> -->
+                            <th>Active/InActive</th>
+                            <th>IsBlocked</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr style="width: 100px;">
+                            <!-- <td *ngFor="let col of cols">
+                                {{item[col.field]}}
+                            </td> -->
+                            <td>{{item.WarehouseName}}</td>
+                            <td>{{item.Name}}</td>
+                            <td>{{item.Address}}</td>
+                            <td>{{item.MobileNo}}</td>
+                            <td>{{item.AadharNo}}</td>
+                            <td>{{item.Type}}</td>
+                            <!-- <td>{{item.TripTypeName}}</td> -->
+                            <td>{{item.AgencyName}}</td>
+                            <td>{{item.AgentOrTransport}}</td>
+                            <td>{{item.ValidFrom=="01/01/0001"? "NA":item.ValidFrom | date:'dd/MM/yyyy'}}</td>
+                            <td>{{item.ValidTill=="01/01/0001"? "NA":item.ValidTill | date:'dd/MM/yyyy'}}</td>
+                            <!-- <td>{{item.IsActive==true? "Active": "InActive"}}</td>
+                            <td>{{item.IsBlocked==true? "blocked": "UnBlock"}}</td> -->
+                            <td>
+                                <input type="button" id="btnEdit" [disabled]="item.IsBlocked? true:false" class="btn btn-raised btn-info " value="Edit"
+                                    (click)="EditDboy(item)">
+                            </td>
+                            <td>
+                                <p-inputSwitch name="IsActive" [disabled]="item.IsBlocked? true:false" [(ngModel)]="item.IsActive"
+                                    (ngModelChange)="ActiveInactive(item,item.IsActive)">
+                                </p-inputSwitch>&nbsp;&nbsp;
+                            </td>
+                            <td>
+                                <p-inputSwitch name="IsBlocked"  [(ngModel)]="item.IsBlocked" (ngModelChange)="isBlocked(item,item.IsBlocked)">
+                              </p-inputSwitch>&nbsp;&nbsp;                  
+                          </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+        <div class="card-footer"></div>
+    </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

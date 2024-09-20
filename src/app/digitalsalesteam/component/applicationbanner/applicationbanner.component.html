@@ -1,0 +1,348 @@
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h4>Application Banner Request</h4>
+            <hr style="background-color: white;">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label for="City">City</label><br>
+            <p-multiSelect [style]="{minWidth:''}" id="Cityid" name="CityName" [options]="cityList"
+                [(ngModel)]="dataset.cityid" (onChange)="GetCityWarehouse(dataset.cityid)"
+                [panelStyle]="{minWidth:'25em'}" optionLabel="CityName">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-2">
+            <label>Select Hub</label><br>
+            <p-multiSelect [style]="{minWidth:''}" id="warehouse" name="warehouse" [options]="warehouseList"
+                [(ngModel)]="selectedwarehouse" [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-2">
+            <label for="FromDate">Status</label>
+            <select name="" value="" [(ngModel)]="searchdata.StatusValue" class="form-control">
+            <option  value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Accept">Accept</option>
+            <option value="Reject">Reject</option>
+        </select>
+        </div>
+        <div class="col-md-2">
+            <label for="FromDate">StartDate</label>
+            <input type="datetime-local" id="startDate" name="startDate" class="form-control"
+                [ngModel]="searchdata.startDate | date:'yyyy-MM-ddTHH:mm'"
+                (ngModelChange)="searchdata.startDate  = $event" />
+        </div>
+        <div class="col-md-2">
+            <label for="FromDate">ToDate</label>
+            <input type="datetime-local" id="endDate" name="endDate" class="form-control"
+                [ngModel]="searchdata.endDate | date:'yyyy-MM-ddTHH:mm'"
+                (ngModelChange)="searchdata.endDate = $event" />
+        </div>
+      
+        <div class="col-md-3">
+            <button (click)="getApplicationBannerList(searchdata)"
+                class="btn btn-primary">search</button>&nbsp;&nbsp;&nbsp;
+            <button (click)="Export(searchdata)" class="btn btn-primary">Export</button>
+        </div>
+    </div>
+    <div class="row">
+        <p-table #dt [value]="AppBannerRequestList" [totalRecords]="totalRecords" [lazy]="true"
+            (onLazyLoad)="load($event)" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="130vh"
+            text-align: center>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Sr No</th>
+                    <th>Warehouse</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Seller</th>
+                    <th>StartDate</th>
+                    <th>EndDate</th>
+                    <th>Action</th>
+                    <th>IsApproved</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowIndex="rowIndex" let-list>
+                <tr>
+                    <td>{{rowIndex+1}}</td>
+                    <td>{{list.Warehouse}}</td>
+                    <td>{{list.Type}}</td>
+                    <td>{{list.Status}}</td>
+                    <td>{{list.SubCatName }}</td>
+                    <td>{{list.StartDate | date:'medium'}}</td>
+                    <td>{{list.EndDate | date:'medium'}}</td>
+
+                    <td>
+                        <button class="btn btn-primary" (click)="edit(list)">
+                            Details
+                        </button>
+                    </td>
+                    <td>{{list.IsApproved}}</td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+
+<div *ngIf="detailData">
+    <p-dialog header="AppBanner Details" [(visible)]="opendetailspopup" [resizable]="true" [modal]="true"
+        appendTo="body" positionTop="10" [style]="{width: '60%',height: '60%'}">
+        <p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Type</label>
+                <input class="form-control" [(ngModel)]="detailData.Type" disabled>
+            </div>
+            <div class="col-md-6">
+                <label>Warehouse</label>
+                <input class="form-control" [(ngModel)]="detailData.Warehouse" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Seller</label>
+                <input class="form-control" [(ngModel)]="detailData.SubCatName" disabled>
+            </div>
+            <div class="col-md-6">
+                <label>Discription</label>
+                <textarea id="w3review" name="w3review" class="form-control"
+                    [(ngModel)]="detailData.AppBannerDiscription" disabled>
+                </textarea>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Start Date</label>
+                <br>
+                <!-- <p-calendar id="startDate" name="startDate" [ngModel]="detailData.StartDate | date:'yyyy-MM-ddTHH:mm'"
+                    [readonlyInput]="true" placeholder="dd/mm/yy" [showIcon]="true" disabled></p-calendar> -->
+
+                <input type="datetime-local" class="form-control"
+                    [ngModel]="detailData.StartDate | date:'yyyy-MM-ddTHH:mm'" disabled>
+            </div>
+            <div class="col-md-6">
+                <label>End Date</label>
+                <br>
+                <!-- <p-calendar id="EndDate" name="EndDate" [ngModel]="detailData.EndDate | date:'yyyy-MM-ddTHH:mm'"
+                    [readonlyInput]="true" placeholder="dd/mm/yy" [showIcon]="true" disabled></p-calendar> -->
+
+                <input type="datetime-local" class="form-control"
+                    [ngModel]="detailData.EndDate | date:'yyyy-MM-ddTHH:mm'" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Comment</label>
+                <textarea id="w3review" name="w3review" class="form-control" [(ngModel)]="detailData.Comment">
+                </textarea>
+            </div>
+            <div class="col-md-6">
+                <label>Status</label>
+                <span *ngIf="detailData.IsApproved">
+                    <input class="form-control" [(ngModel)]="detailData.Status" disabled>
+                </span>
+                <span *ngIf="!detailData.IsApproved"><select class="form-control" name="sa" id="sa"
+                        [(ngModel)]="detailData.Status">
+                        <option value="Pending">Pending</option>
+                        <option value="Accept">Accept</option>
+                        <option value="Reject">Reject</option>
+                    </select></span>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <label>Sequence No</label>
+                <input class="form-control" name="SequenceNo" id="SequenceNo" [(ngModel)]="detailData.SequenceNo">
+            </div>
+            <div class="col-md-6">
+                <label *ngIf="AppImageUrl">Image</label>
+                <br>
+                <div class="form-group" (click)="openImage(AppImageUrl)">
+                    <img *ngIf="AppImageUrl" src="{{baseURL}}{{AppImageUrl}}" height="100px" width="100px">
+                </div>
+            </div>
+
+
+        </div>
+        <!-- <button type="button" (click)="showpreview(detailData)" icon="pi pi-info-circle" label="preview">preview</button> -->
+
+        <div class="form-actions right col-sm-12 p-3">
+            <span *ngIf="detailData.Status=='Accept' && detailData.IsApproved==false && detailData.IsActive==true">
+                <button type="submit" class="btn btn-raised btn-primary" (click)="Approve(detailData)">
+                    <i class="fa fa-check-square-o"></i> Approve</button>
+            </span>
+            <span *ngIf="!detailData.IsActive && detailData.IsApproved==false && detailData.Status!='Pending' ">
+                <button type="submit" class="btn btn-raised btn-primary" (click)="UpdateStatus(detailData)">
+                    <i class="fa fa-check-square-o"></i> Update</button>
+            </span>
+        </div>
+    </p-dialog>
+</div>
+
+<div *ngIf="IsSectionpreview">
+    <p-dialog header="Banner" [(visible)]="IsSectionpreview" appendTo="body" positionTop="10"
+        [style]="{width: '60%',height: '60%',overflow: 'auto'}">
+        <div class="emulatorDiv">
+            <span
+                style="font-size: 14px;font-weight: bolder;color: aliceblue;margin-left: 176px;position: absolute;margin-top: 14px;">SONY</span>
+            <div class="col-md-12 emulator-Container" id="scroller">
+                <div class="col-md-12" style="border:7px solid #2b539b">
+                </div>
+                <div class="col-md-12" style="width:220px;margin-left:2px" *ngFor="let  trade of AppHomeSections">
+                    <div class="col-md-12" *ngIf="trade.IsTile==true" style="margin-left: -26px;">
+                        <div class="col-md-12"
+                            style="background-color:'{{trade.TileHeaderBackgroundColor}}';width:253px;min-height:32px;border-radius:21px;margin:10px 5px 5px 4px"
+                            *ngIf="trade.HasHeaderBackgroundColor==true">
+                            <p class="baseCategory" style="color:'{{trade.HeaderTextColor}}'">{{trade.SectionSubType}}
+                            </p>
+                        </div>
+                        <div class="col-md-12 tileBackgroundImage"
+                            style="background-image:url('{{trade.TileAreaHeaderBackgroundImage}}');width:253px;min-height:auto;border-radius:21px;margin:10px 5px 5px 4px;background-size: contain;"
+                            *ngIf="trade.HasHeaderBackgroundImage==true">
+                            <div class="col-md-12 tileBackgroundImage"
+                                style="background-image:url('{{trade.TileHeaderBackgroundImage}}');width:270px;min-height:auto;border-radius:21px;margin:10px 5px 5px -14px;background-size: contain;">
+                                <div class="col-md-12">
+                                    <p class="baseCategory">{{trade.SectionSubType}} </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 "
+                            style="background-color:'{{trade.TileBackgroundColor}}';width:260px;min-height:'{{trade.RowCount*100}}px';border-radius:21px;"
+                            *ngIf="trade.HasBackgroundColor==true">
+                            <div class="col-md-{{12/trade.ColumnCount}}" *ngFor="let tileimage of trade.AppItemsList"
+                                [ngClass]="{'tileImageDivLevel0': tileimage.ImageLevel==''
+                ,'tileImageDivLevel1': tileimage.ImageLevel==1
+                ,'tileImageDivLevel2':tileimage.ImageLevel==2
+                ,'tileImageDivLevel3':tileimage.ImageLevel==3
+                ,'tileImageDivLevel4':tileimage.ImageLevel==4
+                ,'tileImageDivLevel5':tileimage.ImageLevel==5}">
+                                <div class="col-md-12 "
+                                    style="background-image:url('{{tileimage.TileSectionBackgroundImage}}');width:120px;height:auto;border-radius:21px;background-size: cover;">
+
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((200) / trade.ColumnCount) - (34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 35}}px'"
+                                        *ngIf="tileimage.ImageLevel==5" />
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((120) / trade.ColumnCount) - 2*(34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 1.5*35}}px'"
+                                        *ngIf="tileimage.ImageLevel==4" />
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((120) / trade.ColumnCount) - 3.2*(34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 2*35}}px'"
+                                        *ngIf="tileimage.ImageLevel==3" />
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((120) / trade.ColumnCount) - 4*(34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 4*35}}px'"
+                                        *ngIf="tileimage.ImageLevel==2" />
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((120) / trade.ColumnCount) - 5*(34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 5*35}}px'"
+                                        *ngIf="tileimage.ImageLevel==1" />
+
+                                </div>
+                                <div class="ImageDisplayName">
+                                    <p>{{tileimage.TileName}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 tileBackgroundImage"
+                            style="background-image:url('{{trade.TileBackgroundImage}}');width:260px;height:auto;border-radius:21px;background-size: cover;"
+                            *ngIf="trade.HasBackgroundImage==true">
+                            <div class="col-md-12 tileBackgroundImage"
+                                style="background-image:url('{{trade.sectionBackgroundImage}}');width:240px;height:auto;border-radius:21px;background-size: cover;"
+                                *ngIf="trade.HasBackgroundImage==true">
+                                <div class="col-md-{{12/trade.ColumnCount}}"
+                                    *ngFor="let tileimage of trade.AppItemsList" [ngClass]="{'tileImageDivLevel0': tileimage.ImageLevel=='',
+                'tileImageDivLevel1': tileimage.ImageLevel==1
+                ,'tileImageDivLevel2':tileimage.ImageLevel==2
+                ,'tileImageDivLevel3':tileimage.ImageLevel==3
+                ,'tileImageDivLevel4':tileimage.ImageLevel==4
+                ,'tileImageDivLevel5':tileimage.ImageLevel==5}">
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((260) / trade.ColumnCount) - (34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 35}}px'"
+                                        *ngIf="tileimage.ImageLevel==5" />
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((260) / trade.ColumnCount) - 2*(34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 1.5*35}}px'"
+                                        *ngIf="tileimage.ImageLevel==4" />
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((260) / trade.ColumnCount) - 3.2*(34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 2*35}}px'"
+                                        *ngIf="tileimage.ImageLevel==3" />
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((260) / trade.ColumnCount) - 4*(34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 4*35}}px'"
+                                        *ngIf="tileimage.ImageLevel==2" />
+                                    <img class="tileImages" src="{{tileimage.TileImage}}"
+                                        style="width:'{{((260) / trade.ColumnCount) - 5*(34 /trade.ColumnCount)}}px;height:{{((trade.RowCount*130) / trade.RowCount) - 5*35}}px'"
+                                        *ngIf="tileimage.ImageLevel==1" />
+                                    <div class="ImageDisplayName">
+                                        <p>{{tileimage.TileName}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12"
+                        style="background-color:'{{trade.BannerBackgroundColor}}'px;width:260px;min-height:'{{trade.RowCount*100}}px';border-radius:21px;margin-bottom: -19px;"
+                        *ngIf="trade.IsBanner == true && trade.SectionSubType=='Slider'">
+                        <!-- <div class="col-md-12 sliderEmulatorDiv" *ngFor="let bannerimage of trade.AppItemsList"
+                            *ngIf="sliderImagePreviewIndex[$parent.$index]==$index">
+                            <img [ngClass]="{'sliderEmulator0': bannerimage.ImageLevel==undefined || bannerimage.ImageLevel==''
+                ,'sliderEmulator1': bannerimage.ImageLevel==1
+                ,'sliderEmulator2':bannerimage.ImageLevel==2
+                ,'sliderEmulator3':bannerimage.ImageLevel==3
+                ,'sliderEmulator4':bannerimage.ImageLevel==4
+                ,'sliderEmulator5':bannerimage.ImageLevel==5}" src="{{bannerimage.BannerImage}}"
+                                title="{{bannerimage.OfferStartTime | date:'shortDate'}} - {{bannerimage.OfferEndTime | date:'shortDate'}}" />
+                            <div style="position:absolute;bottom: 3px;right: -77px;color:white;font-size: 9px; ">
+                                <strong>Offer Period</strong> {{bannerimage.OfferStartTime | date:'shortDate'}} -
+                                {{bannerimage.OfferEndTime | date:'shortDate'}}
+                            </div>
+                            <a class="prev" (click)="changeSliderImage(-1,$parent.$index)">&#10094;</a>
+                            <a class="nextButton" id="nextBanner"
+                            (click)="changeSliderImage(1,$parent.$index)">&#10095;</a>
+                        </div> -->
+                    </div>
+                    <div class="col-md-12" style="text-align:center;width: 242px;"
+                        *ngIf="trade.IsBanner == true && trade.SectionSubType=='Slider'">
+                        <span style="padding-left: 1px;" *ngFor="let bannerimage of trade.AppItemsList">
+                            <button (click)="changeSliderImagedot($index,$parent.$index)" [ngClass]="{'slider-dot-selected':sliderImagePreviewIndex[$parent.$index]==$index,
+             'slider-dots':sliderImagePreviewIndex[$parent.$index]!=$index}"></button>
+                        </span>
+                    </div>
+                    <div class="col-md-12" style="margin-bottom: -19px"
+                        *ngIf="trade.IsBanner == true && trade.SectionSubType!='Slider'">
+                        <div class="col-md-12 sliderEmulatorDiv" *ngFor="let bannerimage of trade.AppItemsList">
+                            <img [ngClass]="{'sliderEmulator0': bannerimage.ImageLevel==undefined || bannerimage.ImageLevel==''
+                ,'sliderEmulator1': bannerimage.ImageLevel==1
+                ,'sliderEmulator2':bannerimage.ImageLevel==2
+                ,'sliderEmulator3':bannerimage.ImageLevel==3
+                ,'sliderEmulator4':bannerimage.ImageLevel==4
+                ,'sliderEmulator5':bannerimage.ImageLevel==5}" src="{{bannerimage.BannerImage}}"
+                                title="{{bannerimage.OfferStartTime | date:'shortDate'}} - {{bannerimage.OfferEndTime | date:'shortDate'}}" />
+                            <div style="position:absolute;bottom: 3px;right: -77px;color:white;font-size: 9px; ">
+                                <strong>Offer Period</strong> {{bannerimage.OfferStartTime | date:'shortDate'}} -
+                                {{bannerimage.OfferEndTime | date:'shortDate'}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" style="border:3px solid aliceblue">
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>

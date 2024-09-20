@@ -1,0 +1,148 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">IR Invoice Date Request </h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-3 mt-2">
+                    <label><b>Select WareHouse<span class="required">*</span></b></label>
+                    <p-dropdown id="Category" name="Category" [options]="WareHouseList" placeholder="Select WareHouse" 
+                            [(ngModel)]="selectedWareHouse" [panelStyle]="{minWidth:'25em'}" [filter]="true"
+                            optionLabel="label">
+                        </p-dropdown>
+                </div>
+                <div class="col-sm-3  mt-2">
+                    <label><b> Select Date Range</b></label>
+                    <!-- <p-calendar [showIcon]="true" [(ngModel)]="selectDate"></p-calendar> -->
+                    <p-calendar [showIcon]="true" [(ngModel)]="selectDate" selectionMode="range" [readonlyInput]="true" inputId="range"></p-calendar>
+                </div>
+                <div class="col-md-2 mt-2">
+                    <button type="button" class="btn btn-primary"
+                        style="margin-top: 27px;" (click)="Search()">
+                        Search
+                    </button> 
+                </div>
+            </div>    
+        </div>
+    </div>
+</div>
+
+<p-table [value]="ViewList" text-align:center [paginator]="true" [rows]="10"  >
+    <ng-template pTemplate="header" let-items>
+        <tr>
+            <th>PurchaseOrderID</th>
+            <th>IRID</th>
+            <th>IR Type	Status</th>
+            <th>IC Approval Status</th>
+            <th>Buyer Name</th>
+            <th>Created By</th>
+            <th>Create Date	</th>
+            <th>Invoice Date	</th>
+            <th>TotalAmount	</th>
+            <th>Invoice Discount</th>
+            <th>TDS Amount</th>       
+            <th>View</th>     
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item  let-rowIndex="rowIndex">
+        <tr>
+            <td>{{item.PurchaseOrderId}}</td>
+            <td>{{item.IRID }}</td>
+            <td>{{item.IRStatus}}</td>
+            <td>{{item.ApprovalStatus}}</td>
+            <td>{{item.BuyerName}}</td>
+            <td>{{item.CreatedBy}}</td>
+            <td>{{item.CreationDate | date : 'mediumDate'}}</td>
+            <td>{{item.InvoiceDate | date : 'mediumDate'}}</td>
+            <td>{{item.TotalAmount}}</td>
+            <td>{{item.Discount}}</td>
+            <td>{{item.TotalTDSAmount}}</td>
+            <td> <button type="button" class="btn btn-primary"
+                style="margin-top: 27px;" (click)="View(item)">
+                View
+            </button> </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="iSshow"  [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+[style]="{width: '80%',height: '50%'}" >
+
+    <div class="row">
+        <div class="col-4">
+            <label class="def">IR Type</label><br>
+            <b><input class="abc" pInputText type="text" disabled [(ngModel)]="IRType"></b>
+        </div>
+        <div class="col-4">
+            <label class="def">Invoice Number:</label><br>
+            <b><input class="abc" pInputText type="text" disabled [(ngModel)]="InvoiceNumber"></b>
+        </div>
+        <div class="col-4">
+            <label class="def">Invoice Date:</label><br>
+            <b><input class="abc" pInputText type="text" disabled  [(ngModel)]="InvoiceDate"></b>
+        </div>
+    </div>
+
+    <br><br>
+    <p-table [value]="popupList" [paginator]="true" [rows]="10" >
+        <ng-template pTemplate="header" let-items>
+            <tr>
+                <th>Item Name	</th>
+                <th>ABC Classification</th>
+                <th>HSN</th>
+                <th>MRP</th>
+                <th>ItemMultiMRPId</th>
+                <th>Qty Recived</th>
+                <th>IR Qty	</th>
+                <th>Recive Qty	</th>
+                <th>Price</th>
+                <th>Taxable Amt</th>
+                <th>(GST R.) GST Amt	</th>
+                <th>(GST R.) IGST Amt</th>
+                <th>Cess Tax Amt</th>
+                <th>Total Amt</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item  let-rowIndex="rowIndex">
+            <tr>
+                <td>{{item.ItemName }}</td>
+                <td>{{item.Category}}</td>
+                <td>{{item.HSNCode }}</td>
+                <td>{{item.MRP }}</td>
+                <td>{{item.ItemMultiMRPId}}</td>
+                <td>{{item.Qty}}</td>
+                <td>{{item.IRQuantity}}</td>
+                <td>{{item.IRRemainingQuantity}}</td>
+                <td>{{item.Price}}</td>
+                <td>{{item.TaxableAmount}}</td>
+                <td>{{item.GSTAmount |  number:'1.0-4'}}</td>
+                <td>{{item.GSTAmount |  number:'1.0-4'}}</td>
+                <td>{{item.TotalCessPercentage}}</td>
+                <td>{{item.TotalAmount | number : '1.0-4'}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="row">
+        <div class="col-10"></div>
+        <div  class="col-2 ">
+            <button type="button" class="btn btn-success"  style="margin-top: 27px;" (click)="Accept()">  Accept  </button>&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-primary"  style="margin-top: 27px;" (click)="Reject()">  Reject  </button>
+        </div>
+    </div>
+</p-dialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

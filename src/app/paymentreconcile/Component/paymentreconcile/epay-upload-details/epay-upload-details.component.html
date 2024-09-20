@@ -1,0 +1,118 @@
+
+<section id="customer-master">
+    <div class="header">
+        <h3 class="m-2">ePay Upload Details</h3>
+    </div>
+  
+    <div class="row">
+      <div class="col-sm-2">
+        <div class="form-group">
+          <label for="projectinput3">Status</label>
+          <br>
+          <select id="desg" name="desg" class="form-control" [(ngModel)]="searchModel.value"
+            (change)="onValueChange($event.target.value)">
+            <option value="true">Verified</option>
+            <option value="false">Unverified</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-sm-1">
+        <div class="form-group">
+          <label for="projectinput3">Refresh</label>
+          <br>
+          <button type="button" class="btn btn-raised btn-raised btn-primary  " (click)="Refresh()">
+            Refresh
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+<div>
+    <p-table [value]="resData" [paginator]="true" [rows]="20" dataKey="UploadId" 
+                 [scrollable]="true" scrollHeight="65vh" text-align: center>
+          <ng-template pTemplate="header">         
+            <tr>
+                <th style="text-align: center">
+                   Sno.
+                 </th>
+                <th style="text-align: center">
+                   TXN ID
+                </th>
+                <th style="text-align: center">
+                   TXN Date
+                </th>
+                <th style="text-align: center">
+                    Skcode
+                </th>  
+                <th style="text-align: center">
+                   OrderId
+                </th>            
+                <th style="text-align: center">
+                    Ordered Amount
+                </th>   
+                <th style="text-align: center">
+                    TXN Amount
+                </th>      
+                <th style="text-align: center">
+                    Received Amount
+                </th>        
+                <th style="text-align: center">
+                    Status
+                </th> 
+                <th style="text-align: center">
+                    Settle
+                </th>                      
+            </tr>
+      
+          </ng-template>
+        <ng-template pTemplate="body" let-image let-rowIndex="rowIndex">
+            <tr>
+                <td style="text-align: center">{{rowIndex -- 1}}</td>
+                <td style="text-align: center" [ngStyle]="image.paymentxnId == null && {'background-color':'lightpink'}" >{{image.TXNID}}</td>
+                <td style="text-align: center">{{image.TXNDate| date:'medium'}}</td>
+                <td style="text-align: center">{{image.Skcode}}</td>
+                <td style="text-align: center">{{image.OrderId}}</td>
+                <td style="text-align: center">{{image.OrderAmount}}</td>
+                <td style="text-align: center">{{image.TxnAomunt}}</td>
+                <td style="text-align: center">{{image.UploadAmount}}</td>
+                <!-- <td style="text-align: center">{{image.Status}}</td> -->
+                <td style="text-align: center" *ngIf="image.Status==true">
+                    <span  style="color: #499231" class="label label-info ng-binding">Verified</span>
+                </td>
+                <td style="text-align: center" *ngIf="image.Status==false">
+                    <span style="color: #ff0000" class="label label-info ng-binding">Unverified</span>
+                </td>
+                <td  style="text-align: center">
+                    <button type="button" class="btn btn-raised btn-primary" style="margin-bottom: 0;"
+                    (click)="Show(image)" *ngIf="image.Status==false" >
+                   Settle</button>
+                </td>
+                              
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!--POP UP-->
+<div *ngIf="isOpenPopup">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '50%', overflow: 'auto'}">
+    <div class="col-sm-2">
+        <div class="form-group">
+          <label for="projectinput3">Comment</label>
+          <br>
+          <input class="form-control" type="text" placeholder="Enter Comment"  [(ngModel)]="popupdata.Comment" >
+        </div>
+        <div class="form-group">
+            <label for="projectinput3">Is Settle</label>
+            <br>
+            <input class="form-control" type="checkbox" value="true" [(ngModel)]="popupdata.Status"   >
+          </div>
+          <div class="form-group">
+            <button class="btn btn-raised btn-primary" (click)="Save(popupdata)">Save</button>
+          </div>
+      </div>
+
+
+    </p-dialog>
+  </div>

@@ -1,0 +1,382 @@
+<p-toast></p-toast>
+
+<div class="row m-0">
+    <div class="col-12">
+        <!-- Kick start -->
+        <div id="kick-start" class="kick-start card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Request PO Close</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- <div class="col-lg-3">
+                            <div class="form-group">
+
+                                <div>
+                                    <label for="orderType">WareHouse</label>
+                                    <p-multiSelect id="warehouseids" name="warehouseids" [options]="warehouseList"
+                                        [(ngModel)]="filterreqquestsearch.WarehouseIds" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName"></p-multiSelect>
+                                </div>
+                            </div>
+                        </div> -->
+
+
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Warehouse:</label>
+                                <div>
+                                    <!-- <select id="desg" name="desg" class="form-control"
+                                        [(ngModel)]="filterreqquestsearch.WarehouseIds">
+                                        <option [value]="null">
+                                            -- warehouse --
+                                        </option>
+                                        <option *ngFor="let at of warehouseList" [value]="at.WarehouseId">
+                                            {{ at.WarehouseName }}
+                                        </option>
+                                    </select> -->
+                                    <p-multiSelect id="warehouseids" name="warehouseids" [options]="warehouseList"
+                                        [(ngModel)]="filterreqquestsearch.WarehouseIds" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName"></p-multiSelect>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Supplier:</label>
+                                <div>
+                                    <p-multiSelect id="supplierids" name="SupplierId" [options]="sellerlist"
+                                        [(ngModel)]="filterreqquestsearch.SupplierIds" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="Name"></p-multiSelect>
+
+                                    <!-- <select id="desg" name="desg" class="form-control"
+                                        [(ngModel)]="filterreqquestsearch.SupplierIds">
+                                        <option [value]="null">
+                                            -- supplier --
+                                        </option>
+                                        <option *ngFor="let at of sellerlist" [value]="at.SupplierId">
+                                            {{ at.Name }}
+                                        </option>
+                                    </select> -->
+
+                                    <!-- <p-autoComplete [suggestions]="sellerlist" (completeMethod)="getSeLlerList($event)"
+                                        field="Name" [size]="15" (onSelect)="setSeller($event)"
+                                        placeholder="enter at least 3 chars" [minLength]="3" name="Names" id="sellerid">
+                                    </p-autoComplete> -->
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Purchase Order Id:</label>
+                                <div>
+                                    <!-- <p-multiSelect id="supplierids" name="SupplierId" [options]="sellerlist"
+                                        [(ngModel)]="filterreqquestsearch.SupplierIds" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="Name"></p-multiSelect> -->
+
+                                    <!-- <select id="d43esg" name="daaaesg" class="form-control"
+                                        [(ngModel)]="filterreqquestsearch.BuyerId">
+                                        <option [value]="null">
+                                            -- buyer --
+                                        </option>
+                                        <option *ngFor="let at of buyersList" [value]="at.PeopleID">
+                                            {{ at.DisplayName }}
+                                        </option>
+                                    </select> -->
+
+                                    <input type="text" name="purchaseorderid" class="form-control"
+                                        [(ngModel)]="filterreqquestsearch.PurchaseOrderId">
+
+                                    <!-- <p-autoComplete [suggestions]="sellerlist" (completeMethod)="getSeLlerList($event)"
+                                        field="Name" [size]="30" (onSelect)="setSeller($event)"
+                                        placeholder="enter at least 3 chars" [minLength]="3" name="Names"
+                                        id="sellerid">
+                                    </p-autoComplete> -->
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="form-group">
+
+                                <div>
+                                    <label for="startdate">Start Date: </label>
+                                    <p-calendar placeholder="dd/mm/yyyy" [showIcon]="true"
+                                        [(ngModel)]="filterreqquestsearch.StartDate" name="startDate" required="1"
+                                        [readonlyInput]="true" #dateRangeListInput>
+                                        <!-- {{filterreqquestsearch.StartDate | date: 'dd/MM/yyyy'}} -->
+                                    </p-calendar>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label> End Date:</label>
+                                <div>
+                                    <p-calendar [showIcon]="true" [(ngModel)]="filterreqquestsearch.EndDate"
+                                        name="EndDate" required="1" [readonlyInput]="true" required #dateRangeListInput>
+                                        <!-- {{filterreqquestsearch.EndDate | date: 'dd/MM/yyyy'}} -->
+                                    </p-calendar>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <!-- <label> Search</label> -->
+                                <div>
+                                    <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="GetPODashboardData();"
+                                        label="Search"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <!-- <label> Reset:</label> -->
+                                <div>
+                                    <button type="button" pButton (click)="initialize(); " label="Reset"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <!-- <label> Reset:</label> -->
+                                <div>
+                                    <button type="button" class="ui-button-success mt" pButton (click)="exporttoexcel(); " label="Export to Excel"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-lg-3">
+                            <div class="form-group">
+                                <label> Go To Approval</label>
+                                <div>
+                                    <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="gotoapproval();" label="Go To Approval"></button>
+                                </div>
+                            </div>
+                        </div> -->
+                        <!-- <div class="col-lg-4">
+                            <div class="form-group" *ngIf="dashboarddata && dashboarddata.length"
+                                style="margin-left: 20px;">
+                                <label> Export {{ReportType}} : </label>
+                                <div>
+                                    <button type="button" class="btn btn-raised btn-success" (click)="exportToExcel();">
+                                        Export {{ReportType}}
+                                    </button>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card-content" *ngIf="prRequestList && prRequestList.length">
+                <div class="card-body">
+                    <p-table #dt [paginator]="true" [rows]="10" [value]="prRequestList" [lazy]="true"
+                        [totalRecords]="totalCount" (onLazyLoad)="loadLazy($event)" [paginator]="true"
+                        [scrollable]="true" scrollHeight="140vh" text-align: center>
+
+                        <!-- <p-table [value]="prRequestList" [paginator]="true" [lazy]="true" [totalRecords]="totalCount"
+                        (onLazyLoad)="loadLazy($event)"> -->
+
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>PO Number</th>
+                                <th>Warehouse Name</th>
+                                <th>Supplier Name</th>
+                                <th>Buyer Name</th>
+                                <th>PO Date</th>
+                                <th>PO Amount</th>
+                                <th>GR Amount</th>
+                                <th>IR Amount</th>
+                                <th>Picker Type</th>
+                                <th>Freight Charge</th>
+                                <!-- <th>Send Approval Date</th> -->
+                                <th style="width: 15%; text-align: center;">Close Rejected</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <!-- <ng-template pTemplate="body" let-po let-i="rowIndex"> -->
+                        <ng-template pTemplate="body" let-po let-i="rowIndex">
+                            <tr style="cursor: pointer; pointer-events: all;"
+                                (hover)="hover(true); currentPoId = po.PurchaseOrderId;">
+                                <!-- <td style="width:60px;">
+                                    <i *ngIf="po.open" class="fa fa-square-o fa-2x" aria-hidden="true">+</i>
+                                    <i *ngIf="po.closed" class="fa fa-check-square-o fa-2x" aria-hidden="true">-</i>
+                                </td> -->
+
+                                <td>
+                                    <div>
+                                        <span style="color: red;" (click)="navToPo(po.PurchaseOrderId)">
+                                            {{po.PurchaseOrderId}}
+                                        </span>
+                                        <!-- <span style="margin-left: 40px;"><i *ngIf="!po.open" class="fa fa-expand"
+                                                aria-hidden="true"></i>
+                                            <i *ngIf="po.open" class="fa fa-compress" aria-hidden="true"></i></span> -->
+
+                                    </div>
+
+                                </td>
+
+                                <td (click)="po.open = !po.open">{{po.WarehouseName}}</td>
+                                <td (click)="po.open = !po.open">{{po.SupplierName}}</td>
+                                <td (click)="po.open = !po.open">{{po.BuyerName}}</td>
+                                <td (click)="po.open = !po.open">{{po.CreationDate | date}}</td>
+                                <td (click)="po.open = !po.open">{{po.TotalPOPrice}}</td>
+                                <td (click)="po.open = !po.open">{{po.TotalGRAmount}}</td>
+                                <td (click)="po.open = !po.open">{{po.TotalIrAmount}}</td>
+                                <td (click)="po.open = !po.open">{{po.PickerType}}</td>
+                                <td (click)="po.open = !po.open">{{po.FreightCharge}}</td>
+                                <!-- <td>{{po.SendApprovalDate | date}}</td> -->
+                                <td style="width: 15%; text-align: center;">
+                                    <ng-container *ngIf="po.IsCloseRejected == false">
+                                        <div (click)="po.open = !po.open" >No</div>
+                                    </ng-container>
+                                    <ng-container *ngIf="po.IsCloseRejected == true">
+                                        <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                            (click)="ViewRejectHistory(po.PurchaseOrderId)">
+                                            Reject History
+                                        </button>
+                                    </ng-container>
+                                </td>
+                                <td>
+                                    <ng-container
+                                        *ngIf="po.ApprovalStatus == 0 || po.ApprovalStatus == 2; else falsytemplate">
+                                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1" *ngIf="po.PickerType =='DeliveryfromSupplier'"
+                                            (click)="SendPOForClose(po.PurchaseOrderId);" [disabled]="! isShow" label="Close"></button>
+                                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1" *ngIf="po.PickerType !='DeliveryfromSupplier'"
+                                            (click)="SendPOForClose(po.PurchaseOrderId);"  label="Close"></button>    
+                                    </ng-container>
+                                    <ng-template #falsytemplate>
+                                        Request Pending
+                                    </ng-template>
+                                    <!-- <ng-container *ngIf="po.IsCloseRejected">
+                                        Request Pending
+                                    </ng-container> -->
+                                </td>
+                            </tr>
+                            <tr *ngIf="po.open && po.POItemDetials && po.POItemDetials.length">
+                                <div style="width: 1000%;  color: white; outline: 2px solid black; margin-left: 10px;
+                                margin-bottom: 10px; margin-top: 10px; margin-right: 10px;">
+                                    <div
+                                        style="margin-left: 10px; margin-bottom: 10px; margin-top: 10px; margin-right: 20px;">
+                                        <br>
+                                        <!-- <h4 style="color: royalblue; margin-left: 5px;">Item List</h4> -->
+                                        <br>
+                                        <p-table [value]="po.POItemDetials">
+
+                                            <ng-template pTemplate="header">
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Item MultiMrp Id</th>
+                                <th>Total PO Price</th>
+                                <th>Total PO Qty</th>
+                                <th>Total GR Amount</th>
+                                <th>Total Gr Qty</th>
+                                <th>Total Ir Amount</th>
+                                <th>Total IR Qty</th>
+                            </tr>
+                        </ng-template>
+                        <!-- <ng-template pTemplate="body" let-po let-i="rowIndex"> -->
+                        <ng-template pTemplate="body" let-poitem let-i="rowIndex">
+                            <tr style="cursor: pointer; pointer-events: all;">
+                                <td>{{poitem.Itemname}}</td>
+                                <td>{{poitem.ItemMultiMRPId}}</td>
+                                <td>{{poitem.TotalPOPrice}}</td>
+                                <td>{{poitem.TotalPOQty}}</td>
+
+                                <td>{{poitem.TotalGRAmount}}</td>
+                                <td>{{poitem.TotalGrQty}}</td>
+                                <td>{{poitem.TotalIrAmount}}</td>
+                                <td>{{poitem.TotalIRQty}}</td>
+                        </ng-template>
+                    </p-table>
+                    <br>
+
+
+                </div>
+            </div>
+            <hr style="width: 700%;">
+
+            </tr>
+
+            </ng-template>
+            </p-table>
+
+
+        </div>
+    </div>
+</div>
+<!--/ Kick start -->
+</div>
+</div>
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-dialog *ngIf="rejectedhistory" [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body"
+    positionTop="100" [style]="{width: '50%',height: '70%'}">
+    <p-header>
+        Reject Close Request History
+    </p-header>
+    <div *ngFor="let log of rejectedhistory; let i = index">
+        <div>
+            <div class="container" *ngIf="i%2 == 0">
+
+                <p>reason : {{log.RejestedReson}}</p>
+                <span class="time-right">{{log.ModifiedDate | date:'medium' }}</span>
+                <p>by :
+                    {{getPeopleName(log.ModifiedBy)}}
+                </p>
+
+
+            </div>
+
+            <div class="container darker" *ngIf="i%2 == 1">
+
+                <p>reason : {{log.RejestedReson}}</p>
+                <span class="time-right">{{log.ModifiedDate | date:'medium' }}</span>
+                <p>by :
+                    {{getPeopleName(log.ModifiedBy)}}
+                </p>
+            </div>
+        </div>
+    </div>
+
+</p-dialog>
+
+<p-confirmDialog header="Confirmation" [baseZIndex]="201" appendTo="body" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>
+
+<p-dialog [(visible)]="isOpenPopupForAction" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '30%',height: '30%'}">
+    <p-header>
+        Action
+    </p-header>
+    <div class="row">
+        <div class="col-md-4">
+            a
+        </div>
+        <div class="col-md-4">
+            b
+        </div>
+        <div class="col-md-4">
+            c
+        </div>
+    </div>
+</p-dialog>

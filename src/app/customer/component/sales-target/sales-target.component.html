@@ -1,0 +1,143 @@
+
+
+<div class="card">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+          <h3 class="m-2">Sales Target</h3>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="form-group">
+                <label for="ware"><b>Store :</b></label>
+                <select name="" value="" class="form-control col md-3" [(ngModel)]="selectedStoreId" (change)="onSelect()">
+                    <option [ngValue]="0">-- Select --</option>
+                    <option *ngFor="let item of StoreList" [ngValue]="item.Id">{{item.Name}}</option>
+                </select>
+            </div>
+           
+            <div class="form-group srch">
+                <button type="button" class="btn btn-raised btn-raised btn-success" (click)="search()">Search</button>
+                <button id="btnRefresh" (click)="AddNew()" class="btn btn-raised btn-raised btn-danger ml-1" >Add New</button>              
+            </div>
+           
+            <div class="col md-9"></div>
+            </div>
+            <p-table #dt1 [value]="ItemList" [paginator]="true" [rows]="20" [scrollable]="true"
+             scrollHeight="130vh" text-align: center>
+             <!-- <ng-template pTemplate="caption">             <div style="text-align: right">
+                  <i class="fa fa-search" style="margin:3px 3px 0 0"></i>
+                   <input type="text" pInputText size="50"  placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                  <input pInputText type="text"
+                      (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                      placeholder="Search keyword" />
+              </div>
+          </ng-template> -->
+                <ng-template pTemplate="header">
+                    <tr>
+                    <th>Sr.No.</th>
+                    <th>Item Number</th>
+                    <th>Item Base Name</th>
+                    <th>ItemMultiMrpId</th>
+                    <th>Base Qty</th>
+                    <th>MRP </th>
+                    <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                    <tr>
+                        <td >{{rowIndex+1}}</td>
+                    <td>{{item.ItemNumber}}</td>
+                    <td>{{item.ItemName}}</td>
+                    <td>{{item.ItemMultiMrpId}}</td>
+                    <td>{{item.BaseQty}}</td>
+                    <td>{{item.MRP}}</td>
+                    <td><button id="btndetail" (click)="EditBaseQty(item)" class="btn btn-primary">Edit</button></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+              <div *ngIf="isOpenPopup">
+                <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+                  [style]="{width: '50%',height: '75%',left: '323px'}">
+                  <p-header>
+                 Update Base Qty
+                  </p-header>
+                  <div class="ui-fluid">
+                      <div class="row">
+                        <div class="col-md 6">
+                          <div class="form-group">
+                              <label for="ware"><b>Item Number : </b></label>
+                              <label>{{itemNo}}</label>
+                              <label for="txtitemName"><b>Item Base Name : </b></label>
+                              <label>{{itembaseName}}</label>
+                          </div>
+                        </div>
+                      <div class="col-md 6">
+                        <div class="form-group">
+                            <label for="txtbaseqty"><b>Base Qty :</b></label>
+                           <input type="text" id="txtbaseqty" name="baseQty" [(ngModel)]="baseQty" class="form-control" >
+                        </div>
+                      </div>
+                      <div class="col-md 6 mt">
+                        <div class="form-group">
+                            <input type="submit" name="Save" id="btnSave" (click)="Update(baseQty)" class="btn btn-raised btn-raised btn-success">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </p-dialog>
+              </div>
+
+              <div *ngIf="IsAddNewPopup">
+                <p-dialog [(visible)]="IsAddNewPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+                  [style]="{width: '50%',height: '75%', overflow: 'auto',left: '323px'}">
+                  <p-header>
+                  Add Base Qty
+                  </p-header>
+                  <div class="ui-fluid">
+                    <div class="form-group">
+                        <label for="ware"><b>Store :</b></label>
+                        <select name="" value="" class="form-control col md-3" [(ngModel)]="StoreId" (change)="onSelectStore(item)">
+                            <option [ngValue]="0">-- Select --</option>
+                            <option *ngFor="let item of StoreList" [ngValue]="item.Id">{{item.Name}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ware"><b>Item No. :</b></label>
+                       <input type="text" id="txtitemNo" name="itemNo" [(ngModel)]="itemNo" class="form-control" >
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Search" id="btnSave" (click)="SearchForItem(itemNo)" class="btn btn-raised btn-raised btn-danger">
+                    </div>
+                    <div class="form-group">
+                        <select name="itemMrpId" value="" class="form-control col md-3" [(ngModel)]="itemMrpId" (change)="onSelectMRP()">
+                            <option [ngValue]="0">--Select--</option>
+                            <option *ngFor="let item of ItemMRPList" [ngValue]="item.ItemMultiMRPId">{{item.itemname}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                      <label><b>Item MRP : {{MRP}}</b></label>&nbsp;&nbsp;
+                      <label><b>Unit of Quantity : {{UnitofQuantity}} {{UOM}}</b></label>
+
+                  </div>
+                    <div class="form-group">
+                        <label for="ware"><b>Base Qty :</b></label>
+                       <input type="text" id="txtNewbaseQty" name="NewbaseQty" [(ngModel)]="NewbaseQty" class="form-control" >
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" name="Save" id="btnSave" (click)="Save(NewbaseQty,itemNo)" class="btn btn-raised btn-raised btn-success">
+                    </div>
+                  </div>
+                </p-dialog>
+              </div>
+    </div>
+  </div>
+
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  
+  
+  

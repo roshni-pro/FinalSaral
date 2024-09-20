@@ -1,0 +1,101 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="container-fluid">
+    <div class="row" *ngIf="!isOpenSequence">
+        <div class="col-12">
+            <div class="mt-4 d-flex justify-content-between align-items-center">
+                <div class="header">
+                    <h3 class="">SK Buisness Lead</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-content p-2">
+                    <form class="form" name="form" #buisnessForm="ngForm">
+                 
+                        <div class="row">                                         
+                          <div class="col-lg-3  col-md-6 col-sm-12">
+                            <label><b>Date Range</b></label>
+                            <div>
+                            <p-calendar [(ngModel)]="buisnessData.rangeDates" id="start" name="start" showIcon="true" [readonlyInput]="true" inputId="range" selectionMode="range"
+                            [style]="{'width':'100%'}" [inputStyle]="{'width':'80%'}" appendTo="body"
+                            dateFormat="dd/mm/yy" placeholder="Select Date" (ngModelChange)="onClickDate()">
+                          </p-calendar>
+                        </div>
+                        </div>
+                      <div class="col-lg-3 col-md-6 col-sm-12">
+                        <label><b>Search</b></label>
+                        <input id="search_filter" name="search_filter" class="form-control" [(ngModel)]="buisnessData.Keyword" (change)="onChangeKeyword()"
+                            placeholder="Search By loan_app_id">
+                    </div>
+                        <div class="col-lg-2 col-md-12 col-sm-12" >
+                            <label></label>
+                            <div style="margin-top: .5em;">
+                            <button id="add" name="add" type="button" class="btn btn-raised btn-primary bt"
+                                (click)="onSearch(buisnessForm)" style="width: 100%;"><i class="pi pi-search">  </i> Search</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 text-right">
+                            <label></label>
+                            <div style="margin-top: .5em;">
+                            <button id="add" name="add" type="button" style="background-color: green;color: white;" class="btn btn"
+                                (click)="onExport(buisnessForm)"><i></i> Export</button>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card shadow">                
+                <div class="card-content p-0 text-center" *ngIf="leadPageData && leadPageData.length > 0">
+                    <p-table #dt [value]="leadPageData" [totalRecords]="totalcount" (onLazyLoad)="load($event)" [lazy]="true"
+                     [paginator]="true" [rows]="20" [scrollable]="true" [(first)]="first"
+                     scrollHeight="130vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Customer Name</th>                              
+                                <th>SKCode</th>
+                                <th>Mobile</th>
+                                <th>ScreenName</th>
+                                <th>loan_app_id</th>
+                                <th>borrower_id</th>                                
+                                <th>partner_loan_app_id</th>
+                                <th>partner_borrower_id</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                            <tr (click)="onClickRowData(ir)">
+                                <td>{{ir.CustomerName}}</td>                               
+                                <td>{{ir.SkCode}}</td>
+                                <td>{{ir.MobileNo}}</td>
+                                <td>{{ir.ScreenName}}</td>
+                                <td>{{ir.loan_app_id}}</td>
+                                <td>{{ir.borrower_id}}</td>                                
+                                <td>{{ir.partner_loan_app_id}}</td>
+                                <td>{{ir.partner_borrower_id}}</td>
+                                <td>{{ir.CreatedDate | date : 'dd/MM/yyyy'}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <h5>* Data Not Found</h5>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- <div *ngIf="isOpenSequence">
+        <app-skbuisness-sequence [rowData] = rowData (closeManually)="onCloseSequence()"></app-skbuisness-sequence>
+    </div> -->
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

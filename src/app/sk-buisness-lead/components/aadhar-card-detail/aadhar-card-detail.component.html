@@ -1,0 +1,297 @@
+<div class="card tp common-padding">
+    <div *ngIf="AadharDetailDcs != null && AadharDetailDcs?.DocumentName != null">
+        <!-- <div class="text-right">
+            <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" (click)="Onhistory()" >history</button>
+        </div> -->
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12 text-right">
+            <div class="ml cl">
+                <!-- <button type="button" class="btn btn-raised btn-danger mr-1" (click)="onClickPostArthmate()">Post Arthmate</button> -->
+            </div>
+        </div>
+        </div> 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">OTP </div>
+            </div>
+            <div *ngIf="AadharDetailDcs?.IsComplete" class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    Verified
+                    <!-- <input type="tel" name="aadharCard" id="aadharCard" [(ngModel)]="AadharDetailDcs.aadhar_card_num"> -->
+                </div>
+            </div>
+            <div *ngIf="!AadharDetailDcs?.IsComplete"  class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    Not Verified/ Pending
+                    <!-- <input type="tel" name="aadharCard" id="aadharCard" [(ngModel)]="AadharDetailDcs.aadhar_card_num"> -->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Aadhar Card</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    {{AadharDetailDcs?.DocumentNumber}}
+                    <!-- <input type="tel" name="aadharCard" id="aadharCard" [(ngModel)]="AadharDetailDcs.aadhar_card_num"> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Document Number</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{AadharDetailDcs.DocumentNumber}}</div>
+            </div>
+        </div> -->
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Document Name</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{AadharDetailDcs?.DocumentName}}</div>
+            </div>
+        </div>
+
+        <!-- <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Name On Card</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{AadharDetailDcs.NameOnCard}}</div>
+            </div>
+        </div> 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">DOB</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{AadharDetailDcs.DateOfBirth}}</div>
+            </div>
+        </div>   -->
+        <!-- <div class="row" *ngIf="!isVerified && isFrontUpload">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Front Image</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img" *ngIf="AadharDetailDcs && AadharDetailDcs.FrontFileUrl">
+                            <app-image-upload type="Product" [frontImagePath]="AadharDetailDcs.FrontFileUrl"
+                                [isShowMyInputLogo]="true" [SequenceName]="'Aadhar'"
+                                [uploadImagePage]="AadharDetailDcs.FrontFileUrl" [isRequired]="true" [showUploadedImage]="false"
+                                (detectchange)="onUploadFrontimage($event)">
+                                <div class="uploadImgShow" uploadLogo>
+                                  <img src="{{baseURL}}{{AadharDetailDcs.FrontFileUrl}}" class="button-img">
+                                </div>
+                            </app-image-upload>
+                        </div>
+                        <div class="p-img-nt" *ngIf="!AadharDetailDcs || (AadharDetailDcs && !AadharDetailDcs.FrontFileUrl)">
+                            <app-image-upload type="Product" id="imageValid" [isShowMyInputLogo]="true"
+                                [isRequired]="true" [showUploadedImage]="false" [SequenceName]="'Aadhar'"
+                                [uploadImagePage]="'AadharDetailDcs'" (detectchange)="onUploadFrontimage($event)">
+                                <div uploadLogo>
+                                  <img src="assets/img/gallery.svg" class="button-logo">
+                                    <div style="color: #E9754E;">Click Front Image</div>
+                                    <div>Supports JPG,JPEG,PNG</div>
+                                </div>
+                            </app-image-upload>           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+        <div class="row" *ngIf="!isVerified && isBackUpload">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Back Image</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img" *ngIf="AadharDetailDcs && AadharDetailDcs.BackFileUrl">
+                            <app-image-upload type="Product" [frontImagePath]="AadharDetailDcs.BackFileUrl"
+                                [isShowMyInputLogo]="true" [SequenceName]="'Aadhar'"
+                                [uploadImagePage]="AadharDetailDcs.BackFileUrl" [isRequired]="true" [showUploadedImage]="false"
+                                (detectchange)="onUploadBackimage($event)">
+                                <div class="uploadImgShow" uploadLogo>
+                                  <img src="{{baseURL}}{{AadharDetailDcs.BackFileUrl}}" class="button-img">
+                                </div>
+                            </app-image-upload>
+                        </div>
+                        <div class="p-img-nt" *ngIf="!AadharDetailDcs || (AadharDetailDcs && !AadharDetailDcs.BackFileUrl)">
+                            <app-image-upload type="Product" id="imageValid" [isShowMyInputLogo]="true"
+                                [isRequired]="true" [showUploadedImage]="false" [SequenceName]="'Aadhar'"
+                                [uploadImagePage]="'AadharDetailDcs'" (detectchange)="onUploadBackimage($event)">
+                                <div uploadLogo>
+                                  <img src="assets/img/gallery.svg" class="button-logo">
+                                    <div style="color: #E9754E;">Click Back Image</div>
+                                    <div>Supports JPG,JPEG,PNG</div>
+                                </div>
+                            </app-image-upload>           
+                        </div>
+                    </div>
+            </div>
+        </div>     
+        </div> -->
+        <div class="row" *ngIf="(isVerified && !isFrontUpload) || (!isVerified && !isFrontUpload)">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Front Image</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img" *ngIf="AadharDetailDcs && AadharDetailDcs.FrontFileUrl">
+                                <div class="uploadImgShow" uploadLogo>
+                                  <img src="{{baseURL}}{{AadharDetailDcs.FrontFileUrl}}" class="button-img" (click)="openImg(AadharDetailDcs.FrontFileUrl,'FrontFileUrl')">
+                                </div>
+                        </div>
+                    </div>
+            </div>
+        </div>  
+        <div class="col-md-3 col-sm-3 col-12">
+            <div class="ml cp"></div>
+        </div>
+        <div class="col-md-9 col-sm-9 col-12">
+            <div class="ml cl">
+                <div>
+                    <div class="p-img" *ngIf="AadharDetailDcs && AadharDetailDcs.FrontFileUrl && !isVerified && !isRejected">
+                        <app-image-upload type="Product" id="imageValid" [isShowMyInputLogo]="true"
+                        [isRequired]="true" [showUploadedImage]="false" [SequenceName]="'Aadhar'"
+                        [uploadImagePage]="'AadharDetailDcs'" (detectchange)="onUploadFrontimage($event)">
+                        <div uploadLogo>
+                            <button class="btn btn-primary">Upload Front Image</button>
+                            <div>Supports JPG,JPEG,PNG</div>
+                        </div>
+                    </app-image-upload>        
+                            <div class="uploadImgShow" uploadLogo>
+                                
+                            </div>
+                    </div>
+                </div>
+        </div>
+    
+        </div>
+        </div>
+        <div class="row" *ngIf="(isVerified && !isBackUpload) || (!isVerified && !isBackUpload)">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp">Back Image</div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">
+                        <div>
+                            <div class="p-img" *ngIf="AadharDetailDcs && AadharDetailDcs.BackFileUrl">
+                                    <div class="uploadImgShow" uploadLogo>
+                                      <img src="{{baseURL}}{{AadharDetailDcs.BackFileUrl}}" class="button-img"  (click)="openImg(AadharDetailDcs.BackFileUrl,'BackFileUrl')">
+                                    </div>
+                            </div>
+                        </div>
+                </div>
+            </div>  
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img" *ngIf="AadharDetailDcs && AadharDetailDcs.BackFileUrl && !isVerified && !isRejected">
+                                <div class="uploadImgShow" uploadLogo>
+                                    <app-image-upload type="Product" id="imageValid" [isShowMyInputLogo]="true"
+                                    [isRequired]="true" [showUploadedImage]="false" [SequenceName]="'Aadhar'"
+                                    [uploadImagePage]="'AadharDetailDcs'" (detectchange)="onUploadBackimage($event)">
+                                    <div uploadLogo>
+                                        <button class="btn btn-primary">Upload Back Image</button>
+                                        <div>Supports JPG,JPEG,PNG</div>
+                                    </div>
+                                </app-image-upload>  
+                                </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+       
+        </div> 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Status</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <span *ngIf="isVerified" style="color:green;">
+                        Verified
+                    </span>
+                    <span *ngIf="isRejected" style="color:red;">
+                        Rejected
+                    </span>
+                </div>
+            </div>
+        </div>  
+        <!-- *ngIf="!isVerified && !isRejected && rowData?.SequenceNo == 7" -->
+        <!-- && !isVerified && !isRejected -->
+        <!-- AadharDetailDcs?.IsApprove>0 &&  -->
+        <div class="row" *ngIf="!loanPosted">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+            <div class="ml cl" style="float: right;">
+                <i class="fa fa-times-circle" style="font-size:30px;color:red;float: right;margin-left: .5em;" (click)="onRejectDoc()"></i>
+                <i class="fa fa-check-circle" style="font-size:30px;color:green;float: right;" (click)="onApproved()"></i>
+                  <!-- <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" *ngIf="isUpload" >history</button> -->
+                <!-- <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" *ngIf="isUpload" (click)="onUpdate()">Update</button> -->
+            </div>
+        </div>
+        </div> 
+        <!-- isVerified || isRejected -->
+        <div class="row" *ngIf="loanPosted">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+            <div class="ml cl">
+                <i class="fa fa-times-circle" *ngIf="isRejected" style="font-size:30px;color:red;float: right;margin-left: .5em;"></i>
+                <i class="fa fa-check-circle" *ngIf="isVerified" style="font-size:30px;color:green;float: right;"></i>                
+            </div>
+        </div>
+        </div> 
+    </div>
+<div class="no-Txt" *ngIf="AadharDetailDcs == null || AadharDetailDcs?.DocumentName == null">* No Record Found</div>
+
+</div>
+<p-dialog [(visible)]="isopenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: 'auto', overflow: 'auto'}">
+    <p-header>Aadhar {{title}}</p-header>
+    <div class="ui-fluid">
+      <img src="{{Img}}" class="view-img"/>
+    </div>
+</p-dialog>
+
+
+<p-dialog [(visible)]="isRejectDoc" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: 'auto', overflow: 'auto'}">
+    <p-header>Reason For Reject</p-header>
+    <div class="ui-fluid">
+      <input type="text" id="_selfiecomment" name="_selfiecomment" class="form-control" [(ngModel)]="Comment" placeholder="Enter Reason For Reject">
+    </div>
+    <p-footer>
+        <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" (click)="onReject()">Reject</button>
+    </p-footer>
+</p-dialog>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<!-- <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" [disabled]="!Comment" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog> -->

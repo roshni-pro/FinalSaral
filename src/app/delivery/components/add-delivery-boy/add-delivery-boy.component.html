@@ -1,0 +1,226 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+                <form class="form form-inline" name="form"  #testForm="ngForm" autocomplete="off" >
+                  <!-- <input autocomplete="false" name="hidden" type="text" style="display:none;"> -->
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Delivery Boy Master Info</h4>
+                  <div class="row">
+
+
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="taxname" class="col-md-6"> First Name</label>
+                        <input type="text" id="taxname" class="form-control col-md-6" name="taxname" [(ngModel)]="deliveryBoyDetails.PeopleFirstName" placeholder="Enter PeopleFirstName" required="1"
+                         minlength= 2 #First="ngModel">
+                        <div class="col-md-6"></div>
+
+                        <div *ngIf="isInvalid && !First.valid && First.errors.required">
+                          <code >First Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !First.valid && First.errors.minlength">
+                          <code >Minlength 2</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class=" col-md-6">
+                      <div class="form-group m-2">
+                        <label for="alias" class="col-md-6"> Last Name</label>
+                        <input type="text" id="alias" class="form-control  col-md-6" name="alias" [(ngModel)]="deliveryBoyDetails.PeopleLastName" placeholder="Enter PeopleLastName"required="1"
+                         minlength= 2 #Last="ngModel">
+                         <div class="col-md-6"></div>
+
+                         <div *ngIf="isInvalid && !Last.valid && Last.errors.required">
+                           <code >Last Name is required</code>
+                         </div>
+                         <div *ngIf="isInvalid && !Last.valid && Last.errors.minlength">
+                           <code >Minlength 2</code>
+                         </div>
+                      </div>
+                    </div>
+                    <div class=" col-md-6">
+                      <div class="form-group m-2">
+                        <label for="pgroup" class="col-md-6"> Mobile</label>
+                        
+                        <input type="tel" id="mobile" class="form-control col-md-6" name="mobile"
+                        [(ngModel)]="deliveryBoyDetails.Mobile" placeholder="Enter Phone Number" required="1"
+                          (keypress)="keyPress($event)" minlength=10 maxlength=10 #phoneno="ngModel" />
+                        <div class="col-md-6"></div>
+
+                        <div *ngIf="isInvalid && !phoneno.valid && phoneno.errors.required">
+                          <code >Phone No is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !phoneno.valid && phoneno.errors.minlength">
+                          <code >Minlength 10</code>
+                        </div>
+                        <div *ngIf="isInvalid && !phoneno.valid && phoneno.errors.maxlength">
+                          <code >Maxlength 10</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class=" col-md-6">
+                        <div class="form-group m-2">
+                          <label for="pgroup" class="col-md-6"> Password</label>
+                          <input type="text" id="pgroup" class="form-control  col-md-6" name="pgroup"  [(ngModel)]="deliveryBoyDetails.Password" placeholder="Enter Password"required="1"
+                          minlength= 2 #Password="ngModel">
+                          <div class="col-md-6"></div>
+
+                          <div *ngIf="isInvalid && !Password.valid && Password.errors.required">
+                            <code >Password No is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !Password.valid && Password.errors.minlength">
+                            <code >Minlength 2</code>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- <div class=" col-md-6">
+                          <div class="form-group m-2">
+                            <label for="pgroup" class="col-md-6"> Vehicle Owner Address</label>
+                            <input type="text" id="pgroup" class="form-control  col-md-6" name="pgroup"  [(ngModel)]="deliveryBoyDetails.OwnerAddress" placeholder="Enter Capacity">
+                          </div>
+                        </div> -->
+                    <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label for="state"class="col-md-6">Select State:</label>
+                            <select id="state" name="state" class="form-control col-md-6" [(ngModel)]="deliveryBoyDetails.Stateid" (change)="onStateChange(deliveryBoyDetails.Stateid , 'state')" required="1"  #State="ngModel"
+                            placeholder="Select City">
+                           
+                            <option value="">--Select--</option>
+                            <option *ngFor="let s of stateList" [ngValue]="s.Stateid">
+                              {{ s.StateName }}
+                            </option>
+                            <!-- <div class="col-md-6"></div>
+
+                            <div *ngIf="isInvalid && !State.valid && State.errors.required">
+                              <code >State is required</code>
+                            </div> -->
+                          </select>
+                          
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label for="City"class="col-md-6"> Select City:</label>
+                            <select id="city" name="city" class="form-control col-md-6" [(ngModel)]="deliveryBoyDetails.Cityid" [disabled]="!deliveryBoyDetails.Stateid" (change)="onStateChange(deliveryBoyDetails.Cityid , 'city')" required="1"  #City="ngModel"
+                            placeholder="Select City">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                              {{ city.CityName }}
+                            </option>
+                          </select>
+                          <!-- <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !City.valid && City.errors.required">
+                            <code >City is required</code>
+                          </div> -->
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group m-2">
+                            <label for="ware"class="col-md-6"> Warehouse:</label>
+                            <select id="ware" name="ware" class="form-control col-md-6" [(ngModel)]="deliveryBoyDetails.WarehouseId"  (change)="onStateChange(deliveryBoyDetails.WarehouseId, 'warehouse')"[disabled]="!deliveryBoyDetails.Cityid" required="1"  #Warehouse="ngModel">
+                                <option value="">--Select--</option>
+                                <option *ngFor="let w of warehouseList " [ngValue]="w.WareHouseId">
+                                  {{ w.WareHouseName }}
+                                </option>
+                              </select>
+                              <!-- <div class="col-md-6"></div>
+                              <div *ngIf="isInvalid && !Warehouse.valid && Warehouse.errors.required">
+                                <code >Warehouse is required</code>
+                              </div> -->
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group m-2">
+                            <label for="vehicle"class="col-md-6"> Vehicle:</label>
+                            <select id="vehicle" name="vehicle" class="form-control col-md-6" [(ngModel)]="deliveryBoyDetails.VehicleId"[disabled]="!deliveryBoyDetails.WarehouseId" required="1" #Vehicle="ngModel">
+                              <option value="">--Select--</option>  
+                              <option *ngFor="let w of vehicleList" [ngValue]="w.VehicleId">
+                                  {{ w.VehicleName }}
+                                </option>
+                              </select>
+                              <!-- <div class="col-md-6"></div> -->
+                              <!-- <div *ngIf="isInvalid && !Vehicle.valid && Vehicle.errors.required">
+                                <code >Vehicle is required</code>
+                              </div> -->
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group m-2">
+                            <label for="agent"class="col-md-6"> Agent:</label>
+                            <select id="agent" name="agent" class="form-control col-md-6" [(ngModel)]="deliveryBoyDetails.AgentCode">
+                              <option value="">--Select--</option>  
+                              <option *ngFor="let a of agentList" [ngValue]="a.AgentCode">
+                                  {{ a.DisplayName }}
+                                </option>
+                              </select>
+                          </div>
+                        </div>
+                        <div class=" col-md-6">
+                          <div class="form-group m-2">
+                            <label for="active" class="col-md-6"> Active</label>
+                            <div class="custom-control custom-checkbox custom-control-inline">
+                              <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1" type="checkbox" [(ngModel)]="deliveryBoyDetails.Active">
+                              <label class="custom-control-label" for="customCheckboxInline1"></label>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- <div class="col-md-6">
+                          <div class="form-group m-2">
+                            <label for="ware"class="col-md-6"> Agent:</label>
+                            <select id="ware" name="ware" class="form-control col-md-6" [(ngModel)]="deliveryBoyDetails.WarehouseId">
+                                <option *ngFor="let w of agentList" [ngValue]="w.PeopleID">
+                                  {{ w.VehicleName }}
+                                </option>
+                              </select>
+                          </div>
+                        </div> -->
+                    <!-- <div class=" col-md-6">
+                        <div class="form-group m-2">
+                          <label for="active" class="col-md-6"> Active</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1" type="checkbox" [(ngModel)]="vehicle.isActive">
+                            <label class="custom-control-label" for="customCheckboxInline1"></label>
+                          </div>
+                        </div>
+                      </div> -->
+                    <!-- <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="fname"> </label>
+                        <input type="text" id="fname" class="form-control" name="fname"
+                          [(ngModel)]="accountType.Name" placeholder="Enter Name">
+                      </div>
+                    </div> -->
+                    <!-- <div class=" col-md-12">
+                      <div class="form-group m-2">
+                        <label for="des" class="col-md-3">Description</label>
+                        <textarea type="text" id="des" class="form-control  col-md-9" name="des" [(ngModel)]="vehicle.TDiscription" placeholder="Enter Description"></textarea>
+                      </div>
+                    </div> -->
+                 
+  
+                  </div>
+                </div>
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                    <i class="ft-x"></i> Cancel
+                  </button>
+                  <button type="submit" class="btn btn-raised btn-primary"(click)="onclick(testForm)">
+                    <i class="fa fa-check-square-o"></i> Save</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

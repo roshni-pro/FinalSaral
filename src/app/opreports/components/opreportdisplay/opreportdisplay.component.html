@@ -1,0 +1,176 @@
+<p-toast></p-toast>
+
+<div class="row m-0">
+    <div class="col-12">
+        <!-- Kick start -->
+        <div id="kick-start" class="kick-start card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">OP Report {{ReportType ? ' - ' + ReportType : ''}}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+
+                                <div>
+                                    <label for="orderType">WareHouse</label>
+                                    <p-multiSelect id="warehouseids" name="warehouseids" [options]="warehouseList"
+                                        [(ngModel)]="filterOPReports.WarehouseIds" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName"></p-multiSelect>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="form-group">
+
+                                <div>
+                                    <label for="startdate"><b>Start Date: </b></label><br>
+                                    <p-calendar dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" [showIcon]="true" [(ngModel)]="filterOPReports.StartDate"
+                                        name="startDate" required="1" [readonlyInput]="true"
+                                        #dateRangeListInput>
+                                        <!-- {{filterOPReports.StartDate | date: 'dd/MM/yyyy'}} -->
+                                    </p-calendar>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label> Expiry Date:</label>
+                                <div>
+                                    <p-calendar dateFormat="dd/mm/yy" [showIcon]="true" [(ngModel)]="filterOPReports.EndDate" name="EndDate"
+                                        required="1" [readonlyInput]="true" required #dateRangeListInput>
+                                        <!-- {{filterOPReports.EndDate | date: 'dd/MM/yyyy'}} -->
+                                    </p-calendar>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label> Report Type:</label>
+                                <div>
+                                    <select id="desg" name="desg" class="form-control"
+                                        [(ngModel)]="filterOPReports.ReportType">
+                                        <option [value]="''">
+                                            -- select type --
+                                        </option>
+                                        <option *ngFor="let at of reporttypes" [value]="at.val">
+                                            {{ at.name }}
+                                        </option>
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Search Report:</label>
+                                <div>
+                                    <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="GetOPReportDetails();" label="Search Report"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group" style="margin-left: 20px;">
+                                <label> Reset:</label>
+                                <div>
+                                    <button type="button" pButton (click)="initialize(); " label="Reset"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group" *ngIf="opreportdata && opreportdata.length"
+                                style="margin-left: 20px;">
+                                <label> Export {{ReportType}} : </label>
+                                <div>
+                                    <button type="button" class="btn btn-raised btn-success" (click)="exportToExcel();">
+                                        Export {{ReportType}}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group" *ngIf="opreportdata && opreportdata.length"
+                                style="margin-left: 20px;">
+                                <label> Detail Export : </label>
+                                <div>
+                                    <button type="button" class="btn btn-raised btn-success" (click)="Export();">
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--/ Kick start -->
+    </div>
+
+</div>
+
+
+<p-table *ngIf="opreportdata && opreportdata.length" #dt [paginator]="false" [value]="opreportdata" [lazy]="true"
+    [columns]="columns" [totalRecords]="TotalRecords" (onLazyLoad)="load($event)" [scrollable]="false"
+    scrollHeight="70vh" text-align: center>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <ng-container *ngFor="let col of columns">
+                <th>
+                    <div
+                        [ngClass]="{'red': col.field == 'RedOrderAmount' || col.field == 'RedOrderCount' || col.field == 'RedOrderPercent', 'blue' : col.field == 'BlueOrderAmount' || col.field == 'BlueOrderCount' ||  col.field == 'BlueOrderPercent','yellow' : col.field == 'YellowOrderAmount' || col.field == 'YellowOrderCount' ||  col.field == 'YellowOrderPercent'}">
+                        {{col.header}}
+                    </div>
+                </th>
+            </ng-container>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
+        <tr>
+            <ng-container *ngFor="let col of columns; let i = index">
+                <td
+                    *ngIf="col.field == 'GrandTotal' || col.field == 'RedOrderAmount' || col.field == 'BlueOrderAmount' || col.field == 'WhiteOrderAmount' || col.field == 'YellowOrderAmount'">
+                    <!-- <div  [ngClass]="{'red': col.field == 'RedOrderAmount' || col.field == 'RedOrderPercent', 'blue' : col.field == 'BlueOrderAmount' ||  col.field == 'BlueOrderPercent'}"> -->
+                    <ng-container>
+
+                        <i *ngIf="ReportType == 'Order Color Amount'" class="fa fa-inr" aria-hidden="true"></i>
+                        {{rowData[col.field] | number:'1.2-2' }}
+                    </ng-container>
+
+                    <!-- </div> -->
+                </td>
+                <td
+                    *ngIf="col.field != 'GrandTotal' && col.field != 'RedOrderAmount' && col.field != 'BlueOrderAmount' && col.field != 'WhiteOrderAmount' && col.field != 'YellowOrderAmount'">
+                    <!-- <div  [ngClass]="{'red': col.field == 'RedOrderAmount' || col.field == 'RedOrderPercent', 'blue' : col.field == 'BlueOrderAmount' ||  col.field == 'BlueOrderPercent'}"> -->
+                    <!-- <ng-container *ngIf="rowData[col.field]"> -->
+                    <ng-container>
+                        {{rowData[col.field] }}
+                        <ng-container
+                            *ngIf="col.field == 'YellowOrderPercent' ||  col.field == 'RedOrderPercent' || col.field == 'Hour100OrderPercent'  || col.field == 'BlueOrderPercent' || col.field == 'WhiteOrderPercent' || col.field == 'Hour100GreaterOrderPercent' || col.field == 'Hour72OrderPercent' || col.field == 'Hour48OrderPercent' || col.field == 'Hour24OrderPercent' ">
+                            %</ng-container>
+                    </ng-container>
+                    <!-- <ng-container *ngIf="!rowData[col.field]">
+                        <b style="margin: 10px;">-</b>
+                    </ng-container> -->
+                    <!-- </div> -->
+                </td>
+
+            </ng-container>
+        </tr>
+    </ng-template>
+</p-table>
+
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

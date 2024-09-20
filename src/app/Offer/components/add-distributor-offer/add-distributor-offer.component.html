@@ -1,0 +1,844 @@
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="offer" *ngIf = "editMode == false">
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header">
+        <h3 class="m-2"><b>Add Distributor Offer</b></h3>
+      </div>
+    </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+            <form class="form">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="projectinput3">Select Warehouse</label>
+                      <select id="city" name="city" class="form-control" [(ngModel)]="WarehouseId"  (ngModelChange)="onsearch(WarehouseId)">
+                        <option value="">Select Warehouse</option>
+                        <option *ngFor="let city of WarehouseList" [ngValue]="city.WarehouseId">{{city.WarehouseName}}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  </div>
+            </form>
+    </div>
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded" *ngIf = "offer == true">
+            <div class="row ">
+                <div class="col-sm-12">
+                    <form class="form" #distributorForm="ngForm">
+                        <div class="form-body">
+                            <div class="row p-3">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="OfferName">Offer Name</label>
+                                        <input type="text" placeholder="Offer Name" [(ngModel)]="data.OfferName"
+                                            id="OfferName" name="OfferName" class="form-control" required = "1" maxlength="50" minlength="4" 
+                                            #OfferName="ngModel">
+                                            <div class="col-md-4"></div>
+                                            <div *ngIf="isInvalid && !OfferName.valid && OfferName.errors.required">
+                                              <code>Offer Name is required</code>
+                                            </div>
+                                            <div *ngIf="isInvalid && !OfferName.valid && OfferName.errors.minlength">
+                                                <code>Minlength 4</code>
+                                              </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="name">Offer Status</label>
+                                        <select class="form-control" id="status" name="status" [(ngModel)]="data.IsActive" #status="ngModel" required="1">
+                                          <!-- (ngModelChange)="offerStatus(WarehouseId,data.IsActive)"> -->
+                                          <option value="">Select</option>
+                                          <option value="true">Active</option>
+                                          <option value="false">Inactive</option>
+                                        </select>
+                                        <div class="col-md-2"></div>
+                                        <div *ngIf="isInvalid && !status.valid && status.errors.required">
+                                            <code>Offer Status is required</code>
+                                        </div>
+                                      </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="startdate"><b>Start Date: </b></label><br>
+                                        <p-calendar [showIcon]="true" [(ngModel)]="data.start" name="startDate"
+                                            [readonlyInput]="true" required #dateRangeListInput>
+                                        </p-calendar>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="startdate"><b>End Date: </b></label><br>
+                                        <p-calendar [showIcon]="true" [(ngModel)]="data.end" name="EndDate"
+                                            [readonlyInput]="true" required #dateRangeListInput>
+                                        </p-calendar>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="name">Offer On</label>
+                                        <select class="form-control" id="OfferOn" name="OfferOn" [(ngModel)]="data.OfferOn" 
+                                          (ngModelChange)="offerOn(WarehouseId,data.OfferOn,distributorForm)"  required="1" #OfferOn="ngModel">
+                                          <option value="null">Select</option>
+                                          <option value="ItemPost">ItemPost</option>
+                                          <option value="Slab">Slab</option>
+                                          <option value="ItemMarkDown">ItemMarkDown</option>
+                                          
+                                        </select>
+                                        <div class="col-md-2"></div>
+                                        <div *ngIf="isInvalid && !OfferOn.valid && OfferOn.errors.required">
+                                            <code>Offer On is required</code>
+                                        </div>
+                                      </div>
+                                </div>
+                              
+                                <!-- <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="orderType">Global Search</label>
+                                        <input type="text" id="Search" [(ngModel)]="data.SearchString"
+                                            (ngModelChange)="onGlobalSearch()" placeholder="Enter Consumer Name or Mobile"
+                                            name="search" class="form-control">
+                                    </div>
+                                </div> -->
+                               
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </div>
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded" *ngIf = "itempostOffer == true">
+        <div class="row ">
+            <div class="col-sm-12">
+                <form class="form" #itempostOfferForm="ngForm">
+                    <div class="form-body">
+                        <div class="row p-3">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="name"> Item List<span style="color:red"> *</span></label>
+                                    <span class="ui-fluid">
+                                      <p-autoComplete [(ngModel)]="selectedItem" [suggestions]="barcodeList"
+                                        (completeMethod)="getitembarcode($event,WarehouseId)" field="itemname" [size]="30" placeholder="enter at least 3 chars"
+                                        [minLength]="3" name="itembarcode" (onSelect)="onmodelChange(selectedItem)" name="itemname"
+                                        #itemname="ngModel">
+                                      </p-autoComplete>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row" *ngIf ="radiobtn == true">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="name"></label>
+                                    <p-radioButton name="groupname" value="Amount"
+                                    label="Amount" [(ngModel)]="data.Amount"
+                                    (ngModelChange)="onEventTypeAmount()">
+                                </p-radioButton>
+                                  </div>
+                            </div> &nbsp;&nbsp;&nbsp;&nbsp;
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="name"></label>
+                                    <p-radioButton name="groupname" value="Weight"
+                                    label="Weight" [(ngModel)]="data.Weight"
+                                    (ngModelChange)="onEventTypeWeight(selectedItem)">
+                                </p-radioButton>
+                                  </div>
+                            </div>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="name"></label>
+                                    <p-radioButton name="groupname" value="Quantity"
+                                    label="Quantity" [(ngModel)]="data.Quantity"
+                                    (ngModelChange)="onEventTypeQuantity()">
+                                </p-radioButton>
+                                  </div>
+                            </div>
+                        </div>
+                        <!-- <div class="row" *ngIf = "amt == true"> -->
+                            <!-- <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="MinLimit">Bill Amount Min Limit</label>
+                                    <input type="number" placeholder="MinLimit" [(ngModel)]="data.BillAmount"
+                                        id="MinLimit" name="MinLimit" class="form-control"  #MinLimit="ngModel" required="1">
+                                        <div class="col-md-6"></div>
+                                        <div *ngIf="isInvalid && !MinLimit.valid && MinLimit.errors.required">
+                                            <code>Bill Amount Min Limit is required</code>
+                                        </div>
+                                </div>
+                            </div> -->
+                            <div class="col-md-3" *ngIf = "amt == true">
+                                <div class="form-group">
+                                    <label for="MaxLimit">Bill Amt Max Limit</label>
+                                    <input type="number" placeholder="MaxLimit" [(ngModel)]="data.MaxBillAmount" (ngModelChange)="amountValidationAmt(data.MaxBillAmount)"
+                                        id="MaxLimit" name="MaxLimit" class="form-control" #MaxLimit="ngModel" required="1">
+                                        <div class="col-md-6"></div>
+                                        <div *ngIf="isInvalid && !MaxLimit.valid && MaxLimit.errors.required && validFormAmt == false">
+                                            <code>Bill Amount Max Limit is required</code>
+                                        </div>
+                                        <div *ngIf="isInvalid && !MaxLimit.valid && MaxLimit.errors.required && validFormAmt == true">
+                                            <code>MaxLimit Should be greater then 0 </code>
+                                        </div>
+                                </div>
+                            </div>
+                        <!-- </div> -->
+                        <!-- <div class="row" *ngIf = "weight == true"> -->
+                            <div class="col-md-3" *ngIf = "weight == true">
+                            <div class="form-group">
+                                <label for="Weight">Weight</label>
+                                <input type="number" placeholder="Weight" [(ngModel)]="data.BillDiscountWallet" (ngModelChange)="amountValidationWeight(data.BillDiscountWallet)"
+                                    id="Weight" name="Weight" class="form-control" #Weight="ngModel" required="1">
+                                    <div class="col-md-6"></div>
+                                    <div *ngIf="isInvalid && !Weight.valid && Weight.errors.required && validFormWeight == false">
+                                        <code>Weight is required</code>
+                                    </div>
+                                    <div *ngIf="isInvalid && !Weight.valid && Weight.errors.required && validFormWeight == true">
+                                        <code>Weight Should be greater then 0. </code>
+                                    </div>
+                            </div>
+                        </div>
+                            <div class="col-md-3" *ngIf = "weight == true">
+                                <div class="form-group">
+                                    <label for="UOM">UOM</label>
+                                    <input type="text" id="UOM" name="UOM" class="form-control" [(ngModel)]="selectedItem.UOM" 
+                                        disabled  >
+                                </div>
+                                </div>
+                        <!-- </div> -->
+                        <div class="col-md-3" *ngIf = "qty == true">
+                            <div class="form-group">
+                                <label for="Quantity">Quantity</label>
+                                <input type="number" placeholder="Quantity" [(ngModel)]="data.OffersaleQty" (ngModelChange)="amountValidationQty(data.OffersaleQty)"
+                                    id="Quantity" name="Quantity" class="form-control" #Quantity="ngModel" required="1">
+                                    <div class="col-md-6"></div>
+                                    <div *ngIf="isInvalid && !Quantity.valid && Quantity.errors.required && validFormQty == false">
+                                        <code>Quantity is required </code>
+                                    </div>
+                                    <div *ngIf="isInvalid && !Quantity.valid && Quantity.errors.required && validFormQty == true">
+                                        <code>Quantity Should be greater then 0 </code>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3"  *ngIf ="radiobtn == true">
+                            <div class="form-group">
+                                <!-- <label for="MaxDiscount">Maximum Discount Amount</label> -->
+                                <label for="MaxDiscount">Discount Amount</label>
+                                <input type="number" placeholder="MaxDiscount" [(ngModel)]="data.MaxDiscount" (ngModelChange)="maxDiscount(itempostOfferForm,data)"
+                                    id="MaxDiscount" name="MaxDiscount" class="form-control" required = "1" #MaxDiscount = "ngModel">
+                                    <div *ngIf="isInvalid && !MaxDiscount.valid && MaxDiscount.errors.required && validForm == true">
+                                        <!-- <code>Maximum Discount Amt Should be greater then 0 </code> -->
+                                        <code>Discount Amt Should be greater then 0 </code>
+                                    </div>
+                            </div>
+                        </div>
+    
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+</div>
+ 
+
+<div class="ui-fluid shadow mb-2 bg-white rounded" *ngIf = "itemslaveOffer == true">
+    <div class="row ">
+        <div class="col-sm-12">
+            <form class="form" #itemslaveOfferForm="ngForm">
+                <div class="form-body">
+                    <div class="row p-3">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="name">Discount On</label>
+                                <select class="form-control" id="BillDiscountOfferOn" name="BillDiscountOfferOn" [(ngModel)]="data.BillDiscountOfferOn" 
+                                  (ngModelChange)="discountOn(WarehouseId,data.BillDiscountOfferOn,data)">
+                                  <option value="">Select</option>
+                                  <option value="Percentage">Percentage</option>
+                                  <option value="Amount">Amount</option>
+                                </select>
+                              </div>
+                        </div>
+                       <div class="row" *ngIf = "percentage == true">
+                    <div class="col-md-4" >
+                        <div class="form-group">
+                            <label for="Percentage">Percentage : </label>
+                            <input type="number" placeholder="Percentage" [(ngModel)]="data.DiscountPercentage" (ngModelChange)="itemslaveValidationPer(data.DiscountPercentage)"
+                                id="Percentage" name="Percentage" class="form-control" #Percentage="ngModel" required="1">
+                                <div class="col-md-4"></div>
+                                <div *ngIf="isInvalid && !Percentage.valid && Percentage.errors.required && validFormPer == false">
+                                    <code>Percentage is required</code>
+                                </div>
+                                <div *ngIf="isInvalid && !Percentage.valid && Percentage.errors.required && validFormPer == true">
+                                    <code>Percentage Should be greater then 0 </code>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="MinLimit">Bill Amt Min Limit</label>
+                            <input type="number" placeholder="MinLimit" [(ngModel)]="data.BillAmount" (ngModelChange)="itemslaveValidationMin(data.BillAmount)"
+                                id="MinLimit" name="MinLimit" class="form-control" #MinLimit="ngModel" required="1">
+                                <div class="col-md-4"></div>
+                                <div *ngIf="isInvalid && !MinLimit.valid && MinLimit.errors.required && validFormMin == false">
+                                    <code>Bill Amount Min Limit is required</code>
+                                </div>
+                                <div *ngIf="isInvalid && !MinLimit.valid && MinLimit.errors.required && validFormMin == true">
+                                    <code>Bill Amt Min Limit Should be greater then 0 </code>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" >
+                        <div class="form-group">
+                            <label for="MaxLimit">Bill Amt Max Limit</label>
+                            <input type="number" placeholder="MaxLimit" [(ngModel)]="data.MaxBillAmount" (ngModelChange)="itemslaveValidationMax(data.MaxBillAmount)"
+                                id="MaxLimit" name="MaxLimit" class="form-control" #MaxLimit="ngModel" required="1">
+                                <div class="col-md-4"></div>
+                                <div *ngIf="isInvalid && !MaxLimit.valid && MaxLimit.errors.required && validFormMax == false">
+                                    <code>Bill Amount Max Limit is required</code>
+                                </div>
+                                <div *ngIf="isInvalid && !MaxLimit.valid && MaxLimit.errors.required && validFormMax == true">
+                                    <code>Bill Amt Max Limit Should be greater then 0 </code>
+                                </div>
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-3" >
+                        <div class="form-group">
+                            <label for="MaxDiscount">Maximum Discount Amt</label>
+                            <input type="number" placeholder="MaxDiscount" [(ngModel)]="data.MaxDiscount"
+                                id="MaxDiscount" name="MaxDiscount" class="form-control" #MaxDiscount="ngModel" required="1">
+                                <div class="col-md-3"></div>
+                                <div *ngIf="isInvalid && !MaxDiscount.valid && MaxDiscount.errors.required">
+                                    <code>Maximum Discount is required</code>
+                                </div>
+                        </div>
+                    </div> -->
+                         </div>
+                         <div class="row" *ngIf = "walletpoint == true">                            
+                            <!-- <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="name">Wallet Type</label>
+                                    <select class="form-control" id="WalletType" name="WalletType" [(ngModel)]="data.WalletType"  required="1" #WalletType="ngModel">
+                                      <option value="">Select</option>
+                                      <option value="Amount">Amount</option>
+                                      <option value="WalletPercentage">WalletPercentage</option>
+                                    </select>
+                                    <div class="col-md-3"></div>
+                                    <div *ngIf="isInvalid && !WalletType.valid && WalletType.errors.required">
+                                        <code>Wallet Type is required</code>
+                                    </div>
+                                  </div>
+                            </div> -->
+                            <div class="col-md-4" >
+                                <div class="form-group">
+                                    <label for="Walletpoint">Amount : </label>
+                                    <input type="number" placeholder="Amount" [(ngModel)]="data.FreeWalletPoint" (ngModelChange)="itemslaveValidationAt(data.FreeWalletPoint)"
+                                        id="Walletpoint" name="Walletpoint" class="form-control" #Walletpoint="ngModel" required="1">
+                                        <div class="col-md-4"></div>
+                                        <div *ngIf="isInvalid && !Walletpoint.valid && Walletpoint.errors.required && validFormAmtwp == false">
+                                            <code>Amount is required</code>
+                                        </div>
+                                        <div *ngIf="isInvalid && !Walletpoint.valid && Walletpoint.errors.required && validFormAmtwp == true">
+                                            <code>Amount Should be greater then 0 </code>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="MinLimit">Bill Amt Min Limit</label>
+                                    <input type="number" placeholder="MinLimit" [(ngModel)]="data.BillAmount" (ngModelChange)="itemslaveValidationAtmin(data.BillAmount)"
+                                        id="MinLimit" name="MinLimit" class="form-control" #MinLimit="ngModel" required="1">
+                                        <div class="col-md-4"></div>
+                                        <div *ngIf="isInvalid && !MinLimit.valid && MinLimit.errors.required && validFormMinlt == false">
+                                            <code>Bill Amount Min Limit is required</code>
+                                        </div>
+                                        <div *ngIf="isInvalid && !MinLimit.valid && MinLimit.errors.required && validFormMinlt == true">
+                                            <code>Bill Amt Min Limit Should be greater then 0 </code>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" >
+                                <div class="form-group">
+                                    <label for="MaxLimit">Bill Amt Max Limit</label>
+                                    <input type="number" placeholder="MaxLimit" [(ngModel)]="data.MaxBillAmount" (ngModelChange)="itemslaveValidationAtmax(data.MaxBillAmount)"
+                                        id="MaxLimit" name="MaxLimit" class="form-control" #MaxLimit="ngModel" required="1">
+                                        <div class="col-md-4"></div>
+                                        <div *ngIf="isInvalid && !MaxLimit.valid && MaxLimit.errors.required && validFormMaxlt == false">
+                                            <code>Bill Amount Max Limit is required</code>
+                                        </div>
+                                        <div *ngIf="isInvalid && !MaxLimit.valid && MaxLimit.errors.required && validFormMaxlt == true">
+                                            <code>Bill Amt Max Limit Should be greater then 0 </code>
+                                        </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col-md-3" >
+                                <div class="form-group">
+                                    <label for="MaxDiscount">Maximum Discount</label>
+                                    <input type="number" placeholder="MaxDiscount" [(ngModel)]="data.MaxDiscount"
+                                        id="MaxDiscount" name="MaxDiscount" class="form-control">
+                                </div>
+                            </div> -->
+                          </div>
+                    </div>
+                </div>
+            <!-- </form>
+        </div>
+    </div>
+</div> -->
+<div class="ui-fluid shadow mb-2 bg-white rounded form-actions right p-3" *ngIf="itemSavebtn == false">
+    <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+      Back
+    </button>
+    <button type="button" class="btn btn-raised btn-primary" (click)="save(data,WarehouseId,selectedItem,itemslaveOfferForm)" *ngIf="savebtn==true && btnsave == false">
+      Save
+    </button>
+  </div>
+</form>
+</div>
+</div>
+</div>
+
+
+<div class="ui-fluid shadow mb-2 bg-white rounded" *ngIf = "ItemMarkDownOffer == true">
+    <div class="row ">
+        <div class="col-sm-12">
+            <form class="form" #itemslaveOfferForm="ngForm">
+                <div class="form-body">
+                    <div class="row p-3">
+                       
+                      
+                       <div class="col-md-3" >
+                        <div class="form-group">
+                            <label for="Percentage">Percentage : </label>
+                            <input type="number" placeholder="Percentage" [(ngModel)]="data.DiscountPercentage" (ngModelChange)="itemslaveValidationPer(data.DiscountPercentage)"
+                                id="Percentage" name="Percentage" class="form-control" #Percentage="ngModel" required="1">
+                                <div class="col-md-4"></div>
+                                <div *ngIf="isInvalid && !Percentage.valid && Percentage.errors.required && validFormPer == false">
+                                    <code>Percentage is required</code>
+                                </div>
+                                <div *ngIf="isInvalid && !Percentage.valid && Percentage.errors.required && validFormPer == true">
+                                    <code>Percentage Should be greater then 0 </code>
+                                </div>
+                        </div>
+                       </div>
+                       <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="name">Offer On</label>
+                            <select class="form-control" id="ApplyType" name="ApplyType" required="1" [(ngModel)]="data.ApplyType" #ApplyType="ngModel">
+                              <option value="null">Select</option>
+                              <option value="Distributor">Distributor</option>
+                              <option value="Super Stockist">Super Stockist</option>                              
+                            </select>
+                            <div class="col-md-2"></div>
+                            <div *ngIf="isInvalid && !ApplyType.valid && ApplyType.errors.required">
+                                <code>Apply Type is required</code>
+                            </div>
+                          </div>
+                       </div>
+  
+                       <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="OfferName">Description</label>
+                            <input type="text" placeholder="Description" [(ngModel)]="data.Description"
+                                id="Description" name="Description" class="form-control" required = "1" maxlength="1500" minlength="4" 
+                                #Description="ngModel">
+                                <div class="col-md-4"></div>
+                                <div *ngIf="isInvalid && !Description.valid && Description.errors.required">
+                                  <code>Description is required</code>
+                                </div>
+                                <div *ngIf="isInvalid && !Description.valid && Description.errors.minlength">
+                                    <code>Minlength 4</code>
+                                  </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                       
+                       <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="name">Offer On</label>
+                            <select class="form-control" id="BillDiscountType" name="BillDiscountType" [(ngModel)]="data.BillDiscountType" required="1" #BillDiscountType="ngModel"
+                            (ngModelChange)="GetApplyDetail(WarehouseId,data.BillDiscountType,data)">
+                              <option value="null">Select</option>
+                              <option value="Category">Category</option>
+                              <option value="SubCategory">SubCategory</option> 
+                              <option value="Brand">Brand</option>                              
+                            </select>
+                            <div class="col-md-2"></div>
+                            <div *ngIf="isInvalid && !ApplyType.valid && ApplyType.errors.required">
+                                <code>Offer On is required</code>
+                            </div>
+                          </div>
+                       </div>
+                       <div class="col-md-3">
+                        <div class="form-group">  
+                            <label for="name">Select </label>                         
+                            <p-multiSelect id="ObjectIds" name="ObjectIds" [options]="ObjectList"
+                            [(ngModel)]="data.ObjectIds" #whouses="ngModel" (ngModelChange)="onchangeObject()"
+                            [panelStyle]="{minWidth:'25em'}" optionLabel="Name"></p-multiSelect>
+                          </div>
+                       </div>
+                  
+                    </div>
+                </div>
+            <!-- </form>
+        </div>
+    </div>
+</div> -->
+<div class="ui-fluid shadow mb-2 bg-white rounded form-actions right p-3" *ngIf="ItemMarkDownOffer == true">
+    <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+      Back
+    </button>
+    <button type="button" class="btn btn-raised btn-primary" (click)="save(data,WarehouseId,selectedItem,ItemMarkDownOffer)" >
+      Save
+    </button>
+  </div>
+</form>
+</div>
+</div>
+</div>
+
+<div class="ui-fluid shadow mb-2 bg-white rounded form-actions right p-3" *ngIf="itemSavebtn == true">
+    <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+      Back
+    </button>
+    <button type="button" class="btn btn-raised btn-primary" (click)="save(data,WarehouseId,selectedItem,itemslaveOfferForm)" *ngIf="savebtn==true && btnsave == false">
+      Save
+    </button>
+  </div>
+
+      </section>
+
+      <!-- EDitMode -->
+      <section id="offer" *ngIf = "editMode == true">
+        <div class="my-2 d-flex justify-content-between">
+          <div class="header">
+            <h3 class="m-2"><b>Edit Distributor Offer</b></h3>
+          </div>
+        </div>
+        <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+                <form class="form">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="projectinput3">Select Warehouse</label>
+                          <select id="city" name="city" class="form-control" [(ngModel)]="data.WarehouseId" disabled >
+                            <option value="">Select Warehouse</option>
+                            <option *ngFor="let city of WarehouseList" [ngValue]="city.WarehouseId">{{city.WarehouseName}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      </div>
+                </form>
+        </div>
+    
+        <div class="ui-fluid shadow mb-2 bg-white rounded">
+                <div class="row ">
+                    <div class="col-sm-12">
+                        <form class="form customeForm" #distributorForm="ngForm">
+                            <div class="form-body">
+                                <div class="row p-3">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="OfferName">Offer Name</label>
+                                            <input type="text" placeholder="Offer Name" [(ngModel)]="data.OfferName"
+                                                id="OfferName" name="Offername" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="name">Offer Status</label>
+                                            <select class="form-control" id="status" name="status" [(ngModel)]="data.IsActive" >
+                                              <option value="">Select</option>
+                                              <option value="true">Active</option>
+                                              <option value="false">Inactive</option>
+                                            </select>
+                                          </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="startdate"><b>Start Date: </b></label><br>
+                                            <input type="text"  [(ngModel)]="data.start"
+                                            id="start" name="start" class="form-control" disabled>
+                                            <!-- <p-calendar [showIcon]="true" [(ngModel)]="data.start" name="startDate"
+                                                [readonlyInput]="true" required #dateRangeListInput >
+                                            </p-calendar> -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="startdate"><b>End Date: </b></label><br>
+                                            <input type="text"  [(ngModel)]="data.end"
+                                            id="end" name="end" class="form-control" disabled>
+                                            <!-- <p-calendar [showIcon]="true" [(ngModel)]="data.end" name="EndDate"
+                                                [readonlyInput]="true" required #dateRangeListInput >
+                                            </p-calendar> -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="name">Offer On</label>
+                                            <select class="form-control" id="OfferOn" name="OfferOn" [(ngModel)]="data.OfferOn"
+                                             disabled (ngModelChange)="offerOn(WarehouseId,data.OfferOn)">
+                                              <option value="">Select</option>
+                                              <option value="ItemPost">ItemPost</option>
+                                              <option value="Slab">Slab</option>
+                                               <option value="ItemMarkDown">ItemMarkDown</option>
+                                            </select>
+                                          </div>
+                                    </div>                                   
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        </div>
+    
+        <div class="ui-fluid shadow mb-2 bg-white rounded" *ngIf="itempostOffer == true" >
+            <div class="row ">
+                <div class="col-sm-12">
+                    <form class="form">
+                        <div class="form-body">
+                            <div class="row p-3">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="name"> Item List<span style="color:red"> *</span></label>
+                                        <input type="text" placeholder="itemname" [(ngModel)]="data.itemname"
+                                        id="itemname" name="itemname" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="name">FreeOfferType</label>
+                                        <input type="text" id="FreeOfferType" name="FreeOfferType" class="form-control" [(ngModel)]="data.FreeOfferType"  
+                                        disabled>                                       
+                                      </div>
+                                </div>
+                               <div class="row" *ngIf = "amt == true">
+                                <!-- <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="MinLimit">Bill Amount Min Limit</label>
+                                        <input type="number" placeholder="MinLimit" [(ngModel)]="data.BillAmount"
+                                            id="MinLimit" name="MinLimit" class="form-control" disabled>
+                                    </div> -->
+                                </div>
+                                <div class="col-md-12" *ngIf = "amt == true">
+                                <div class="row" >
+                                <div class="col-md-3" >
+                                    <div class="form-group">
+                                        <label for="MaxLimit">Bill Amt Max Limit</label>
+                                        <input type="number" placeholder="MaxLimit" [(ngModel)]="data.MaxBillAmount"
+                                            id="MaxLimit" name="MaxLimit" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <!-- <label for="MaxDiscount">Maximum Discount Amount</label> -->
+                                        <label for="MaxDiscount">Discount Amount</label>
+                                        <input type="number" placeholder="MaxDiscount" [(ngModel)]="data.DistributorDiscountAmount" 
+                                            id="MaxDiscount" name="MaxDiscount" class="form-control" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            </div>
+                            <div class="row" *ngIf = "weight == true">
+                                <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="Weight">Weight</label>
+                                    <input type="number" placeholder="Weight" [(ngModel)]="data.BillDiscountWallet"
+                                        id="Weight" name="Weight" class="form-control" disabled>
+                                </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <!-- <label for="MaxDiscount">Maximum Discount Amount</label> -->
+                                        <label for="MaxDiscount">Discount Amount</label>
+                                        <input type="number" placeholder="MaxDiscount" [(ngModel)]="data.DistributorDiscountAmount" 
+                                            id="MaxDiscount" name="MaxDiscount" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <!-- <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="UOM">Unit Of Measurment</label>
+                                        <input type="text" id="UOM" name="UOM" class="form-control" [(ngModel)]="selectedItem.UOM" 
+                                        disabled  >
+                                    </div>
+                                    </div> -->
+                            </div>
+                            <div class="col-md-12"  *ngIf="qty == true">
+                            <div class="row" >
+                            <div class="col-md-3" >
+                                <div class="form-group">
+                                    <label for="Quantity">Quantity</label>
+                                    <input type="number" placeholder="Quantity" [(ngModel)]="data.OffersaleQty"
+                                        id="Quantity" name="Quantity" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-3" >
+                                <div class="form-group">
+                                    <!-- <label for="MaxDiscount">Maximum Discount Amount</label> -->
+                                    <label for="MaxDiscount">Discount Amount</label>
+                                    <input type="number" placeholder="MaxDiscount" [(ngModel)]="data.DistributorDiscountAmount" 
+                                        id="MaxDiscount" name="MaxDiscount" class="form-control" disabled>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </div>
+      
+    
+    <div class="ui-fluid shadow mb-2 bg-white rounded" *ngIf = "itemslaveOffer == true">
+        <div class="row ">
+            <div class="col-sm-12">
+                <form class="form">
+                    <div class="form-body">
+                        <div class="row">
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="name"> Item List<span style="color:red"> *</span></label>
+                                    <input type="text" placeholder="itemname" [(ngModel)]="data.itemname"
+                                    id="itemname" name="itemname" class="form-control" disabled>
+                                </div>
+                            </div> -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="name">Discount On</label>
+                                    <select class="form-control" id="BillDiscountOfferOn" name="BillDiscountOfferOn" [(ngModel)]="data.BillDiscountOfferOn" 
+                                      (ngModelChange)="discountOn(WarehouseId,data.BillDiscountOfferOn)" disabled>
+                                      <option value="">Select</option>
+                                      <option value="Percentage">Percentage</option>
+                                      <option value="Amount">Amount</option>
+                                    </select>
+                                  </div>
+                            </div>
+                           <div class="row" *ngIf="percentage == true" >
+                        <div class="col-md-4" >
+                            <div class="form-group">
+                                <label for="Percentage">Percentage : </label>
+                                <input type="number" placeholder="Percentage" [(ngModel)]="data.DistributorDiscountPercentage"
+                                    id="Percentage" name="Percentage" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="MinLimit">Bill Amt Min Limit</label>
+                                <input type="number" placeholder="MinLimit" [(ngModel)]="data.BillAmount"
+                                    id="MinLimit" name="MinLimit" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-4" >
+                            <div class="form-group">
+                                <label for="MaxLimit">Bill Amt Max Limit</label>
+                                <input type="number" placeholder="MaxLimit" [(ngModel)]="data.MaxBillAmount"
+                                    id="MaxLimit" name="MaxLimit" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-3" >
+                            <div class="form-group">
+                                <label for="MaxDiscount">Maximum Discount</label>
+                                <input type="number" placeholder="MaxDiscount" [(ngModel)]="data.MaxDiscount"
+                                    id="MaxDiscount" name="MaxDiscount" class="form-control" disabled>
+                            </div>
+                        </div> -->
+                             </div>
+                             <div class="row" *ngIf ="walletpoint == true">
+                               
+                                <!-- <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="name">Wallet Type</label>
+                                        <select class="form-control" id="WalletType" name="WalletType" [(ngModel)]="data.WalletType" disabled>
+                                          <option value="">Select</option>
+                                          <option value="Amount">Amount</option>
+                                          <option value="WalletPercentage">WalletPercentage</option>
+                                        </select>
+                                      </div>
+                                </div> -->
+                                <div class="col-md-3" >
+                                    <div class="form-group">
+                                        <label for="Walletpoint">Amount : </label>
+                                        <input type="number" placeholder="Amount" [(ngModel)]="data.FreeWalletPoint"
+                                            id="Walletpoint" name="Walletpoint" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="MinLimit">Bill Amt Min Limit</label>
+                                        <input type="number" placeholder="MinLimit" [(ngModel)]="data.BillAmount"
+                                            id="MinLimit" name="MinLimit" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-md-3" >
+                                    <div class="form-group">
+                                        <label for="MaxLimit">Bill Amt Max Limit</label>
+                                        <input type="number" placeholder="MaxLimit" [(ngModel)]="data.MaxBillAmount"
+                                            id="MaxLimit" name="MaxLimit" class="form-control" disabled>
+                                    </div>
+                                </div>
+                                <!-- <div class="col-md-3" >
+                                    <div class="form-group">
+                                        <label for="MaxDiscount">Maximum Discount</label>
+                                        <input type="number" placeholder="MaxDiscount" [(ngModel)]="data.MaxDiscount"
+                                            id="MaxDiscount" name="MaxDiscount" class="form-control" disabled >
+                                    </div>
+                                </div> -->
+                              </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded" *ngIf = "ItemMarkDownOffer == true">
+        <div class="row ">
+            <div class="col-sm-12">
+                <form class="form">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="OfferName">Description</label>
+                                    <input type="text" placeholder="Description" [(ngModel)]="data.Description"
+                                        id="Description" name="Description" class="form-control" required = "1" maxlength="1500" minlength="4" 
+                                        #Description="ngModel" disabled>
+                                        
+                                       
+                                </div>
+                            </div>
+
+
+                            </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div class="form-actions right col-sm-12 p-3">
+        <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+          Back
+        </button>
+        <button type="button" class="btn btn-raised btn-primary" (click)="update(data,row)" *ngIf="btnsave == false">
+          Save
+        </button>
+      </div>
+    
+          </section>
+
+
+
+          <p-blockUI [blocked]="blocked"></p-blockUI>
+          <p-progressSpinner *ngIf="blocked"
+            [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+            fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

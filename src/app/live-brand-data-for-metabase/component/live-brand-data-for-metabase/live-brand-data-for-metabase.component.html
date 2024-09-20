@@ -1,0 +1,79 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<section >
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2"><b>Live Brand Data For Metabase </b></h3>
+    </div>
+  </div>
+
+
+<div class="col-md-3">
+    <div class="form-group my-2">
+      <label for="Brandss" class="col-md-3">Brands<span style="color:red"> *</span></label>
+      <p-multiSelect [options]="BrandList" name="SubsubcategoryName" [(ngModel)]="selectedList"
+        optionLabel="SubsubcategoryName" [style]="{minWidth:'18em'}" (onChange)="selectedBands()">
+      </p-multiSelect>
+    </div>
+  </div>
+<div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover">      
+      <div class="position-relative">
+        <p-table [value]="liveBrandMetaData" [paginator]="true" [lazy]="true"
+        (onLazyLoad)="load($event)" [rows]="10"
+        [totalRecords]="totalRecords" [scrollable]="true" scrollHeight="130vh" text-align: center>
+
+        <ng-template pTemplate="header">
+        <tr>
+            <th rowspan="3" style="text-align: center;padding-bottom: 4em;">Brand</th>
+            <th colspan="5" style="text-align: center;">MTD</th>
+            <th colspan="5" style="text-align: center;">Today</th>
+            <th colspan="5" style="text-align: center;">Yesterday</th>
+        </tr>
+        <tr>
+            <th>MTD CFR</th>
+            <th>MTD DFR</th>
+            <th>MTD SPI</th>
+            <th>MTD Visit</th>
+            <th>MTD Active User</th>
+            <th>Today CFR</th>
+            <th>Today DFR</th>
+            <th>Today SPI</th>
+            <th>Today Visit</th>
+            <th>Today Active User</th>
+            <th>Yesterday CFR</th>
+            <th>Yesterday DFR</th>
+            <th>Yesterday SPI</th>
+            <th>Yesterday Visit</th>
+            <th>Yesterday Active User</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr>
+            <td>{{rowData.Brand}}</td>
+            <td>{{rowData.MTDCFR | number: '1.0-2'}}</td>
+            <td>{{rowData.MTDCFR | number: '1.0-2'}}</td>
+            <td>{{rowData.MTDCFR | number: '1.0-2'}}</td>
+            <td>{{rowData.MTDVisit | number: '1.0-2'}}</td>
+            <td>{{rowData.MTDActiveUser | number: '1.0-2'}}</td>
+            <td>{{rowData.TodayCFR | number: '1.0-2'}}</td>
+            <td>{{rowData.TodayDFR | number: '1.0-2'}}</td>
+            <td>{{rowData.TodaySPI | number: '1.0-2'}}</td>
+            <td>{{rowData.TodayVisit | number: '1.0-2'}}</td>
+            <td>{{rowData.TodayActiveUser | number: '1.0-2'}}</td>
+            <td>{{rowData.YesterdayCFR | number: '1.0-2'}}</td>
+            <td>{{rowData.YesterdayDFR | number: '1.0-2'}}</td>
+            <td>{{rowData.YesterdaySPI | number: '1.0-2'}}</td>
+            <td>{{rowData.YesterdayVisit | number: '1.0-2'}}</td>
+            <td>{{rowData.YesterdayActiveUser | number: '1.0-2'}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+      </div>  
+  </div>
+</section>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+

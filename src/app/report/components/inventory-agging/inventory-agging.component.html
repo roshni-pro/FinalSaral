@@ -1,0 +1,80 @@
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>Inventory Ageing</b></h3>
+    </div>
+
+</div>
+
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label for="Warehouse">Select Warehouse</label><br>
+                    <p-multiSelect optionLabel="WarehouseName" [options]="warehouseList"
+                        [(ngModel)]="selectedwarehouselist" >
+
+                    </p-multiSelect>
+                </div>
+          
+                <div class="form-group col-md-2 mb-3"  *ngIf="found">
+                    <i class="pi pi-search"></i> <label>Search</label><br>
+                    <input type="text" pInputText  placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value,'contains')" style="width:100%"
+                     >                  
+                </div>
+                
+                <div class="form-group col-md-3 mt-4">
+                    <button type="button"   
+                         class="btn btn-primary" (click)="Searchbtn()">Search 
+                    </button>
+                   
+                    <button id="btnExport" class="btn"
+                        style="background-color: black;color: aliceblue;margin-bottom:15px;margin-left:15px;"
+                        (click)="Export()" *ngIf="found" >Export
+                    </button>
+                </div>
+               
+            </div>
+            <div>
+                <!--  -->
+                <p-table #dt  [value]="Data" [paginator]="true" [scrollable]="true" [rows]="10" [globalFilterFields]="['itemBaseName']">
+                    <ng-template pTemplate="header"  >
+                         <tr>
+                            <th style="font-family:Sans-serif;font-size:15px;">WarehouseName </th>
+                            <th style="font-family:Sans-serif;font-size:15px;">item Name</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">MRP </th>
+                            <th style="font-family:Sans-serif;font-size:15px;">ItemMultiMrpId </th>
+                            <th style="font-family:Sans-serif;font-size:15px;">Ageing </th>
+                            <th style="font-family:Sans-serif;font-size:15px;">InDate</th>                        
+                            <th style="font-family:Sans-serif;font-size:15px;">ClosingQty</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">ClosingAmount</th>
+                            
+                            
+                         </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-dc>
+                        <tr style="width: 100px;" [ngStyle]="{'background-color': dc.OrderColor}">
+                            <td>{{dc.WarehouseName }}</td>
+                            <td>{{dc.itemBaseName}}</td>
+                            <td>{{dc.MRP }}</td>
+                            <td>{{dc.ItemMultiMrpId }}</td>  
+                            <td>{{dc.Ageing}}</td>
+                            <td>{{dc.InDate| date}}</td>                         
+                            <td>{{dc.ClosingQty}}</td>
+                            <td>{{dc.ClosingAmount| number:'.1-2'}}</td>   
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+              <p-toast  position="top-right"></p-toast>
+        </div>
+    </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

@@ -1,0 +1,69 @@
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="card">
+      <div class="card-content">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group m-2">
+              <label for="cnmae"><b>Cluster Name:</b></label>
+              <!-- <div class="col-md-6"> -->
+              <input type="text" id="cnmae" class="form-control col-md-10" name="cnmae" placeholder="Cluster Name"
+                [(ngModel)]="ClusterName" disabled />
+              <!-- </div> -->
+            </div>
+          </div>
+
+
+          <div class="col-md-4">
+            <div class="form-group m-2">
+              <label for="cwname"><b>Cluster Warehouse Name:</b></label>
+              <!-- <div class="col-md-6"> -->
+              <input type="text" id="cwname" class="form-control col-md-10" name="cwname"
+                placeholder="Cluster Warehouse Name" [(ngModel)]="WarehouseName" disabled />
+              <!-- </div> -->
+            </div>
+          </div>
+
+          <div class="form-actions right col-md-4 p-3">
+            <button type="button" class="btn btn-raised btn-primary m-3" (click)="updatepolygon()">
+              <b>Save</b>
+            </button>
+          </div>
+
+        </div>
+
+        <div class="sk">
+          <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [fullscreenControl]="fullscreenControl" [zoomControl]="true"
+            [disableDefaultUI]="false" [zoomControl]="false" [fullscreenControlOptions]="options">
+            <div *ngIf="showMap">
+              <agm-polygon [fillColor]="item.fillColor" *ngFor="let item of zonesPath; let i=index"
+                [polyDraggable]="false" [fillOpacity]="0.4" [paths]="item.ZonePaths"
+                (polyMouseOver)="polyMouseUp(item, polygon, infoWindow, true)" [editable]="true"
+                (polyMouseOut)="polyMouseUp(item, polygon, infoWindow, false)" strokeOpacity="0.1"
+                (polyPathsChange)="onPolygonChange($event)">
+              </agm-polygon>
+            </div>
+            <agm-marker *ngFor="let m of clusterWiseCustomerIndividual; let i = index" [latitude]="m.lat"
+              [longitude]="m.lng" [iconUrl]="m.icon" (mouseOver)="onMouseOver(infoWindow, $event)"
+              (mouseOut)="onMouseOut(infoWindow, $event)" (dragEnd)="markerDragEnd($event)">
+              <agm-info-window [disableAutoPan]="false" #infoWindow>
+                <div>
+                  {{m.label}}
+                </div>
+              </agm-info-window>
+            </agm-marker>
+          </agm-map>
+
+        </div>
+
+
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

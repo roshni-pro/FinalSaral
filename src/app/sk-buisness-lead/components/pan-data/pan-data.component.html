@@ -1,0 +1,199 @@
+<div class="card tp common-padding">
+    <div *ngIf="panDetailsDc != null">
+        <!-- <div class="text-right">
+            <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" (click)="Onhistory()" >history</button>
+        </div> -->
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+
+            </div>
+            <div class="col-md-9 col-sm-9 col-12 text-right">
+            <div class="ml cl">
+                <!-- <button type="button" class="btn btn-raised btn-danger mr-1" (click)="onClickPostArthmate()">Post Arthmate</button> -->
+            </div>
+        </div>
+        </div> 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">PAN</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{panDetailsDc.appl_pan}}</div>
+            </div>
+        </div>
+<!-- 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Document Number</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{panDetailsDc.DocumentNumber}}</div>
+            </div>
+        </div> -->
+
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Name On PAN</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{panDetailsDc.NameOnCard}}</div>
+            </div>
+        </div> 
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Father's Name</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{fathersname}}</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Date Of Birth</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">{{panDetailsDc.DateOfBirth}}</div>
+            </div>
+        </div>  
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">PAN Front Image</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img" *ngIf="panDetailsDc">
+                            <img src="{{baseURL}}{{panDetailsDc.FrontFileUrl}}" class="button-img" (click)="openImg(panDetailsDc.FrontFileUrl)">
+                            <!-- <app-image-upload type="Product" [frontImagePath]="panDetailsDc.FrontFileUrl"
+                                [isShowMyInputLogo]="true" [SequenceName]="'PAN'"
+                                [uploadImagePage]="panDetailsDc.FrontFileUrl" [isRequired]="true" [showUploadedImage]="false"
+                                (detectchange)="onUploadbackimage($event)">
+                                <div class="uploadImgShow" uploadLogo>
+                                  <img src="{{baseURL}}{{panDetailsDc.FrontFileUrl}}" class="button-img">
+                                </div>
+                            </app-image-upload> -->
+                        </div>
+                        <!-- <div class="p-img-nt" *ngIf="!panDetailsDc">
+                            <app-image-upload type="Product" id="imageValid" [isShowMyInputLogo]="true"
+                                [isRequired]="true" [showUploadedImage]="false" [SequenceName]="'PAN'"
+                                [uploadImagePage]="'panDetailsDc'" (detectchange)="onUploadbackimage($event)">
+                                <div uploadLogo>
+                                  <img src="assets/img/gallery.svg" class="button-logo">
+                                    <div style="text-align: center;color: #E9754E;">Click Selfie</div>
+                                    <div>Supports JPG,JPEG,PNG</div>
+                                </div>
+                            </app-image-upload>           
+                        </div> -->
+                    </div>
+                <!-- <img src="{{panDetailsDc.FrontFileUrl}}"> -->
+                </div>
+            </div>
+        </div>  
+
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Status</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <span *ngIf="isVerified" style="color:green;">
+                        Verified
+                    </span>
+                    <span *ngIf="isRejected" style="color:red;">
+                        Rejected
+                    </span>
+                </div>
+            </div>
+        </div>  
+
+        <!-- <div class="row">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp">Selfie</div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+                <div class="ml cl">
+                    <div>
+                        <div class="p-img" *ngIf="panDetailsDc && panDetailsDc.Selfie">
+                            <app-image-upload type="Product" [frontImagePath]="panDetailsDc.Selfie"
+                                [isShowMyInputLogo]="true" [SequenceName]="'PAN'"
+                                [uploadImagePage]="panDetailsDc.Selfie" [isRequired]="true" [showUploadedImage]="false"
+                                (detectchange)="onUploadSelfieimage($event)">
+                                <div class="uploadImgShow" uploadLogo>
+                                  <img src="{{panDetailsDc.Selfie}}" class="button-img">
+                                </div>
+                            </app-image-upload>
+                        </div>
+                        <div class="p-img-nt" *ngIf="!panDetailsDc || (panDetailsDc && !panDetailsDc.Selfie)">
+                            <app-image-upload type="Product" id="imageValid" [isShowMyInputLogo]="true"
+                                [isRequired]="true" [showUploadedImage]="false" [SequenceName]="'PAN'"
+                                [uploadImagePage]="'panDetailsDc'" (detectchange)="onUploadSelfieimage($event)">
+                                <div uploadLogo>
+                                  <img src="assets/img/gallery.svg" class="button-logo">
+                                    <div style="text-align: center;color: #E9754E;">Click Selfie</div>
+                                    <div>Supports JPG,JPEG,PNG</div>
+                                </div>
+                            </app-image-upload>           
+                        </div>
+                    </div>
+            </div>
+        </div>     
+        </div> -->
+        <!-- && !isVerified && !isRejected -->
+        <div class="row" *ngIf=" !loanPosted" >
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+            <div class="ml cl">
+                <i class="fa fa-times-circle" style="font-size:30px;color:red;float: right;margin-left: .5em;" (click)="onRejectDoc()"></i>
+                <i class="fa fa-check-circle" style="font-size:30px;color:green;float: right;" (click)="onApproved()"></i>
+               
+            </div>
+        </div>
+        </div>
+        <div class="row" *ngIf="loanPosted">
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12">
+            <div class="ml cl">
+                <i class="fa fa-times-circle" *ngIf="isRejected" style="font-size:30px;color:red;float: right;margin-left: .5em;"></i>
+                <i class="fa fa-check-circle" *ngIf="isVerified" style="font-size:30px;color:green;float: right;"></i>
+            </div>
+        </div>
+        </div>   
+    <div class="no-Txt" *ngIf="panDetailsDc == null">* No Record Found</div>
+</div>
+
+<p-dialog [(visible)]="isopenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: 'auto', overflow: 'auto'}">
+    <p-header>Pan Image</p-header>
+    <div class="ui-fluid">
+      <img src="{{Img}}" class="view-img"/>
+    </div>
+</p-dialog>
+
+
+<p-dialog [(visible)]="isRejectDoc" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: 'auto', overflow: 'auto'}">
+    <p-header>Reason For Reject</p-header>
+    <div class="ui-fluid">
+      <input type="text" id="_selfiecomment" name="_selfiecomment" class="form-control" [(ngModel)]="Comment" placeholder="Enter Reason For Reject">
+    </div>
+    <p-footer>
+        <button class="btn btn-primary" style="margin-left: .5em; margin-right: .5em;" (click)="onReject()">Reject</button>
+    </p-footer>
+</p-dialog>
+
+<!-- <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" [disabled]="!Comment" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog> -->
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+

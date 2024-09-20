@@ -1,0 +1,150 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Customer Referral Page</h3>
+    </div>
+</div>
+<div class="my-2 card shadow row ">
+    <div class="col-12">
+        <div class="row p-2">
+            <div class="col-4">
+                <label>Refferal Type </label>
+                <p-dropdown [options]="AllRefferal" [(ngModel)]="SelectedRefType" optionLabel="label"></p-dropdown>
+            </div>
+            <div class="col-4">
+                <label>Search SK-Code</label>
+                <input type="text" class="form-control" [(ngModel)]="SK_Code">
+            </div>
+            <div class="col-4">
+                <button class="btn btn-primary" style="margin-top: 2em;" (click)="search()">Search</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 text-center">
+
+        <div class=" p-2">
+
+
+            <p-table [value]="allCustReferralData" [scrollable]="false" [totalRecords]="totalRecords"
+                (onLazyLoad)="load($event)" [lazy]="true" [paginator]="true" [rows]="10">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Referral SK-Code</th>
+                        <th>Shop Name</th>
+                        <th>Mobile</th>
+                        <th>Total Earning Point</th>
+                        <th>Total Pending Earning Point</th>
+                        <th>Customer Ref. Wallet Point</th>
+                        <th>Pending Customer Ref. Wallet Point</th>
+                        <th>Detail</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{rowData.ReferralSkCode}}</td>
+                        <td>{{rowData.ShopName}}</td>
+                        <td>{{rowData.Mobile}}</td>
+                        <td>{{rowData.TotalEarnedPoint}}</td>
+                        <td>{{rowData.TotalPendingEarnedPoint}}</td>
+                        <td>{{rowData.CustomerReferralWalletPoint}}</td>
+                        <td>{{rowData.PendingCustomerReferralWalletPoint}}</td>
+                        <td><button type="button" (click)="detailPop(rowData)" class="btn btn-primary">Detail</button>
+                        </td>
+
+                    </tr>
+                </ng-template>
+                <!-- <ng-template pTemplate="footer">
+                    <tr>
+                        <td colspan="3">Total Page: </td>
+                        <td colspan="3">Current Page: </td>
+                        <td><button type="button" (click)="Search('Next')"
+                            class="btn btn-primary">Prev
+                        </button></td>
+                        <td><button type="button" (click)="search()"
+                            class="btn btn-primary">Next
+                        </button></td>
+
+                    </tr>
+                </ng-template> -->
+            </p-table>
+        </div>
+
+    </div>
+
+</div>
+
+
+<p-dialog header="Details" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="PopDetails"
+    [style]="{width: '70vw', left: '440px', height: '70%'}" [draggable]="false">
+
+    <i *ngIf="detailsLoader" class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    <div class="row m-2 pt-2">
+        <div class="col-12 text-center">
+            <p-table [value]="detailsList" [paginator]="true" [rows]="5" [style]="{height: 'auto'}"
+                [scrollable]="false">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>City Name</th>
+                        <th>Referral Type</th>
+                        <th>On Order (Count)</th>
+                        <th>Order Status</th>
+                        <th>Referral Wallet Point</th>
+                        <th>Customer Wallet Point</th>
+                        <th>Date</th>
+
+                        <!-- <th>Action</th> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{rowData.City}}</td>
+                        <td>{{rowData.ReferralType}}</td>
+                        <td>{{rowData.OnOrder}}</td>
+                        <td>{{rowData.OrderStatus}}</td>
+                        <td>{{rowData.ReferralWalletPoint}}</td>
+                        <td>{{rowData.CustomerWalletPoint}}</td>
+                        <td>{{rowData.CreatedDate }}</td>
+                        <!-- <td><button type="button" class="btn btn-primary" (click)="removeFromList(rowIndex)">Remove From
+                                List</button></td> -->
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <!-- <p-footer>
+        <div>
+            
+        </div>
+    </p-footer> -->
+
+</p-dialog>
+
+
+<!-- Delete -->
+<!-- <p-dialog header="Confirmation" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="openDeleteDialog"
+    [style]="{width: '60vw', left: '440px'}" [draggable]="false">
+    <div class="row m-2">
+        <h5>Are you sure want to delete this entry?</h5>
+    </div>
+    <div class="row m-2">
+        <div class="col-8">
+
+        </div>
+        <div class="col-4">
+            <button type="button" class="btn btn-primary" (click)="deleteFromList()">Delete</button> &nbsp;
+            <button type="button" class="btn btn-primary" (click)="closeDeleteCustReffPopUp()">close</button>
+        </div>
+    </div>
+</p-dialog> -->
+
+<!-- History -->
+<!-- <p-dialog header="History" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="viewHistory"
+    [style]="{width: '60vw', left: '440px'}" [draggable]="false">
+
+    <div class="row m-2">
+        <div class="col-12">
+            <app-history [entity]="entity" [id]="historyID"></app-history>
+        </div>
+    </div>
+
+</p-dialog> -->

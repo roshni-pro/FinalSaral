@@ -1,0 +1,148 @@
+<div class="row m-0">
+    <div class="col-12">
+      <!-- Kick start -->
+      <div id="kick-start" class="kick-start card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-6">
+              <h4 class="card-title">SME Loan Applied Details</h4>
+            </div>
+          </div>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-3">
+                  <label>Select Warehouse</label>
+                  <select id="desg" name="desg" #ctrl class="form-control" [(ngModel)]="selectedWarehouses" required>
+                    <!-- <option [selected]="true" default [value]="null">--select warehouse--
+                    </option> -->
+                    <option value="">--select warehouse--</option>
+                    <ng-container *ngFor="let warehouse of warehouseList">
+                      <option [value]="warehouse.WarehouseId">
+                        {{warehouse.WarehouseName}}
+                      </option>
+                    </ng-container>
+                  </select>
+                </div>
+  
+  
+                <div class="col-md-3">
+                  <label>Sk Code</label>
+                  <input type="text" id="skcode" name="skCode" #ctrl class="form-control" [(ngModel)]="customerskCode"
+                    required>
+  
+                </div>
+  
+                <div class="col-md-1">
+                  <!-- <label>Search</label> -->
+  
+                  <button style="    margin-top: 24px;" type="button" class="btn btn-raised btn-primary btn-md"
+                    (click)="search()">
+                    search
+                  </button>
+  
+  
+  
+                </div>
+  
+                <div class="col-md-1">
+                  <!-- <label>Export</label> -->
+                  <!-- <br> -->
+                  <button style="    margin-top: 24px;" type="button" class="btn btn-raised btn-primary"
+                    (click)="Export()">
+                    export
+                  </button>
+  
+  
+  
+                </div>
+  
+  
+              </div>
+            </div>
+  
+          </div>
+        </div>
+      </div>
+      <!--/ Kick start -->
+    </div>
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  
+  <!-- <div>
+    <h1><span>SME Loan Applied Details</span></h1>
+  </div> -->
+  
+  
+  
+  <ng-container>
+    <div class="card-content">
+      <div class="card-body">
+        <!-- <div class="container bundleItemContainer">
+      <div class="card bundleBox"> -->
+  
+        <!-- <thead>
+            <th>Customer Name</th>
+            <th>SKCode</th>
+            
+            <th>Loan Amount</th>
+            <th>Description</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of loanData">
+              <td>{{row.CustomerName}}</td>
+              <td>{{row.SKcode}}</td>
+              
+              <td>{{row.LoanAmount}}</td>
+              <td>{{row.Description}}</td>
+            </tr>
+          </tbody> -->
+        <!-- </table>  -->
+        <p-table *ngIf="loanData && loanData.length" #dt [resizableColumns]="true" value="loanData" [autoLayout]="true"
+          class="center" [paginator]="true" [rows]="10" [value]="loanData" [lazy]="true" [totalRecords]="TotalCount"
+          (onLazyLoad)="load($event)" [scrollable]="true" scrollHeight="70vh" text-align: center>
+          <ng-template pTemplate="header">
+            <tr>
+            
+              <th style="text-align: center">Customer Name</th>
+              <th style="text-align: center">
+                Sk Code
+              </th>
+              <th style="text-align: center">Warehouse Name</th>
+              <th style="text-align: center">Loan Amount</th>
+              <th style="text-align: center">Status</th>
+  
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+            <tr>
+  
+  
+             
+              <td style="text-align: center">{{rowData.CustomerName}}</td>
+              <td style="text-align: center ">{{rowData.SKcode}}</td>
+              <td style="text-align: center">{{rowData.WarehouseName}}</td>
+              <td style="text-align: center ">{{rowData.LoanAmount}}</td>
+  
+              <td style="text-align: center">{{rowData.Description}}</td>
+  
+  
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </ng-container>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  
+  <p-progressSpinner *ngIf="initialLoader"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '50%', riht: '50%', bottom: '50%', top: '50%'}"
+    strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

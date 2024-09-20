@@ -1,0 +1,34 @@
+<p>
+  ng build<p-table [value]="lstData" [paginator]="true" [rows]="100">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width:50px">Sr</th>
+        <th>Requestor Name</th>
+        <th>Role Requested</th>
+         <th style="width:155px">Status</th>
+        <th style="width:155px">UAC Status</th>
+        <th>UAC Rejct Reason</th>
+        <th>Reject Reason</th>
+        <th>Role Creation</th>
+        <th style="width:110px">Approve</th>
+        <th style="width:110px">Reject</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dt let-i="rowIndex">
+      <tr>
+        <td>{{i + 1}}</td>
+       <td>{{dt.DisplayName}}</td>
+        <td>{{dt.Role}}</td>
+       <td>{{dt.Statuses}}</td>
+        <td>{{dt.UACStatus}}</td>
+        <td>{{dt.rejctReasonUAC}}</td>
+       <td><input type="text" [(ngModel)]="dt.rejectReason" [disabled]="dt.RejectDisabled"/></td>
+       <td>{{dt.CreatedDate | date:'mediumDate'}}</td>
+        <td><button id="btnupdate" type="button"(click)="UpdateByHead(dt)" [disabled]="dt.ApproveDisabled">Approve</button></td>
+        <td><button type="button"(click)="RejctByHead(dt)" [disabled]="dt.ApproveDisabled">Reject</button></td>
+      
+             </tr>
+    </ng-template>
+
+  </p-table>
+</p>

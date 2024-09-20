@@ -1,0 +1,127 @@
+<section id="customer-master">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+      <div class="header">
+        <h3 class="m-2">Debit Note Register</h3>
+      </div>
+    </div>
+    <div class="row ">
+      <div class="col-md-2">
+      <div class="form-group">
+        <label for="name" >Select Warehouse</label>
+        <p-multiSelect [options]="warehouseList" name="WarehouseName" [(ngModel)]="warehouseid" [panelStyle]="{minWidth:'25em'}" optionLabel="label">
+        </p-multiSelect>               
+      </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+          <label for="projectinput3">From Date</label>
+          <br>
+          <p-calendar name="startDateInput" [(ngModel)]="FromDate" [showIcon]="true" name="fromDate">
+          </p-calendar>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label for="projectinput3">End Date</label>
+          <br>
+          <p-calendar name="startDateInput" [(ngModel)]="EndDate" [showIcon]="true" name="fromDate">
+          </p-calendar>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <div></div>
+          <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="search()">
+            Search
+          </button>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <div></div>
+          <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="export()">
+            Export
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="row mt-4" >
+    <p-table #dt [value]="datalist"  [paginator]="true" [lazy]="true" responsiveLayout="scroll" [rows]="10" [scrollable]="true" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" 
+                    scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 100px;">S.No.</th>
+                            <th style="width: 100px;">PurchaseOrderId</th>
+                            <th style="width: 100px;">WarehouseName</th>
+                            <th style="width: 100px;">SupplierName</th>
+                            <th style="width: 100px;">InvoiceDate</th>
+                            <th style="width: 100px;">InvoiceNumber</th>
+                            <th style="width: 100px;">CNNumber</th>
+                            <th style="width: 100px;">DebitNoteAmount</th>
+                            <th style="width: 100px;">SGSTTaxPercentage</th>
+                            <th style="width: 100px;">SGSTTaxAmount</th>
+                            <th style="width: 100px;">CGSTTaxPercentage</th>
+                            <th style="width: 100px;">CGSTTaxAmount</th>
+                            <th style="width: 100px;">IGSTTaxPercentage</th>
+                            <th style="width: 100px;">IGSTTaxAmount</th>
+                            <th style="width: 100px;">CessTaxPercentage</th>
+                            <th style="width: 100px;">CessTaxAmount</th>
+                            <th style="width: 100px;">IsDebitNoteGenerate</th>
+                            <th style="width: 100px;">CreatedDate</th>
+                            <th style="width: 100px;">ShortQty</th>
+                            <th style="width: 100px;">DamageQty</th>
+                            <th style="width: 100px;">ExpiryQty</th>
+                            <th style="width: 100px;">SupplierCreditNoteNumber</th>
+                            <th style="width: 100px;">TaxAmount</th>
+                            <th style="width: 100px;">ItemName</th>
+                            <th style="width: 100px;">CreditNoteAmount</th>
+                            <th style="width: 100px;">CreditNoteDate</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-index="rowIndex" let-ir>
+                        <tr>
+                            <td style="width: 100px;">{{index+1}}</td>
+                            <td style="width: 100px;">{{ir.PurchaseOrderId}}</td>
+                            <td style="width: 100px;">{{ir.WarehouseName}}</td>
+                            <td style="width: 100px;">{{ir.SupplierName}}</td>
+                            <td style="width: 100px;">{{ir.InvoiceDate |date:'mediumDate'}}</td>
+                            <td style="width: 100px;">{{ir.InvoiceNumber}}</td>
+                            <td style="width: 100px;">{{ir.CNNumber}}</td>
+                            <td style="width: 100px;">{{ir.DebitNoteAmount}}</td>
+                            <td style="width: 100px;">{{ir.SGSTTaxPercentage}}</td>
+                            <td style="width: 100px;">{{ir.SGSTTaxAmount}}</td>
+                            <td style="width: 100px;">{{ir.CGSTTaxPercentage}}</td>
+                            <td style="width: 100px;">{{ir.CGSTTaxAmount}}</td>
+                            <td style="width: 100px;">{{ir.IGSTTaxPercentage}}</td>
+                            <td style="width: 100px;">{{ir.IGSTTaxAmount}}</td>
+                            <td style="width: 100px;">{{ir.CessTaxPercentage}}</td>
+                            <td style="width: 100px;">{{ir.CessTaxAmount  }}</td>
+                            <td style="width: 100px;">{{ir.IsDebitNoteGenerate}}</td>
+                            <td style="width: 100px;">{{ir.CreatedDate |date:'mediumDate'}}</td>
+                            <td style="width: 100px;">{{ir.ShortQty}}</td>
+                            <td style="width: 100px;">{{ir.DamageQty}}</td>
+                            <td style="width: 100px;">{{ir.ExpiryQty}}</td>
+                            <td style="width: 100px;">{{ir.SupplierCreditNoteNumber}}</td>
+                            <td style="width: 100px;">{{ir.TaxAmount}}</td>
+                            <td style="width: 100px;">{{ir.ItemName}}</td>
+                            <td style="width: 100px;">{{ir.CreditNoteAmount}}</td>
+                            <td style="width: 100px;">{{ir.CreditNoteDate |date:'mediumDate'}}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                <h5 class="emptymsg">No Record</h5>
+              </ng-template>
+                </p-table>
+</div>
+
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s">
+  </p-progressSpinner>

@@ -1,0 +1,170 @@
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+
+<!-- <div class="my-2 d-flex justify-content-between"> -->
+    <div class="header" style="margin-bottom: 10px;">
+        <h3 class="m-2">TK SellerWise Dashboard <i class="icon-graph font-large-1"></i></h3>
+    </div>
+<div class="container">
+    <div class="row">
+        <div class="col-xl-2 col-md-4" >
+            <div class="card bg-warning" (click)="sellerdata()">
+                <div class="card-content" style="height: 90px;">
+                    <div class="card-body pt-2 pb-0">
+                        <div class="media">
+                            <div class="media-body white text-center">
+                                <div>
+                                    <!-- <i class="icon-graph"></i> -->
+                                    <span class="font-medium-2"> Total Seller Count
+                                    </span>
+                                </div>
+                                <h3 class="font-medium-4 mb-0">&nbsp; {{TotalSellerCount}}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="heights WidgetlineChart WidgetlineChartShadow">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-md-4">
+            <div class="card bg-primary" (click)="totalBiddata()">
+                <div class="card-content" style="height: 90px;">
+                    <div class="card-body pt-2 pb-0">
+                        <div class="media">
+                            <div class="media-body white text-center">
+                                <div>
+                                    <!-- <i class="icon-graph"></i> -->
+                                    <span class="font-medium-2"> Total BID Count </span>
+                                </div>
+                                <h3 class="font-medium-4 mb-0">&nbsp; {{totalBIDCount}}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="heights WidgetlineChart WidgetlineChartShadow">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="search-head rounded d-flex p-2 px-4  text-primary justify-content-between align-items-center"
+            (click)="toggleSearch()">
+            <h5 class="m-0">filters</h5>
+            <div><i class="icon-cursor"></i></div>
+        </div>
+        <div id="search-content p-2" *ngIf="isSearch">
+            <form class="form" #TkSellerDashboard="ngForm">
+                <div class="form-body container">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="city"><b>city:</b></label>
+                                <select id="city" name="city" class="form-control" 
+                                [(ngModel)]="data.city">
+                                    <option Value="">--select--</option>
+                                    <option *ngFor="let city of cityList" [ngValue]="city">
+                                        {{ city }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="startdate"><b>From Date: </b></label><br>
+                                <p-calendar [showIcon]="true" [(ngModel)]="data.StartDate" name="startDate"
+                                    [readonlyInput]="true">
+                                </p-calendar>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="startdate"><b>To Date: </b></label><br>
+                                <p-calendar [showIcon]="true" [(ngModel)]="data.EndDate" name="EndDate"
+                                    [readonlyInput]="true">
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="sellerName">Seller Name:</label>
+                                <p-autoComplete type="search" [(ngModel)]="text" [suggestions]="sellerslist"
+                                    (completeMethod)="getSeLlerList($event)" (onKeyUp)="data.SellerId"
+                                    (onClear)="data.SellerId = null;" field="CustomerName" [size]="30"
+                                    (onSelect)="onSelectSeller($event);" (change)="!idnotexist"
+                                    placeholder="enter at least 3 chars" [minLength]="3" name="sellerid" id="sellerid">
+                                </p-autoComplete>
+                            </div>
+                        </div>
+                        <div class="col-md-6" style="padding-top: 30px">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="Search(data)">
+                                    Search
+                                </button> &nbsp;
+                                <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="ngOnInit()">
+                                    Reset
+                                </button>&nbsp;&nbsp;
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="exportSellerReport(data)">
+                                    Export Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <p-table #dt [paginator]="true" [rows]="PageSize" [value]="getTkSellerDetails" [lazy]="true" 
+    [totalRecords]="TotalRecords" (onLazyLoad)="load($event)" [paginator]="true" [scrollable]="true" scrollHeight="70vh">
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="text-align: center">Seller Name</th> 
+            <th style="text-align: center">Active Bid Count</th>
+            <th style="text-align: center">Order Count</th>
+            <th style="text-align: center">Order Amount</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+        <tr>
+            <td style="text-align: center">{{rowData.SellerName}}</td>
+            <td style="text-align: center">{{rowData.BidCount}}</td>
+            <td style="text-align: center">{{rowData.OrderCount}}</td>
+            <td style="text-align: center">{{rowData.OrderAmount | number : '1.1-2'}}</td>
+        </tr>
+    </ng-template>
+
+</p-table>
+
+
+<!-- <div class="container">
+    <div class="row">
+        <div class="col-xl-5 col-md-6">
+            <div class="card bg-primary">
+                <div class="card-content" style="height: 90px;">
+                    <div class="card-body pt-2 pb-0">
+                        <div class="media">
+                            <div class="media-body white text-center">
+                                <div>
+                                    <span class="font-medium-2">&nbsp; SellerWise BID Count </span> </div><br>
+                                <h3 class="font-medium-4 mb-0">&nbsp; {{SellerWiseBIDCount}}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="heights WidgetlineChart WidgetlineChartShadow">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

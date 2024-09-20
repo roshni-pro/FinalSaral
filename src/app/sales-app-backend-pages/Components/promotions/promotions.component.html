@@ -1,0 +1,70 @@
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <label>City<span style="color:red;">*</span></label>
+                <p-dropdown [options]="cityList" [(ngModel)]="CityId" optionLabel="CityName" (onChange)="GetWareHouse()"  placeholder="Select city"></p-dropdown>
+            </div>
+
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Warehouse<span style="color:red;">*</span></label>
+                    <br>
+                    <p-dropdown [options]="masterwarehouseList" [(ngModel)]="DatafilterWareHouse" optionLabel="WareHouseName" (onChange)="GetItemList()" placeholder="Select warehouse" ></p-dropdown>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Search by</label>
+                    <br>
+                    <p-autoComplete  [suggestions]="ItemList" (completeMethod)="getItemList($event)"
+                         [size]="55" [(ngModel)]="Searchby" field="ItemName"
+                         placeholder="Search by item"
+                        [minLength]="3" #agentLeger required (onSelect)="onSelectItemPromotion($event)" name="agentid"
+                        id="agentId" ngDefaultControl  >
+                    </p-autoComplete> 
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3"  *ngIf="showList" >
+        <p-table  *ngIf="showList"   [value]="ItemListShow" [reorderableColumns]="true" responsiveLayout="scroll" [columns]="cols">
+        <ng-template pTemplate="header" pReorderableColumn>
+            <tr>
+                <th style="width:6rem"></th>
+                <th style="width: 117px;">S No.</th>
+                <th style="width: 450px;">ItemName</th>
+                <th >Item-Number-MultiMRP</th>
+                <th>Store</th>
+                <th >Selling Price</th>
+                <th >Status</th>
+                <th>Action</th>
+           </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData  let-columns="columns" let-index="rowIndex" >
+            <tr style="width: 40px;" [pReorderableRow]="index" >
+                <td >
+                    <span class="pi pi-bars" pReorderableRowHandle ></span>
+                </td>
+               <td style="width: 117px;">{{index+1}}</td> 
+               <td style="width: 500px;">{{rowData.ItemName}}</td>
+               <td>{{rowData.ItemNumber}}</td>
+               <td>{{rowData.StoreName}}</td>
+               <td>{{rowData.SellingPrice}}</td>
+               <td style="font-weight: bold;" [ngClass]="rowData.ActiveStatus=='Active' ? 'green' : 'red'">{{rowData.ActiveStatus}}</td>
+               <td (click)="confirm1(rowData)"><i class="pi pi-trash" style="font-size: 2rem;color: orangered;"></i></td>
+               <!-- <button (click)="confirm($event)" label="Confirm"></button> -->  
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<div class="row" *ngIf="showList" >
+<div class="col-md-12">
+    <div class="form-group">
+        <button style="margin: 45%;"  value="Add"  class="btn btn-primary mt-4"  *ngIf="showList"  (click)="AddItems()">Save</button>
+    </div>
+</div>
+</div>
+    </div>
+    <p-toast position="top-right"></p-toast>
+    <p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+</div>

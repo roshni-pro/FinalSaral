@@ -1,0 +1,74 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Rejected Order Picker Report</h3>
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+            <div class="d-flex">
+                <div class="mr-4">
+                    <label><b>Select Warehouses<span class="required">*</span></b></label>
+                    <p-multiSelect id="Category" name="Category" [options]="WareHouseList"
+                        [(ngModel)]="selectedWareHouse" optionLabel="label" placeholder="Select WareHouse"  > 
+                    </p-multiSelect>
+                </div>    
+                <div class="mr-4">
+                    <label>Date Range</label>
+                    <p-calendar placeholder="Date Range" selectionMode="range" [readonlyInput]="true" 
+                    [minDate]="minDateValue" [maxDate]="TodayDate"  [(ngModel)]="selectedDate"
+                    [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"></p-calendar>
+                </div>             
+                <div style="margin-top:28px;">                            
+                    <button  class="btn btn-primary mr-2" (click)="SearchExportD()" >Search</button>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row text-left" >
+    <div class="col-md-12">
+        <div class="card">
+            <p-table [paginator]="true" [value]="ListData" [rows]="10" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Warehouse</th>
+                        <th>Today</th>
+                        <th>Current Month</th>
+                        <th>Export</th>
+                        <th>Previous Month</th>
+                        <th>Export</th>  
+                        <th>Casual Month</th>
+                        <th>Export</th>  
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{item.WarehouseName}}</td>
+                        <td>{{item.todayCount}}</td>
+                        <td>{{item.currentMonthCount}}</td> 
+                        <td><i class=" pi pi-upload" style="font-size: xx-large; cursor: pointer;" (click)="CurrentM(item)"></i></td> 
+                        <td>{{item.lastMonthCount}}</td>
+                        <td><i class="pi pi-upload" style="font-size: xx-large; cursor: pointer;" (click)="PreviousM(item)"></i></td> 
+                        <td>{{item.selectedDateCount}}</td>
+                        <td><i class="pi pi-upload" style="font-size: xx-large; cursor: pointer;" (click)="CasualM(item)"></i></td> 
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                        <td colspan="7" style="text-align: center;">
+                        <h5><b>No Data Found.</b></h5>
+                      </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

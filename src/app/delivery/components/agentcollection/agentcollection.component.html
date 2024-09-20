@@ -1,0 +1,154 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+<!-- <div class="form-group">
+  <label for="due"> Due Amount:</label>
+    <input type="number" name="dueamount" [(ngModel)]="AgentDue"/>
+  </div> -->
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept(); ">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+
+<section id="Group">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2"> !!Agent Collection!!</h3>
+    </div>
+  </div>
+  <div class="card">
+    <form class="form " name="form">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="Warehouse"> SelectHub:</label>
+              <!-- <select id="ip" name="WarehouseName" class="form-control" [(ngModel)]="WarehouseId"
+                (ngModelChange)="onsearch(WarehouseId)">
+                <option value="">Select Warehouse</option>
+                <option *ngFor="let WareHouse of warehouses" [ngValue]="WareHouse.WarehouseId">
+                  {{WareHouse.WarehouseName}}
+                </option>
+              </select> --> 
+              
+              <p-dropdown [options]="warehouses" name="WarehouseName" optionLabel="label"
+              (onChange)="onsearch(WarehouseId.value)"  [(ngModel)]="WarehouseId" [filter]="true" >
+              </p-dropdown>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="dboy"><b>Select Delivery Boy:</b></label>
+              <select id="dboy" name="dboy" class="form-control" [(ngModel)]="searchdata.DeliveryboyId">
+                <option value=0>--Select Delivery Boy--</option>
+                <option *ngFor="let dboy of dboyList" [ngValue]="dboy.PeopleID">
+                  {{ dboy.DisplayName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="projectinput23"><b>Assignment ID</b></label>
+              <input type="text" id="ip9" name="AssignmentId" class="form-control" placeholder="AssignmentId"
+                [(ngModel)]="searchdata.AssignmentId" />
+            </div>
+          </div>
+          
+          <div class="col-md-3">
+            <div class="form-group">
+              <br />
+              <button type="button" class="btn btn-raised btn-primary " (click)="search(searchdata)">
+                Search
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="col-md-12">
+      <div class="card">
+        <div class="position-absolute country-details" *ngIf="isDetails">
+          <div class="card-header pb-4">
+            <h4 class="card-title" id="basic-layout-colored-form-control">Agent Collection List</h4>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="px-3">
+            <form class="form">
+
+              <p-table #dt [value]="agentlist" [paginator]="true" [rows]="20" [scrollable]="true" scrollHeight="130vh"
+                text-align: center>
+
+
+
+                <ng-template pTemplate="header">
+
+                  <tr>
+                    <th>Select</th>
+
+                    <th>Assignment Id </th>
+                    <th>Status </th>
+                    <th>Total Delivery Amt</th>
+                    <th>Total Cash Amt</th>
+                    <th>Total Cheque Amt :</th>
+                    <th>Total Online Amt</th>
+
+
+
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                  <tr>
+                    <td (click)="check(rowData)" (ngModelChange)="onClickCustomer(rowData)" [ngClass]="{'sel':rowData.IsSelected} ">
+                      <i *ngIf="!rowData.IsSelected" class="fa fa-square-o fa-2x" aria-hidden="true"></i>
+                      <i *ngIf="rowData.IsSelected" class="fa fa-check-square" style="font-size:30px;color:orangered" aria-hidden="true"></i>
+                  </td>
+                    
+
+                    <td>{{rowData.Deliveryissueid}}</td>
+                    <td>{{rowData.Status}}</td>
+                    <td>{{rowData.TotalDeliveryissueAmt}}</td>
+                    <td>{{rowData.TotalCashAmt}}</td>
+                    <td>{{rowData.TotalCheckAmt}}</td>
+                    <td>{{rowData.TotalOnlineAmt}}</td>
+
+
+
+
+
+                  </tr>
+                </ng-template>
+              </p-table>
+            </form>
+
+            <div class="form-actions right col-sm-12 p-3">
+              <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                Cancel
+              </button>
+
+              <button type="button" class="btn btn-raised btn-primary" (click)="Save(Deliveryissueids)" [disabled]="this.isSelectedIds.length==0" >
+                Genrate Pdf 
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<p-dialog [(visible)]="showDialog" [style]="{width: '50vw'}" [baseZIndex]="100" appendTo="body">
+  <p-header>
+    Total Due Amt Till Date
+  </p-header>
+  <input type="number" [(ngModel)]="AgentDue" name="totalDueAmt">
+  <p-footer>
+    <button (click)="saveTotalDueAmt()">Save  And Genrate</button>
+  </p-footer>
+</p-dialog>

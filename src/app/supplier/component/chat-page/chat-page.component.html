@@ -1,0 +1,81 @@
+<!-- fgdfhjdsrghjgdre -->
+<section class="chat">
+  <div #scrollMe class="w-100 bg-grey100" id="chat-box">
+      <!-- {{supplierChat[0].Chat}} -->
+
+      <!-- <div class="ui-g-2 scr">
+          <div *ngFor="let index of ChatThread">
+              <button type="button" id="buttonId" class="btn btn-raised btn-primary px-2" (click)="getchat(index)">
+              <i class="fa fa-comments" aria-hidden="true"></i>
+              <span> Purchase Order Number : {{index}}</span>
+            </button>
+          </div>
+        </div> -->
+        <div class="chatContent w-100 ui-g-10 scr">
+          <div *ngFor="let message of supplierChat" class="">
+            <div *ngIf="message.isfromSupplier" class="d-flex m-2">
+              <div class="w-25">
+                <div class="supp-name">{{message.SupplierName}}</div>
+                <div *ngIf="message.Chat" class="p-2 bg-white shadow rounded messageChat">
+                  {{message.Chat}}
+                </div>
+
+                <a *ngIf="message.ImageURL" href={{message.ImageURL}} target="_blank">
+                  <img *ngIf="message.ImageURL" src={{message.ImageURL}} width="300" height="300">
+                </a>
+
+                <div class="message-time text-align-right">{{message.ChatTime}}</div>
+                <div class="message-time text-align-right">{{message.PurchaseId}}</div>
+              </div>
+            </div>
+
+            <div *ngIf="!message.isfromSupplier" class="d-flex justify-content-end m-2">
+              <div class="w-25 d-f">
+                <div *ngIf="message.Chat"
+                  class="p-2 bg-primary shadow rounded text-align-right text-white messageChat">
+                  {{message.Chat}}
+                </div>
+                <a *ngIf="message.ImageURL" href={{message.ImageURL}} target="_blank">
+                  <img *ngIf="message.ImageURL" src={{message.ImageURL}} width="300" height="300">
+                </a>
+                <div class="message-time text-align-right">{{message.ChatTime}}</div>
+                <!-- <div class="message-time text-align-right">{{message.PurchaseId}}</div> -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        
+      <div class="w-100 ui-g inputChatbottom">
+          <section class="chat-app-form w-100" id="chat-input">
+            <form class="chat-app-input mt-2" name="form" (ngSubmit)="sendMessage(chat_message)">
+              <div class="row">
+                <fieldset class="form-group has-icon-left col-lg-9 col-5">
+                  <div class="form-control-position">
+                    <i class="icon-emoticon-smile"></i>
+                  </div>
+                  <input type="text" name="msg" class="form-control" id="iconLeft4" placeholder="Type your message"
+                    [(ngModel)]="chat_message">
+                  <div class="form-control-position control-position-right">
+                    <i class="ft-image mr-1"></i>
+                  </div>
+                </fieldset>
+                <fieldset class="form-group has-icon-left col-lg-1 col-3">
+                  <button type="button" class="btn refreshBtn" (click)="refreshChat()">
+                    <i class="fa fa-refresh"></i></button>
+                </fieldset>
+                <fieldset class="form-group has-icon-left col-lg-2 col-4">
+                  <button type="submit" class="btn btn-raised btn-primary px-4" [disabled]="!chat_message ">
+                    <i class="fa fa-paper-plane-o d-block d-xl-inline-block d-lg-none p-0"></i>
+                    <span class="d-none d-lg-inline-block ml-1">Send</span>
+                  </button>
+                </fieldset>
+              </div>
+            </form>
+          </section>
+
+        </div>
+      
+    </div>
+  </section>

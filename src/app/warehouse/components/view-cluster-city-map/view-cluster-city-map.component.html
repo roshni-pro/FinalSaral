@@ -1,0 +1,171 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="basic-form-layouts">
+  <div class="row text-left">
+    <div class="col-sm-12">
+      <div class="content-header">Cluster Map</div>
+    </div>
+  </div>
+  <div class="row text-left">
+    <div class="col-md-2">
+      <div class="card">
+        <div class="card-content">
+          <div class="px-3">
+            <form class="form">
+              <div class="form-body">
+                <h4 class="form-section"><i class="ft-user"></i> Filters</h4>
+                <div class="ui-g">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="long"><b>Location Search:</b></label>
+                      <input placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off"
+                        name="Loc" type="text" class="form-control" #search [formControl]="searchControl">
+                    </div>
+                  </div>
+                  <div class="col-md-12" *ngIf="customerData">
+                    <div class="form-group">
+                      <label for="long"><b>SkCode:</b></label>
+
+                      <p-autoComplete [(ngModel)]="Skcode" [suggestions]="selectedData"
+                        (completeMethod)="onSearchCustomer($event)" field="Skcode" (onSelect)="onSelectCustomer($event)"
+                        name="SKcode" placeholder="SkCode" [minLength]="1">
+                      </p-autoComplete>
+
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="active"> Active Customers</label>
+                      <div class="custom-control custom-checkbox custom-control-inline">
+                        <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1"
+                          name="AC" type="checkbox" [(ngModel)]="showActiveMarkers">
+                        <label class="custom-control-label" for="customCheckboxInline1"></label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="active"> Inactive Customers</label>
+                      <div class="custom-control custom-checkbox custom-control-inline">
+                        <input class="custom-control-input" id="customCheckboxInline2" name="customCheckboxInline2"
+                          name="IC" type="checkbox" [(ngModel)]="showInactiveMarkers">
+                        <label class="custom-control-label" for="customCheckboxInline2"></label>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="col-6">
+                    <button type="button" class="btn btn-raised " disabled></button>
+                  </div>
+                  <div class="col-6">
+                    <button type="button" class="btn btn-raised btn-primary pull-right"
+                    (click)="onCancel()"><b>Back</b></button>
+                  </div>
+
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-content">
+          <div class="px-3">
+            <form class="form">
+              <div class="form-body">
+                <h4 class="form-section"><i class="ft-user"></i> Search By Latitude Longitude </h4>
+                <div class="ui-g">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="long"><b>Latitude:</b></label>
+                      <input placeholder="Search for Latitude" autocorrect="off" autocapitalize="off" spellcheck="off"
+                        [(ngModel)]="newLat" name="Loc" type="number" class="form-control" #search
+                        [formControl]="searchControl">
+                    </div>
+                  </div>
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="long"><b>Longitude:</b></label>
+                      <input placeholder="Search for Longitude" autocorrect="off" autocapitalize="off" spellcheck="off"
+                        [(ngModel)]="newLng" name="Loc" type="number" class="form-control" #search
+                        [formControl]="searchControl">
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <button type="button" class="btn btn-raised btn-primary pull-right"
+                      (click)="onChangeManualLocation()"><b>Search</b></button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-md-10">
+
+      <div class="card-content">
+        <div class="px-3">
+
+          <form class="form">
+            <div class="form-body">
+
+              <div class="sk">
+                <div class="tooltip-clu" *ngIf="selectedPolygon">
+                  {{selectedPolygon.city}} - {{selectedPolygon.ClusterName ? selectedPolygon.ClusterName: ''}}
+                </div>
+                <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [zoomControl]="true"
+                  [fullscreenControl]="fullscreenControl" [disableDefaultUI]="false" [zoomControl]="false"
+                  [fullscreenControlOptions]="options" [style.height.px]="myInnerHeight">
+                  <div *ngIf="showMap && clusterWiseCityWise">
+                    <agm-polygon [fillColor]="item.fillColor"
+                      *ngFor="let item of clusterWiseCityWise.clusters; let i=index" [polyDraggable]="false"
+                      [fillOpacity]="0.4" [paths]="item.clusterlatlng" [editable]="false" strokeOpacity="0.1"
+                      (polyPathsChange)="onPolygonChange($event, item, i)"
+                      (polyClick)="polyClicked(item, clusterWiseCityWise)">
+
+                    </agm-polygon>
+                  </div>
+                  <div *ngIf="showActiveMarkers">
+                    <agm-marker *ngFor="let m of activeMarkers; let i = index" [latitude]="m.lat" [longitude]="m.lg"
+                      [animation]="m.animation" [iconUrl]="m.icon">
+                      <agm-info-window [disableAutoPan]="false" #infoWindow>
+                        <div><b>{{m.title }}</b>
+                          <br />{{m.Skcode }}
+                          <br /> {{m.ShippingAddress}}
+                        </div>
+                      </agm-info-window>
+                    </agm-marker>
+                  </div>
+                  <div *ngIf="showInactiveMarkers">
+                    <agm-marker *ngFor="let m of inactiveMarkers; let i = index" [latitude]="m.lat" [longitude]="m.lg"
+                      [animation]="m.animation" [iconUrl]="m.icon">
+                      <agm-info-window [disableAutoPan]="false" #infoWindow>
+                        <div><b>{{m.title }}</b>
+                          <br />{{m.Skcode }}
+                          <br /> {{m.ShippingAddress}}
+                        </div>
+                      </agm-info-window>
+                    </agm-marker>
+                  </div>
+                  <div *ngIf="manualMarkerList && manualMarkerList.length> 0">
+                    <agm-marker *ngFor="let m of manualMarkerList; let i = index" [latitude]="m.lat" [longitude]="m.lg"
+                      [animation]="m.animation">
+
+                    </agm-marker>
+                  </div>
+                </agm-map>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>

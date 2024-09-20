@@ -1,0 +1,400 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="customer-gst">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="header">
+        <h3 class="content-header">Payment Mode Change</h3>
+      </div>
+    </div>
+  </div>
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <form>
+      <div class="row">
+        <div class="col-sm-2">
+          <label for="validto">OrderId</label>
+          <input class="form-control" type="text" pInputText size="20" name="searchwh" [(ngModel)]="OrderId"
+            placeholder="Search">
+        </div>
+
+        <div class="col-sm-2" style="margin-top:1.7%;">
+          <button type="submit" class="btn btn-raised btn-primary" name="search" (click)="OnClick(OrderId)">
+            Search</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <div class="position-relative">
+      <div class="position-relative">
+        <p-table #dt  [value]="orderdata" [rows]="20" dataKey="OrderId" [scrollable]="true"
+          scrollHeight="70vh" text-align: center>
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="text-align: center">
+                OrderId
+              </th>
+              <th style="text-align: center">
+                Skcode
+              </th>
+              <th style="text-align: center">
+                WarehouseName
+              </th>
+              <th style="text-align: center">
+                Order Status
+              </th>
+              <th style="text-align: center">
+                Assignment Status
+              </th>
+
+              <th style="text-align: center">
+                Payment Mode
+              </th>
+              
+
+              <th style="text-align: center">
+                Amount
+              </th>
+              <th style="text-align: center">
+                Order Date
+              </th>
+              <th style="text-align: center" >
+                Change Status
+              </th>
+              <th style="text-align: center">
+               History
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td style="text-align: center">
+                {{rowData.OrderId}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.Skcode}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.WarehouseName}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.Status}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.AssignmentStatus}}
+              </td>
+              
+
+              <td style="text-align: center">
+                {{rowData.PaymentFrom}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.amount}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.CreatedDate |  date:'medium'}}
+              </td>
+              <td style="text-align: center" >
+                <div *ngIf="rowData.PaymentFrom=='Cash'">
+                <button type="button" class="btn btn-raised btn-raised btn-primary "
+                  (click)="open(rowData)">Change MOP</button>
+                </div>
+              </td>
+              <td style="text-align: center">
+                <button type="button" class="btn btn-raised btn-raised btn-primary "
+                (click)="openDetails(rowData)">History</button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="openPopup">
+  <p-dialog [(visible)]="openPopup" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%'}">
+    <p-header>
+      Change Payment Mode
+    </p-header>
+
+    <form style="min-height: 480px;">
+      <div class="row">
+        <div class="form-group" class="col-sm-2">
+          <label for="validto">Select Payment Type</label>
+          <select id="paymenttype" name="paymenttype" class="form-control" [(ngModel)]="data.value">
+            <option value="" disabled>--Select--</option>
+            <option value="Cash">Cash</option>
+            <option value="hdfc">hdfc</option>
+            <!-- <option value="ePaylater">ePaylater</option> -->
+            <!-- <option value="mPos">mPos</option>
+            <option value="credit hdfc">credit hdfc</option>
+            <option value="Razorpay QR">Razorpay QR</option> -->
+            <!-- <option value="chqbook">chqbook</option> -->
+            <option value="Failed">Failed</option>
+            <option value="Gullak">Gullak</option>
+            <option value="DirectUdhar">DirectUdhar</option>
+            <option value="UPI">UPI</option>
+          </select>
+        </div>
+        <div *ngIf="data.value == 'Cash'">
+          <div class="row">
+            <div class="col-sm-4">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number" name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-4 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            <div class="col-sm-4">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="data.value == 'hdfc'">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number"  name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Id</label>
+              <input class="form-control" type="tel"  name="GatewayTransId" [(ngModel)]="data.GatewayTransId"
+                placeholder="Transaction Id">
+            </div>
+            <div class="col-sm-3 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            <div class="col-sm-3">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="data.value == 'ePaylater'">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number"  name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Id</label>
+              <input class="form-control" type="tel"  name="GatewayTransId" [(ngModel)]="data.GatewayTransId"
+                placeholder="Transaction Id">
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Order Id</label>
+              <input class="form-control" type="text"  name="GatewayOrderId" [(ngModel)]="data.GatewayOrderId"
+                placeholder="Transaction Order Id">
+                <label style="color: red;">[Format 137372(SK20252)]</label>
+            </div>
+            <div class="col-sm-3 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            
+            </div>
+            <div class="col-sm-12 text-right">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        <!-- </div> -->
+        <div *ngIf="data.value == 'Gullak'">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number"  name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Id</label>
+              <input class="form-control" type="tel"  name="GatewayTransId" [(ngModel)]="data.GatewayTransId"
+                placeholder="Transaction Id">
+            </div>
+            <div class="col-sm-3 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            <div class="col-sm-3">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="data.value == 'mPos'">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number"  name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Id</label>
+              <input class="form-control" type="tel"  name="GatewayTransId" [(ngModel)]="data.GatewayTransId"
+                placeholder="Transaction Id">
+            </div>
+            <div class="col-sm-3 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            <div class="col-sm-3">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="data.value == 'credit hdfc'">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number"  name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Id</label>
+              <input class="form-control" type="tel"  name="GatewayTransId" [(ngModel)]="data.GatewayTransId"
+                placeholder="Transaction Id">
+            </div>
+            <div class="col-sm-3 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            <div class="col-sm-3">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="data.value == 'Razorpay QR'">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number"  name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Id</label>
+              <input class="form-control" type="text"  name="GatewayTransId" [(ngModel)]="data.GatewayTransId"
+                placeholder="Transaction Id">
+            </div>
+            <div class="col-sm-3 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            <div class="col-sm-3">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="data.value == 'chqbook'">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number"  name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Id</label>
+              <input class="form-control" type="text"  name="GatewayTransId" [(ngModel)]="data.GatewayTransId"
+                placeholder="Transaction Id">
+            </div>
+            <div class="col-sm-3 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            <div class="col-sm-3">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="data.value == 'Failed'">
+          <div class="col-sm-3">
+            <label class="col-md-12">&nbsp;</label>
+            <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+              Update</button>
+          </div>
+        </div>
+        <div *ngIf="data.value == 'DirectUdhar'">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number"  name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Id</label>
+              <input class="form-control" type="tel"  name="GatewayTransId" [(ngModel)]="data.GatewayTransId"
+                placeholder="Transaction Id">
+            </div>
+            <div class="col-sm-3 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            <div class="col-sm-3">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="data.value == 'UPI'">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="validto">Amount</label>
+              <input class="form-control" type="number"  name="searchwh" [(ngModel)]="orderdata.amount"
+                placeholder="Amount" disabled>
+            </div>
+            <div class="col-sm-3">
+              <label for="validto">Transaction Id</label>
+              <input class="form-control" type="tel"  name="GatewayTransId" [(ngModel)]="data.GatewayTransId"
+                placeholder="Transaction Id">
+            </div>
+            <div class="col-sm-3 dateBtn">
+              <label class="col-md-12" for="endDateInput">Date</label>
+              <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [showTime]="true" name="toDate"></p-calendar>
+            </div>
+            <div class="col-sm-3">
+              <label class="col-md-12">&nbsp;</label>
+              <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                Update</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </p-dialog>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</div>
+
+<div id="history" *ngIf="popupOpen" >
+  <p-dialog [(visible)]="popupOpen" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+    <p-header>
+      History
+    </p-header>
+    <app-history [entity]="entity" [id]="rowDataV1.id" ></app-history>
+   
+</p-dialog>
+</div>
+
+<!-- <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> -->

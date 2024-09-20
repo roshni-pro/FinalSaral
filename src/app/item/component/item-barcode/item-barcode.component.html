@@ -1,0 +1,67 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<section id="Barcode">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2"><b>Barcode Label </b></h3>
+    </div>
+  </div>
+  <div class="row">
+
+    <div class="col-md-4">
+      <div class="form-group" *ngIf="!itemDetails">
+        <label for="name"> Item Base Name<span style="color:red"> *</span></label>
+        <span class="ui-fluid">
+          <p-autoComplete [(ngModel)]="selectedItem" [suggestions]="barcodeList"
+            (completeMethod)="getitembarcode($event)" field="itemname" [size]="30" placeholder="enter at least 3 chars"
+            [minLength]="3" name="itembarcode" (onSelect)="onmodelChange(selectedItem)" name="itemname"
+            #itemname="ngModel">
+          </p-autoComplete>
+        </span>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name">Item Barcode</label>
+        <input type="text" id="itembarcode" class="form-control" name="itembarcode" [(ngModel)]="selectedItem.Barcode"
+          readonly value="{{selectedItem.Barcode}}"  />
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="site-name">SK Bar Codes</label><br />
+        <input id="itemcode" name="skbarcode" type="text" class="form-control" 
+          [(ngModel)]="selectedItem.Number" disabled="true" />
+      </div>
+    </div>
+  </div>
+
+  <form class="form" name="infoForm" #infoForm="ngForm" autocomplete="off">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="form-group">
+          <label></label>
+          <select class="form-control" id="Barcode" name="Barcode" [(ngModel)]="barcodegetvalue"  #Barcode="ngModel"  (change)=getbarcode() >
+            <option  value="">Select</option>
+            <option  value="Getbarcode">SK Barcode</option>
+            <option value="Getbarcodeofitem">Item Barcode</option>
+        </select>
+        </div>
+      </div>
+    </div>
+    
+  </form>
+</section>
+  
+<div id="print-section" style="padding: 5px; box-sizing: border-box; width: 192px; height: 96px;">
+    <img [src]="imgPath" *ngIf="show==true" width="190px;" height="75px"/>
+</div>
+  
+  <div class="col-md-3">
+    <div class="form-group">
+      <label></label>
+      <div></div>
+      <button printSectionId="demo" ngxPrint class="btn btn-raised btn-primary print1"  icon="print" text="Print" 
+        (click)="print() ">print Label</button>
+    </div>
+  </div>

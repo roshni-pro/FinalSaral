@@ -1,0 +1,266 @@
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3>Zaruri App Dashboard <i class="icon-graph font-large-1"></i> </h3>
+    </div>
+</div>
+
+<div class="ui-fluid shadow mb-2 bg-white rounded mar-to">
+    <div class="search-head rounded d-flex p-2 px-4 justify-content-between align-items-center"
+        (click)="toggleSearch()">
+        <h5 class="m-0">filters</h5>
+        <div><i class="icon-cursor"></i></div>
+    </div>
+    <div id="search-content p-2" *ngIf="isSearch">
+        <div style="padding:0px 35px;">
+            <form class="form" #ledgerForm="ngForm">
+                <div class="row">
+                    <!-- <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <select id="city" name="city" class="form-control" [(ngModel)]="selectedCity"
+                                (ngModelChange)="onCityClick(selectedCity)">
+                                <option [ngValue]="">--select--</option> 
+                                <option *ngFor="let city of cityList" [ngValue]="city">
+                                    {{ city }}
+                                </option>
+                            </select>
+
+                        </div>
+
+                    </div> -->
+
+                    <!-- <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="Category">Category Name:</label>
+                            <select id="Category" name="Catlist" class="form-control"
+                                [(ngModel)]="selectedcategory"
+                                (ngModelChange)="oncatClick(selectedcategory)">
+                                <option [ngValue]="">--Select--</option>
+                                <option *ngFor="let Catlist of CategoryList" [ngValue]="Catlist.CategoryId">
+                                    {{ Catlist.CategoryName }}
+                                </option>
+                            </select>
+                        </div>
+                    </div> -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="sellerName">Seller Name:</label>
+                            <p-autoComplete type="search" [(ngModel)]="text" [suggestions]="sellerslist" (completeMethod)="getSeLlerList($event)"
+                            (onKeyUp)="data.SellerId" (onClear)="data.SellerId = null;"
+                            field="CustomerName" [size]="30" (onSelect)="onSelectSeller($event);"
+                            (change)="!idnotexist" placeholder="enter at least 3 chars"
+                            [minLength]="3" name="sellerid" id="sellerid">
+                        </p-autoComplete>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mt-2 padtop">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-raised btn-raised btn-primary mr-2 mlef" (click)="onSearch()">
+                                Search
+                            </button>
+                            <!-- <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                (click)="onReset()">
+                                Reset
+                            </button> -->
+                            <a class="h111" href="javascript:void(0)" (click)="onCityClick(selectedCity)"><i class="icon-refresh"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+<h4>Today</h4>
+<div class="row">
+    <div class="col-xl-6 col-md-6">
+        <div class="card bg-warning">
+            <div class="card-content">
+                <div class="card-body pt-2 pb-0">
+                    <div class="media text-center"> 
+                        <div class="media-body white text-center">
+                            <div>
+                                <!-- <i class="icon-graph"></i> -->
+                                <span class="font-medium-2"> Order </span>
+                            </div><br>
+                            <h3 class="font-medium-4">{{DashboardList.DailyplacedOrders}}</h3>
+                        </div>
+                        <div class="media-body white text-center">
+                            <div>
+                                <span class="font-medium-2"> Received
+                                    <!-- <i class="icon-wallet"></i>  -->
+                                </span>
+                            </div><br>
+                            <h3 class="font-medium-4">
+                                {{DashboardList.DailySale |currency:'INR':true}} CR
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="heights WidgetlineChart WidgetlineChartShadow">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 col-md-6">
+        <div class="card bg-primary">
+            <div class="card-content">
+                <div class="card-body pt-2 pb-0">
+                    <div class="media text-center">
+                        <div class="media-body white text-center">
+                            <div>
+                                <!-- <i class="icon-bulb"></i> -->
+                                <span class="font-medium-2"> Order
+                                </span></div><br>
+                            <h3 class="font-medium-4"> {{DashboardList.DailydeliveredOrders}}</h3>
+                        </div>
+                        <div class="media-body white text-center">
+                            <div>
+                                <span class="font-medium-2">Delivered
+                                    <!-- <i class="icon-wallet"></i> -->
+                                </span> </div><br>
+                            <h3 class="font-medium-4">
+                                {{DashboardList.DailydeliveredSale |currency:'INR':true}} CR
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="heights WidgetlineChart WidgetlineChartShadow">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr>
+<h4>This Month</h4>
+<div class="row">
+    <div class="col-xl-6 col-md-6">
+        <div class="card bg-warning">
+            <div class="card-content">
+                <div class="card-body pt-2 pb-0">
+                    <div class="media text-center">
+                        <div class="media-body white text-center">
+                            <div>
+                                <!-- <i class="icon-graph"></i> -->
+                                <span class="font-medium-2"> Order </span>
+                            </div><br>
+                            <h3 class="font-medium-4">{{DashboardList.MonthlyplacedOrders}}</h3>
+                        </div>
+                        <div class="media-body white text-center">
+                            <div>
+                                <span class="font-medium-2">Received
+                                    <!-- <i class="icon-wallet"></i> -->
+                                </span>
+                            </div><br>
+                            <h3 class="font-medium-4">
+                                {{DashboardList.MonthlySale |currency:'INR':true}} CR
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="heights WidgetlineChart WidgetlineChartShadow">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6 col-md-6">
+        <div class="card bg-primary">
+            <div class="card-content">
+                <div class="card-body pt-2 pb-0">
+                    <div class="media text-center">
+                        <div class="media-body white text-center">
+                            <div>
+                                <!-- <i class="icon-bulb"></i> -->
+                                <span class="font-medium-2">Order </span> </div><br>
+                            <h3 class="font-medium-4 mb-0">{{DashboardList.MonthlydeliveredOrders}}</h3>
+                        </div>
+                        <!-- <div class="media-right white text-center">
+                            <i class="icon-bulb font-large-1"></i>
+                        </div> -->
+                        <div class="media-body white text-center">
+                            <div class="font-medium-2"><span>Delivered </span>
+                                <!-- <i class="icon-pie-chart"></i>  -->
+                            </div><br>
+                            <h3 class="font-medium-4">
+                                {{DashboardList.MonthlydeliveredSale |currency:'INR':true}} CR
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="heights WidgetlineChart WidgetlineChartShadow">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+<h4>This Year</h4>
+<div class="row">
+    <div class="col-xl-6 col-md-6">
+        <div class="card bg-warning">
+            <div class="card-content">
+                <div class="card-body pt-2 pb-0">
+                    <div class="media text-center">
+                        <div class="media-body white text-center">
+                            <div>
+                                <!-- <i class="icon-graph"></i> -->
+                                <span class="font-medium-2">Order </span> </div><br>
+                            <h3 class="font-medium-4">{{DashboardList.OverallplacedOrders}} </h3>
+                        </div>
+                        <div class="media-body white text-center">
+                            <div>
+                                <span class="font-medium-2">Received </span>
+                                <!--  <i class="icon-wallet"></i>  -->
+                            </div><br>
+                            <h3 class="font-medium-4">
+                                {{DashboardList.OverallSale |currency:'INR':true}} CR
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="heights WidgetlineChart WidgetlineChartShadow">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6 col-md-6">
+        <div class="card bg-primary">
+            <div class="card-content">
+                <div class="card-body pt-2 pb-0">
+                    <div class="media text-center">
+                        <div class="media-body white text-center">
+                            <div>
+                                <!-- <i class="icon-bulb"></i> -->
+                                <span class="font-medium-2"> Order </span> </div><br>
+                            <h3 class="font-medium-4">{{DashboardList.OveralldeliveredOrders}} </h3>
+                        </div>
+                        <div class="media-body white text-center">
+                            <div class="font-medium-2"><span>Delivered </span>
+                                <!-- <i class="icon-pie-chart"></i>  -->
+                            </div><br>
+                            <h3 class="font-medium-4">
+                                {{DashboardList.OveralldeliveredSale |currency:'INR':true}} CR
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="heights WidgetlineChart WidgetlineChartShadow">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+
+
+<hr>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

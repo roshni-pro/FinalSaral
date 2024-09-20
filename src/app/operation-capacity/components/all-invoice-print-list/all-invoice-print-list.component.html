@@ -1,0 +1,662 @@
+<div class="position-relative" style="padding:0px 15px;">
+
+    <form class="ovelFieldForm form" name="form" #deliveryboy="ngForm">
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;"
+                    printSectionId="allInvoiceOrderPrint" ngxPrint>Print</button>
+                <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;"
+                    (click)="onClickBack()">Back</button>
+            </div>
+        </div>
+    </form>
+
+    <div id="allInvoiceOrderPrint" style="position: absolute;">
+        <form class="ovelFieldForm form form-inline" name="form" #orderForm="ngForm"
+            style="position: relative;z-index: 9;">
+            <div id="print-section" style="padding:10px 15px; position: relative;z-index: 9;">
+                <div class="waterMark"
+                    style="width: 50%;position: absolute;top: 41%;left: 45%;transform: skew(23deg, -36deg);height: 390px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+                    <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+                </div>
+                <div *ngFor="let OrderData1 of AllOrderList ">
+                    <div class="containers invoice">
+
+
+                        <h3 style="text-align: center;"><b>TAX INVOICE</b></h3>
+
+                        <table style="width:100%;" *ngIf="OrderData1.OrderType == '11'">
+                            <tr>
+                                <td style="text-align:left;padding-left:10px;vertical-align:top; width:30%;">
+                                    
+                                    <br />
+                                    <img src="assets/img/ZilaPicture.png" width="216px" height="98px" />
+        
+                                </td>
+                                
+                            </tr>
+                            <tr>
+                                <td style="text-align:left;padding-left:10px;vertical-align:top; width:25%;">
+                                    <strong style="font-size: 18px;">ShopKirana E Trading Pvt. Ltd.</strong>
+                                    <br />
+                                    <span style="font-size: 14px;"><b>CIN: </b></span>U51109MP2014PTC033534<br />
+                                    <span style="font-size: 14px;"><b>GSTN Number: </b></span>{{warehouse.GSTin}} <br />
+                                    <span style="font-size: 14px;"><b>FSSAI Number: </b></span>{{warehouse.FSSAILicenseNumber}} <br />
+                                    <span style="font-size: 14px;width:70%"><b>Address :</b> {{warehouse.Address}}</span><br />
+                                    <span style="font-size: 14px;">{{warehouse.StateName}} ,India </span><br />
+                                    <span style="font-size: 14px;"><b>Contact Number : </b> {{warehouse.Phone}}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                        </table>
+                        <table style="width:100%;" *ngIf="OrderData1.OrderType != '11'" >
+                            <tbody>
+                                <tr>
+                                    <td colspan="3"
+                                        style="text-align:left; border:none;border-bottom: none !important;">
+                                        <div class="row col-md-12"
+                                            style="display:flex;justify-content:space-around;align-items:center;margin-top:10px;">
+                                            <!--<div style="width:30%;margin-left:15px;">
+                                        <img src="https://res.cloudinary.com/shopkirana/image/upload/v1563356363/home/Logo_2.png" height="20px" />
+                                    </div>-->
+                                            <div>
+                                                <!-- [ngStyle]="text-align:left;width:{{!(OrderData1.IRNNo==null || OrderData1.IRNNo==undefined ||  OrderData1.IRNNo=='') ? '60%' : '80%'}});padding-left:10px" -->
+
+                                                <strong style="font-size: 18px;">ShopKirana E Trading Pvt. Ltd.</strong>
+                                                <br />
+                                                <span style="font-size: 14px;"><b>CIN:
+                                                    </b></span>U51109MP2014PTC033534<br />
+                                                <span style="font-size: 14px;"><b>GSTN Number:
+                                                    </b></span>{{warehouse.GSTin}} <br />
+                                                <span style="font-size: 14px;width:70%"><b>Address :</b>
+                                                    {{warehouse.Address}}</span>
+                                                <span style="font-size: 14px;">{{warehouse.StateName}} ,India
+                                                </span><br />
+                                                <span style="font-size: 14px;"><b>Contact Number : </b>
+                                                    {{warehouse.Phone}}</span>
+                                            </div>
+                                            <div style="width:20%;margin-right:15px;">
+                                                <div *ngIf="OrderData1.InvoiceBarcodeImage!=null && OrderData1.OrderType != '11'">
+                                                    <div style="text-align:center;">
+                                                        Bar Code
+                                                    </div>
+                                                    <!--<img src="{{OrderData1.BcodeUrl}}" style="width:60%;float: right;">-->
+                                                    <img src="data:image/png;base64,{{OrderData1.InvoiceBarcodeImage}}"
+                                                        width="150" height="150" />
+
+                                                </div>
+                                            </div>
+                                            <!-- <div style="width:20%;margin-right:15px;" *ngIf="!(OrderData1.IRNNo==null || OrderData1.IRNNo==undefined ||  OrderData1.IRNNo=='')">
+                                        <div style="font-size: 14px;" *ngIf="!(OrderData1.IRNNo==null || OrderData1.IRNNo==undefined ||  OrderData1.IRNNo=='')">
+                                            <div style="text-align:center">
+                                                IRN QR Code
+                                            </div>
+                                            <img src="{{OrderData1.IRNQRCodeUrl}}" width="150" height="150" />
+                                        </div>
+                                    </div> -->
+                                            <div style="width:20%;margin-right:15px;">
+                                                <div style="font-size: 14px;"
+                                                    *ngIf="(!(OrderData1.IRNQRCodeUrl==null || OrderData1.IRNQRCodeUrl==undefined ||  OrderData1.IRNQRCodeUrl=='') || !(OrderData1.POCIRNQRCodeURL==null || OrderData1.POCIRNQRCodeURL==undefined ||  OrderData1.POCIRNQRCodeURL==''))">
+                                                    <div style="text-align:center"
+                                                        *ngIf="!(OrderData1.IRNQRCodeUrl==null || OrderData1.IRNQRCodeUrl==undefined ||  OrderData1.IRNQRCodeUrl=='') && (OrderData1.POCIRNQRCodeURL==null || OrderData1.POCIRNQRCodeURL==undefined ||  OrderData1.POCIRNQRCodeURL=='')">
+                                                        IRN QR Code 
+                                                    </div>
+                                                    <span
+                                                        *ngIf="!(OrderData1.IRNQRCodeUrl==null || OrderData1.IRNQRCodeUrl==undefined ||  OrderData1.IRNQRCodeUrl=='') && (OrderData1.POCIRNQRCodeURL==null || OrderData1.POCIRNQRCodeURL==undefined ||  OrderData1.POCIRNQRCodeURL=='')">
+                                                        <img  src="{{apiURL}}{{OrderData1.IRNQRCodeUrl}}" width="150"
+                                                            height="150" />
+                                                    </span>
+                                                </div>
+                                                <div style="font-size: 14px;"
+                                                    *ngIf="!(OrderData1.POCIRNQRCodeURL==null || OrderData1.POCIRNQRCodeURL==undefined ||  OrderData1.POCIRNQRCodeURL=='')">
+                                                    <div style="text-align:center">
+                                                        POC IRN QR Code
+                                                    </div>
+                                                    <span
+                                                        *ngIf="!(OrderData1.POCIRNQRCodeURL==null || OrderData1.POCIRNQRCodeURL==undefined ||  OrderData1.POCIRNQRCodeURL=='')">
+                                                        <img *ngIf src="{{OrderData1.POCIRNQRCodeURL}}" width="150"
+                                                            height="150" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                                <!-- <tr *ngIf="!(OrderData1.IRNNo==null || OrderData1.IRNNo==undefined ||  OrderData1.IRNNo=='')">
+                            <td style="padding:15px">
+                                <b>IRN No.:</b><strong> {{OrderData1.IRNNo}}</strong>
+                            </td>
+                        </tr> -->
+                                <tr
+                                    *ngIf="!(OrderData1.IRNNo==null || OrderData1.IRNNo==undefined ||  OrderData1.IRNNo=='') && (OrderData1.POCIRNNo==null || OrderData1.POCIRNNo==undefined ||  OrderData1.POCIRNNo=='')">
+                                    <td style="padding:15px">
+                                        <b>IRN No.:</b><strong> {{OrderData1.IRNNo}}</strong>
+                                    </td>
+                                </tr>
+                                <tr
+                                    *ngIf="!(OrderData1.POCIRNNo==null || OrderData1.POCIRNNo==undefined ||  OrderData1.POCIRNNo=='')">
+                                    <td style="padding:15px">
+                                        <b>POC IRN No.:</b><strong> {{OrderData1.POCIRNNo}}</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br />
+
+                        <div style="border:none;border-bottom:none">
+
+                        </div>
+                        <br />
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="text-align:left;padding-left:10px;vertical-align:top; width:30%;">
+                                    <strong style="font-size: 14px;">Bill To:</strong>
+                                    <br />
+                                    <strong style="font-size: 12px;" *ngIf="OrderData1.OrderType != '11'"><b>Shop Name :</b>
+                                        {{OrderData1.ShopName}}</strong><br />
+                                    <strong style="font-size: 12px;" *ngIf="OrderData1.OrderType == '11'"><b>Receiver's Name :</b>
+                                        {{OrderData1.ShopName}}</strong><br />
+                                    <span style="font-size: 14px;"><b>Address : </b>
+                                        {{OrderData1.BillingAddress}}</span><br />
+                                    <span style="font-size: 14px;"><b>GSTN Number :</b>
+                                        {{OrderData1.Tin_No}}</span><br />
+                                    <span style="font-size: 14px;"><b>Customer Name :
+                                        </b>{{OrderData1.CustomerName}}</span><br />
+                                    <span style="font-size: 14px;"><b>SKCode :</b>
+                                        <strong>{{OrderData1.Skcode}}</strong></span><br />
+                                    <span style="font-size: 14px;"><b>Mobile :
+                                        </b>{{OrderData1.Customerphonenum}}</span><br />
+                                    <span style="font-size: 14px;"><b>Place of Supply :
+                                        </b>{{OrderData1.BillingStateName}}</span><br />
+                                    <span style="font-size: 14px;"><b>Code :
+                                        </b>{{OrderData1.BillingStateCode}}</span><br />
+                                    <span style="color:red;">
+                                        {{OrderData1.IsPrimeCustomer!=null && OrderData1.IsPrimeCustomer?"* Fayda Club
+                                        ":""}}
+
+                                    </span>
+                                    <span *ngIf="OrderData1.IsFirstOrder"> <strong style="font-size: 14px;">* 1st
+                                            Order</strong> </span>
+                                </td>
+                                <td style="text-align:left;padding-left:10px;vertical-align:top;width:25%;">
+                                    <strong style="font-size: 14px;">Ship To:</strong>
+                                    <br />
+                                    <span style="font-size: 14px;"><b>Address : </b>
+                                        {{OrderData1.ShippingAddress}}</span><br />
+                                    <span style="font-size: 14px;"><b>Place of Supply :
+                                        </b>{{OrderData1.shippingStateName}}</span><br />
+                                    <span style="font-size: 14px;"><b>Code :
+                                        </b>{{OrderData1.shippingStateCode}}</span><br />
+                                </td>
+                                <td style="text-align:left;padding-left:10px;vertical-align:top; width:25%;">
+                                    <span style="font-size: 14px;"><b>Invoice No.:</b><strong>
+                                            {{OrderData1.invoice_no}}</strong></span><br />
+                                    <span style="font-size: 14px;"><b>Invoice Date :
+                                        </b>{{OrderData1.CreatedDate|date}}</span><br />
+                                    <span style="font-size: 14px;"><b>Order Id: </b>{{OrderData1.OrderId}}</span><br />
+                                    <span style="font-size: 14px;"><b>Order Date :
+                                        </b>{{OrderData1.OrderedDate|date}}</span><br />
+                                    <span style="font-size: 14px;"><b>Eway Bill Number :
+                                        </b>{{OrderData1.EwayBillNumber}}</span><br />
+                                    <span style="font-size: 14px;" *ngIf="OrderData1.PocCreditNoteNumber"><b>Credit note
+                                            No.:</b><strong> {{OrderData1.PocCreditNoteNumber}}</strong></span><br />
+                                    <span style="font-size: 14px;" *ngIf="OrderData1.PocCreditNoteDate"><b>Credit note
+                                            Date.:</b><strong> {{OrderData1.PocCreditNoteDate |date}}</strong></span>
+                                </td>
+
+                                <td style="text-align:left;padding-left:10px;vertical-align:top; width:25%;" *ngIf="OrderData1.OrderType != '11'">
+                                    <span style="font-size: 14px;"><b>Executive :</b><strong>
+                                            {{OrderData1.SalesPerson}}</strong> </span><br />
+                                    <span style="font-size: 14px;"><b>Mob.No. :</b><strong>
+                                            {{OrderData1.SalesMobile}}</strong></span><br />
+                                    <span style="font-size: 14px;"><b>DeliveryBoy : </b><strong>
+                                            {{OrderData1.DboyName}}</strong></span><br>
+                                    <span style="font-size: 14px;">
+                                        <b>Assig. No. :</b><strong>
+                                            {{OrderData1.DeliveryIssuanceIdOrderDeliveryMaster}}</strong><br />
+                                    </span>
+                                    <!--<span style="font-size: 14px;">offertype  : {{OrderData1.offertype}} </span><br/>-->
+                                    <span style="font-size: 14px;"
+                                        *ngIf="(OrderData1.OrderType == '1'|| OrderData1.OrderType == '0')"><b>OrderType:</b>
+                                        General Order</span>
+                                    <span style="font-size: 14px;"
+                                        *ngIf="(OrderData1.OrderType =='2')"><b>OrderType:</b>Bundle Order </span>
+                                    <span style="font-size: 14px;"
+                                        *ngIf="(OrderData1.OrderType == '3')"><b>OrderType:</b> Return Order </span>
+                                    <span style="font-size: 14px;"
+                                        *ngIf="(OrderData1.OrderType =='4')"><b>OrderType:</b>Distributer Order</span>
+                                    <span style="font-size: 14px;"
+                                        *ngIf="(OrderData1.OrderType !='0' && OrderData1.OrderType !='1' && OrderData1.OrderType !='2' && OrderData1.OrderType !='3' && OrderData1.OrderType !='4' && OrderData1.OrderType !='6')"><b>OrderType:</b>
+                                        Order</span>
+                                    <span style="font-size: 14px;"
+                                        *ngIf="(OrderData1.OrderType =='6')"><b>OrderType:</b>Damage Order</span>
+                                    <span style="font-size: 14px;"
+                                        *ngIf="(OrderData1.OrderType =='8')"><b>OrderType:</b>Clearance Order</span>
+                                </td>
+                            </tr>
+                            <tr>
+                        </table>
+
+                        <table style="width:100%;">
+                            <tr>
+                                <td colspan="3">
+                                    <div class="table-responsive">
+                                        <div class="table-responsive">
+                                            <table style="font-size:12px!important;" width="100%" border="1">
+                                                <thead style="border-bottom: none !important;">
+                                                    <tr>
+                                                        <td><strong>S.no.</strong></td>
+                                                        <td><strong>Item Name</strong></td>
+                                                        <td><strong>MRP</strong></td>
+                                                        <td class="border" *ngIf="OrderData1.OrderType != '11'"><strong>PTR</strong></td>
+                                                        <td class="border" *ngIf="OrderData1.OrderType != '11'"><strong>Scheme %</strong></td>
+                                                        <td class="border" *ngIf="OrderData1.OrderType != '11'"><strong>Scheme Value</strong></td>
+                                                        <td><strong>Unit Price</strong></td>
+                                                        <td *ngIf="OrderData1.OrderType != '11'"><strong>MOQ</strong></td>
+                                                        <td><strong>Peti/Out/Qty</strong></td>
+                                                        <td><strong>Total Qty(pcs)</strong></td>
+                                                        <!--<td><strong>Discount%</strong></td>-->
+                                                        <!--<td><strong>DiscountAmount</strong></td>-->
+                                                        <td *ngIf="OrderData1.OrderType != '11'"><strong>AWOTD</strong></td>
+                                                        <td *ngIf="OrderData1.OrderType == '11'"><strong>Taxable Value</strong></td>
+                                                        <td class="border"><strong>HSNCode</strong></td>
+
+                                                        <!--<td class="border"><strong>Tax%</strong></td>-->
+                                                        <!--<td class="border"><strong>Tax</strong></td>-->
+                                                        <!--New-->
+                                                        <td class="border" *ngIf="OrderData1.IsIgstInvoice== true">
+                                                            <strong>IGST%</strong>
+                                                        </td>
+                                                        <td class="border" *ngIf="OrderData1.IsIgstInvoice== true">
+                                                            <strong>IGST</strong>
+                                                        </td>
+                                                        <td class="border" *ngIf="OrderData1.IsIgstInvoice== false">
+                                                            <strong>SGST%</strong>
+                                                        </td>
+                                                        <td class="border" *ngIf="OrderData1.IsIgstInvoice== false">
+                                                            <strong>SGST</strong>
+                                                        </td>
+                                                        <td class="border" *ngIf="OrderData1.IsIgstInvoice== false">
+                                                            <strong>CGST%</strong>
+                                                        </td>
+                                                        <td class="border" *ngIf="OrderData1.IsIgstInvoice== false">
+                                                            <strong>CGST</strong>
+                                                        </td>
+                                                        <!--//cess-->
+                                                        <td class="border"
+                                                            *ngIf="(OrderData1.HideCessColumn == true && OrderData1.IsIgstInvoice== false)">
+                                                            <strong>Cess%</strong>
+                                                        </td>
+                                                        <td class="border"
+                                                            *ngIf="(OrderData1.HideCessColumn == true && OrderData1.IsIgstInvoice== false)">
+                                                            <strong>Cess</strong>
+                                                        </td>
+                                                        <td class="border">TotalAmt (Inc. Tax)</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="border">
+                                                    <tr
+                                                        *ngFor="let orderDetail of OrderData1.orderDetails  let i = index">
+
+                                                        <td *ngIf="orderDetail.UnitPrice!=0">
+                                                            {{i + 1}}
+                                                        </td>
+                                                        <!--<td *ngIf="orderDetail.UnitPrice==0.0001 || orderDetail.UnitPrice==0.01">
+                                                    Free Item
+                                                </td>-->
+                                                        <td>
+                                                            {{orderDetail.itemname}}
+                                                            <span
+                                                                *ngIf="orderDetail.UnitPrice==0.0001 || orderDetail.UnitPrice==0.01">
+                                                                <b style="color:red">(Free Item)</b>
+                                                            </span>
+                                                        </td>
+                                                        <td>{{orderDetail.price}}</td>
+
+                                                        <td *ngIf="OrderData1.OrderType != '11'">
+                                                            <span
+                                                                *ngIf="orderDetail.PTR>0 && (orderDetail.price/(1+orderDetail.PTR/100) -orderDetail.UnitPrice)/(orderDetail.price/(1+orderDetail.PTR/100))*100>0">
+                                                                {{(orderDetail.price/(1+orderDetail.PTR/100)) | number :
+                                                                '1.2-2'}}
+                                                            </span>
+                                                            <span
+                                                            *ngIf="!(orderDetail.PTR>0 && (orderDetail.price/(1+orderDetail.PTR/100) -orderDetail.UnitPrice)/(orderDetail.price/(1+orderDetail.PTR/100))*100>0)">
+                                                            {{(orderDetail.UnitPrice==0.0001 ||
+                                                                orderDetail.UnitPrice==0.01)? (orderDetail.UnitPrice |
+                                                                number : '1.2-4') : (orderDetail.UnitPrice | number :
+                                                                '1.2-2')}}
+                                                        </span>
+                                                        </td>
+                                                        <td *ngIf="OrderData1.OrderType != '11'">
+                                                            <span
+                                                                *ngIf="orderDetail.PTR>0 && (orderDetail.price/(1+orderDetail.PTR/100) -orderDetail.UnitPrice)/(orderDetail.price/(1+orderDetail.PTR/100))*100>0">
+                                                                {{ (orderDetail.price/(1+orderDetail.PTR/100)-orderDetail.UnitPrice)/(orderDetail.price/(1+orderDetail.PTR/100))*100| number : '1.2-2'}}
+                                                            </span>
+                                                            <span
+                                                            *ngIf="!(orderDetail.PTR>0 && (orderDetail.price/(1+orderDetail.PTR/100) -orderDetail.UnitPrice)/(orderDetail.price/(1+orderDetail.PTR/100))*100>0)">
+                                                            0
+                                                            </span>
+                                                        </td>
+                                                        <td *ngIf="OrderData1.OrderType != '11'">
+                                                            <span
+                                                                *ngIf="orderDetail.PTR>0 && (orderDetail.price/(1+orderDetail.PTR/100) -orderDetail.UnitPrice)/(orderDetail.price/(1+orderDetail.PTR/100))*100>0">
+                                                                {{ (orderDetail.price/(1+orderDetail.PTR/100))*(orderDetail.price/(1+orderDetail.PTR/100) -orderDetail.UnitPrice)/(orderDetail.price/(1+orderDetail.PTR/100))*100/100 
+                                                                | number : '1.2-2'}}
+                                                            </span>
+                                                            <span
+                                                            *ngIf="!(orderDetail.PTR>0 && (orderDetail.price/(1+orderDetail.PTR/100) -orderDetail.UnitPrice)/(orderDetail.price/(1+orderDetail.PTR/100))*100>0)">
+                                                            0
+                                                            </span>
+                                                        </td>
+                                                        <!--<td>{{orderDetail.UnitPrice| number : 2}}</td>-->
+                                                        <td>{{(orderDetail.UnitPrice==0.0001 ||
+                                                            orderDetail.UnitPrice==0.01)? (orderDetail.UnitPrice |
+                                                            number : '1.2-4') : (orderDetail.UnitPrice | number :
+                                                            '1.2-2')}}</td>
+
+                                                        <td *ngIf="OrderData1.OrderType != '11'">{{orderDetail.MinOrderQty}}</td>
+                                                        <td *ngIf="OrderData1.OrderType != '11'">{{orderDetail.qty/orderDetail.MinOrderQty | number :
+                                                            '1.2-2'}}</td>
+                                                        <td>{{orderDetail.Noqty}}</td>
+                                                        <!--<td>{{orderDetail.DiscountPercentage}}</td>-->
+                                                        <!--<td>{{orderDetail.DiscountAmmount | number : 2}}</td>-->
+                                                        <td>{{orderDetail.AmtWithoutTaxDisc | number : '1.2-2'}}</td>
+                                                        <td>{{orderDetail.HSNCode}}</td>
+
+                                                        <!--<td>{{orderDetail.TaxPercentage + orderDetail.TotalCessPercentage}}</td>-->
+                                                        <!--<td>{{(orderDetail.TaxAmmount + orderDetail.CessTaxAmount) | number:2}}</td>-->
+                                                        <!--//new column in Igst-->
+                                                        <td *ngIf="OrderData1.IsIgstInvoice== true">
+                                                            {{orderDetail.TaxPercentage +
+                                                            orderDetail.TotalCessPercentage}} </td>
+                                                        <td *ngIf="OrderData1.IsIgstInvoice== true">
+                                                            {{(orderDetail.TaxAmmount + orderDetail.CessTaxAmount) |
+                                                            number : '1.2-2'}} </td>
+                                                        <td *ngIf="OrderData1.IsIgstInvoice== false">
+                                                            {{orderDetail.SGSTTaxPercentage}}</td>
+                                                        <td *ngIf="OrderData1.IsIgstInvoice== false">
+                                                            {{orderDetail.SGSTTaxAmmount| number : '1.2-2'}}</td>
+                                                        <td *ngIf="OrderData1.IsIgstInvoice== false">
+                                                            {{orderDetail.CGSTTaxPercentage}}</td>
+                                                        <td *ngIf="OrderData1.IsIgstInvoice== false">
+                                                            {{orderDetail.CGSTTaxAmmount| number : '1.2-2'}}</td>
+                                                        <!--//cess-->
+                                                        <td
+                                                            *ngIf="(OrderData1.HideCessColumn == true  && OrderData1.IsIgstInvoice== false)">
+                                                            {{orderDetail.TotalCessPercentage}}</td>
+                                                        <td
+                                                            *ngIf="(OrderData1.HideCessColumn == true  && OrderData1.IsIgstInvoice== false)">
+                                                            {{orderDetail.CessTaxAmount| number : '1.2-2'}}</td>
+                                                        <td>{{orderDetail.TotalAmt}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <!--<td>{{}}</td>-->
+                                                        <td><strong>Total: </strong></td>
+                                                        <td></td>
+                                                        <td *ngIf="OrderData1.OrderType != '11'"></td>
+                                                        <td *ngIf="OrderData1.OrderType != '11'"></td>
+                                                        <td *ngIf="OrderData1.OrderType != '11'"></td>
+                                                        <td></td>
+                                                        <td *ngIf="OrderData1.OrderType != '11'">{{getTotalQty(OrderData1.orderDetails)}}</td>
+                                                        <!--<td>{{}}</td>-->
+                                                        <!--<td>{{}}</td>-->
+                                                        <td *ngIf="OrderData1.OrderType != '11'">{{getTotalAWOTD(OrderData1.orderDetails) | number :
+                                                            '1.2-2'}}</td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <!--<td>{{}}</td>-->
+                                                        <!--<td><b>{{getTotalTax(OrderData1.orderDetails) | number:2}}</b></td>-->
+                                                        <!--New-->
+                                                        <td *ngIf="(OrderData1.IsIgstInvoice== false)"></td>
+                                                        <td *ngIf="(OrderData1.IsIgstInvoice== false)">
+                                                            <b>{{getTotalCGST(OrderData1.orderDetails) | number :
+                                                                '1.2-2'}}</b>
+                                                        </td>
+                                                        <td *ngIf="(OrderData1.IsIgstInvoice== false)"></td>
+                                                        <td *ngIf="(OrderData1.IsIgstInvoice== false)">
+                                                            <b>{{getTotalSGST(OrderData1.orderDetails) | number :
+                                                                '1.2-2'}}</b>
+                                                        </td>
+                                                        <td *ngIf="(OrderData1.IsIgstInvoice== true)"></td>
+                                                        <td *ngIf="(OrderData1.IsIgstInvoice== true)">
+                                                            <b>{{getTotalIGST(OrderData1.orderDetails) | number :
+                                                                '1.2-2'}}</b>
+                                                        </td>
+                                                        <!--//cess-->
+                                                        <td
+                                                            *ngIf="(OrderData1.HideCessColumn == true && OrderData1.IsIgstInvoice== false)">
+                                                        </td>
+                                                        <td
+                                                            *ngIf="(OrderData1.HideCessColumn == true && OrderData1.IsIgstInvoice== false)">
+                                                            <b>{{getTotalCess(OrderData1.orderDetails) | number :
+                                                                '1.2-2'}}</b>
+                                                        </td>
+                                                        <td>{{getTotalAmtIncTaxes(OrderData1.orderDetails) | number :
+                                                            '1.2-2'}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="no-print">
+                            <hr />
+                        </div>
+
+
+                        <table style="width:100%;">
+                            <tr>
+                                <td colspan="3">
+                                    <div class="table-responsive">
+                                        <div class="table-responsive">
+                                            <table style="font-size:12px!important;" width="100%">
+                                                <thead style="border-bottom: none !important;">
+                                                    <tr>
+                                                        <td><strong>HSN Summary</strong></td>
+                                                        <td><strong>Taxable Value</strong></td>
+                                                        <td class="border" *ngIf="(OrderData1.IsIgstInvoice== false)">
+                                                            <strong>CGST</strong>
+                                                        </td>
+                                                        <td class="border" *ngIf="(OrderData1.IsIgstInvoice== false)">
+                                                            <strong>SGST</strong>
+                                                        </td>
+                                                        <td class="border" *ngIf="(OrderData1.IsIgstInvoice== true)">
+                                                            <strong>IGST</strong>
+                                                        </td>
+                                                        <!--//cess-->
+                                                        <td class="border"
+                                                            *ngIf="(OrderData1.HideCessColumn == true && OrderData1.IsIgstInvoice== false)">
+                                                            <strong>Cess</strong>
+                                                        </td>
+                                                        <td><strong>Total</strong></td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="border">
+                                                    <!-- <tr data-ng-repeat="orderDetail in OrderData| filter: RemoveZeroQtyItemInvoice('Noqty', 0)"> -->
+                                                    <tr *ngFor="let orderDetail of OrderData1.orderDetails">
+                                                        <td *ngIf="orderDetail.Noqty != 0">{{orderDetail.HSNCode}}</td>
+                                                        <td *ngIf="orderDetail.Noqty != 0">
+                                                            {{orderDetail.AmtWithoutTaxDisc | number : '1.2-2'}}</td>
+                                                        <!--<td>{{(orderDetail.TaxAmmount + orderDetail.CessTaxAmount) | number:2}}</td>-->
+                                                        <td
+                                                            *ngIf="(OrderData1.IsIgstInvoice== true) && orderDetail.Noqty != 0">
+                                                            {{(orderDetail.TaxAmmount + orderDetail.CessTaxAmount )|
+                                                            number : '1.2-2'}} </td>
+                                                        <td
+                                                            *ngIf="(OrderData1.IsIgstInvoice== false) && orderDetail.Noqty != 0">
+                                                            {{orderDetail.CGSTTaxAmmount | number : '1.2-2'}}</td>
+                                                        <td
+                                                            *ngIf="(OrderData1.IsIgstInvoice== false) && orderDetail.Noqty != 0">
+                                                            {{orderDetail.SGSTTaxAmmount | number : '1.2-2'}}</td>
+                                                        <!--//cess-->
+                                                        <td
+                                                            *ngIf="(OrderData1.HideCessColumn == true  && OrderData1.IsIgstInvoice== false) && orderDetail.Noqty != 0">
+                                                            {{orderDetail.CessTaxAmount| number : '1.2-2'}}</td>
+                                                        <td *ngIf="orderDetail.Noqty != 0">
+                                                            {{(orderDetail.AmtWithoutTaxDisc +
+                                                            orderDetail.SGSTTaxAmmount+orderDetail.CGSTTaxAmmount+orderDetail.CessTaxAmount)|
+                                                            number : '1.2-2'}} </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong> Total : </strong></td>
+                                                        <td><b>{{getTotalTaxableValue(OrderData1.orderDetails) | number
+                                                                : '1.2-2'}}</b></td>
+                                                        <td *ngIf="(OrderData1.IsIgstInvoice== true)">
+                                                            <b>{{getTotalIGST(OrderData1.orderDetails) | number :
+                                                                '1.2-2'}}</b>
+                                                        </td>
+                                                        <td *ngIf="(OrderData1.IsIgstInvoice== false)">
+                                                            <b>{{getTotalCGST(OrderData1.orderDetails) | number :
+                                                                '1.2-2'}}</b>
+                                                        </td>
+                                                        <td *ngIf="(OrderData1.IsIgstInvoice== false)">
+                                                            <b>{{getTotalSGST(OrderData1.orderDetails) | number :
+                                                                '1.2-2'}}</b>
+                                                        </td>
+                                                        <td
+                                                            *ngIf="(OrderData1.HideCessColumn == true  && OrderData1.IsIgstInvoice== false)">
+                                                            <b>{{getTotalCess(OrderData1.orderDetails) | number :
+                                                                '1.2-2'}}</b>
+                                                        </td>
+                                                        <td><b>{{getTotalIOverall(OrderData1.orderDetails) | number :
+                                                                '1.2-2'}}</b></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="no-print">
+                            <hr />
+                        </div>
+                        <table style="width:100%;">
+                            <tr>
+                                <td style="text-align:left;padding-left:10px;vertical-align:top;width:100%;">
+                                    <span style="font-size: 14px;" *ngIf="OrderData1.deliveryCharge>0">
+                                        <b>Delivery Charge:</b> {{OrderData1.deliveryCharge | number : '1.0-0'}}&nbsp;₹
+                                        /-
+                                    </span><br *ngIf="OrderData1.deliveryCharge>0" />
+
+                                    <span style="font-size: 14px;" *ngIf="OrderData1.WalletAmount>0">
+                                        <b>Wallet Amount: </b>{{OrderData1.WalletAmount | number : '1.0-0'}}&nbsp;₹ /-
+                                    </span><br *ngIf="OrderData1.WalletAmount>0" />
+                                    <span style="font-size: 14px;" *ngIf="OrderData1.BillDiscountAmount>0"><b>Bill
+                                            Discount Amount: </b>{{OrderData1.BillDiscountAmount | number :
+                                        '1.0-0'}}&nbsp;<i class="fa fa-inr"></i></span><br
+                                        *ngIf="OrderData1.BillDiscountAmount>0" />
+                                    <span style="font-size: 14px;" *ngIf="OrderData1.BillDiscountAmount>0"><b>Offer
+                                            Code:</b> {{OrderData1.offertype }}</span><br
+                                        *ngIf="OrderData1.BillDiscountAmount>0" />
+                                    <!-- <span style="font-size: 14px;" *ngIf="InvoiceOrderOffer.BillDiscountAmount>0 "> <b>Post Offer Code: </b>{{InvoiceOrderOffer.OfferCode }}</span><br *ngIf="InvoiceOrderOffer.BillDiscountAmount>0 " />
+                            <span style="font-size: 14px;" *ngIf="InvoiceOrderOffer.BillDiscountAmount>0 "><b>Post Wallet Amount</b> : {{InvoiceOrderOffer.BillDiscountAmount| number: 0 }}<i class="fa fa-inr"></i></span><br *ngIf="InvoiceOrderOffer.BillDiscountAmount>0 " /> -->
+                                    <span style="font-size: 14px;" *ngIf="OrderData1.TCSAmount>0">
+                                        <b>TCS Charge ({{TCSPercent}}%):</b> : {{OrderData1.TCSAmount | number :
+                                        '1.0-0'}}<i class="fa fa-inr"></i>
+                                    </span><br *ngIf="OrderData1.TCSAmount>0" />
+                                    <span style="font-size: 14px;">
+                                        <b>Invoice Amount:</b> ₹ {{OrderData1.GrossAmount -
+                                        (OrderData1.DiscountAmount?OrderData1.DiscountAmount:0) | number:0}}&nbsp;/-
+                                        &nbsp; &nbsp;&nbsp;<b>({{OrderData1.InvoiceAmountInWord}})</b>
+                                    </span>
+                                    <br />
+                                    <span *ngIf="OrderData1.PaymentDetails.length>0">
+                                        <span style="font-size: 14px;">
+                                            <b> Payment Mode:</b>
+                                            <span *ngFor="let Pd of OrderData1.PaymentDetails">
+                                                <span>{{Pd.PaymentFrom}}</span>
+                                                <span>&nbsp;&nbsp;</span>
+                                                <!-- <span>
+                                                    {{Pd.amount}}&nbsp;₹ /- 
+                                                </span> -->
+                                                <span *ngIf="Pd.IsOnline && Pd.PaymentFrom != 'PayLater'">
+                                                    {{Pd.amount}}&nbsp;₹ /-  (Paid)
+                                                </span>
+                                                <span *ngIf="Pd.IsOnline && Pd.PaymentFrom == 'PayLater' ">
+                                                    {{Pd.amount}}&nbsp;₹ /-  ({{Pd.statusDesc}})
+                                                </span>
+                                                <span>&nbsp;&nbsp;</span>
+                                            </span>
+                                        </span>
+                                    </span>
+
+                                    <br />
+
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="text-align:left">
+                                    <span style="font-size: 14px;text-align:left;margin-left:11px;"><strong><b><u>Terms
+                                                    & conditions</u></b></strong></span>
+
+                                    <!--<span style="font-size: 12px; margin-right:5px;">&nbsp;&nbsp;&nbsp;<b>1).</b> Payment to be made by cash on delivery or Cheque(Same day only)</span></br>
+                            <span style="font-size: 12px; margin-right:5px;">&nbsp;&nbsp;&nbsp;<b>2).</b> Cheques Payable to ShopKirana E Trading Pvt. Ltd.</span></br>
+                            <span style="font-size: 12px; margin-right:5px;">&nbsp;&nbsp;&nbsp;<b>3).</b> Only same day cheques are accepted.</span></br>
+                            <span style="font-size: 12px; margin-right:5px;">4). Cheques retrun charges Rs.200 to Rs.400</span>
+                            <span style="font-size: 12px; margin-right:5px;">&nbsp;&nbsp;&nbsp;<b>4).</b> Cheques Bounce Charges: Cheque Amount 5,000/- to 9999/-; Bounce Charges: INR 300/- For Cheque Amount =>10,000/-& Above; Bounce Charges: INR 500/-</span></br>
+                            <span style="font-size: 12px; margin-right:5px;">&nbsp;&nbsp;&nbsp;<b>5).</b> Cheques are accepted above 5,000.00 only.</span></br>-->
+                                    <span style="font-size: 12px; margin-right:5px;"><br/>
+                                        &nbsp;&nbsp;&nbsp;<b>1).</b> Post
+                                        WalletPoint will be credited after order delivered</span><br />
+                                    <span style="font-size: 12px; margin-right:5px;color:red">
+                                        &nbsp;&nbsp;&nbsp;<b>2).</b>* All Amount in Rupee(₹ )
+                                    </span>
+                                    <br />
+                                    <span style="font-size: 12px; margin-right:5px;"  *ngIf="(OrderData1.OrderType =='6')">&nbsp;&nbsp;&nbsp;
+                                        <b>3).</b>not fit for human consumption.
+                                    </span>
+                                    <span style="font-size: 12px; margin-right:5px;"  *ngIf="(OrderData1.OrderType =='9')">&nbsp;&nbsp;&nbsp;
+                                        <b>3).</b>not fit for human consumption.
+                                    </span><br />
+                                    <span style="font-size: 12px; margin-right:5px;"  *ngIf="(OrderData1.OrderType =='8')">&nbsp;&nbsp;&nbsp;
+                                        <b>3).</b>All clearance orders will be placed as prepaid orders.
+                                    </span><br />
+                                    <span style="font-size: 12px; margin-right:5px;" *ngIf="(OrderData1.OrderType =='8')">&nbsp;&nbsp;&nbsp;
+                                        <b>4).</b>All material listed for sale is sold on ‘as-is’ basis.
+                                        Products marked as "non-returnable" on the product detail page cannot be returned.
+                                    </span><br />
+                                    <span style="font-size: 12px; margin-right:5px;" *ngIf="(OrderData1.OrderType =='8')">&nbsp;&nbsp;&nbsp;
+                                        <b>5).</b>Any issue with regards to the product must be reported at the time of delivery.
+                                    </span>
+
+                                </td>
+                            </tr>
+                        </table>
+                        <!--<br />-->
+
+                        <br />
+                        <table>
+                            <tr>
+                                <td>
+
+                                    <span>
+                                        This is computer generated invoice no signature required
+                                    </span>
+                                    <br />
+                                    <span>* The courts at Indore alone will have jurisdiction in respect of all disputes
+                                        arising with regard to the goods sold under this invoice.</span>
+                                    <br />
+
+                                    <p style="color:red;border:1px dotted black" *ngIf="CustomerCriticalInfo">
+                                        *{{CustomerCriticalInfo}}
+                                    </p>
+
+                                </td>
+                            </tr>
+                        </table>
+                        <footer style="page-break-before: always;"></footer>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

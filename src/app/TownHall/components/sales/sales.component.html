@@ -1,0 +1,412 @@
+<app-town-hall-navigation></app-town-hall-navigation>
+
+<div *ngIf="townHallCommentsSection">
+<!-- Total Sales scope starts-->
+<section id="horizontal-examples">
+  <div class="row text-left">
+    <div class="col-12 mt-3 mb-1">
+      <!-- <h2 class="content-header">Total Sales</h2> -->
+      <div class="content-header">
+          <span>
+              <a href="javascript:void(0);" (click)="isEditable = !isEditable">Total Sales</a>
+              &nbsp;
+              <a href="javascript:void(0);" *ngIf="isEditable" (click)="updateComment()"><i
+                      class="fa fa-floppy-o" aria-hidden="true"></i></a>
+          </span>
+      </div>
+      <!-- <p class="content-sub-header">For a small places in place of hub kpp works.</p> -->
+    </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+    <div class="col-xl-12 col-lg-12">
+      <div class="card horizontal">
+        <div class="card-content d-flex justify-content-between">
+          <div class="card-img ttl-sl">
+            <div *ngIf="totaleSalesChartData">
+              <canvas height="500" baseChart class="chart" [datasets]="totaleSalesChartData"
+                [labels]="totalSalesDataLabel" [options]="totalSalesChartOptions" [colors]="totalSalesChartColors"
+                [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+            </div>
+          </div>
+
+          <!-- <div class="card-stacked align-self-center xmr"> -->
+              <div
+              [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallSalesComments.TotalSales}">
+            <div class="px-3">
+              <div class="card-header">
+                <h4 class="card-title">Total Sales</h4>
+              </div>
+              <table class="table ">
+                <thead class="">
+                  <tr>
+                    <th>#</th>
+                    <th>Month</th>
+                    <th>Sales (in crore)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let sale of kkSales; let i=index;">
+                    <td>{{i+1}}</td>
+                    <td>{{sale.MonthName}}</td>
+                    <td>{{sale.TotalSales}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-stacked align-self-center xmr bck rghtt"
+          *ngIf="!isEditable && townHallCommentsSection.TownHallSalesComments.TotalSales">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="vtnt"
+                      [innerHTML]="townHallCommentsSection.TownHallSalesComments.TotalSales"></div>
+              </div>
+          </div>
+      </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallSalesComments.TotalSales" name="AgentKPPEditor"
+            [style]="{'height':'320px'}"></p-editor>
+    </div>
+  </div>
+</section>
+<!-- Total Sales scope ends-->
+
+
+<!-- Online Sales scope starts-->
+<section id="horizontal-examples">
+  <div class="row text-left">
+    <div class="col-12 mt-3 mb-1">
+      <!-- <h2 class="content-header">Online Sales</h2> -->
+      <div class="content-header">Online Sales</div>
+      <!-- <p class="content-sub-header">For a small places in place of hub kpp works.</p> -->
+    </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+    <div class="col-xl-12 col-lg-12">
+      <div class="card horizontal">
+        <div class="card-content d-flex justify-content-between">
+          <div class="card-img dd">
+            <div *ngIf="onlineSalesChartData">
+              <canvas height="500" baseChart class="chart" [datasets]="onlineSalesChartData"
+                [labels]="onlineSalesDataLabel" [options]="onlineSalesChartOptions" [colors]="onlineSalesChartColors"
+                [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+            </div>
+          </div>
+          <!-- <div class="card-stacked align-self-center xmr"> -->
+          <div
+              [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallSalesComments.OnlineSales}">
+            <div class="px-3">
+              <div class="card-header">
+                <h4 class="card-title">Online Sales</h4>
+              </div>
+              <table class="table ">
+                <thead class="">
+                  <tr>
+                    <th>#</th>
+                    <th>Month</th>
+                    <th>Sales (in crore)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let sale of kkSales; let i=index;">
+                    <td>{{i+1}}</td>
+                    <td>{{sale.MonthName}}</td>
+                    <td>{{sale.onlineSale}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-stacked align-self-center xmr  bck rghtt"
+          *ngIf="!isEditable && townHallCommentsSection.TownHallSalesComments.OnlineSales">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="vtnt"
+                      [innerHTML]="townHallCommentsSection.TownHallSalesComments.OnlineSales"></div>
+              </div>
+          </div>
+      </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallSalesComments.OnlineSales" name="OnlineSalesEditor"
+            [style]="{'height':'320px'}"></p-editor>
+    </div>
+  </div>
+</section>
+<!-- Online Sales scope ends-->
+
+<!-- Kisan Kirana Sales scope starts-->
+<section id="horizontal-examples">
+  <div class="row text-left">
+    <div class="col-12 mt-3 mb-1">
+      <!-- <h2 class="content-header">Kisan Kirana Sales</h2> -->
+      <div class="content-header">Kisan Kirana Sales</div>
+      <!-- <p class="content-sub-header">For a small places in place of hub kpp works.</p> -->
+    </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+    <div class="col-xl-12 col-lg-12">
+      <div class="card horizontal">
+        <div class="card-content d-flex justify-content-between">
+          <div class="card-img cc">
+            <div *ngIf="kkSalesChartColors">
+              <canvas height="500" baseChart class="chart" [datasets]="kkChartData" [labels]="kkSalesDataLabel"
+                [options]="kkChartOptions" [colors]="kkSalesChartColors" [legend]="lineChartLegend"
+                [chartType]="lineChartType"></canvas>
+            </div>
+          </div>
+          <!-- <div class="card-stacked align-self-center xmr"> -->
+          <div [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallSalesComments.KisanKiranaSales}">
+            <div class="px-3">
+              <div class="card-header">
+                <h4 class="card-title">Kisan Kirana Sales</h4>
+              </div>
+              <table class="table ">
+                <thead class="">
+                  <tr>
+                    <th>#</th>
+                    <th>Month</th>
+                    <th>Sales (in lakhs)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let sale of kkSales; let i=index;">
+                    <td>{{i+1}}</td>
+                    <td>{{sale.MonthName}}</td>
+                    <td>{{sale.kkSale}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-stacked align-self-center xmr  bck rghtt"
+          *ngIf="!isEditable && townHallCommentsSection.TownHallSalesComments.KisanKiranaSales">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="vtnt"
+                      [innerHTML]="townHallCommentsSection.TownHallSalesComments.KisanKiranaSales"></div>
+              </div>
+          </div>
+      </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallSalesComments.KisanKiranaSales"
+            name="ActiveClusterEditor" [style]="{'height':'320px'}"></p-editor>
+    </div>
+  </div>
+</section>
+<!-- Kisan Kirana Sales scope ends-->
+
+<!-- Order & Kisan Kirana Retailers scope starts-->
+<section id="horizontal-examples">
+  <div class="row text-left">
+    <div class="col-12 mt-3 mb-1">
+      <!-- <h2 class="content-header">Order & Kisan Kirana Retailers</h2> -->
+      <div class="content-header">Order & Kisan Kirana Retailers</div>
+      <!-- <p class="content-sub-header">For a small places in place of hub kpp works.</p> -->
+    </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+    <div class="col-xl-12 col-lg-12">
+      <div class="card horizontal">
+        <div class="card-content d-flex justify-content-between">
+          <div class="card-img on-kk">
+            <div *ngIf="orderAndKisanKiranaRetailersChartData">
+              <canvas height="500" baseChart class="chart" [datasets]="orderAndKisanKiranaRetailersChartData"
+                [labels]="orderAndKisanKiranaRetailersDataLabel" [options]="orderAndKisanKiranaRetailersChartOptions"
+                [colors]="orderAndKisanKiranaRetailersChartColors" [legend]="lineChartLegend"
+                [chartType]="lineChartType"></canvas>
+            </div>
+          </div>
+          <!-- <div class="card-stacked align-self-center xmr"> -->
+          <!-- <div [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallKppComments.OrderandKisanKiranaRetailers}"> -->
+              <div
+              [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallSalesComments.OrderAndKisanKiranaRetailers}">
+            <div class="px-3">
+              <div class="card-header">
+                <h4 class="card-title">Order & Kisan Kirana Retailers</h4>
+              </div>
+              <table class="table ">
+                <thead class="">
+                  <tr>
+                    <th>#</th>
+                    <th>Month</th>
+                    <th>KK Retailers</th>
+                    <th>All Retailers</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let sale of kkSales; let i=index;">
+                    <td>{{i+1}}</td>
+                    <td>{{sale.MonthName}}</td>
+                    <td>{{sale.KisanKiranaRetailers}}</td>
+                    <td>{{sale.OrderRetailers}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- <div class="card-stacked align-self-center xmr  bck rghtt"
+          *ngIf="!isEditable && townHallCommentsSection.TownHallKppComments.Order&KisanKiranaRetailers"> -->
+          <div class="card-stacked align-self-center xmr  bck rghtt"
+          *ngIf="!isEditable && townHallCommentsSection.TownHallSalesComments.OrderAndKisanKiranaRetailers">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="vtnt"
+                      [innerHTML]="townHallCommentsSection.TownHallSalesComments.OrderAndKisanKiranaRetailers"></div>
+              </div>
+          </div>
+      </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallSalesComments.OrderAndKisanKiranaRetailers"
+            name="ActiveClusterEditor" [style]="{'height':'320px'}"></p-editor>
+    </div>
+  </div>
+</section>
+<!-- Order & Kisan Kirana Retailers scope ends-->
+
+<!-- Total Orders scope starts-->
+<section id="horizontal-examples">
+  <div class="row text-left">
+    <div class="col-12 mt-3 mb-1">
+      <!-- <h2 class="content-header">Total Orders</h2> -->
+      <div class="content-header">Total Orders</div>
+      <!-- <p class="content-sub-header">For a small places in place of hub kpp works.</p> -->
+    </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+    <div class="col-xl-12 col-lg-12">
+      <div class="card horizontal">
+        <div class="card-content d-flex justify-content-between">
+          <div class="card-img tt-or">
+            <div *ngIf="totalOrderChartData">
+              <canvas height="500" baseChart class="chart" [datasets]="totalOrderChartData"
+                [labels]="totalOrderDataLabel" [options]="totalOrderChartOptions" [colors]="totalOrderChartColors"
+                [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+            </div>
+          </div>
+          <!-- <div class="card-stacked align-self-center xmr"> -->
+          <div [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallSalesComments.TotalOrders}">
+            <div class="px-3">
+              <div class="card-header">
+                <h4 class="card-title">Total Orders </h4>
+              </div>
+              <table class="table ">
+                <thead class="">
+                  <tr>
+                    <th>#</th>
+                    <th>Month</th>
+                    <th>Total Orders</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let sale of kkSales; let i=index;">
+                    <td>{{i+1}}</td>
+                    <td>{{sale.MonthName}}</td>
+                    <td>{{sale.TotalOrders}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-stacked align-self-center xmr  bck rghtt"
+          *ngIf="!isEditable && townHallCommentsSection.TownHallSalesComments.TotalOrders">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="vtnt"
+                      [innerHTML]="townHallCommentsSection.TownHallSalesComments.TotalOrders"></div>
+              </div>
+          </div>
+      </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallSalesComments.TotalOrders"
+            name="ActiveClusterEditor" [style]="{'height':'320px'}"></p-editor>
+    </div>
+  </div>
+</section>
+<!-- Total Orders scope ends-->
+
+<!-- Total Brands scope starts-->
+<section id="horizontal-examples">
+    <div class="row text-left">
+      <div class="col-12 mt-3 mb-1">
+        <!-- <h2 class="content-header">Total Brands</h2> -->
+        <div class="content-header">Total Brands</div>
+        <!-- <p class="content-sub-header">For a small places in place of hub kpp works.</p> -->
+      </div>
+    </div>
+  
+    <div class="row text-left" matchHeight="card">
+      <div class="col-xl-12 col-lg-12">
+        <div class="card horizontal">
+          <div class="card-content d-flex justify-content-between">
+            <div class="card-img ttbr">
+              <div *ngIf="orderedBrandsChartData">
+                <canvas height="500" baseChart class="chart" [datasets]="orderedBrandsChartData"
+                  [labels]="orderedBrandsDataLabel" [options]="orderedBrandsChartOptions" [colors]="orderedBrandsChartColors"
+                  [legend]="lineChartLegend" [chartType]="lineChartType"></canvas>
+              </div>
+            </div>
+            <!-- <div class="card-stacked align-self-center xmr"> -->
+            <div [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallSalesComments.TotalBrands}">
+              <div class="px-3">
+                <div class="card-header">
+                  <h4 class="card-title">Total Brands </h4>
+                </div>
+                <table class="table ">
+                  <thead class="">
+                    <tr>
+                      <th>#</th>
+                      <th>Month</th>
+                      <th>Total Brands</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let sale of kkSales; let i=index;">
+                      <td>{{i+1}}</td>
+                      <td>{{sale.MonthName}}</td>
+                      <td>{{sale.OrderedBrands}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-stacked align-self-center xmr  bck rghtt"
+            *ngIf="!isEditable && townHallCommentsSection.TownHallSalesComments.TotalBrands">
+            <div class="card horizontal">
+                <div class="card-content d-flex justify-content-between">
+                    <div class="vtnt"
+                        [innerHTML]="townHallCommentsSection.TownHallSalesComments.TotalBrands"></div>
+                </div>
+            </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+          <p-editor [(ngModel)]="townHallCommentsSection.TownHallSalesComments.TotalBrands"
+              name="ActiveClusterEditor" [style]="{'height':'320px'}"></p-editor>
+      </div>
+    </div>
+  </section>
+  <!-- Total Brands scope ends-->
+
+</div>

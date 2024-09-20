@@ -1,0 +1,42 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="card">
+    <div class="card-header">
+        <div class="header">CRM Platform Configuration</div>
+    </div>
+    <div class="mr_left">
+        <!-- <p-accordion (onClose)="onTabClose($event)" (onOpen)="onTabOpen($event)">
+            <p-accordionTab header="CRM">
+                <app-crm-list-page></app-crm-list-page>
+            </p-accordionTab>
+            <p-accordionTab header="Platform">
+                <app-platform-list-page></app-platform-list-page>
+            </p-accordionTab>
+            <p-accordionTab header="Configuration">
+                <app-configuration-page></app-configuration-page>
+            </p-accordionTab>
+        </p-accordion> -->
+        <p-tabView (onChange)="onTabChange($event)">
+            <!-- =========Profile Section Start here=========== [(first)]="first" -->
+            <p-tabPanel header="Configuration" [selected]="true">
+                    <app-configuration-page *ngIf="selectedTab == 'Configuration'"></app-configuration-page>
+            </p-tabPanel>
+            <p-tabPanel header="CRM" >
+                <app-crm-list-page *ngIf="selectedTab == 'CRM'"></app-crm-list-page>
+            </p-tabPanel>
+            <p-tabPanel header="Platform" >
+                <app-platform-list-page *ngIf="selectedTab == 'Platform'"></app-platform-list-page>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</div>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  

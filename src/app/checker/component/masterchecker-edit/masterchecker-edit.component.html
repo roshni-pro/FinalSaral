@@ -1,0 +1,51 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="row">
+<div class="col-md-2">
+  <!-- <div class="form-group m-2"> -->
+    <label for="a"> Change Status </label>
+    <select id="desg" name="desg" class="form-control" [(ngModel)]="details.Status">
+      <option value="">--select--</option>
+      <option *ngFor="let sta of Status" [ngValue]="sta">
+        {{ sta }}
+      </option>
+    </select>
+  </div>
+<!-- </div> -->
+
+<div class="col-md-3">
+  <label for="name"><b>Comment</b></label>
+  <textarea class="form-control" name="c" [(ngModel)]="details.CheckerComment" cols="100" rows="3">
+        </textarea>
+</div>
+<div class="col-md-3">
+  <button type="button" class="btn btn-raised btn-primary" (click)="update()" *ngIf="LastStatus == 'Pending'"  [disabled]="disablebtn">
+    Save
+  </button>
+</div>
+<!-- 
+
+<div class="col-md-3">
+  <button type="button" class="btn btn-raised btn-primary" (click)="update()" ng-click-options="{preventDoubleClick: true}" *ngIf="LastStatus == 'Pending'"  [disabled]="disablebtn">
+    Save
+  </button>
+</div> -->
+</div><br/><br/>
+
+<div class="ui-fluid shadow p-12 mb-5 bg-white rounded table table-hover" >
+  <table class="table table-stripped table-hover table-sm">
+    <thead>
+      <!-- <th>Action</th> -->
+      <th *ngFor="let header of ColumnArray">{{header}}</th>
+      <!-- <th>Action</th> -->
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of RowArray">
+        <td>{{row}}</td>
+
+        <td>{{list.length>1?list[1][row]: '-'}}</td>
+        <td [ngClass]="{'nt-mt': list.length>1 && (list[1][row] !=list[0][row]) }">{{list[0][row]}}</td>       
+      </tr>
+    </tbody>
+  </table>
+</div>

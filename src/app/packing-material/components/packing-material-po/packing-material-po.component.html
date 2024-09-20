@@ -1,0 +1,122 @@
+
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<section *ngIf="!isAddPo && !isGRApproval">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="content-header">Material PO Master</div>
+        </div>
+    </div>
+    <br/>
+    <div class="row float-right" style="margin-right: 15px;">
+        <button type="button" class="btn btn-raised btn-primary" (click)="AddPo()">AddPO</button>
+    </div>
+<br/><br/>
+<p-confirmDialog #cd appendTo="body" header="Good Recieved">
+<p-footer>
+    <div class="row"style="margin-left: 5px; margin-top: 10px; margin-right: 5px">
+        <label>Remaining QTY</label>
+        <input type="number" class="form-control" [(ngModel)]="RemainingQTy" disabled>
+    </div>
+    <!-- <br /> -->
+    <div class="row"style="margin-left: 5px; margin-top: 10px; margin-right: 5px">
+        <label>Enter Recived QTY</label>
+        <input type="number" class="form-control" [(ngModel)]="RecivedQTy" #Recived="ngModel">
+
+         <div *ngIf="RecivedQTy > RemainingQTy ">
+            <code> Recived Quantity is Not greater than Remaining QTy</code>
+          </div>
+    </div>
+    <div class="row form-group"style="margin-left: 5px; margin-top: 10px;">
+        <label for="uploadAdvertisements">Invoice Image:</label><br />
+        <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+            (change)="upload($event.target.files)" />
+        <br />
+      
+        <div class="form-group">
+            <img alt="" src="{{imgURL}}" class="img-square">
+        </div>
+    </div>
+      
+    <!-- <br /> -->
+    <!-- <h6 class="text-left">Comment Section:</h6>
+    <textarea type="text" class="form-control" [(ngModel)]="Comment"></textarea><br /> -->
+    <button type="button" class="btn btn-raised  float-left" style=" margin-left: 5px;background-color: rgb(96, 148, 18);" (click)="uploadImage()" [disabled] = "RecivedQTY > RemainingQTy"> Upload</button>
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()" >No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1"(click)="cd.accept()" [disabled] = "RecivedQTy > RemainingQTy || !imgURL || !RecivedQTy">Yes</button>
+</p-footer>
+  </p-confirmDialog>
+    <div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover">
+        <div class="position-relative">
+            <p-table #dt [globalFilterFields]="cols" [value]="MaterialPOList" [paginator]="true" [rows]="3"[lazy]="true"
+            [totalRecords]="totalRecords" (onLazyLoad)="load($event)" 
+                dataKey="PackingId" [scrollable]="true" scrollHeight="70vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <!-- <th>Edit</th> -->
+                        <th *ngFor="let col of cols" style="text-align: center">
+                            {{col.header}}
+                            <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+                        </th>
+                        <th>
+                            Good Recived
+                        </th>
+                        <th>
+                          GR Approval
+                        </th>
+                        <!-- <th>Open</th> -->
+                        <!-- <th>Action</th> -->
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                    <tr >
+                        <td *ngFor="let col of cols" style="text-align: center" > <!--(click)="open(rowData)"-->
+                                {{rowData[col.field]}}
+                        </td>
+                        <td>
+                            <div *ngIf="rowData.Quantity != rowData.GRReceivedQuantity">
+                                <button type="button" class="btn btn-raised btn-primary" (click)="gr(rowData)">Good Recived</button>
+                            </div>
+                            <div *ngIf="rowData.Quantity == rowData.GRReceivedQuantity">
+                                <b style="color: brown;">GR Closed</b>
+                            </div>
+                        </td>
+                        <td>
+                            <div  *ngIf="rowData.GRReceivedQuantity > 0 && rowData.STATUS != 2 ">
+                            <button type="button" class="btn btn-raised " style="background-color: rgb(96, 148, 18);" (click)="open(rowData)">GR Approval</button>
+                            </div>
+                            <div  *ngIf="rowData.STATUS == 2 ">
+                                <button type="button" class="btn btn-raised " style="background-color: rgb(204, 20, 51);" (click)="open(rowData)">Approved</button>   
+                            </div>
+                            <div *ngIf="rowData.GRReceivedQuantity == 0">
+                                NA
+                            </div>
+                        </td>
+                        <!-- <td><button type="button" class="btn btn-raised " style="background-color:brown;" (click)="open(rowData)"> Open
+                            </button></td>-->
+                        
+                        <!-- <td > 
+                            <div *ngIf="rowData.Status != 'Pending to Pick'">
+                            <button *ngIf="rowData.Status == 'Pick from Customer'" type="button" class="btn btn-raised "
+                                style="background-color:rgb(173, 125, 22);" (click)="OnWhAccept(rowData)"> WH Accept </button>
+                                <button *ngIf="rowData.Status == 'Received at Warehouse'" type="button" class="btn btn-raised " style="background-color:blueviolet;" (click)="open(rowData)"> QC Accept </button>
+                            </div>
+                            <div *ngIf="rowData.Status == 'Pending to Pick'">
+                                  NA
+                            </div>
+                            </td> -->
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+
+    </div>
+</section>
+<section *ngIf="isAddPo">
+    <app-add-material-po (isdetailsclose)="isdetailsclose()"></app-add-material-po>
+</section>
+
+<section *ngIf="isGRApproval">
+    <app-material-grapproval [packingID]="packingID" (isdetailsclose)="isdetailsclose()"></app-material-grapproval>
+</section>

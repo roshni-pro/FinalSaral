@@ -1,0 +1,71 @@
+<p-dialog [(visible)]="display" (onHide)="hideThis()" [style]="{width: '100vw', height: '100vh'}" appendTo="body">
+    <p-header>
+        Request
+    </p-header>
+    <!-- Content -->
+    <div class="sk">
+        <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [zoomControl]="true"
+            [fullscreenControl]="true" [disableDefaultUI]="false" [zoomControl]="false"
+            [style.height.px]="myInnerHeight">
+            <agm-direction [origin]="origin" [destination]="origin" [waypoints]="expectedWaypoints" 
+                [markerOptions]="markerOptions">
+            </agm-direction>
+            <agm-marker *ngFor="let wp of expectedWaypoints; let i = index;" label="CustomerLatLng"
+                [latitude]="wp.location.lat" [longitude]="wp.location.lng">
+                <agm-info-window [disableAutoPan]="false" #infoWindow>
+                    <div>
+                        {{selectedData.BillingAddress}}
+                    </div>
+                </agm-info-window>
+            </agm-marker>
+            <agm-marker label="NewLatLng" [latitude]="origin.lat" [longitude]="origin.lng"
+            [iconUrl]="waypointMarker">
+            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                <div>
+                   
+                </div>
+            </agm-info-window>
+        </agm-marker>
+        </agm-map>
+    </div>
+    <div class="col-md-12">
+        <span class="bl">Distance between markers: <u> {{distance}}</u> miles.</span>
+    </div>
+    <hr>
+    <div class="col-md-12">
+        <table class="table table-striped" id="tb">
+                <tr>
+                    <th>SkCode</th>
+                    <th>Requested By</th>
+                    <th>Billing Address</th>
+                    <th>Request Date</th>
+                </tr>
+                <tr>
+                    <td>{{selectedData.Skcode}}</td>
+                    <td>{{selectedData.CreatedBy}}</td>
+                    <td>{{selectedData.BillingAddress}}</td>
+                    <td>{{selectedData.CreatedDate | date : 'dd/MM/yyyy'}}</td>
+                </tr>
+        </table>
+    </div>
+    <p-footer *ngIf="!selectedData.IsRejected && !selectedData.IsApproved">
+        <div class="row" >
+            <div class="col-12">
+                <button class="pull-right btn btn-warning cl" (click)="onReject()">Reject</button>
+                <button class="pull-right btn btn-primary" (click)="onApprove()">Approve</button>
+            </div>
+            
+        </div>
+    </p-footer>
+</p-dialog>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

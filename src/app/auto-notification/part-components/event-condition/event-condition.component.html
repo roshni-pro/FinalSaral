@@ -1,0 +1,46 @@
+<form class="form mr-t-10" #eventForm="ngForm">
+    <div class="form-body">
+        <h4 class="form-section"><i class="fa fa-key" aria-hidden="true"></i>Condition Selections</h4>
+        <div *ngIf="autoNotification && autoNotification.AutoNotificationConditions">
+            <div class="row" *ngFor="let conditions of autoNotification.AutoNotificationConditions; let i=index;">
+                <div class="col-md-6">
+                    <div class="form-group" *ngIf="autoNotification">
+                        <label for="projectinput1">Field Name</label>
+                        <select class="form-control" [(ngModel)]="conditions.FieldName" name="{{'field_' + i}}"
+                            (ngModelChange)="onSelectField(conditions)">
+                            <option value="">select</option>
+                            <option *ngFor="let field of anFieldMasterList" [value]="field.FieldName">
+                                {{field.FieldName}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group" *ngIf="conditions.operatorMasterList">
+                        <label for="projectinput1">Operator</label>
+                        <select class="form-control" [(ngModel)]="conditions.OperatorSign" name="{{'operator_' + i}}"
+                            (ngModelChange)="onSelectField(conditions)">
+                            <option value="">select</option>
+                            <option *ngFor="let operator of conditions.operatorMasterList"
+                                [value]="operator.OperatorSign">
+                                {{ operator.OperatorName + ' (' +  operator.OperatorSign + ')'}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group" *ngIf="conditions.operatorMasterList">
+                        <label for="projectinput1">Value 1</label>
+                        <input [(ngModel)]="conditions.Value1" class="form-control" name="{{'Value1' + i}}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group" *ngIf="conditions.operatorMasterList && conditions.OperatorSign">
+                        <label for="projectinput1">Value 2</label>
+                        <input [(ngModel)]="conditions.Value2" class="form-control" name="{{'Value2' + i}}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

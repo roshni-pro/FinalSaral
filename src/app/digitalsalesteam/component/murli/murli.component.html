@@ -1,0 +1,235 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<br>
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-12">
+            <h4>Murli</h4>
+            <hr style="background-color: white;">
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-2">
+                    <label for="City">City</label><br>
+                    <p-multiSelect [style]="{minWidth:''}" id="Cityid" name="CityName" [options]="cityList"
+                        [(ngModel)]="dataset.cityid" (onChange)="GetCityWarehouse(dataset.cityid)"
+                        [panelStyle]="{minWidth:'25em'}" optionLabel="CityName" appendTo="body">
+                    </p-multiSelect>
+                </div>
+                <div class="col-sm-2">
+                    <label>Select Hub</label><br>
+                    <p-multiSelect [style]="{minWidth:''}" id="warehouse" name="warehouse" [options]="warehouseList"
+                        [(ngModel)]="selectedwarehouse" [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName">
+                    </p-multiSelect>
+
+                </div>
+                <div class="col-sm-2">
+                    <label for="FromDate">Status</label>
+                    <select name="" value="" [(ngModel)]="searchdata.StatusValue" class="form-control">
+                    <option  value="All">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Accept">Accept</option>
+                    <option value="Reject">Reject</option>
+                </select>
+                </div>
+
+                <div class="col-sm-2">
+                    <label for="FromDate">StartDate</label>
+                    <input type="datetime-local" id="startDate" name="startDate" class="form-control"
+                        [ngModel]="searchdata.startDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="searchdata.startDate  = $event" />
+                </div>
+                <div class="col-sm-3">
+                    <label for="FromDate">ToDate</label>
+                    <input type="datetime-local" id="endDate" name="endDate" class="form-control"
+                        [ngModel]="searchdata.endDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="searchdata.endDate = $event" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <br>
+            <button (click)="getmurliList(searchdata)" class="btn btn-primary">search</button>&nbsp;&nbsp;&nbsp;
+            <button (click)="Export(searchdata)" class="btn btn-primary">Export</button>
+        </div>
+    </div>
+
+
+    <div>
+        <p-table [value]="murliRequestdata" [paginator]="true" [lazy]="true"
+            (onLazyLoad)="load($event)" [rows]="10" [totalRecords]="totalcount">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Sr No</th>
+                    <th>Warehouse</th>
+                    <th>Status</th>
+                    <th>Seller</th>
+                    <th>StartDate</th>
+                    <th>EndDate</th>
+                    <th>Action</th>
+                    <th>IsApproved</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowIndex="rowIndex" let-list>
+                <tr>
+                    <td>{{rowIndex+1}}</td>
+                    <td>{{list.Warehouse}}</td>
+                    <td>{{list.Status}}</td>
+                    <td>{{list.SubCatName}}</td>
+                    <td>{{list.StartDate | date:'medium'}}</td>
+                    <td>{{list.EndDate | date:'medium'}}</td>
+
+                    <td>
+                        <button class="btn btn-primary" (click)="edit(list)">
+                            Details
+                        </button>
+                    </td>
+                    <td>{{list.IsApproved}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+
+<div *ngIf="murlidetailsDetails">
+
+    <p-dialog header="Murli Details" [(visible)]="opendetailspopup" [resizable]="false" [modal]="true" appendTo="body"
+        positionTop="10" [style]="{width: '80%',height: '88%',top: '45px', overflow: 'auto'}">
+        <p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Seller</label>
+                <input class="form-control" [(ngModel)]="murlidetailsDetails.SubCatName" disabled>
+            </div>
+            <div class="col-md-6">
+                <label>WarehouseName</label>
+                <input class="form-control" [(ngModel)]="murlidetailsDetails.Warehouse" disabled>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <label>StartDate</label>
+                <input type="datetime-local" class="form-control" [ngModel]="murlidetailsDetails.StartDate| date:'yyyy-MM-ddTHH:mm'" disabled>
+            </div>
+            <div class="col-md-6">
+                <label>EndDate</label>
+                <input type="datetime-local" class="form-control" [ngModel]="murlidetailsDetails.EndDate | date:'yyyy-MM-ddTHH:mm'" disabled>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Murli Notification Title</label>
+                <input class="form-control" [(ngModel)]="murlidetailsDetails.MurliNotificationTitle" disabled>
+            </div>
+
+            <div class="col-md-6">
+                <label for="name"><b>Description</b></label>
+                <textarea class="form-control" name="se" [(ngModel)]="murlidetailsDetails.MurliDescription" cols="100"
+                    rows="4">
+                        </textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label for="name"><b>Language</b></label>
+                <select class="form-control" name="saa" id="sff"   [(ngModel)]="murlidetailsDetails.language">
+                    <option  value="hi">Hindi</option>
+                </select>
+            </div>
+            <div class=col-md-2>
+                <label for="name"> </label>
+                <button type="button" style="margin-top: 27px" class="btn btn-raised btn-primary mr-1 c1"
+                    (click)="convertHindi()">
+                    Convert
+                </button>
+            </div>
+            <div class="col-md-6">
+                <label for="name"><b>Murli text</b></label>
+                <textarea class="form-control" name="b" [(ngModel)]="murlidetailsDetails.MurliNotificationMsg">
+              </textarea>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="name"> </label>
+                <button type="button" style="margin-top: 27px" class="btn btn-raised btn-primary mr-1 center"
+                    (click)="ConvertAudioSellers()">
+                    Convert & Save Audio
+                </button>
+            </div>
+            <div class="col-md-3">
+                <label for="name"><b>Murli Audio</b></label>
+                <br>
+                <audio controls class="audiowidth">
+                    <source [src]="murlidetailsDetails.MurliFile" type="audio/mp3">
+                </audio>
+            </div>
+        </div>
+        <div class="row">
+            <!-- <div class="col-md-6">
+                    <label for="name"><b>Example</b></label>
+                    <textarea class="form-control" name="b" [(ngModel)]="example" cols="100" rows="5" readonly>
+                </textarea>
+                    <br /><strong> For More Details please use below link=></strong>> <a
+                        href="https://cloud.google.com/text-to-speech/docs/ssml"
+                        target="_blank">https://cloud.google.com/text-to-speech/docs/ssml </a>
+                </div> -->
+
+            <div class="col-md-6">
+                <label>Status</label>
+                <span *ngIf="murlidetailsDetails.IsApproved">
+                    <input class="form-control" [(ngModel)]="murlidetailsDetails.Status" disabled>
+                </span>
+                <span *ngIf="!murlidetailsDetails.IsApproved"><select class="form-control" name="sa" id="sa"
+                        [(ngModel)]="murlidetailsDetails.Status">
+                        <option value="Pending">Pending</option>
+                        <option value="Accept">Accept</option>
+                        <option value="Reject">Reject</option>
+                    </select></span>
+            </div>
+            <div class="col-md-6">
+                <label>Comment</label>
+                <textarea class="form-control" [(ngModel)]="murlidetailsDetails.Comment"></textarea>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="form-actions right col-sm-12 p-3">
+                <span
+                    *ngIf="murlidetailsDetails.Status=='Accept' && murlidetailsDetails.IsApproved==false && murlidetailsDetails.IsActive==true">
+                    <button type="submit" class="btn btn-raised btn-primary" (click)="Approve(murlidetailsDetails)">
+                        <i class="fa fa-check-square-o"></i> Approve</button>
+                </span>
+                <span
+                    *ngIf="!murlidetailsDetails.IsActive && murlidetailsDetails.IsApproved==false && murlidetailsDetails.Status!='Pending' ">
+                    <button type="submit" class="btn btn-raised btn-primary"
+                        (click)="UpdateStatus(murlidetailsDetails)">
+                        <i class="fa fa-check-square-o"></i> Update</button>
+                </span>
+            </div>
+        </div>
+
+
+    </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>

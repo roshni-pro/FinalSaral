@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Kisan Kirana</title>
+	<!-- <link rel="icon" href="demo_icon.gif" type="image/gif" sizes="16x16"> -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<script>
+		$.urlParam = function (name) {
+			var results = new RegExp('[\?&]' + name + '=([^&#]*)')
+				.exec(window.location.search);
+
+			return (results !== null) ? results[1] || 0 : false;
+		}
+		$(document).ready(function () {
+			var custid = $.urlParam('customerid');
+			var lang = $.urlParam('lang');
+			var wid = $.urlParam('wid');
+			$("#Param").text("CustomerId :" + custid + " <br /> WarehouseId :" + wid + " <br /> Language :" + lang);
+		});
+	</script>
+
+</head>
+<body>
+	<div class="container">
+		<main>
+			<section class="donationAmoung">
+				<div class="row">
+					<div class="col-6">
+						<div class="card" style="border: 1px solid #ff5b1e;">
+							<h4><i class="fa fa-inr" aria-hidden="true"></i>{{Total}}</h4>
+							<h5>Our Donations </h5>
+						</div>
+					</div>
+					<div class="col-6" >
+						<div class="card x-clk" style="border: 1px solid #ff5b1e;" (click)="customerkisanwebview()">
+							<h4><i class="fa fa-inr" aria-hidden="true"></i>{{CustomerTotalDaan}}</h4>
+							<h5>Your Donations<i class="fa fa-hand-pointer-o" aria-hidden="true"></i></h5>
+						</div>
+					</div>
+				</div>
+			</section>
+			<div *ngIf="Kisandanimage">
+				<p-carousel [value]="Kisandanimage" numScroll="4" [numVisible]="1" [circular]="false"
+					[autoplayInterval]="3000">
+					<p-header>
+						<h3>Basic</h3>
+					</p-header>
+					<ng-template let-col pTemplate="item">						
+						<img src="{{col.KisanDaanImage}}" />
+					</ng-template>
+				</p-carousel>
+			</div>
+			<div class="accordion kisanDanAcc" id="accordionExample">
+				<div class="card">
+					<div class="card-header" id="headingOne">
+						<h2 class="mb-0">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+								data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"
+								(click)="IsShowDesCription(IsShowview)">
+								किसान दान क्या है ?
+							</button>
+						</h2>
+					</div>
+					<p *ngIf="IsShowview">
+						{{Kisandaan}}
+					</p>
+				</div>
+				<div class="card">
+					<div class="card-header" id="headingTwo">
+						<h2 class="mb-0">
+							<button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+								data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"
+								(click)="IsShowDesCriptiondata(IsShow)">
+								किसान दान कैसे काम करता हैं !
+							</button>
+						</h2>
+					</div>
+					<p *ngIf="IsShow">
+						{{Kisandaandata}}
+					</p>
+				</div>
+				<div class="card">
+					<div class="card-header" id="headingTwo">
+						<h2 class="mb-0">
+							<a class="btn btn-link collapsed" (click)="kisandaangallary()">
+								किसान दान गैलरी 
+							</a>
+						</h2>
+					</div>
+				</div>
+			</div>
+			
+		</main>
+        <div class="my-2 d-flex justify-content-between align-items-center">
+			<div class="kisandanHeader">
+			  <div class="row">
+				<div class="col-md-12">
+				  <h3 class="m-6" style=" font-size: 24px;color: #ff5e22;">टॉप किसान दान दाता</h3>
+				</div>
+				<!-- <div class="col-md-6">
+				  <h3>Total Daan: 12,0000</h3>
+				</div> -->
+			  </div>     
+			</div>
+		  </div>
+		
+		  <table width="100%" >    
+			<thead>
+			  <tr>
+				<!-- <th>Image</th> -->
+				<th>Shop Name</th>			
+				<th>KK Amt</th>
+				<th>KD Amt</th>							
+			  </tr>
+			</thead>
+			<tbody>
+				
+			<p-progressSpinner *ngIf="blocked"[style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+              fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+			  <tr *ngFor="let custdata of custKisanlist">
+				<!-- <td data-label="Image"><img src="{{custdata.Shopimage}}"style="width:100%;"/></td>       -->
+				<td data-label="ShopName">{{custdata.ShopName}}</td>
+				<td data-label="KDan Amt">{{custdata.KisanKiranaAmount}}</td>	 
+				<td data-label="KK Amt">{{custdata.KisanDanAmount}}</td>								
+			  </tr>     
+			 
+			</tbody>
+		  </table>
+         
+
+	</div>
+	<a href="#" class="cd-top"><i class="fas fa fa-angle-up"></i></a>
+</body>
+
+</html>

@@ -1,0 +1,1089 @@
+<div *ngIf="selectedSupplier">
+    <p-toast [style]="{marginTop: '450px'}"></p-toast>
+
+   
+    <div class="container">
+        <!-- <p-dialog header="{{docName}} Document view" [(visible)]="display"   [contentStyle]="{'overflow':'visible'}">
+            <table>
+                <tr *ngFor="let room of imagelist; let i = index">
+                    <td>
+                        <img alt="" src="{{room}}" class="img-square" height="150px;" *ngIf="room">
+                        
+                    </td>
+                    <td>
+                        <a href="{{room}}" target="_blank" download>download</a>        
+                    </td>
+                </tr>
+            </table>
+        </p-dialog> -->
+        <form id="supplierForma" name="supplierForm" (ngSubmit)="onSave(supplierForm)" #supplierForm="ngForm">
+            <br>
+            <h3 style="color:orange">Supplier General Details</h3>
+            <br>
+            <div class="row">
+                <div class="col-sm-6" >
+
+                    <div>
+                        <label>Supplier firm Name: <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Supplier Name" class="form-control" required
+                        [(ngModel)]="selectedSupplier.supplierName" #SupplierNameInput="ngModel">
+                    <div >
+                        <code
+                            *ngIf="supplierForm.submitted && SupplierNameInput.invalid && SupplierNameInput.errors && SupplierNameInput.errors.required ">
+                        SupplierName required! 
+                    </code>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>Father/Husband Name <i class="fa fa-asterisk" aria-hidden="true" *ngIf="fathernamerequired"></i></label>
+                    </div>
+                    <input name="Father’s Name" class="form-control"  [(ngModel)]="selectedSupplier.fatherName"
+                        #SupplierFatherNameInput="ngModel">
+                    <!-- <div>
+                        <code
+                            *ngIf="supplierForm.submitted && SupplierFatherNameInput.invalid && SupplierFatherNameInput.errors && SupplierFatherNameInput.errors.required">
+                        Supplier Father Name required! 
+                    </code> -->
+                    <!-- </div> -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>Email Id <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Email Id" class="form-control" required [(ngModel)]="selectedSupplier.emailId"
+                        #EmailIdInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && EmailIdInput.invalid && EmailIdInput.errors && EmailIdInput.errors.required">
+                        Email Id required! 
+                    </code>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div>
+                        <label>Contact Number <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Contact Number" class="form-control" pattern="^[6-9]\d{9}$" maxlength="10" (keyup)="oncontactnumbervaildate($event.target.value)"
+                        minlength="10" required [(ngModel)]="selectedSupplier.mobileNo" #ContactNumberInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && ContactNumberInput.invalid && ContactNumberInput.errors && ContactNumberInput.errors.required">
+                        Contact Number required! 
+                    </code>
+                    </div>
+                    <div *ngIf="ContactNumberInput.touched">
+                        <code *ngIf="ContactNumberInput.errors?.pattern">
+                      Please Enter valid contact number
+                    </code>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <label>Type of Firm:</label><br>
+                    <!-- <input name="Firm" class="form-control" required [(ngModel)]="selectedSupplier.TypeofFirm"
+                    #FirmInput="ngModel">
+                <div>
+                    <code
+                        *ngIf="supplierForm.submitted && FirmInput.invalid && FirmInput.errors && FirmInput.errors.required">
+                        Firm required! 
+                    </code>
+                </div> -->
+                    <select name="Firm" class="form-control" required [(ngModel)]="selectedSupplier.typeofFirm"
+                        #FirmInput="ngModel" (change)="TypeofFirmchange(selectedSupplier.typeofFirm)" >
+                        <option value="Proprietor"> Proprietor </option>
+                        <option value="Partnership">Partnership</option>
+                        <option value="LLP">LLP</option>
+                        <option value="Private Limited">Private Limited</option>
+                        <option value="Limited">Limited</option> 
+                    </select>
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && FirmInput.invalid && FirmInput.errors && FirmInput.errors.required">
+                            Firm required! 
+                        </code>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div>
+                        <label>{{Proprietornamebytype}} Name <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Proprietor Name" class="form-control" required
+                        [(ngModel)]="selectedSupplier.proprietorName" #ProprietorNameInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && ProprietorNameInput.invalid && ProprietorNameInput.errors && ProprietorNameInput.errors.required">
+                            {{Proprietornamebytype}}  required! 
+                    </code>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row" *ngIf="selectedSupplier.typeofFirm!='Proprietor'" >
+                <div class="col-sm-6">
+                    <div>
+
+                        <label>{{Proprietornamebytype}} Pan Number </label>
+                    </div>
+                    <input name="ProprietorPanNumber Name" class="form-control" pattern="^[A-Za-z]{5}[0-9]{4}[A-Za-z]$" (keyup)="onpannumbervaildate($event.target.value)"
+                        [(ngModel)]="selectedSupplier.ProprietorPanNumber" #ProprietorPanNumberInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && ProprietorPanNumberInput.invalid && ProprietorPanNumberInput.errors && ProprietorPanNumberInput.errors.required">
+                            {{Proprietornamebytype}} PanNumber required! 
+                    </code>
+                    </div>
+                    <div>
+                        <code *ngIf="ProprietorPanNumberInput.errors?.pattern">
+                      Please Enter valid  {{Proprietornamebytype}} pan number
+                    </code>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div>
+                        <label for="uploadAdvertisements">{{Proprietornamebytype}} Pan Card Image: </label><br />
+                        <input #proppanimage class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*" 
+                            (change)="upload($event,Proprietornamebytype)" 
+                            (change)="onFileChange($event)" multiple />
+                            <label for=""> &nbsp; &nbsp; {{proppan7}} &nbsp;file selected</label>
+                        <br />
+                        <button type="button" *ngIf="uploadFlagPropPan" class="btn btn-raised btn-primary " (click)="uploadPropPanImagProof()">
+                            Upload
+                        </button>&nbsp;
+                        <button type="button" *ngIf="!uploadFlagPropPan" class="btn btn-raised btn-primary " (click)="RemovePropPanImagProof()">
+                            Remove
+                        </button>&nbsp;
+                        <img [src]="imageSrc" *ngIf="imageSrc" style="height: 100px; width:200px">
+                     
+                        <div>
+                            <br>
+                            <!-- <img alt="" src="{{baseURL}}{{selectedSupplier.ProprietorPanImage}}" class="img-square"
+                                height="100px;" *ngIf="selectedSupplier.ProprietorPanImage"> -->
+                                <button type="button" (click)="showDialog(selectedSupplier.ProprietorPanImage,Proprietornamebytype)" pButton
+                                icon="pi pi-info-circle" label="Show Document"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div>
+                        <label>Supplier Type: <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <!-- <select name="Supplier Type" class="form-control"   
+                    [(ngModel)]="selectedSupplier.supplierType"  #SupplierTypeInput="ngModel">
+                         <option value="Advanced">Advanced</option> 
+                        <option value="Credit" selected >Credit</option>                        
+                    </select>  -->
+                    <input name="supplierType" disabled class="form-control" required
+                        [(ngModel)]="selectedSupplier.supplierType" #supplierTypeInput="ngModel">
+
+
+                    <!-- <div>
+                        <code
+                            *ngIf="supplierForm.submitted && SupplierTypeInput.invalid && SupplierTypeInput.errors && SupplierTypeInput.errors.required">
+                            SupplierType  required! 
+                        </code>
+                    </div>         -->
+                </div>
+                <div class="col-sm-6">
+                    <div>
+                        <label>paymentTerms</label>
+                    </div>
+                    <input name="paymentTerms" class="form-control" required [(ngModel)]="selectedSupplier.paymentTerms"
+                        #paymentTermsInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && paymentTermsInput.invalid && paymentTermsInput.errors && paymentTermsInput.errors.required">
+                    paymentTerms required! 
+                </code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div>
+                        <label>Selling Brands:  </label>
+                    </div>
+                    <p-multiSelect [options]="BrandList" name="name" [(ngModel)]="selectedList" optionLabel="name"
+                        [style]="{minWidth:'18em'}" (onChange)="selectedBands()" #SellingBrandsInput="ngModel">
+                    </p-multiSelect>
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && SellingBrandsInput.invalid && SellingBrandsInput.errors && SellingBrandsInput.errors.required">
+                            sellingBrands  required! 
+                        </code>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label>Supplier segment <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    <select name="Supplier Type" class="form-control" [(ngModel)]="selectedSupplier.SupplierSegment"
+                        #SuppliersegmentInput="ngModel" required 
+                        (change)="SupplierTypechange(selectedSupplier.SupplierSegment)" >
+                        <option value="Food">Food</option>
+                        <option value="Non Food"> Non Food</option>
+                        <option value="Both">Both</option>
+                        
+                    </select>
+
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && SuppliersegmentInput.invalid && SuppliersegmentInput.errors && SuppliersegmentInput.errors.required">
+                        Suppliersegment  required! 
+                    </code>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-6" *ngIf="selectedSupplier.typeofFirm =='Proprietor'">
+                    <div>
+                        <label>{{Proprietornamebytype}} Phone Number <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Proprietor Phonenumber" class="form-control" required type="tel" pattern="^[6-9][0-9]{9}$" (keypress)="keyPress($event)" maxlength="10" minlength="10"
+                    (keyup)="oncontactnumbervaildate($event.target.value)" [(ngModel)]="selectedSupplier.proprietorphonenumber" #ProprietorPhonenumberInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && ProprietorPhonenumberInput.invalid && ProprietorPhonenumberInput.errors && ProprietorPhonenumberInput.errors.required">
+                            {{Proprietornamebytype}} Phone Number required! 
+                    </code>
+                    </div>
+                    <div *ngIf="ProprietorPhonenumberInput.touched">
+                        <code *ngIf="ProprietorPhonenumberInput.errors?.pattern">
+                      Please Enter valid contact number
+                    </code>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>FSSAI NO <i class="fa fa-asterisk" aria-hidden="true" *ngIf=supplietyperequiredsign></i></label>
+                    </div>
+                    <input name="FSSAI NO" class="form-control" [(ngModel)]="selectedSupplier.FSSAINO"
+                        #FSSAINOInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && FSSAINOInput.invalid && FSSAINOInput.errors && FSSAINOInput.errors.required">
+                        fssaino  required! 
+                    </code>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+
+                    <label>Select FSSAI image <i class="fa fa-asterisk" aria-hidden="true" *ngIf=supplietyperequiredsign></i></label>
+                    <br>
+                    <input #fssaimage class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*"  
+                        (change)="upload($event,'FSSAI')" 
+                        (change)="onFileChange1($event)" multiple />
+                        <label for=""> &nbsp; &nbsp; {{proppan3}}&nbsp;file selected</label>
+                    <br>
+                    <button type="button"  class="btn btn-raised btn-primary" *ngIf="uploadFlagfassi"  (click)="uploadhassiImage()">
+                        Upload
+                    </button>&nbsp;
+                    <button type="button"  class="btn btn-raised btn-primary" *ngIf="!uploadFlagfassi"  (click)="RemovefassiImage()">
+                        Remove
+                    </button>&nbsp;
+                    <img [src]="imageSrc1" *ngIf="imageSrc1" style="height: 100px; width:200px">
+               
+                    <div>
+                    <br>
+                    <!-- <img src="{{baseURL}}{{selectedSupplier.FSSAIImage}}" height="100px"> -->
+                    <!-- <a href="{{baseURL}}{{selectedSupplier.FSSAIImage}}" target="_blank" download>download</a> -->
+                    <button type="button" (click)="showDialog(selectedSupplier.FSSAIImage,'FSSAI')" pButton
+                    icon="pi pi-info-circle" label="Show Document"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" >
+                <div class="col-sm-6" >
+
+                    <div>
+                        <label>Pan Number <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Pan Number" pattern="^[A-Za-z]{5}[0-9]{4}[A-Za-z]$" class="form-control" required [(ngModel)]="selectedSupplier.panNumber" (keyup)="onpannumbervaildate($event.target.value)"
+                        #PanNumberInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && PanNumberInput.invalid && PanNumberInput.errors && PanNumberInput.errors.required">
+                        PanNumber  required! 
+                    </code>
+                    </div>
+                    <div>
+                        <code *ngIf="PanNumberInput.errors?.pattern">
+                      Please Enter valid pan number
+                    </code>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <!-- <label>Pan Image</label> -->
+                    <label for="uploadAdvertisements">Pan Card Image:<span  style="color:red"> *</span></label><br />
+                    <input #pancardimage class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*"  
+                        (change)="upload($event ,'Pan Card')" (change)="onFileChange2($event)"  multiple/>
+                        <label for=""> &nbsp; &nbsp; {{proppan1}} &nbsp;file selected</label>
+                    <br />
+                    <button type="button"  class="btn btn-raised btn-primary " *ngIf="uploadFlagpan" (click)="uploadPanCardProof()">
+                        Upload
+                    </button>&nbsp;
+                    <button type="button"  class="btn btn-raised btn-primary " *ngIf="!uploadFlagpan" (click)="RemovePanCardProof()">
+                        Remove
+                    </button>&nbsp;
+                    <img [src]="imageSrc2" *ngIf="imageSrc2" style="height: 100px; width:200px">
+                 
+                    <div>
+                    <br>
+                    <!-- <img src="{{baseURL}}{{selectedSupplier.PanNumberImage}}" height="100px"> -->
+                    <!-- <a href="{{baseURL}}{{selectedSupplier.PanNumberImage}}" target="_blank">download</a> -->
+                    <button type="button" (click)="showDialog(selectedSupplier.PanNumberImage,'Pan Card')" pButton
+                    icon="pi pi-info-circle" label="Show Document"></button>
+                   </div> 
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+
+                <div class="col-sm-6" *ngIf="selectedSupplier.typeofFirm!='Private Limited' && selectedSupplier.typeofFirm!='Limited'">
+                    <label>Address Proof <i class="fa fa-asterisk" aria-hidden="true"></i></label><br>
+                    <!-- <p-dropdown [options]="AddressProofs" name="AddressProofType" [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedSupplier.AddressProofType" placeholder="Select a Address Proof" optionLabel="AddressProofType" [showClear]="true"></p-dropdown> -->
+                    <select name="AddressProofType " class="form-control" required
+                        [(ngModel)]="selectedSupplier.addressProofType" #AddressProofTypeInput="ngModel">
+                        <option value="Voter Id">Voter Id</option>
+                        <option value="Adhar Card">Adhar Card</option>
+                        <option value="Passport">Passport</option>
+                        <option value="Driving License">Driving License </option>
+                    </select>
+                </div>
+                <div class="col-sm-6" *ngIf="selectedSupplier.typeofFirm!='Private Limited' && selectedSupplier.typeofFirm!='Limited'">
+                    <label>selected Address Proof:{{selectedSupplier.addressProofType}}<span  style="color:red"> *</span></label>
+                    <br>
+                    <input #addressproofimage class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*" 
+                        (change)="upload($event,'Address Proof')" (change)="onFileChange3($event)"  multiple />
+                        <label for=""> &nbsp; &nbsp; {{proppan2}} &nbsp;file selected</label>
+                    <br />
+                    <button type="button"   class="btn btn-raised btn-primary " *ngIf="uploadFlagAdd"
+                        (click)="uploadAddressProof()">
+                        Upload
+                    </button>&nbsp;
+                    <button type="button"   class="btn btn-raised btn-primary " *ngIf="!uploadFlagAdd"
+                        (click)="RemoveAddressProof()">
+                        Remove
+                    </button>&nbsp;
+                    <img [src]="imageSrc3" *ngIf="imageSrc3" style="height: 100px; width:200px">
+                 
+                    <div>
+                    <br>
+                    <!-- <img src="{{baseURL}}{{selectedSupplier.AddressProofImage}}" height="100px;"> -->
+                    <!-- <a href="{{baseURL}}{{selectedSupplier.AddressProofImage}}" target="_blank" download>download</a> -->
+                    <button type="button" (click)="showDialog(selectedSupplier.AddressProofImage,'Address Proof')" pButton
+                    icon="pi pi-info-circle" label="Show Document"></button>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <br>
+
+            <h3 style="color:orange">Bank details</h3>
+
+
+
+            <br>
+            <div class="row">
+                <div class="col-sm-6">
+
+
+                    <div>
+                        <label>A/C Number <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="A/C Number" type="text" (keypress)="numberOnly($event)"  class="form-control" required [(ngModel)]="selectedSupplier.bankAccNo"
+                        #ACNumberInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && ACNumberInput.invalid && ACNumberInput.errors && ACNumberInput.errors.required">
+                        Ac number   required! 
+                    </code>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label>Bank A/C Image <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    <br>
+                    <input #bankacimage class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*" 
+                        (change)="upload($event,'Bank A/C')" (change)="onFileChange4($event)" multiple />
+                        <label for=""> &nbsp; &nbsp; {{proppan4}}&nbsp;file selected</label>
+                    <br>
+                    <button type="button"   class="btn btn-raised btn-primary" *ngIf="uploadFlagBankAc"  (click)="uploadBankAcImage()">
+                        Upload
+                    </button>&nbsp;
+                    <button type="button"   class="btn btn-raised btn-primary" *ngIf="!uploadFlagBankAc"  (click)="RemoveBankAcImage()">
+                        Remove
+                    </button>&nbsp;
+                    <img [src]="imageSrc4" *ngIf="imageSrc4" style="height: 100px; width:200px">
+                  
+                    <div>
+                        <br>
+                        <!-- <img alt="" src="{{baseURL}}{{selectedSupplier.ChequeImage}}" height="100px;" class="img-square " *ngIf="selectedSupplier.ChequeImage"> -->
+                            <button type="button" (click)="showDialog(selectedSupplier.ChequeImage,'Bank A/C')" pButton
+                    icon="pi pi-info-circle" label="Show Document"></button>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-sm-6">
+                    <div>
+                        <label>Loan Requirement <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+
+                    <div>
+                        <input type="radio" [checked]="activecheck" id="yes_Rd" name="yes_Rd" 
+                            (click)="setradioyes()">Yes
+                        <input type="radio" [checked]="inactivecheck" id="no_Rd" name="no_Rd" 
+                            (click)="setradio()">No
+                    </div>
+
+                </div>
+
+                <div class="col-sm-6" *ngIf="loanReqFlag">
+
+                    <div>
+                        <label>Loan Amount<i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Loan Amount" class="form-control" required [(ngModel)]="selectedSupplier.loanAmount"
+                        #LoanAmountInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && LoanAmountInput.invalid && LoanAmountInput.errors && LoanAmountInput.errors.required">
+                        LoanAmount  required! 
+                    </code>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+            <br>
+            <div class="row">
+
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>Bank Account Type<i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <select name="Bank Account Type" class="form-control" required
+                        [(ngModel)]="selectedSupplier.bankAccType" #BankAccountTypenput="ngModel">
+                        <option value="Current" >Current</option>
+                        <option  value="Saving">Saving</option>
+                        <option value="Virtual">Virtual</option>
+                    </select>
+
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && BankAccountTypenput.invalid && BankAccountTypenput.errors && BankAccountTypenput.errors.required">
+                    BankAccountType  required! 
+                </code>
+                    </div>
+                    <!-- <input name="Bank Account Type" class="form-control" required [(ngModel)]="selectedSupplier.BankAccType"
+                #BankAccountTypenput="ngModel">
+            <div>
+                <code
+                    *ngIf="supplierForm.submitted && BankAccountTypenput.invalid && BankAccountTypenput.errors && BankAccountTypenput.errors.required">
+                    BankAccountType  required! 
+                </code>
+            </div> -->
+                </div>
+
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>Bank Name <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Bank Name" class="form-control" required [(ngModel)]="selectedSupplier.bankName"
+                        #BankNameInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && BankNameInput.invalid && BankNameInput.errors && BankNameInput.errors.required">
+                    BankNameInput  required! 
+                </code>
+                    </div>
+                </div>
+
+            </div>
+
+            <br>
+            <div class="row">
+
+
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>Bank Address<i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Bank Address" class="form-control" required [(ngModel)]="selectedSupplier.bankAddress"
+                        #BankAddressInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && BankAddressInput.invalid && BankAddressInput.errors && BankAddressInput.errors.required">
+                    bankAddress  required! 
+                </code>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div>
+                        <label>IFSC Code<i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="IFSC Code" class="form-control" required [(ngModel)]="selectedSupplier.ifscCode"
+                        #IFSCCodeInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && IFSCCodeInput.invalid && IFSCCodeInput.errors && IFSCCodeInput.errors.required">
+                    IFSCCode  required! 
+                </code>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>Credit Score <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Credit Score" class="form-control" required [(ngModel)]="selectedSupplier.creditScore"
+                        #CreditScoreInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && CreditScoreInput.invalid && CreditScoreInput.errors && CreditScoreInput.errors.required">
+                    CreditScore  required! 
+                </code>
+                    </div>
+
+                </div>
+                <div class="col-sm-6">
+                    <label>Business Establishment year
+                        <i class="fa fa-asterisk" aria-hidden="true"></i>
+                    </label>
+
+                    <input name="Business Establishment year" class="form-control" required
+                        [(ngModel)]="selectedSupplier.businessEstablishmentYear"
+                        #BusinessEstablishmentyearInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && BusinessEstablishmentyearInput.invalid && BusinessEstablishmentyearInput.errors && BusinessEstablishmentyearInput.errors.required">
+                            BusinessEstablishmentyear required! 
+                        </code>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <label>Bank PinCode
+                        <i class="fa fa-asterisk" aria-hidden="true"></i>
+                    </label>
+
+                    <input name="Bank PinCode" class="form-control" required
+                        [(ngModel)]="selectedSupplier.bankPinCode"
+                        #bankPinCodeInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && bankPinCodeInput.invalid && bankPinCodeInput.errors && bankPinCodeInput.errors.required">
+                            bankPinCode required! 
+                        </code>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+            <h3 style="color: orange;">Address Details </h3>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div>
+                        <label>GSTIN NO <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <!-- pattern="\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}" -->
+                    <input name="GSTIN NO"  
+                        class="form-control" required [(ngModel)]="selectedSupplier.gstinno" #GSTINNOInput="ngModel" (keyup)="gstNumberChange(selectedSupplier.gstinno)" (keyup)="ongstnumbervalidate($event.target.value)">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && GSTINNOInput.invalid && GSTINNOInput.errors && GSTINNOInput.errors.required">
+                                GSTINNO required! 
+                            </code>
+                    </div>
+                    <!-- <div>
+                        <code *ngIf="GSTINNOInput.errors?.pattern">
+                              Please Enter valid gst number
+                            </code>
+                    </div> -->
+                    <button type="button" *ngIf="isShowBtn" class="btn btn-raised btn-primary mt-2"   (click)="VarifiedSupplierGSTNO(selectedSupplier.gstinno)">
+                        Gst Verify
+                    </button>
+                </div>
+                <div class="col-sm-6">
+                    <label>Gst Image <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    <br>
+                    <input #gstimage class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*"  
+                        (change)="upload($event,'GST')" (change)="onFileChange5($event)" multiple />
+                        <label for=""> &nbsp; &nbsp; {{proppan5}}&nbsp;file selected</label>
+                    <br>
+                    <button type="button"  class="btn btn-raised btn-primary" *ngIf="uploadFlaggstImage"  (click)="uploadgstImage()">
+                        Upload
+                    </button>&nbsp;
+                    <button type="button"  class="btn btn-raised btn-primary" *ngIf="!uploadFlaggstImage"   (click)="removegstImage()">
+                        Remove
+                    </button>&nbsp;
+                    <img [src]="imageSrc5" *ngIf="imageSrc5" style="height: 100px; width:200px">
+               
+                    <div>
+                        <br>
+                        <!-- <img alt="" src="{{baseURL}}{{selectedSupplier.GSTImage}}" height="100px;" class="img-square " *ngIf="selectedSupplier.GSTImage"> -->
+                            <button type="button" (click)="showDialog(selectedSupplier.GSTImage,'GST')" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>Full Business Address <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Full Business Address" class="form-control" required
+                        [(ngModel)]="selectedSupplier.fullBusinessAddress" #FullBusinessAddressInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && FullBusinessAddressInput.invalid && FullBusinessAddressInput.errors && FullBusinessAddressInput.errors.required">
+                                FullBusinessAddress  required! 
+                            </code>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>HeadOffice <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="HeadOffice" class="form-control" required [(ngModel)]="selectedSupplier.headOffice"
+                        #HeadOfficeInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && HeadOfficeInput.invalid && HeadOfficeInput.errors && HeadOfficeInput.errors.required">
+                                HeadOfficeInput required! 
+                            </code>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+
+                    <div>
+                        <label>Pin Code <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    </div>
+                    <input name="Pin Code" class="form-control" pattern="^[0-9]*$" minlength="5" maxlength="7" required
+                        [(ngModel)]="selectedSupplier.pinCode" #PinCodeInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && PinCodeInput.invalid && PinCodeInput.errors && PinCodeInput.errors.required">
+                                Pin Code required! 
+                            </code>
+                    </div>
+
+                    <div>
+                        <code *ngIf="PinCodeInput.errors?.pattern">
+                              Please Enter valid contact number
+                            </code>
+                    </div>
+                </div>
+                <!-- <div class="col-sm-6">
+                    <div>
+                        <label>Password</label>
+                    </div>
+                    <input name="Password" class="form-control" required [(ngModel)]="selectedSupplier.password"
+                        #PasswordInput="ngModel">
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && PasswordInput.invalid && PasswordInput.errors && PasswordInput.errors.required">
+                             Password required! 
+                        </code>
+                    </div>
+                </div> -->
+                <div class="col-sm-6">
+                    <div>
+                        <label>StartedBusiness with Shop Kirana</label>
+                    </div>
+                    <!-- <input type="date" [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedSupplier.StartedBusiness" name="startedBusiness"> -->
+                    <div>
+                        <p-calendar [(ngModel)]="selectedSupplier.StartedBusiness" dataType="string"
+                            name="startedBusiness" [monthNavigator]="true" [yearNavigator]="true" [showIcon]="true"
+                            dateFormat="yy/mm/dd" [yearRange]="yearRangeForCalender"></p-calendar>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div>
+                        <label>contact Person</label>
+                    </div>
+                    <input name="contactPerson" class="form-control" 
+                        [(ngModel)]="selectedSupplier.contactPerson" #contactPersonInput="ngModel" >
+                    <!-- <div>
+                        <code
+                            *ngIf="supplierForm.submitted && contactPersonInput.invalid && contactPersonInput.errors && contactPersonInput.errors.required">
+                            contactPerson required! 
+                        </code>
+                    </div> -->
+                </div>
+                <div class="col-sm-6">
+                    <label>Contact person's Phone number</label>
+                    <input name="contactPersonContactNumber" class="form-control" pattern="^[6-9]\d{9}$" maxlength="10" minlength="10"  (keyup)="oncontactnumbervaildate($event.target.value)"
+                        [(ngModel)]="selectedSupplier.ContactPersonMobileNo" #contactPersonContactInput="ngModel">
+                    <!-- <div>
+                        <code
+                            *ngIf="supplierForm.submitted && contactPersonContactInput.invalid && contactPersonContactInput.errors && contactPersonContactInput.errors.required">
+                            contactPersonContact required! 
+                        </code>
+                    </div> -->
+                    <div *ngIf="contactPersonContactInput.touched">
+                        <code *ngIf="contactPersonContactInput.errors?.pattern">
+                    Please Enter valid Contact Person Number
+                    </code>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div>
+                        <label>bussinessType</label>
+                    </div>
+                    <select name="bussinessType" class="form-control" required (change)="changeDay()"
+                        [(ngModel)]="selectedSupplier.bussinessType" #bussinessTypeInput="ngModel">
+
+                        <option value="Distributor">Distributor</option>
+                        <option value="WholeSeler">WholeSeler</option>
+                        <option value="Repacking">Repacking</option>
+                        <option value="Trader">Trader</option>
+                        <option value="Direct from company">Direct from company</option>
+
+                    </select>
+                    <!-- <input name="bussinessType" class="form-control" required [(ngModel)]="selectedSupplier.bussinessType"
+                        #bussinessTypeInput="ngModel"> -->
+                    <div>
+                        <code
+                            *ngIf="supplierForm.submitted && bussinessTypeInput.invalid && bussinessTypeInput.errors && bussinessTypeInput.errors.required">
+                            bussinessType required! 
+                        </code>
+                    </div>
+                </div>
+
+                <!-- <div class="col-sm-6"> -->
+                   
+                    <!-- -->
+                    <!-- <div>
+                        <code  
+                            *ngIf="supplierForm.submitted && startedBusinessInput.invalid && startedBusinessInput.errors && startedBusinessInput.errors.required">
+                            startedBusiness required! 
+                        </code>
+                        </div> -->
+                        <div class="col-sm-6">
+
+                            <label>Agreement Document <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                            <br>
+                            <input #agreementimage class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*" 
+                                (change)="upload($event,'Agreement')" (change)="onFileChange6($event)" multiple />
+                                <label for=""> &nbsp; &nbsp; {{proppan6}}&nbsp;file selected</label>
+                            <br>
+                            <button type="button" class="btn btn-raised btn-primary" *ngIf="uploadFlagAgreementImage" (click)="uploadAgreementImage()">
+                                Upload 
+                            </button>&nbsp;
+                            <button type="button" class="btn btn-raised btn-primary" *ngIf="!uploadFlagAgreementImage" (click)="RemoveAgreementImage()">
+                                Remove
+                            </button>&nbsp;
+                            <img [src]="imageSrc6" *ngIf="imageSrc6" style="height: 100px; width:200px">
+                           
+                            <div>
+                                <br>
+                                <!-- <img alt="" src="{{baseURL}}{{selectedSupplier.AgreementImage}}" height="100px;"
+                                    class="img-square " *ngIf="selectedSupplier.AgreementImage"> -->
+                                    <button type="button" (click)="showDialog(selectedSupplier.AgreementImage,'Agreement')" pButton
+                                    icon="pi pi-info-circle" label="Show Document"></button>
+                            </div> 
+                        </div>
+                <!-- </div> -->
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <!-- <div>
+                        <label>webUrl</label>
+                    </div>
+                    <input name="webUrl" class="form-control" [(ngModel)]="selectedSupplier.webUrl"> -->
+
+                    <div>
+                        <label>PO Expiry Days</label>
+                    </div>
+                    <input name="ExpiryDays" class="form-control" required
+                    [(ngModel)]="selectedSupplier.ExpiryDays" #ExpiryDays="ngModel" >
+                    <div>
+                        <code
+                        *ngIf="supplierForm.submitted && ExpiryDays.invalid && ExpiryDays.errors && ExpiryDays.errors.required">
+                        Expiry Days required! 
+                    </code>
+
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <label> MSME Status <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    <br>
+                    <select name="MSMEType" class="form-control" [(ngModel)]="selectedSupplier.MSMEType"
+                        #MSMETypeInput="ngModel" required
+                        (change)="OnChangeMSMEStatus(selectedSupplier.MSMEType)">
+                        <option value="Registered">Registered</option>
+                        <option value="Not Registered">Not Registered</option>
+                        <option value="Not Applicable">Not Applicable</option>
+                    </select>
+                    <div>
+                        <code  *ngIf="supplierForm.submitted && MSMETypeInput.invalid && MSMETypeInput.errors && MSMETypeInput.errors.required">
+                            MSMEStatus  required!
+                        </code> 
+                    </div>
+                </div>
+                <div class="col-sm-6" *ngIf="selectedSupplier.MSMEType=='Registered' || isMSMERegis">
+                    <label>MSME Document <i class="fa fa-asterisk" aria-hidden="true"></i></label>
+                    <br>
+                    <input #MSMEDoc class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*" 
+                        (change)="upload($event,'MSME')" (change)="onFileChange8($event)" multiple />
+                        <label for=""> &nbsp; &nbsp; {{proppan8}}&nbsp;file selected</label>
+                    <br>
+                    <button type="button" class="btn btn-raised btn-primary" *ngIf="uploadFlagMSME" (click)="uploadMSMEImage()">
+                        Upload 
+                    </button>&nbsp;
+                    <button type="button" class="btn btn-raised btn-primary" *ngIf="!uploadFlagMSME" (click)="removeMSMEImage()">
+                        Remove
+                    </button>&nbsp;
+                    <img [src]="imageSrc8" *ngIf="imageSrc8" style="height: 100px; width:200px">
+                    <div>
+                        <br>
+                            <button type="button" (click)="showDialog(selectedSupplier.MSMEImage,'MSME')" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+                    </div> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <br>
+                    <br>
+                    <input type="checkbox" [ngModelOptions]="{standalone: true}"
+                        [(ngModel)]="selectedSupplier.isIRNInvoiceRequired">
+                    Is IRN Invoice Required
+
+                    &nbsp; &nbsp;
+                    <input type="checkbox" [ngModelOptions]="{standalone: true}"
+                        [(ngModel)]="selectedSupplier.isStopAdvancePr">
+                    Do you want to stop advance PR?
+
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="State">State<span style="color:red"> *</span></label>
+                        <br>
+                        <select id="State" name="State" class="form-control" required
+                            [(ngModel)]="selectedSupplier.Stateid" (change)="getcity(selectedSupplier.Stateid)"
+                            #StateidInput="ngModel">
+                            <option value="" disabled>--select--</option>
+                            <option *ngFor="let state of statelist" [ngValue]="state.Stateid">
+                                {{ state.StateName }}
+                            </option>
+                        </select>
+                        <div>
+                            <code
+                                *ngIf="supplierForm.submitted && StateidInput.invalid && StateidInput.errors && StateidInput.errors.required">
+                                State Name required! 
+                            </code>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+
+                        <!-- <input id="city" name="city" class="form-control" required [(ngModel)]="selectedSupplier.Cityid"> -->
+
+                        <label for="City">City<span style="color:red"> *</span></label>
+                        <br>
+                        <select id="City" name="City" class="form-control" required
+                            [(ngModel)]="selectedSupplier.Cityid" #cityIdInput="ngModel">
+                            <option value="" disabled>--select--</option>
+                            <option *ngFor="let city of citylist" [ngValue]="city.Cityid">
+                                {{ city.CityName }}
+                            </option>
+                        </select>
+                        <div>
+                            <code
+                                *ngIf="supplierForm.submitted && cityIdInput.invalid && cityIdInput.errors && cityIdInput.errors.required">
+                                City Name required! 
+                            </code>
+                        </div>
+                    </div>
+                </div>
+                <!-- *ngIf="isShow" -->
+                <div class="col-sm-3" *ngIf="isShow">
+                    <div class="form-group">
+                        <label for="Status">Status<span style="color:red"> *</span></label>
+                        <br>
+                        <select id="Status" name="Status" [(ngModel)]="selectedStatus" class="form-control" required
+                        #StatusInput="ngModel"  (change)="test($event)">
+                            <option  value="Active">Active</option>
+                            <option  value="Inactive">Inactive</option>
+                            <option  value="Block">Block</option>
+                        </select>
+                        <div>
+                            <code
+                                *ngIf="supplierForm.submitted && StatusInput.invalid && StatusInput.errors && StatusInput.errors.required">
+                                Status required! 
+                            </code>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="col-sm-3" *ngIf="isposhow">
+                    <div class="form-group">
+                        <label>Purchase OrderId </label><br>
+                        <input name="PurchaseOrderId" class="form-control" required [(ngModel)]="PurchaseOrderId"
+                            disabled />
+                    </div>
+                </div>
+                <div class="col-sm-3" *ngIf="isposhow">
+                    <div class="form-group">
+                        <label>Gr-Date </label>
+                        <input name="GrDate" class="form-control" required [(ngModel)]="GrDate " disabled />
+                    </div>
+                </div>
+
+                <div class="col-sm-3" *ngIf="isShow && selectedStatus!='Active'">
+                    <div class="form-group">
+                        <div>
+                        <label for="Comments">Comments<span style="color:red"> *</span></label>
+                        </div>
+                        <input name="Comments" class="form-control" required [(ngModel)]="selectedSupplier.Comments"
+                        #commentsInput="ngModel">
+                        <div>
+                            <code
+                                *ngIf="supplierForm.submitted && commentsInput.invalid && commentsInput.errors && commentsInput.errors.required">
+                                Comments required! 
+                            </code>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-sm-3" >
+                    <div class="form-group">
+                        <label for="Comments">Buyer Name<span style="color:red"> *</span></label>
+                        
+                        <select id="Buyer" name="Buyer" class="form-control" [(ngModel)]="selectedSupplier.BuyerId" 
+                        #BuyerInput="ngModel" >
+                            <option value="">--select--</option>
+                            <option *ngFor="let b of BuyersList" [ngValue]="b.PeopleID" >
+                                {{ b.DisplayName }}
+                            </option>
+                        </select>
+                        <div>
+                            <code
+                                *ngIf="supplierForm.submitted && BuyerInput.invalid && BuyerInput.errors && BuyerInput.errors.required">
+                                Select Buyer!
+                            </code>
+                        </div>
+                    </div>
+                </div> 
+            <br>
+
+        </div>
+            <button class="btn btn-primary" type="submit" color="warn" form="supplierForma"
+                *ngIf="(selectedSupplier.Status==['Approved'] || selectedSupplier.Status==['Rejected'])
+                && (!selectedSupplier.IsVerified) ">Update</button>
+            <button class="btn btn-primary pull-right" type="submit" color="warn" (click)="back()">back</button>
+            
+        </form>
+    </div>
+</div>
+
+<div *ngIf="display">
+    <p-dialog header="{{docName}} Document view" [(visible)]="display" appendTo="body" [contentStyle]="{'overflow-y': 'auto', 'overflow-x': 'hidden', 
+    'max-height': '80vh','min-height':'250px'}">
+        <table>
+            <tr *ngFor="let room of imagelist; let i = index">
+                <td>
+                    <img alt="" src="{{room}}" class="img-square" height="400px;" width="500px" *ngIf="room">
+                    
+                </td>
+                <td>
+                    <a style="margin-left: 200px;" href="{{room}}" target="_blank" download>Download</a>    
+                    <button style="margin-left: 10px;"  (click)="RemoveImage(i,docName,room)" >Remove</button>      
+                    <!-- (click)="RemoveImage(i,docName)" -->
+                </td>
+            </tr>
+        </table>
+    </p-dialog>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+
+    <p-dialog header="Confirmation" [style]="{left: '440px', height: '50px'}" appendTo="body" [draggable]="false" [modal]="true"
+    [positionTop]="200" [(visible)]="isshow">
+    
+        <div  *ngIf="!statusforcheck">
+            <div class="col" style="color: red; font-weight: bold;">
+                {{texts}}
+            </div>
+        </div>
+        <div  *ngIf="statusforcheck">
+            <div class="col" style="color: green; font-weight: bold;">
+                {{texts}}
+            </div>
+        </div>
+        <br>
+        <div >
+            <div class="col-sm-1" >
+                <button class="btn btn-primary " style="margin-left: 150px;" (click)="ok()">OK</button>
+            </div>
+        </div>
+    </p-dialog>

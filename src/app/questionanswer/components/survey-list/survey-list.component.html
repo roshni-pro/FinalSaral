@@ -1,0 +1,168 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+<section id="customer-master">
+  <div class="my-1 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="m-2">Survey List</h3>
+    </div> 
+  </div>
+  
+  <div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+        <h5 class="m-0">Search By</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+    <div id="search-content p-2">
+        <div class="row ">
+          <div class="col-sm-12">
+            <form class="form" #ledgerForm="ngForm">
+                  <div class="row p-2 px-5">
+                   <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="surveylistproject">Warehouse:</label>
+                      <br>
+                      <select id="des" name="warehouse" class="form-control" [(ngModel)]="data.WarehouseId" (change)="getsurveylist(data.WarehouseId)">
+                        <option value="">--select--</option>
+                        <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                          {{warehouse.WarehouseName}} {{warehouse.CityName}}
+                        </option>
+               </select>
+              </div>
+         </div>
+         <div class="col-md-6 border-right border-right-1">
+          <div class="col-md-10">
+              <label for="surveylistproject">Search</label><br>
+              <input type="text" id="ab" class="form-control" name="ab" [(ngModel)]="searchKey">  
+          </div>   
+                
+      </div>
+      <div class="col-md-2" style="margin-top: 8px;">
+        <label for="surveylistproject"></label><br>
+        <button type="button" name="Search" class="btn btn-raised btn-raised btn-primary" (click)="onSearch(searchKey)">Search</button>  
+    </div>         
+      <div class="col-md-2">
+          <label for="surveylistproject"></label><br>
+          <button type="button" name="search" class="btn btn-raised btn-raised btn-primary" style="margin-top: 8px;"
+             (click)="createSurvey()">Add New Survey</button>
+        </div>
+         <!-- <div class="col-md-3">
+            <label for="surveylistproject">Survey Name:</label>
+            <select id="des" name="SurveyName" class="form-control" [(ngModel)]="data.Id">
+              <option value="" selected>--select--</option>
+              <option *ngFor="let survey of surveyList" [ngValue]="survey.Id">
+                {{survey.SurveyName}}
+              </option>
+            </select>
+          </div> -->
+         
+         </div>             
+        </form>
+     </div>
+     </div>
+  </div>
+  <div class="ui-fluid shadow mb-2 bg-white rounded" id="dataTable">
+        <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+          <p-table #dt [value]="Questionlist" [lazy]="true" dataKey="Id" [scrollable]="false" (onLazyLoad)="load($event)" 
+            scrollHeight="65vh" text-align: center>                  
+
+            <ng-template pTemplate="body" let-pageData let-rowIndex="rowIndex">
+              <!-- let-rowIndex="rowIndex"    {{pageData.QuestionId}} . {{pageData.QueName}}     -->
+              <tr>
+                <td class="tbwidth"><b>{{pageData.SurveyName}} &nbsp;&nbsp;&nbsp; -- {{pageData.StartDate | date}} To {{pageData.EndDate | date}}</b> </td>                
+                <td class="tb1"> {{pageData.WarehouseName}} </td>                  
+                <td style="width: 150px;">  
+                    <label for="published">Publish</label><br>              
+                    <p-inputSwitch name="isPublished" [(ngModel)]="pageData.Publish" (ngModelChange)="PublishSurvey(pageData)"></p-inputSwitch>
+                    <!-- <span class="input-color" *ngIf="pageData.Publish==true">                      
+                        <input type="text" style="border: none;pointer-events:none;font-size:14px" value="Published" readonly="">                       
+                    </span>   -->
+                    <!-- <span class="input-color" *ngIf="pageData.Publish==false">
+                        <input type="text" style="border: none;pointer-events:none;font-size:14px" value="UnPublished" readonly="">                       -->
+                        <!-- <button type="button" name="publish" class="btnStyle btn btn-raised btn-raised btn-primary" 
+                        (click)="isPublished(pageData)" disabled>Publish</button> -->
+                    <!-- </span>  -->
+                </td>                    
+                <td style="width: 280px;">                
+                  <button  name="detail" class="btn btn" (click)="getQuestionlist(pageData.SurveyId)">Survey Details</button>
+                  <button name="copy" class="btn btn" (click)="CopySurvey(pageData)">Copy Survey</button>              
+                </td>                             
+                 <td style="width: 250px;">
+                    <button name="edit" class="btn1 btn" (click)="editSurvey(pageData.SurveyId)" [disabled]="pageData.Publish==true">Edit Survey</button>
+                    <button name="delete" class="btn1 btn" (click)="deletesurvey(pageData)">Delete Survey</button>
+                 </td>
+              </tr>   
+             
+            <div *ngIf="pageData.SurveyId == Id">  
+                <div *ngIf="isSearch">                                       
+                <p-table #dt [value]="pageData.SQA" [lazy]="true" dataKey="pageData.QuestionId" [scrollable]="true" scrollHeight="70vh" text-align: center>
+                  <ng-template pTemplate="body" let-colData let-rowIndex="rowIndex+1">     
+                    <tr>
+                       
+                    </tr>  
+                    <tr>
+                      <td class="pageStyle"><b> {{colData.QuestionId}} . {{colData.QueName}}  </b> </td>                         
+                    </tr>
+                                                  
+                <p-table #dt [value]="colData.AnswerList" [lazy]="true" dataKey="colData.QuestionId"
+                  [scrollable]="true" scrollHeight="65vh" text-align: center>
+                  <ng-template pTemplate="body" let-Data let-columns="colData.AnswerList" let-expanded="expanded" let-rowIndex="rowIndex+1">                
+                    <tr>
+                      <td class="answerStyle">               
+                          <div id="{{Data.QuestionId}}" class="ui-g-12">
+                            <p-radioButton name="{{Data.QuestionId}}" value="{{Data.SurveyId}}"
+                              label="{{rowIndex}} - {{Data.Answer}}" [(ngModel)]="pageData.RightAnsId"></p-radioButton>
+                          </div>
+                          <br>
+                    
+                      </td>
+                    </tr>
+                
+                  </ng-template>
+                </p-table>
+                     
+            </ng-template>
+          </p-table>
+              </div>
+          </div>          
+          </ng-template>
+          </p-table>
+                  
+        <br>
+  </div>
+  <div *ngIf="selectedQue">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+      <p-header>
+       Copy Survey To Warehouse
+      </p-header>
+      <div class="ui-fluid">
+        <form #storyForm="ngForm">
+          <div class="ui-g">
+            <div class="ui-g-6">
+              <div class="ui-g">
+                <div class="form-group">
+                  <label for="surveylistproject">Warehouse:</label>
+                  <br>
+                  <select id="des" name="warehouse" class="form-control" [(ngModel)]="data.WarehouseId">
+                    <option value="">--select--</option>
+                    <option *ngFor="let w of warehouseList" [ngValue]="w.WarehouseId">
+                      {{w.WarehouseName}} {{w.CityName}}
+                    </option>
+              </select>
+           </div>
+              </div>
+            </div>
+            <div class="ui-g-12">
+              <div class="bdry"> </div>
+              <button class="btn btn-raised btn-raised btn-primary pull-right" (click)="SavesurveyCopy(storyForm)">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </p-dialog>
+  </div>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+ 

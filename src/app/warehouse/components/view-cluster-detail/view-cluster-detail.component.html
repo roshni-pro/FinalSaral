@@ -1,0 +1,96 @@
+<section id="tax-details">
+    <div class="email-app-mail-content px-2 py-0 h-100 border-left border-left-2">
+      <div class="email-app-mail-content-detail h-100 overflow-hidden">
+        <div class="info-header">
+          <button type="button" class="close" aria-label="Close" (click)="closeDetails(false)">
+            <span aria-hidden="true">&times;</span>
+          </button>
+ 
+          <h3 class="m-2">{{details[activeFields[0].field]}}</h3>
+  
+          <ul class="nav border-bottom">
+            <li class="nav-item" (click)="overviewDisplay($event)">
+              <a [ngClass]="activeTabClass[0].isActive==true? 'nav-link active' : 'nav-link' " id="overview-btn">Overview</a>
+            </li>
+            <li class="nav-item" (click)="map($event)">
+                <a [ngClass]="activeTabClass[1].isActive==true? 'nav-link active' : 'nav-link' ">View</a>
+              </li>
+            <li class="nav-item" (click)="editinfo($event)">
+              <a [ngClass]="activeTabClass[2].isActive==true? 'nav-link active' : 'nav-link' "></a>
+            </li>
+            <li class="nav-item" (click)="CitydisplayTabs($event)">
+  
+              <a [ngClass]="activeTabClass[3].isActive==true? 'nav-link active' : 'nav-link' "></a>
+            </li>
+  
+            <li class="nav-item" (click)="Vehicle($event)">
+              <a [ngClass]="activeTabClass[4].isActive==true? 'nav-link active' : 'nav-link' "></a>
+            </li>
+            <li class="nav-item" (click)="Agent($event)">
+              <a [ngClass]="activeTabClass[5].isActive==true? 'nav-link active' : 'nav-link' "></a>
+            </li>
+           
+  
+  
+  
+          </ul>
+  
+  
+  
+        </div>
+  
+  
+        <div id="editForm" *ngIf="displayTabs[1].bool" class="info-div m-2">
+         
+        </div>
+  
+  
+        <div id="depo" *ngIf="displayTabs[2].bool" class="info-div m-2">
+       
+        </div>
+  
+        <!-- Depo Start -->
+        <div id="depo" *ngIf="displayTabs[2].bool" class="">
+  
+        </div>
+        <!-- Depo End -->
+  
+        <div id="depoedit" *ngIf="displayTabs[3].bool" class="info-div overflow-hidden h-100 m-2">
+          {{details.CityId}}
+          
+        </div>
+  
+        <div id="depo" *ngIf="displayTabs[4].bool" class="info-div overflow-hidden h-100 m-2">
+          {{details.CityId}}
+         
+        </div>
+        <div id="depo1" *ngIf="displayTabs[5].bool" class="info-div overflow-hidden h-100 m-2">
+        
+        </div>
+        <div id="depo2" *ngIf="displayTabs[6].bool" class="info-div overflow-hidden h-100 m-2">
+         
+        </div>
+        <div id="depo3" *ngIf="displayTabs[7].bool" class="info-div overflow-hidden h-100 m-2">
+          <app-view-cluster-map [CityId]="details.CityId" [WarehouseName]="details.WarehouseName"
+            [ClusterName]="details.ClusterName" [ClusterId]="details.ClusterId"></app-view-cluster-map>
+        </div>
+  
+        <div id="overview" *ngIf="displayTabs[0].bool" class="info-div text-sm">
+          <div class="info-content">
+            <div class="row m-2 mx-4">
+              <div class="col-md-6 d-flex" *ngFor="let activeField of activeFields">
+                <div class="info-label font-weight-bold m-2">{{activeField.label}}</div>
+                <div class="info-value m-2">
+                  <div
+                  *ngIf="activeField.field == 'ExecutiveName' && details.primeExecutive != details.ExecutiveName">{{details.primeExecutive + ','}}</div>
+                  {{details[activeField.field]}}
+                
+                </div>
+              </div>
+            </div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </section>

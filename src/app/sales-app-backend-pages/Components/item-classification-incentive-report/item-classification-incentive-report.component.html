@@ -1,0 +1,94 @@
+<div>
+  <h3 class="heading mt-4">Items Classification Incentive Report</h3>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+              <div class="header">
+                <!-- <h3 class="content-header">Items classification incentive report</h3> -->
+              </div>
+            </div>
+          </div>  
+          <div class="row">
+            <div class="col-md-3">
+                <label for="">Select City</label>
+                <!-- <p-dropdown [options]="CityList" [(ngModel)]="selectedCity" optionLabel="label" placeholder="Select city" (onChange)="getWarehouseByCityId();getStore()"
+                [filter]="true" [resetFilterOnHide]="true">
+                </p-dropdown> -->
+                <p-multiSelect [options]="CityList" [(ngModel)]="selectedCity" defaultLabel="Select City" (onChange)="getWarehouseByCityId();getStore()"
+                optionLabel="label" selectedItemsLabel="{0} City selected" ></p-multiSelect>
+            </div>
+            <div class="col-md-3">
+                <label for="">Select Warehouse</label>
+                <p-multiSelect [options]="warehouseList" [(ngModel)]="warehouseID" defaultLabel="Select warehouse" (onChange)="chageWarehouse()"
+                optionLabel="label" selectedItemsLabel="{0} Warehouse selected"  optionValue="value"></p-multiSelect>
+            </div>
+            <div class="col-md-3">
+                <label for="">Select Store</label>
+                <p-multiSelect [options]="StoreList" [(ngModel)]="StoreId" defaultLabel="Select Store" (onChange)="chageStore()"
+                optionLabel="Name" selectedItemsLabel="{0} Store selected"></p-multiSelect>
+            </div>
+            <div class="col-md-3">        
+              <label for="">Enter Month</label><br>
+              <p-calendar [style]="{'width':'100%'}" [(ngModel)]="dateValue" view="month" dateFormat="mm/yy"></p-calendar>
+            </div>
+            <!-- <div class="col mt-3">
+                <button class="btn btn-primary ml-1" (click)="Search()">Search</button>
+                <button class="btn btn-primary ml-1" (click)="Clear()">Clear</button>
+                <button class="btn btn-success btn-raised ml-1" (click)="Export()" >Export</button>
+                <button class="btn btn-success btn-raised ml-1" (click)="ExportAll()">Export All</button>
+            </div> -->
+          </div>
+          <div class="row">
+            <div class="col mt-3 text-right mr-2">
+              <button class="btn btn-primary ml-1" (click)="Search()">Search</button>
+              <button class="btn btn-primary ml-1" (click)="Clear()">Clear</button>
+              <button class="btn btn-success btn-raised ml-1" (click)="Export()" >Export</button>
+              <button class="btn btn-success btn-raised ml-1" (click)="ExportAll()">Export All</button>
+            </div>
+          </div>
+
+    </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+      <div class="card-body">
+          <p-table [value]="incentiveClaftionReport" [paginator]="true" [rows]="20" [(first)]="first" [showCurrentPageReport]="true" class="center">
+              <ng-template pTemplate="header" >
+                  <tr > 
+                      <!-- <th style="width:75px"><b> S.N.</b></th> -->
+                      <th  ><b> Executive Name</b></th>
+                      <th ><b> Store </b></th>
+                      <th ><b> warehouse </b></th>
+                      <th ><b> Item Classification Name</b></th>
+                      <th ><b> Sale Value</b></th>
+                      <th ><b> Classification Wise Incentive</b></th>
+                      <th ><b> Total Incentive</b></th>            
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex">
+                  <tr>
+                      <!-- <td style="width:75px">{{rowIndex+1}}</td> -->
+                      <td >{{rowData.ExecutiveName==null?'--':rowData.ExecutiveName}}</td>
+                      <td >{{rowData.StoreName==null?'--':rowData.StoreName}}</td>
+                      <td>{{rowData.WarehouseName==null?'--':rowData.WarehouseName}}</td>
+                      <td >{{rowData.ItemClassification}}</td>
+                      <td >{{rowData.SaleValue}}</td>
+                      <td >{{rowData.CommissionPercentage}}</td>
+                      <td >{{rowData.Earning}}</td>
+                  </tr>
+              </ng-template>
+          </p-table>
+      </div>
+  </div>
+</div>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+[style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

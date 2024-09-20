@@ -1,0 +1,84 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Marketing Dashboard</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col">
+                <label style="font-weight: 500;">Store *</label>
+                <p-multiSelect [options]="StoreList" [(ngModel)]="SelectedStoreId" optionLabel="Name"
+                    defaultLabel="Select a Store"></p-multiSelect>
+            </div>
+
+            <div class="col">
+                <label style="font-weight: 500;">Order Type *</label><br>
+                <p-dropdown [options]="orderType" [filter]="true" [(ngModel)]="orderid" placeholder="Select Order Type"
+                    optionValue="value" optionLabel="lable"></p-dropdown>
+            </div>
+            <div class="col">
+                <label style="font-weight: 500;">Retailer Type *</label><br>
+                <p-multiSelect [options]="customerType" placeholder="Select Customer Type"
+                    [(ngModel)]="SelectedCustomer" [filter]="true" optionValue="value"
+                    optionLabel="lable"></p-multiSelect>
+            </div>
+            <div class="col">
+                <label style="font-weight: 500;">Retailer Class *</label><br>
+                <p-multiSelect [options]="Retailer" placeholder="Select Retailer Class"
+                    [(ngModel)]="SelectedRetailer" [filter]="true" optionValue="value"
+                    optionLabel="lable"></p-multiSelect>
+            </div>
+            <div class="col">
+                <label style="font-weight: 500;"> Month / Year *</label><br>
+                <p-calendar [showIcon]="true" dateFormat="mm/yy" placeholder="Select Month/Year" [(ngModel)]="MonthYear"
+                    view="month"></p-calendar>
+            </div>
+            <div class="col mt-3 mt-2 d-flex">
+                <button class="btn btn-primary mr-2 mt-2" (click)="Search()">Search</button>
+                <button class="btn btn-success mr-2 mt-2" (click)="ExportSearch()">Export</button>
+            </div>
+        </div>
+        <p-table [value]="markitingList" [tableStyle]="{'min-width': '50rem'}" [scrollable]="true" scrollHeight="55vh">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Warehouse</th>
+                    <th>Total Sales</th>
+                    <th>Cancellation</th>
+                    <th>Offers<br>(A)</th>
+                    <th>Waller Points<br>(B)</th>
+                    <th>Freebies <br> (C)</th>
+                    <th>Total Spend<br>(A + B + C) </th>
+                    <th>Marketing Cost<br>(Total Spend /Total Sales)</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+                <tr>
+                    <td>{{product.WarehouseName}}</td>
+                    <td>{{product.TotalSales}}</td>
+                    <td>{{product.Cancellation}}</td>
+                    <td>{{product.Offers}}</td>
+                    <td>{{product.WalletPoint}}</td>
+                    <td>{{product.Freebies}}</td>
+                    <td>{{product.TotalSpend}}</td>
+                    <td>{{product.MarketingCost}}%</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td colspan="13" style="text-align: center;">
+                        <br>
+                        <h4><b>No Data Found.</b></h4>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<p-toast [style]="{width: '20vw'}" position="top-right"></p-toast>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

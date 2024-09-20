@@ -1,0 +1,29 @@
+<div class="mt-5 d-flex justify-content-center" >
+    <p-card [style]="{'width': '35rem', 'margin-bottom': '2em', 'padding-left': '2.8rem'}" styleClass="p-card-shadow" >
+        <img alt="Card" src="assets/img/gallery/test.jpg" style="width: 85%; height: 100px;">
+        <h5 style="font-family: Open Sans, Helvetica Neue, sans-serif; font-weight: 700;"><b>Login</b> </h5>
+        <form (ngSubmit)="this.loginForm.valid && login(this.loginForm.value)" [formGroup]="this.loginForm" >
+            <div class="row mt-4">
+                <label class="col-md-5 " ><b>Email:</b></label>&nbsp;&nbsp;
+                <div class="col-md-6" >
+                    <input formControlName="email" class="form-control" type="email" pInputText >
+                    <small style="color: red;" *ngIf="loginForm.controls['email'].invalid && (loginForm.controls['email'].dirty || loginForm.controls['email'].touched)"  class="p-error">Email is required.</small>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <label class="col-md-5" ><b>Password:</b></label>&nbsp;&nbsp;
+                <div class="col-md-6" >
+                    <input formControlName="password" class="form-control" type="password" pInputText >
+                    <small style="color: red;" *ngIf="loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)" class="p-error">(8-12)digit password is required</small>
+                </div>  
+            </div>
+            <div class="row mt-1">
+                <a class="col-md-5"  href="http://localhost:4200/#/layout/angular/practice">Forget Password ?</a> 
+            </div>
+            <div class="text-right mt-1 mb-4" >
+                <button pButton pRipple type="submit" label="Login" (click)="login(12)"  class="p-button-raised clor"></button>&nbsp;&nbsp;&nbsp;
+                <button pButton pRipple type="button"  label="Signup"  (click)="signup()"  class="p-button-raised clor" ></button>
+            </div>
+        </form>
+    </p-card>
+</div>

@@ -1,0 +1,36 @@
+<div class="row">
+    <div class="col-md-6" *ngIf="!warehouseName">
+        <select id="desg" name="desg" class="form-control" [(ngModel)]="warehouseID" required="true"
+            (ngModelChange)="onLedgerTypeChange(); checkValid($event)" (blur)="checkValid($event)"
+            [disabled]="isSelected">
+            <option [ngValue]="null">Select Warehouse</option>
+            <option *ngFor="let whouse of warehouseList" [ngValue]="whouse.WarehouseId">
+                {{ whouse.WarehouseName}}
+            </option>
+        </select>
+        <!-- <input type="text" list="desg" />
+        <datalist id="desg" name="desg" class="form-control" [(ngModel)]="warehouseID" required="true"
+        (ngModelChange)="onLedgerTypeChange(); checkValid($event)" (blur)="checkValid($event)"
+        [disabled]="isSelected" >
+            <option [ngValue]="null">Select Warehouse</option>
+            <option *ngFor="let whouse of warehouseList" [ngValue]="whouse.WarehouseId">
+                {{ whouse.WarehouseName }} </option>
+        </datalist> -->
+        <p *ngIf="invalidItem" style="color: red">
+            please select warehouse
+        </p>
+    </div>
+    <div class="col-md-6" *ngIf="isSelected">
+        <div class="ui-inputgroup">
+            <input class="form-control" [(ngModel)]="itemValue.itemname" disabled>
+            <button pButton type="button" icon="pi pi-times" (click)="cancel()" class="ui-button-danger"></button>
+        </div>
+    </div>
+    <div [ngClass]="{'col-md-6':!warehouseName, 'ui-g-12': warehouseName}" *ngIf="!isSelected">
+        <p-autoComplete appendTo="body" [(ngModel)]="selectedItem" [suggestions]="itemList"
+            (completeMethod)="getitemList($event)" [disabled]="warehouseName && warehouseName != ''" field="itemname"
+            [size]="30" placeholder="Search Items (min 2 letters)" [minLength]="1" (onSelect)="onSelectItem($event)"
+            name="itemname" required="true" #ledgerName="ngModel" (onBlur)="checkValid($event)">
+        </p-autoComplete>
+    </div>
+</div>

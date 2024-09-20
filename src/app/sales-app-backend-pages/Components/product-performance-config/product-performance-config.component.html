@@ -1,0 +1,160 @@
+<div>
+    <h3 class="heading mt-4">Product Performance Configurations</h3>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h6 class="heading"></h6>
+        <div class="card-body">
+            <!-- <div class="row">
+                <div class="col-3">
+                    <p>  Select Warehouse* </p>
+                    <p-dropdown  
+                    placeholder="Select Warehouse" [options]="warehouseList"  [filter]="true" 
+                    [(ngModel)]="selectedWarehouses" optionLabel="WarehouseName" 
+                    (onChange)="onSearchWareHouseId(selectedWarehouses)"></p-dropdown>
+                </div>
+                <div class="col-9 mt-4 text-left">
+                    <button style="margin-top: 4px;" class="btn btn-primary" (click)="search()" >Search</button>
+                </div>
+            </div> -->
+            <div class="container-fluid my-1 " >
+                <div class="card-body" style="padding: 1rem;">
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-3"><b>From Day</b></div>
+                    <div class="col-3"><b>To Day</b></div>
+                    <div class="col-2"></div>
+                    <div class="col-2"><b>Anytime</b></div>
+                </div>
+            </div></div>
+
+            <div class="container-fluid my-1 " style="height: 80px; border: 2px solid black;">
+                <div class="card-body" style="padding: 1rem;">
+                    <!-- <div class="row mb-1">
+                        <div class="col-2"></div>
+                        <div class="col-3">From Day</div>
+                        <div class="col-3">To Day</div>
+                        <div class="col-1"></div>
+                        <div class="col-3">Anytime</div>
+                    </div> -->
+                        <div class="row">
+                            <div class="col-2">Sales forecast edit:</div>
+                            <div class="col-3">
+                                <!-- <label>From Day</label> -->
+                                <p-dropdown [options]="FromDate" placeholder="Select" optionLabel="name" optionValue="id" [(ngModel)]="FromDate1" (onChange)="DateChange(FromDate1,'sales')" [disabled]="IsAnytime"></p-dropdown>
+                            </div>
+                            <div class="col-3">
+                                <!-- <label>To Day</label> -->
+                                <p-dropdown class="mr-4" [options]="TodateList"  placeholder="Select"  optionLabel="name" optionValue="id"   [(ngModel)]="ToDate1"  [disabled]="IsAnytime"></p-dropdown>
+                            </div>
+                            <div class="col-2 text-center">
+                                <button  class="btn btn-primary" (click)="save('sales')">Save</button>
+                            </div>
+                            <div class="col-1 text-center">
+                                <!-- <label>Anytime</label> -->
+                                <p-inputSwitch id="cty" name="StoreNam" [(ngModel)]="IsAnytime"  (onChange)="OnToggleChange(IsAnytime,'sales')" >   
+                                </p-inputSwitch>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <br>
+            <!-- 104px -->
+            <div class="container-fluid my-1 " style="height: 80px; border: 2px solid black;"> 
+                <div class="card-body" style="padding: 1rem;">
+                    <!-- <div class="row mb-1">
+                        <div class="col-2"></div>
+                        <div class="col-3">From Day</div>
+                        <div class="col-3">To Day</div>
+                        <div class="col-1"></div>
+                        <div class="col-3">Anytime</div>
+                    </div> -->
+                        <div class="row">
+                            <div class="col-2">Buyer forecast edit:</div>
+                            <div class="col-3">
+                                <!-- <label>From Day</label> -->
+                                <p-dropdown [options]="FromDate" placeholder="Select" optionLabel="name" optionValue="id" [(ngModel)]="FromDate2" (onChange)="DateChange(FromDate2,'buyer')" [disabled]="IsAnytimeBuyer"></p-dropdown>
+                                <!-- <p-dropdown class="mr-4" [options]="TodateList"  placeholder="Select"  optionLabel="name" optionValue="id"   [(ngModel)]="ToDate1" (onChange)="DateChange(ToDate1,'buyer')"  [disabled]="IsAnytimeBuyer"></p-dropdown> -->
+                            </div>
+                            <div class="col-3">
+                                <!-- <label>To Day</label> -->
+                                <p-dropdown class="mr-4" [options]="TodateList1"  placeholder="Select"  optionLabel="name" optionValue="id"   [(ngModel)]="ToDate2"  [disabled]="IsAnytimeBuyer"></p-dropdown>
+                            </div>
+                            <div class="col-2 text-center">
+                                <button  class="btn btn-primary" (click)="save('buyer')">Save</button>
+                            </div>
+                            <div class="col-1 text-center">
+                                <!-- <label>Anytime</label> -->
+                                <p-inputSwitch id="cty" name="StoreNam" [(ngModel)]="IsAnytimeBuyer"  (onChange)="OnToggleChange(IsAnytimeBuyer,'buyer')" >   
+                                </p-inputSwitch>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <br><br><br>
+            <div class="container-fluid my-1 " style="height: 80px; border: 2px solid black;">
+                <div class="card-body">
+                        <div class="row">
+                            <!-- <div class="col-3">Introduce New Products for Store:</div> -->
+                            <div class="col-4" >
+                                <!-- style="display: contents;" -->
+                                <div >Introduce New Products for All Store:</div>
+                                <!-- <p-dropdown  
+                                placeholder="Select strore" [options]="storeList"  [filter]="true" 
+                                [(ngModel)]="selectedstore" optionLabel="Name" 
+                                ></p-dropdown> -->
+                            </div>
+                            <!-- <div class="col-2 text-center">
+                                <img width="40" height="40" (click)="DawnloadSampleFile()" src="https://img.icons8.com/wired/64/download--v1.png" alt="download--v1"/>
+                            </div>
+                            <div class="col-2.5">Download sample file</div>
+                            <div class="col-1 text-right ml-1">
+                                <img width="40" height="40" (click)="openFilePicker()" src="https://img.icons8.com/wired/64/upload--v1.png" alt="upload--v1"/>
+                            </div>
+                            <div class="col-2.5 text-right ml-3">Upload file here</div> -->
+                            <div class="col-1 text-left ml-1">
+                                <img class="fa fa-mouse-pointer" width="40" height="40" (click)="DawnloadSampleFile()" src="https://img.icons8.com/wired/64/download--v1.png" alt="download--v1"/>
+                            </div>
+                            <div class="col-3">Download sample file</div>
+                            <div class="col-1 text-left ml-1">
+                                <img class="fa fa-mouse-pointer" width="40" height="40" (click)="openFilePicker()" src="https://img.icons8.com/wired/64/upload--v1.png" alt="upload--v1"/>
+                            </div>
+                            <div class="col-2 text-left "><span id="file-name"></span>
+                               <span id="my-button">Upload file here</span>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <!-- <br> -->
+            <!-- <div class="container-fluid my-1 " style="height: 70px; border: 2px solid black;">
+                <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">Introduce New Products for Store 2</div>
+                            <div class="col">
+                                <img width="40" (click)="DawnloadSampleFile(2)" height="40" src="https://img.icons8.com/wired/64/download--v1.png" alt="download--v1"/>
+                            </div>
+                            <div class="col-3">Download sample file</div>
+                            <div class="col">
+                                <img width="40" height="40" (click)="openFilePicker(2)" src="https://img.icons8.com/wired/64/upload--v1.png" alt="upload--v1"/>
+                            </div>
+                            <div class="col">Upload file here</div>
+                        </div>
+                </div>
+            </div> -->
+            <div class="text-center"><button  class="btn btn-success my-2"  (click)="processExcelFile()" >Save</button></div>
+        </div>
+    </div>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+
+
+
+

@@ -1,0 +1,64 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+  <!-- <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <div class="position-relative">
+        <div class="col-md-12 mr"> -->
+            <p-table [value]="orderRedispatchList"  #dt [globalFilterFields]="['OrderId','invoice_no','Skcode','CustomerName','Mobile','CustomerType','RedispatchStatus','Status']" [paginator]="true" [rows]="10" text-align: center>
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                      <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                      <input type="text" pInputText size="50" placeholder="Global Filter"
+                        (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                  </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Redispatch Status</th>
+                    <th>OrderId</th>
+                    <th>Order Details</th>
+                    <th>Customer Info</th>
+                    <!-- <th>Cluster Name</th> -->
+                    <th>Status</th>
+                    <th>Delivery Address</th>
+                    <th>Order Date</th>
+                    <th>Redispatch Count</th>
+                    <th>Request</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                  <tr >
+                      <td style="color: red;font-weight: 500;">{{rowData.RedispatchStatus}}</td>
+                      <td>{{rowData.OrderId}}</td>
+                      <td>
+                        Amount : {{rowData.GrossAmount}}
+                        Invoice_No : {{rowData.invoice_no}}
+                      </td>
+                      <td>
+                          {{rowData.Skcode}}
+                          {{rowData.CustomerName}}
+                          {{rowData.Mobile}}
+                          {{rowData.CustomerType}}
+                      </td>
+                      <!-- <td>{{rowData.ClusterName}}</td> -->
+                      <td>{{rowData.Status}}</td>
+                      <td>{{rowData.ShippingAddress}}</td>
+                      <td>{{rowData.Deliverydate | date : 'mediumDate'}}</td>
+                      <td>{{rowData.Redispatchcount}}</td>
+                      <td>
+                          <button type="button" *ngIf="rowData.IsApproved == null" class="btn btn-raised btn-primary" (click)="onApproval(rowData)"  
+                          style="font-size: .8em;">Send Request</button>
+                          <button type="button" *ngIf="rowData.IsApproved != null" class="btn btn-raised btn-warning" (click)="onApproval(rowData)"  [disabled]="rowData.IsApproved != null" 
+                          style="font-size: .8em;">Sent Request</button>
+                        </td>
+                  </tr>
+                  </ng-template>
+            </p-table>
+        <!-- </div>
+    </div>
+  </div> -->
+  <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">Cancel</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Request</button>
+    </p-footer>
+  </p-confirmDialog>
+<!-- </section> -->

@@ -1,0 +1,120 @@
+<h3 class="m-2">
+    <i class="fa fa-boxes"></i><b> Clearance Item Status Update</b>
+</h3>
+<div class="row">
+    <div class="col-md-2">
+        <label>Select Warehouse</label>
+        <p-dropdown [options]="warehouseList" optionLabel="WarehouseName" [filter]="true" [resetFilterOnHide]="true"
+            placeholder="Select Warehouse" [(ngModel)]="selWarehouse" (ngModelChange)="onSearch()"></p-dropdown>
+    </div>
+    <div class="col-md-10">
+        <label>Search Item</label>
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" id="ab" placeholder="&#xF002; Enter text here" class="form-control"
+                    style="font-family:Arial, FontAwesome" name="ab" [(ngModel)]="searchKey">
+                <span class="col-md-1 col-12"></span>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-success _success" (click)="onSearch()">
+                    Search
+                </button>&nbsp;&nbsp;
+                <button class="btn btn-primary" (click)="onRefresh()">
+                    Refresh
+                </button> &nbsp;&nbsp;
+                <button class="btn btn-info _info" (click)="onExport()">
+                    Export
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div *ngIf="selWarehouse"> -->
+    
+<p-table [value]="clearanceLiveItemList" [lazy]="true"   (onLazyLoad)="load($event)"
+    [totalRecords]="totalRecords" [loading]="blocked" [paginator]="true" [rows]="10" scrollHeight="65vh" scrollWidth = "10vh" [scrollable]="true">
+    <!-- scrollHeight="65vh" scrollWidth = "10vh" [scrollable]="true"  -->
+    <ng-template pTemplate="header">
+        <tr>
+            <th>warehouse</th>
+            <th>ItemMultiMRPId</th>
+            <th>ItemName</th>
+            <th>ABC Classfication</th>
+            <th>Unit Price</th>
+            <th>Offer Status</th>
+            <th>Live Qty</th>
+            <th>Remaining Live Qty</th>
+            <th>Batch Code</th>
+            <th>MFG Date</th>
+            <th>Expiry Date</th>
+            <th>Stock Type</th>
+            <th> Shelf Life Days Left</th>
+            <th>Shelf Life Left</th>
+            <th>Action</th>
+            <th>History</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+        <tr>
+            <td>{{rowData.WarehouseName}}</td>
+            <td>{{rowData.ItemMultiMRPId}}</td>
+            <td>{{rowData.itemname}}</td>
+            <td>{{rowData.ABCClassification}}</td>
+            <td>{{rowData.UnitPrice}}</td>
+            <td>{{rowData.offerstatus}}</td>
+            <td>{{rowData.TotalQty}}</td>
+            <td>
+                <!-- <input class="form-control col-12" type="number" 
+                        title="Numbers only" id="qty" name="qty{{i}}" style="color: black;" 
+                         [(ngModel)]="rowData.AvailableQty" (keypress)="keyPress($event)" min="0" [disabled]="!rowData.IsChecked"/> -->
+                {{rowData.AvailableQty}}
+            </td>
+            <td>{{rowData.BatchCode}}</td>
+            <td>{{rowData.MFGDate | date : 'mediumDate'}}</td>
+            <td>{{rowData.ExpiryDate | date : 'mediumDate'}}</td>
+            
+            <td>{{rowData.StockType}}</td>
+            <td>{{rowData.RemainShelfLifedays}}</td>
+            <td>{{rowData.ShelfLifeLeft}}</td>
+            <td>
+                <button class="btn btn-info _info" *ngIf="rowData.IsActive" (click)="onAction(rowData)">
+                    {{rowData.Status}}
+                </button>
+                <button class="btn btn-primary" *ngIf="!rowData.IsActive" (click)="onAction(rowData)">
+                    {{rowData.Status}}
+                </button>
+            </td>
+            <td><i class="fa fa-history" (click)="getHistory(rowData)" aria-hidden="true" style="font-size:30px;"></i>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-dialog [(visible)]="IsHistory" positionTop="50" [modal]="true" appendTo="body"
+    [style]="{width: '70%',height: '40%', top: '30px'}">
+    <div class="header">
+        <h3 class="m-2" style="align-content:flex-start;">History</h3>
+    </div>
+    <div class="card" *ngIf="IsHistory">
+        <app-history [entity]="entity" [id]="Id"></app-history>
+    </div>
+    <div class="row">
+        <div class="col-1" style="margin-left:90%;">
+            <button class="btn btn-primary" (click)="IsHistory=false;">Cancel</button>
+        </div>
+    </div>
+</p-dialog>
+<!-- </div> -->
+
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

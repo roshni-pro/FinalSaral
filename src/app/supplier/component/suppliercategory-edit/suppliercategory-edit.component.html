@@ -1,0 +1,54 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form-inline" name="form" #suppliercategoryEditForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Edit Supplier Category</h4>
+                  <div class="row">
+   
+                    <div class="col-md-12">
+                      <div class="form-group m-2">
+                        <label for="CategoryName" class="col-md-12">Supplier Category Name:</label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="CategoryName" class="form-control col-md-12" name="CategoryName"
+                          placeholder="Supplier Category Name" [(ngModel)]="suppliercategory.CategoryName" required="1" maxlength="20" minlength="2"
+                          #firstName="ngModel" />
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code class="padding">Supplier Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                            <code class="padding">Minlength 2</code>
+                          </div>
+                          <div *ngIf="isInvalid && !firstName.valid && firstName.errors.maxlength">
+                            <code class="padding">Maxlength 20</code>
+                          </div>
+                      <!-- </div> -->
+                      </div>
+                    </div>
+  
+                </div>
+              </div>
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    Cancel
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="update(suppliercategoryEditForm)">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

@@ -1,0 +1,61 @@
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <!-- <h3 class="m-2"><b>Fleet Master List</b></h3> -->
+      <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">Assignment List</h4>    
+    </div>
+     <div>
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: 10px;" (click)="onCancel()">
+            Back
+        </button>
+      </div>
+</div>
+
+<p-table [value]="assignmentList" [paginator]="true" [lazy]="true" [scrollable]="true" width="100%">
+
+    <ng-template pTemplate="header">
+        <tr style="text-align: center">
+          <th>
+           Select Order
+          </th>
+          <th>
+            Order Id
+          </th>
+          <th>
+            Order Details
+          </th>
+          <th>
+            Customer Info
+          </th>
+          <th>
+            Cluster Name
+          </th>
+          <th>
+              Delivery Address
+          </th>
+          <th>
+            Delivery Date
+          </th>
+          <th>
+              Product Detail
+          </th>          
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+        <tr style="text-align: center">
+            <td>
+                <p-checkbox [name]="rowData.selectOrder" [(ngModel)]="rowData.IsChecked"  binary="true" (ngModelChange)="onClickAssignment(rowData)"></p-checkbox>
+            </td>
+            <td>{{rowData.OrderId}}</td>
+            <td>{{rowData.OrderDetail}}</td>
+            <td>{{rowData.CustomerInfo}}</td>
+            <td>{{rowData.ClusterName}}</td>
+            <td>{{rowData.DeliveryAddress}}</td>
+            <td>{{rowData.DeliveryDate}}</td>
+            <td>
+                <button type="button" class="btn btn-primary" name="product_detail">Details</button>
+            </td>
+        </tr>
+    </ng-template>
+
+</p-table>

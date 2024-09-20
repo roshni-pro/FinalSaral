@@ -1,0 +1,61 @@
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form" name="form" #acctypeForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Add Account Type Info</h4>
+                  <div class="row col-md-12" *ngIf="accountType">
+                    <div class="col-md-6">
+                      <div class="form-group  m-2">
+                        <label for="fname" class="col-md-6"> Name</label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="fname" class="form-control col-md-6" name="fname"
+                          [(ngModel)]="accountType.Name" placeholder="Enter Name" required="1" minlength="3" maxlength="30" #name="ngModel"/>
+                          <div *ngIf="isInvalid && !name.valid && name.errors.required">                            
+                              <code>Name is required</code>
+                            </div>
+                             <div *ngIf="isInvalid && !name.valid && name.errors.minlength">
+                                <code>Minlength 3</code>
+                              </div>    
+                              <!-- </div>    -->
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="desg" class="col-md-6">AccountClassification</label>
+                        <select id="desg" name="desg"  class="form-control col-md-6"  [(ngModel)]="accountType.AccountClassificationID">
+                          <option *ngFor="let ac of accountClassificationList" [ngValue]="ac.ID">
+                            {{ ac.Name }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                 
+  
+                  </div>
+                </div>
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                    <!-- <i class="ft-x"></i>  -->
+                    Cancel
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="onclick(acctypeForm)">
+                    <!-- <i class="fa fa-check-square-o"></i> -->
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

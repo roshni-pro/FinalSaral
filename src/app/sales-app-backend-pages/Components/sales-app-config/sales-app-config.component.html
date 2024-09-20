@@ -1,0 +1,32 @@
+<p-tabView [(activeIndex)]="activeIndex">
+    <p-tabPanel header="Catalog">
+        <div *ngIf="this.abc==false">
+            <app-sales-app-config-catalog  (newItemEvent)="addItem($event)"></app-sales-app-config-catalog>
+        </div>
+        <div *ngIf="this.abc==true">
+            <app-sales-app-config-catalog-create-new (newItemEvent)="addItem($event)"></app-sales-app-config-catalog-create-new>
+        </div>       
+    </p-tabPanel>
+
+    <p-tabPanel header="Checkout">
+       <app-sales-app-checkout (newItemEvent)="addItem($event)"></app-sales-app-checkout>
+    </p-tabPanel>
+    <p-tabPanel header="Personal Home">
+        <app-product-catalog></app-product-catalog>
+     </p-tabPanel>
+     <p-tabPanel header="Setting and Menu">
+    
+     </p-tabPanel>
+     <p-tabPanel header="Beat Edit">
+        <app-sales-app-beat-edit></app-sales-app-beat-edit>
+     </p-tabPanel>
+
+     <p-tabPanel header="Attendance Rules">
+        <div *ngIf="this.IsSalesAttendance==false">
+            <app-attendance-rules  (SalesAttendanceEvent)="changeSalesAttComponent($event)" ></app-attendance-rules>
+        </div>
+        <div *ngIf="this.IsSalesAttendance==true">
+            <app-attendance-rules-create-new (SalesAttendanceEvent)="changeSalesAttComponent($event)"  ></app-attendance-rules-create-new>
+        </div>       
+    </p-tabPanel>
+</p-tabView>

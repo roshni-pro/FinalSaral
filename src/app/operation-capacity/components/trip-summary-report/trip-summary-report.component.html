@@ -1,0 +1,300 @@
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">Trip Summary Report</h4>
+    </div>
+    <div class="col-xl-12 col-lg-12">
+        <div class="card">
+            <div class="card-content">
+                <div class="card-body">
+                    <form class="form" #filterForm="ngForm">
+                        <div class="ui-fluid">
+                            <div class="ui-g">
+                                <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">City</label>
+                                        <!-- <select name="cityInput" class="form-control" required
+                                            [(ngModel)]="input.selectedCityId" (ngModelChange)="onCityChange()"
+                                            #cityInputModel="ngModel">
+                                            <option [value]="null">Select City</option>
+                                            <option *ngFor="let city of cityList" [value]="city.value">{{city.label}}
+                                            </option>
+                                        </select>
+                                        <code *ngIf="input.isFilterFormSubmitted && !cityInputModel.valid">
+                                            Required!!
+                                        </code> -->
+                                        <p-dropdown [options]="cityList" name="cityList" optionLabel="label" 
+                                            (onChange)="onCityChange()"  [(ngModel)]="input.selectedCityId" [filter]="true" placeholder="select city">
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Warehouse</label>
+                                        <p-dropdown name="warehouseInput" placeholder="select warehouse"
+                                            [options]="warehouseList" [(ngModel)]="input.selectedWarehouseId"
+                                            #warehouseInputModel="ngModel" [filter]="true" placeholder="select Warehouse"></p-dropdown>
+
+                                        <code *ngIf="input.isFilterFormSubmitted && !warehouseInputModel.valid">
+                                                Required!!
+                                        </code>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Date</label>
+                                        <select name="dateInput" class="form-control" required
+                                            [(ngModel)]="input.selectedDateOption"
+                                            (ngModelChange)="onChangeDateOption()">
+                                            <option *ngFor="let opt of dateOptionList" [value]="opt.value">
+                                                {{opt.label}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3" *ngIf="input.rangeDates && input.rangeDates.length>0">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Range</label>
+                                        <p-calendar name="dateCalenderInput" [(ngModel)]="input.rangeDates"
+                                            selectionMode="range" [readonlyInput]="true" (onClose)="setDate()">
+                                        </p-calendar>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <button type="button" class="btn-r btn btn-primary" (click)="onSearch(filterForm)"
+                                        label="Search">
+                                        <i class="fa fa-search"></i> Search
+                                    </button>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                        <div *ngIf="input.showData">
+                            <div class="row" *ngIf="input.startDate && input.endDate">
+                                <div class="col-12">
+                                    <span class="nte">Date Range - </span>
+                                    <span class="bb"> Start Date </span><span class="cc">: {{input.startDate | date:"dd/MM/yy"}}</span>
+                                    <span class="bb"> End Date </span><span class="cc">: {{input.endDate | date:"dd/MM/yy"}}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <span class="nte">Note - </span>
+                                    <span class="bb"> D</span><span class="cc">: Delivered</span>
+                                    <span class="bb"> A</span><span class="cc">: All</span>
+                                    <span class="bb"> D Amount</span><span class="cc">: Delivered Amount</span>
+                                    <span class="bb"> V Cost</span><span class="cc">: Vehicle Cost</span>
+
+                                </div>
+                            </div>
+                            <div class="row mr-b-10">
+                                <div class="col-6">
+                                    <div class="row">
+                                        <div class="col-6" *ngIf="pieOrderChart">
+                                            <div class="inr-dv" *ngIf="pieOrderChart">
+                                                <h3>Total Orders</h3>
+                                                <app-trip-summary-chart [inputData]="pieOrderChart">
+                                                </app-trip-summary-chart>
+                                                <div class="row">
+                                                    <div class="lgnd">
+                                                        <table class="tbl-1">
+                                                            <tr>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieOrderChart.datasets[0].backgroundColor[0]}">
+                                                                    {{pieOrderChart.labels[0] }}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieOrderChart.datasets[0].backgroundColor[0]}">
+                                                                    {{pieOrderChart.datasets[0].data[0]}}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieOrderChart.datasets[0].backgroundColor[1]}">
+                                                                    {{pieOrderChart.labels[1] }}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieOrderChart.datasets[0].backgroundColor[1]}">
+                                                                    {{pieOrderChart.datasets[0].data[1]}}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieOrderChart.datasets[0].backgroundColor[2]}">
+                                                                    {{pieOrderChart.labels[2] }}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieOrderChart.datasets[0].backgroundColor[2]}">
+                                                                    {{pieOrderChart.datasets[0].data[2]}}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieOrderChart.datasets[0].backgroundColor[3]}">
+                                                                    {{pieOrderChart.labels[3] }}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieOrderChart.datasets[0].backgroundColor[3]}">
+                                                                    {{pieOrderChart.datasets[0].data[3]}}
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="inr-dv" *ngIf="pieOrderChart">
+                                                <h3>Delayed Trips</h3>
+                                                <app-trip-summary-chart [inputData]="pieTripData">
+                                                </app-trip-summary-chart>
+                                                <div class="row">
+                                                    <div class="lgnd">
+                                                        <table class="tbl-1">
+                                                            <tr>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieTripData.datasets[0].backgroundColor[0]}">
+                                                                    {{pieTripData.labels[0] }}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieOrderChart.datasets[0].backgroundColor[0]}">
+                                                                    {{pieTripData.datasets[0].data[0]}}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieTripData.datasets[0].backgroundColor[1]}">
+                                                                    {{pieTripData.labels[1] }}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieTripData.datasets[0].backgroundColor[1]}">
+                                                                    {{pieTripData.datasets[0].data[1]}}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieTripData.datasets[0].backgroundColor[2]}">
+                                                                    {{pieTripData.labels[2] }}
+                                                                </td>
+                                                                <td
+                                                                    [ngStyle]="{'color': pieTripData.datasets[0].backgroundColor[2]}">
+                                                                    {{pieTripData.datasets[0].data[2]}}
+                                                                </td>
+                                                               
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6" *ngIf="summary">
+                                    <div class="row dt-rwww">
+                                        <div class="col-4">
+                                            <div class="tt">
+                                                <p>{{summary.PlannedKm}}</p>
+                                                <div>Planned Km</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="tt">
+                                                <p>{{summary.TotalTrips | number: '1.0-0'}}</p>
+                                                <div>Total Trips</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="tt">
+                                                <p>{{summary.DistancePerTrip | number: '1.2-2'}}</p>
+                                                <div>Distance/Trip</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="tt">
+                                                <p>{{summary.ActualKm | number: '1.2-2'}}</p>
+                                                <div>Actual Km</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="tt">
+                                                <p>{{summary.AvgServiceTimeInMin | number: '1.0-0'}}</p>
+                                                <div>Distinct Vehicles</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="tt">
+                                                <p>{{summary.OrderPerDay | number: '1.2-2'}}</p>
+                                                <div> <span class="bb">A</span> Order/Day</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6" *ngIf="cost">
+                                    <div class="row dt-rwww tt-hv">
+                                        <div class="col-4">
+                                            <div [ngClass]="{'tt': true, 'bgl' : input.selectedChartOption=='Cost/Km'}"
+                                                (click)="showData('Cost/Km')">
+                                                <p>{{cost.CostPerKm | number: '1.2-2'}}</p>
+                                                <div>Cost/Km</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div [ngClass]="{'tt': true, 'bgl' : input.selectedChartOption=='Cost/Kg'}"
+                                                (click)="showData('Cost/Kg')">
+                                                <p>{{cost.CostPerKg | number: '1.2-2'}}</p>
+                                                <!-- D amount/ V cost % -->
+                                                <!-- <div>Cost/<span class="bb">D</span> Kg</div> -->
+                                                <div><span class="bb">D</span> Amount/ <span class="bb">V</span> Cost %</div>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div [ngClass]="{'tt': true, 'bgl' : input.selectedChartOption=='Cost/Vehicle'}"
+                                                (click)="showData('Cost/Vehicle')">
+                                                <p>{{cost.CostPerVehicle | number: '1.2-2'}}</p>
+                                                <div>Vehicle's Cost</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row dt-rwww  tt-hv">
+                                        <div class="col-4">
+                                            <div [ngClass]="{'tt': true, 'bgl' : input.selectedChartOption=='Cost/Order'}"
+                                                (click)="showData('Cost/Order')">
+                                                <p>{{cost.CostPerOrder | number: '1.2-2'}}</p>
+                                                <div>Cost/<span class="bb">D </span>Order</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div [ngClass]="{'tt': true, 'bgl' : input.selectedChartOption=='Cost/Trip'}"
+                                                (click)="showData('Cost/Trip')">
+                                                <p>{{cost.CostPerTrip | number: '1.2-2'}}</p>
+                                                <div>Cost/Trip</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div [ngClass]="{'tt': true}" >
+                                                <p>{{cost.DboyCost | number: '1.2-2'}}</p>
+                                                <div>DboyCost</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="row" *ngIf="lineChartSelectedData">
+                                        <div class="col-12">
+                                            <p-chart type="line" [data]="lineChartSelectedData"></p-chart>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

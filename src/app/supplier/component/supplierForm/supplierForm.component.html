@@ -1,0 +1,442 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+      <!-- <div class="row text-left"> -->
+        <div class="col-md-12">
+          <div class="card pt-2">
+            <div class="card-content">
+              <div class="px-3">
+                <form class="form form-inline" name="form" (ngSubmit)="onclick(newSupplier,testForm)" #testForm="ngForm" autocomplete="off" >
+                    <input autocomplete="false" name="hidden" type="text" style="display:none;">
+                  <div class="form-body col-12">
+                    <!-- General -->
+                    <h5 class="m-1 ml-2"><strong>General Details</strong></h5>
+                    <hr>
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group m-2">
+                              <label for="a" class="col-md-6">Supplier Name *</label>
+                              <input type="text" id="a" class="form-control col-md-6" [(ngModel)]="newSupplier.Name" name="a" required="1" maxlength="50" minlength="2"
+                              #Name="ngModel" />
+                              <div class="col-md-6"></div>
+                            <div *ngIf="isInvalid && !Name.valid && Name.errors.required">
+                              <code>Supplier Name is required</code>
+                            </div>
+                            <div *ngIf="isInvalid && !Name.valid && Name.errors.minlength">
+                                <code>Minlength 2</code>
+                              </div>                               
+                            </div>
+                        </div>
+
+                        <!-- Supplier Category -->
+                        <div class="col-md-6">
+                            <div class="form-group m-2">
+                              <label for="suppCat" class="col-md-6">Supplier Category *</label>
+                              <select id="suppCat" name="suppCat"  class="form-control col-md-6" [(ngModel)]="newSupplier.SupplierCaegoryId" required>
+                                <option disabled>Select Category</option>
+                                <option *ngFor="let cat of supplierCategoryList" [ngValue]="cat.SupplierCaegoryId">
+                                    {{ cat.CategoryName }}
+                                </option>
+                              </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                      <!-- Buyer -->
+                      <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label for="buyer" class="col-md-6">Buyer *</label>
+                          <select id="buyer" name="buyer" class="form-control col-md-6" [(ngModel)]="newSupplier.PeopleID" required>
+                            <option disabled>Select Category</option>
+                            <option *ngFor="let buyer of buyerList" [ngValue]="buyer.PeopleID">
+                              {{ buyer.DisplayName }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <!-- Password -->
+                      <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label for="supppassword" class="col-md-6">Password *</label>
+                          <input type="password" id="supppassword" class="form-control col-md-6" name="supppassword" [(ngModel)]="newSupplier.password" required="1" maxlength="50" minlength="2"
+                          #password="ngModel" />
+                          <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !password.valid && password.errors.required">
+                          <code>password is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !password.valid && password.errors.minlength">
+                            <code>Minlength 2</code>
+                          </div>                                                        
+                        </div>
+                      </div>                     
+                    </div>
+                    <div class="row">
+                        <!-- Available Time  -->
+                        <div class="col-md-6">
+                            <div class="form-group m-2">
+                                <label for="time" class="col-md-6">Available Time</label>
+                                <input type="time" id="time" class="form-control col-md-6" [(ngModel)]="newSupplier.Avaiabletime" name="time" required="1" maxlength="50" minlength="2"
+                                #Avaiabletime="ngModel" />
+                                <div class="col-md-6"></div>
+                              <div *ngIf="isInvalid && !Avaiabletime.valid && Avaiabletime.errors.required">
+                                <code>Available Time is required</code>
+                              </div>
+                              <div *ngIf="isInvalid && !Avaiabletime.valid && Avaiabletime.errors.minlength">
+                                  <code>Minlength 2</code>
+                                </div>                               
+                            </div>
+                        </div>                       
+                    </div>
+
+                    <div class="mt-2 bg-grey50 border-top border-top-2 border-top-primary">
+                      <ngb-tabset type="pills">
+                        <ngb-tab title="Contact Details">
+                          <ng-template ngbTabContent>
+                            <!-- Contact --> 
+                              <div class="row">
+                                <!-- Contact Person -->
+                                <div class="col-md-6">
+                                    <div class="form-group m-2">
+                                        <label for="contactperson" class="col-md-6">Contact Person *</label>
+                                        <input type="text" id="contactperson" class="form-control col-md-6" name="contactperson" [(ngModel)]="newSupplier.ContactPerson" placeholder="Enter Contact Person" required="1" maxlength="50" minlength="2"
+                                        #ContactPerson="ngModel" />
+                                        <div class="col-md-6"></div>
+                                      <div *ngIf="isInvalid && !ContactPerson.valid && ContactPerson.errors.required">
+                                        <code>Contact Person is required</code>
+                                      </div>
+                                      <div *ngIf="isInvalid && !ContactPerson.valid && ContactPerson.errors.minlength">
+                                          <code>Minlength 2</code>
+                                        </div>                               
+                                    </div>
+                                </div>
+                              </div>      
+                              <div class="row">
+                                <!-- Phone Number  -->
+                                <div class="col-md-6">
+                                    <div class="form-group m-2">
+                                        <label for="phone" class="col-md-6">Phone Number *</label>
+                                        <input type="number" id="phone" class="form-control col-md-6" [(ngModel)]="newSupplier.PhoneNumber" name="phone" required="1" maxlength="10" minlength="2"
+                                        #PhoneNumber="ngModel" />
+                                        <div class="col-md-6"></div>
+                                      <div *ngIf="isInvalid && !PhoneNumber.valid && PhoneNumber.errors.required">
+                                        <code>Phone Number is required</code>
+                                      </div>
+                                      <div *ngIf="isInvalid && !PhoneNumber.valid && PhoneNumber.errors.minlength">
+                                          <code>Minlength 10</code>
+                                        </div>                               
+                                    </div>
+                                </div>
+                                <!-- Office Phone -->
+                                <div class="col-md-6">
+                                    <div class="form-group m-2">
+                                        <label for="officeno" class="col-md-6">Office Phone</label>
+                                        <input type="number" id="officeno" class="form-control col-md-6" [(ngModel)]="newSupplier.OfficePhone" name="officeno" required="1" maxlength="50" minlength="2"
+                                        #OfficePhone="ngModel" />
+                                        <div class="col-md-6"></div>
+                                      <div *ngIf="isInvalid && !OfficePhone.valid && OfficePhone.errors.required">
+                                        <code>Phone Number is required</code>
+                                      </div>
+                                      <div *ngIf="isInvalid && !OfficePhone.valid && OfficePhone.errors.minlength">
+                                          <code>Minlength 2</code>
+                                        </div>                               
+                                    </div>
+                                </div>
+                                <!-- Mobile NO. -->
+                                <div class="col-md-6">
+                                    <div class="form-group m-2">
+                                        <label for="Mobile" class="col-md-6">Mobile No. *</label>
+                                        <input type="number" id="Mobile" class="form-control col-md-6" name="Mobile" [(ngModel)]="newSupplier.MobileNo" required="1" maxlength="50" minlength="2"
+                                        #MobileNo="ngModel" />
+                                        <div class="col-md-6"></div>
+                                      <div *ngIf="isInvalid && !MobileNo.valid && MobileNo.errors.required">
+                                        <code>Mobile Number is required</code>
+                                      </div>
+                                      <div *ngIf="isInvalid && !MobileNo.valid && MobileNo.errors.minlength">
+                                          <code>Minlength 2</code>
+                                        </div>                              
+                                    </div>
+                                </div>
+                                <!-- Email ID -->
+                                <div class="col-md-6">
+                                    <div class="form-group m-2">
+                                        <label for="email" class="col-md-6">Email ID</label>
+                                        <input type="email" id="email" class="form-control col-md-6" name="email" [(ngModel)]="newSupplier.EmailId" required="1" maxlength="50" minlength="2"
+                                        #EmailId="ngModel" />
+                                        <div class="col-md-6"></div>
+                                      <div *ngIf="isInvalid && !EmailId.valid && EmailId.errors.required">
+                                        <code>Email Id is required</code>
+                                      </div>
+                                      <div *ngIf="isInvalid && !EmailId.valid && EmailId.errors.minlength">
+                                          <code>Minlength 2</code>
+                                        </div>                              
+                                    </div>
+                                </div>
+                              </div>
+                          </ng-template>
+                        </ngb-tab>
+                        <ngb-tab title="Address Details">
+                          <ng-template ngbTabContent>
+                            <!-- Address -->
+                              <div class="row">
+                                <!-- Select State -->
+                                <div class="col-md-6">
+                                    <div class="form-group m-2">
+                                      <label for="state" class="col-md-6">Select State *</label>
+                                      <select id="state" name="state"  class="form-control col-md-6" [(ngModel)]="newSupplier.Stateid" required>
+                                        <option disabled>--Select State--</option>
+                                        <option *ngFor="let state of states" value="state.Stateid">{{state.StateName}}</option>
+                                      </select>
+                                    </div>
+                                </div>
+  
+                                <!-- Select City -->
+                                <div class="col-md-6">
+                                        <div class="form-group m-2">
+                                          <label for="city" class="col-md-6">Select City *</label>
+                                          <select id="city" name="city"  class="form-control col-md-6" [(ngModel)]="newSupplier.Cityid" required>
+                                            <option disabled>--Select City--</option>
+                                            <option *ngFor="let city of cities" value="city.Cityid">{{city.CityName}}</option>
+                                          </select>
+                                        </div>
+                                  </div>
+  
+                                  <!-- Billing Address -->
+                                  <div class="col-sm-12">
+                                      <div class="form-group m-2">
+                                          <label for="billadd" class="col-md-3">Billing Address *</label>
+                                          <textarea id="billadd" class="form-control col-md-6" name="billadd" placeholder="Write the address here" [(ngModel)]="newSupplier.BillingAddress" required="1" maxlength="50" minlength="2"
+                                          #BillingAddress="ngModel" > </textarea> 
+                                          <div class="col-md-4"></div>                                    
+                                        <div *ngIf="isInvalid && !BillingAddress.valid && BillingAddress.errors.required">
+                                          <code>Billing Address  is required</code>
+                                        </div>
+                                        <div *ngIf="isInvalid && !BillingAddress.valid && BillingAddress.errors.minlength">
+                                            <code>Minlength 2</code>
+                                          </div>                             
+                                          <!-- <input type="text" id="fname" class="form-control col-md-6" name="fname" placeholder="Enter Billing Address"> -->
+                                      </div>
+                                  </div>
+  
+                                  <!-- Shipping Address -->
+                                  <div class="col-sm-12">
+                                      <div class="form-group m-2">
+                                          <label for="shipadd"  class="col-md-3">Shipping Address</label>
+                                          <textarea id="shipadd" class="form-control col-md-6" name="shipadd" [(ngModel)]="newSupplier.ShippingAddress" placeholder="Write the address here" required="1" maxlength="50" minlength="2"
+                                          #ShippingAddress="ngModel" > </textarea>   
+                                          <div class="col-md-4"></div>                                   
+                                        <div *ngIf="isInvalid && !ShippingAddress.valid && ShippingAddress.errors.required">
+                                          <code>Shipping Address  is required</code>
+                                        </div>
+                                        <div *ngIf="isInvalid && !ShippingAddress.valid && ShippingAddress.errors.minlength">
+                                            <code>Minlength 2</code>
+                                          </div>                            
+                                          <!-- <input type="text" id="fname" class="form-control col-md-6" name="fname" placeholder="Enter Shipping Address"> -->
+                                      </div>
+                                  </div>             
+                              </div>
+                          </ng-template>
+                        </ngb-tab>
+                        
+                        <ngb-tab title="Misc">
+                          <ng-template ngbTabContent>
+                                  <div class="row">
+                                    <!-- Web URL -->
+                                    <div class="col-md-6">
+                                        <div class="form-group m-2">
+                                            <label for="weburl" class="col-md-6">Web URL</label>
+                                            <input type="url" id="weburl" class="form-control col-md-6" [(ngModel)]="newSupplier.WebUrl" name="weburl" required="1" maxlength="50" minlength="2"
+                                            #WebUrl="ngModel" >   
+                                            <div class="col-md-6"></div>                                   
+                                          <div *ngIf="isInvalid && !WebUrl.valid && WebUrl.errors.required">
+                                            <code>Web URL is required</code>
+                                          </div>
+                                          <div *ngIf="isInvalid && !WebUrl.valid && WebUrl.errors.minlength">
+                                              <code>Minlength 2</code>
+                                            </div>                            
+                                        </div>
+                                    </div>
+            
+                                  <!-- Rating -->
+                                  <div class="col-md-6">
+                                      <div class="form-group m-2">
+                                          <label for="rating" class="col-md-6">Rating</label>
+                                          <input type="text" id="rating" class="form-control col-md-6" name="rating" [(ngModel)]="newSupplier.rating" placeholder="Enter Rating" required="1" maxlength="50" minlength="2"
+                                          #rating="ngModel" >   
+                                          <div class="col-md-6"></div>                                   
+                                        <div *ngIf="isInvalid && !rating.valid && rating.errors.required">
+                                          <code>Rating  is required</code>
+                                        </div>
+                                        <div *ngIf="isInvalid && !rating.valid && rating.errors.minlength">
+                                            <code>Minlength 2</code>
+                                          </div>                            
+                                      </div>
+                                  </div>
+            
+                                  <!-- Payment Terms -->
+                                  <div class="col-md-6">
+                                      <div class="form-group m-2">
+                                          <label for="payterms" class="col-md-6">Payment Terms *</label>
+                                          <input type="text" id="payterms" class="form-control col-md-6" name="payterms" [(ngModel)]="newSupplier.PaymentTerms" placeholder="Enter Payment Terms" required="1" maxlength="50" minlength="2"
+                                          #PaymentTerms="ngModel" >   
+                                          <div class="col-md-6"></div>                                   
+                                        <div *ngIf="isInvalid && !PaymentTerms.valid && PaymentTerms.errors.required">
+                                          <code>Payment Terms is required</code>
+                                        </div>
+                                        <div *ngIf="isInvalid && !PaymentTerms.valid && PaymentTerms.errors.minlength">
+                                            <code>Minlength 2</code>
+                                          </div>                            
+                                      </div>
+                                  </div>
+                                  
+                                  <!-- Remarks -->
+                                  <div class="col-sm-12">
+                                      <div class="form-group m-2">
+                                          <label for="remark" class="col-md-3">Remarks</label>
+                                          <textarea id="remark" class="form-control col-md-9" name="remark" [(ngModel)]="newSupplier.Comments" placeholder="Write something you like :)" required="1" maxlength="50" minlength="2"
+                                          #Comments="ngModel" ></textarea> 
+                                          <div class="col-md-3"></div>                                   
+                                        <div *ngIf="isInvalid && !Comments.valid && Comments.errors.required">
+                                          <code>Remarks is required</code>
+                                        </div>
+                                        <div *ngIf="isInvalid && !Comments.valid && Comments.errors.minlength">
+                                            <code>Minlength 2</code>
+                                          </div>                      
+                                      </div>
+                                  </div>
+                                
+                              </div>
+                          </ng-template>
+                        </ngb-tab>
+
+                        <ngb-tab title="Bank Details">
+                            <ng-template ngbTabContent>
+                                    <div class="row">
+                                      <!-- Name Of Bank -->
+                                    <div class="col-md-12">
+                                        <div class="form-group m-2">
+                                            <label for="rating" class="col-md-3">Name Of Bank</label>
+                                            <input type="text" id="rating" class="form-control col-md-3" name="rating" [(ngModel)]="newSupplier.Bank_Name" placeholder="Enter Rating" required="1" maxlength="50" minlength="2"
+                                            #Bank_Name="ngModel" >
+                                            <div class="col-md-7"></div>                                   
+                                          <div *ngIf="isInvalid && !Bank_Name.valid && Bank_Name.errors.required">
+                                            <code>Bank_Name is required</code>
+                                          </div>
+                                          <div *ngIf="isInvalid && !Bank_Name.valid && Bank_Name.errors.minlength">
+                                              <code>Minlength 2</code>
+                                            </div>                      
+                                        </div>
+                                    </div>
+
+                                      <!-- Bank Account No. -->
+                                      <div class="col-md-6">
+                                          <div class="form-group m-2">
+                                              <label for="weburl" class="col-md-6">Bank Account No.</label>
+                                              <input type="text" id="weburl" class="form-control col-md-6" [(ngModel)]="newSupplier.Bank_AC_No" name="weburl" required="1" maxlength="50" minlength="2"
+                                              #Bank_AC_No="ngModel" >
+                                              <div class="col-md-6"></div>                                   
+                                            <div *ngIf="isInvalid && !Bank_AC_No.valid && Bank_AC_No.errors.required">
+                                              <code>Bank AC/No is required</code>
+                                            </div>
+                                            <div *ngIf="isInvalid && !Bank_AC_No.valid && Bank_AC_No.errors.minlength">
+                                                <code>Minlength 2</code>
+                                              </div>                      
+                                          </div>
+                                      </div>
+              
+                                    <!-- Bank IFSC Code -->
+                                    <div class="col-md-6">
+                                        <div class="form-group m-2">
+                                            <label for="payterms" class="col-md-6">Bank IFSC Code</label>
+                                            <input type="text" id="payterms" class="form-control col-md-6" name="payterms" [(ngModel)]="newSupplier.Bank_Ifsc" placeholder="Enter Payment Terms" required="1" maxlength="50" minlength="2"
+                                            #Bank_Ifsc="ngModel" >
+                                            <div class="col-md-6"></div>                                   
+                                          <div *ngIf="isInvalid && !Bank_Ifsc.valid && Bank_Ifsc.errors.required">
+                                            <code>Bank Ifsc is required</code>
+                                          </div>
+                                          <div *ngIf="isInvalid && !Bank_Ifsc.valid && Bank_Ifsc.errors.minlength">
+                                              <code>Minlength 2</code>
+                                            </div>                      
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                          </ngb-tab>
+                          <ngb-tab title="Verification Details">
+                              <ng-template ngbTabContent>
+                                      <div class="row">
+                                        <!-- GST Verifications -->
+                                        <div class="col-md-6">
+                                            <div class="form-group m-2">
+                                                <div class="custom-control custom-checkbox custom-control-inline">
+                                                  <input class="custom-control-input check" id="gst" name="gst" type="checkbox" (change)="verificationCheck()">
+                                                  <label class="custom-control-label" for="gst">GST is Verified</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                
+                                      <!-- GST Verifications -->
+                                      <div class="col-md-6">
+                                          <div class="form-group m-2">
+                                              <div class="custom-control custom-checkbox custom-control-inline">
+                                                <input class="custom-control-input check" id="fssai" name="fssai" type="checkbox" (change)="verificationCheck()">
+                                                <label class="custom-control-label" for="fssai">GST is Verified</label>
+                                              </div>
+                                          </div>
+                                      </div>
+                
+                                      <!-- GST Verifications -->
+                                      <div class="col-md-6">
+                                          <div class="form-group m-2">
+                                              <div class="custom-control custom-checkbox custom-control-inline">
+                                                <input class="custom-control-input check" id="g" name="g" type="checkbox" (change)="verificationCheck()">
+                                                <label class="custom-control-label" for="g">GST is Verified</label>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      
+                                      <!-- GST Verifications -->
+                                      <div class="col-md-6">
+                                          <div class="form-group m-2">
+                                              <div class="custom-control custom-checkbox custom-control-inline">
+                                                <input class="custom-control-input check" id="test" name="test" type="checkbox" (change)="verificationCheck()">
+                                                <label class="custom-control-label" for="test">GST is Verified</label>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                      <div class="col-md-6">
+                                        <div class="form-group m-2" *ngIf="displayCheckbox">
+                                          <div class="custom-control custom-checkbox custom-control-inline">
+                                            <input class="custom-control-input" id="verified" name="verified" type="checkbox">
+                                            <label class="custom-control-label text-success" for="verified">Is the supplier Verified?</label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    
+                                  </div>
+                              </ng-template>
+                            </ngb-tab>
+                      </ngb-tabset>
+                    </div>
+
+                    
+                    <div class="form-actions right col-sm-12 p-3">
+                        <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                          <i class="ft-x"></i> Cancel
+                        </button>
+                        <button type="submit" class="btn btn-raised btn-primary">
+                          <i class="fa fa-check-square-o"></i> Save
+                        </button>
+                    </div>
+
+                    <div class="form-footer m-2">Fields with * sign are mandatory to fill</div>
+
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+    

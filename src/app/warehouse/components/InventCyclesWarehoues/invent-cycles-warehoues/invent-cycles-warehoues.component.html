@@ -1,0 +1,303 @@
+
+<p-toast [style]="{marginTop: '80px'}" *ngIf="!display"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  
+    <p-footer class="ovelFieldForm">
+    <!-- <div *ngFor="let a of orderids">
+        <i class="fa fa-dot-circle-o" aria-hidden="true"></i>   {{a.Id}}
+    </div> -->
+        <button type="button" class="btn btn-raised btn-primary" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<section id="Warehouse" >
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header">
+          <br>
+        <h3 class="m-2">Stop Warehouse Transactions </h3>
+      </div>
+    </div>
+<div class="row ">
+
+  <div class="ui-fluid shadow p-3 m-2 mt-4 bg-white rounded table table-hover min-height-80">
+    <div class="position-relative">
+  <div class="row text-left" style="margin-top: -2%;">
+    <div class="col-md-12">
+        <div class="card noneHoverRow">
+            <p-table  #dt [globalFilterFields]="['WarehouseName']" [value]="list" [scrollable]="true"
+                scrollHeight="130vh" text-align: center>
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">        
+                        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                        <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                </ng-template>    
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Warehouse Name</th>
+                        <th style="text-align: center;">Action</th>
+                        <th>History</th>
+                        <!-- <th style="text-align: center;">Action</th> -->
+                        <!-- <th></th> -->
+                        <th>ItemList</th>
+                        <!-- <th *ngIf="IsPVProcess">Physical Verification</th> -->
+                        <th>PV History</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-ir>
+                    <tr>
+                        <td>{{ir.WarehouseName}}</td>
+
+                        <td *ngIf="ir.IsStopCurrentStockTrans==false"> 
+                            <button type="button" class="btn" style="background-color: #337ab7;color:white" (click)="startPopup(ir)">
+                                Stop CurentStock Transactions
+                            </button>
+                        </td>
+                        <td *ngIf="ir.IsStopCurrentStockTrans==true"> <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="stop(ir)">
+                            Start CurrentStock Transactions
+                            </button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-raised btn-primary" (click)="openDetails(ir)">
+                                History
+                            </button>
+                        </td>
+                        <!-- <td>
+                            <button type="button" class="btn btn-raised " (click)="onClickClearancePreapreItem(ir)"
+                             [disabled]="ir.isShowBtn==false" [ngStyle]="ir.isShowBtn==false?{'background-color': '#FDB44E','color':'white'}:{'background-color':'orangered'}">
+                            Clearance Prepare Move Item 
+                        </button>
+                    </td>                    -->
+                    <td>
+                        <!--  [disabled]="ir.enableList==false" disabled-->
+                        <button label="Available"  [ngStyle]="(enableList==false)?{'background-color':'#A7C7E7','color':'white' }:{'background-color':'#0096FF','color':'white'}" class="btn" (click)="IsAvailable=true;rowdata=ir" >Available Items </button>
+                    </td>
+                    <!-- <td *ngIf="ir.IsPVProcess == true"> 
+                        <button *ngIf="ir.IsPV==false" type="button" class="btn" style="background-color: #337ab7;color:white" (click)="startPV(ir)"
+                            [disabled]="ir.IsStopCurrentStockTrans==false">
+                           Start PV
+                        </button>
+                        <button type="button" *ngIf="ir.IsPV==true" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="stopPV(ir)">
+                        Stop PV
+                        </button>
+                    </td> -->
+                    <td>
+                        <button type="button" class="btn btn-raised btn-primary" (click)="openPVHistoryDetail(ir)">
+                           PV History
+                        </button>
+                    </td>
+                    </tr>
+                </ng-template> 
+                <p-dialog  header="Available Items" [(visible)]="IsAvailable" [resizable]="false" positionTop="50" [modal]="true" appendTo="body" [draggable]="false">
+                    <div class="col" *ngIf="IsAvailable">
+                        <p-table [value]="availableData" [tableStyle]="{'min-width': '50rem'}"  [paginator]="true" [rows]="10" [scrollable]="true"
+                        [lazy]="true" (onLazyLoad)="loader($event,rowdata.WarehouseId)" [totalRecords]="total">
+                            <ng-template pTemplate="header" >
+                                <tr>
+                                    <th>StockType</th>
+                                    <th >itemname</th>
+                                    <th>AvailableQty</th>
+                                    <th >BatchCode</th>
+                                    <th>ShelfLife</th>
+                                    <th>MRP</th>
+                                    <th >ItemMultiMRPId</th>
+                                    <th>MFGDate</th>
+                                    <th >ExpiryDate</th>
+                                 
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-List>
+                                <tr>
+                                    <td [ngStyle]="List.StockType=='CL' ?{'background-color':'#74B72E'}:{'background-color':'#F7DC6F '}">{{List.StockType}}</td>
+                                    <td>{{List.itemname}}</td>
+                                    <td>{{List.AvailableQty}}</td>
+                                    <td >{{List.BatchCode}}</td>
+                                    <td>{{List.ShelfLife}}</td>
+                                    <td>{{List.MRP}}</td>
+                                    <td >{{List.ItemMultiMRPId}}</td>
+                                    <td>{{List.MFGDate |date:'short'}}</td>
+                                    <td >{{List.ExpiryDate|date:'short'}}</td>
+                                 
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </p-dialog>
+            </p-table>
+        </div>
+    </div>
+  </div>
+    </div>
+</div>
+</div>
+</section>
+<div id="history" *ngIf="popupOpen" >
+    <p-dialog [(visible)]="popupOpen" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+        <div class="w3-container w3-center w3-animate-left">
+            <h4><b>History</b></h4>
+        </div>
+        <p-table #dt [value]="historylist" [scrollable]="true"  [paginator]="true" [rows]="10" dataKey="WarehouseId"[scrollable]="true" 
+        scrollHeight="130vh" text-align: center>
+     
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Warehouse Name</th>
+                <th>IsStopCurrentStockTrans</th>
+                <th>CreatedBy</th>
+                <th>CreatedDate</th>
+                <th>Transaction Type</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-ir>
+            <tr>
+                <td>{{ir.WarehoueName}}</td>
+                <td>{{ir.IsStopCurrentStockTrans}} </td>
+                <td>{{ir.CreatedBy}} </td>
+                <td>{{ir.CreatedDate | date:'medium'}}</td>
+                <td>{{ir.TransactionType}} </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+  </p-dialog>
+  </div>
+
+  <div id="history" *ngIf="isPVHistory" >
+    <p-dialog [(visible)]="isPVHistory" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+        <div class="w3-container w3-center w3-animate-left">
+            <h4><b>History</b></h4>
+        </div>
+        <p-table #dt [value]="PVhistorylist" [scrollable]="true"  [paginator]="true" [rows]="10" dataKey="WarehouseId"[scrollable]="true" 
+        scrollHeight="130vh" text-align: center>
+     
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Warehouse Name</th>
+                <th>IsPV</th>
+                <th>CreatedBy</th>
+                <th>CreatedDate</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-ir>
+            <tr>
+                <td>{{ir.WarehouseName}}</td>
+                <td>{{ir.IsPV}} </td>
+                <td>{{ir.CreatedBy}} </td>
+                <td>{{ir.CreatedDate | date:'medium'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+  </p-dialog>
+  </div>
+
+  
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<p-dialog header="Action" [(visible)]="display" appendTo="body" positionTop="50vh" [style]="{width: '30vw'}" modal="true">
+    <div class="row" >
+      <div class="col mt-2" style="text-align:center">
+          <button class="btn btn-success mt-2"  (click)="checkStockInventoryMovement('SM')"
+          [disabled]="Newlistdata && Newlistdata.IsPV"
+          >Stock Movement</button> 
+      </div>
+      <div class="col mt-2" style="text-align:center">
+        <button class="btn btn-success mt-2"  (click)="checkStockInventoryMovement('IC')"       
+        >Inventory Cycle</button>      
+        <!-- [disabled]="Newlistdata && (Newlistdata.IsPV || !Newlistdata.IsInventory)" -->
+    </div>
+    <div class="col mt-2" style="text-align:center">
+        <button type="button" class="btn btn-success mt-2" *ngIf="Newlistdata && !Newlistdata.IsPV" style="background-color: #337ab7;color:white" (click)="startPV(Newlistdata)"
+           >
+           <!-- [disabled]="Newlistdata && (Newlistdata.TransactionType=='IC' && Newlistdata.IsPV || !Newlistdata.IsInventory)" -->
+            Start PV
+        </button>
+        <button type="button" *ngIf="Newlistdata && Newlistdata.IsPV" class="btn btn-raised btn-primary mt-2" (click)="stopPV(Newlistdata)"
+        >
+            Stop PV
+        </button>
+    </div>
+    </div> 
+    <div class="row mt-4" style="text-align:center">
+      <div class="col "></div>
+    </div>
+   
+    <p-toast position="top-center"  *ngIf="display"></p-toast>
+</p-dialog>
+
+<p-dialog [(visible)]="isOrder" [resizable]="true"  [modal]="true" appendTo="body"  [style]="{width: '70%'}">
+    <p-header>
+       Confirmation
+    </p-header>
+    <h5><b>{{textMsg}}</b></h5>
+    <div *ngFor="let a of orderids">
+        <i class="fa fa-dot-circle-o" aria-hidden="true"></i>   {{a.Id}}
+    </div>
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary" (click)="isOrder = false;">No</button>
+        <button type="button" class="btn btn-raised btn-danger" (click)="orderIdsUpdate()">Yes</button>
+    </p-footer>
+</p-dialog>
+
+
+    <p-dialog   [(visible)]="StartPVPopUp" [style]="{width: '60vw',left:'50%'}" [resizable]="false"  positionTop="50" [modal]="true" appendTo="body" [draggable]="false">
+        <div class="col">
+            <p-table [value]="StartViList" [tableStyle]="{'min-width': '30rem'}"  [rows]="10" [scrollable]="true">
+                <ng-template pTemplate="header" >
+                    <tr>
+                        <th>ItemMultiMRPId</th>
+                        <th>Item Name</th>
+                        <th >Item Number</th>
+                        <th>Batch Qty</th>
+                        <th >Stock Qty</th>
+                        <th>CurrentToStockBatchDiff</th>
+                        <th>StockId</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-List>
+                    <tr>
+                        <td >{{List.ItemMultiMRPId}}</td>
+                        <td>{{List.itemname}}</td>
+                        <td>{{List.ItemNumber}}</td>
+                        <td>{{List.BatchQty}}</td>
+                        <td >{{List.StockQty}}</td>
+                        <td>{{List.CurrentToStockBatchDiff}}</td>
+                        <td>{{List.StockId}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-dialog>
+
+    <p-dialog   [(visible)]="StockInventoryPopUp" [style]="{width: '60vw',left:'50%'}"  [resizable]="false"  (onHide)="cancel()"  positionTop="50" [modal]="true" appendTo="body" [draggable]="false">
+        <div class="col">
+            <p-table [value]="InventoryList" [tableStyle]="{'min-width': '30rem'}"  [rows]="10" [scrollable]="true">
+                <ng-template pTemplate="header" >
+                    <tr>
+                        <th>ItemMultiMRPId</th>
+                        <th>Item Name</th>
+                        <th >Item Number</th>
+                        <th>Batch Qty</th>
+                        <th >Stock Qty</th>
+                        <th>CurrentToStockBatchDiff</th>
+                        <th>StockId</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data>
+                    <tr>
+                        <td >{{data.ItemMultiMRPId}}</td>
+                        <td>{{data.itemname}}</td>
+                        <td>{{data.ItemNumber}}</td>
+                        <td>{{data.BatchQty}}</td>
+                        <td >{{data.StockQty}}</td>
+                        <td>{{data.CurrentToStockBatchDiff}}</td>
+                        <td>{{data.StockId}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-dialog>

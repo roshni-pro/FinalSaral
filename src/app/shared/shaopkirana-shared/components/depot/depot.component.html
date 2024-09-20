@@ -1,0 +1,55 @@
+
+
+<div *ngIf="!isForm">
+    <div class="w-100 d-flex justify-content-end">
+        <button class="btn btn-sm mr-2 btn-raised btn-primary zindex-up" (click)="openAddForm()">Add Depot</button>
+    </div>
+    <p-table [columns]="cols" [value]="depoBySupplierList" dataKey="vin" *ngIf="!isForm">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th style="width: 3em"></th>
+                <th *ngFor="let col of columns">
+                    {{col.header}}
+                </th>
+                <th>Edit</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns">
+            <tr>
+                <td>
+                    <a href="#" [pRowToggler]="rowData">
+                        <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                    </a>
+                </td>
+                <td *ngFor="let col of columns">
+                    {{rowData[col.field]}}
+                </td>
+                <td><button class="btn bg-white" (click)="openEditForm(rowData)"><i
+                            class="fa fa-edit text-primary"></i></button></td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+            <tr class="expansion">
+
+                <td [attr.colspan]="columns.length + 2">
+                    <div class="ui-g ui-fluid" style="font-size:16px;padding:20px">
+                        <div class="ui-g-12 ui-md-12">
+                            <div class="ui-g">
+
+                                <div class="ui-g-12 text-sm col-md-4" *ngFor="let field of fieldsOnExpand">
+                                    <b>{{field}} :</b><span>{{rowData[field]}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+
+    </p-table>
+</div>
+
+<div class="scale-small" *ngIf="isForm">
+        <app-depot-form (closeForm)="closeForm()" [depotId]="selectedDepotId"></app-depot-form>
+    </div>

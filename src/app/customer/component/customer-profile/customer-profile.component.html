@@ -1,0 +1,278 @@
+<div class="card">
+    <div class="col-md-12 text-right">
+        <button id="back" name="back" class="btn btn-primary tp_mr" (click)="onBack()">Back</button>
+    </div>
+    <p-tabView (onChange)="onTabChange($event)">
+        <!-- =========Profile Section Start here=========== [(first)]="first" -->
+        <p-tabPanel header="Profile" [selected]="true">
+           <div class="row tp">
+            <div class="col-md-2">
+                <label>Customer Name</label>
+                <div>
+                    <span>{{customerData.CustomerName}}</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>Shop Name</label>
+                <div>
+                    <span>{{customerData.ShopName}}</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>SkCode</label>
+                <div>
+                    <span>{{customerData.Skcode}}</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>Street Address</label>
+                <div>
+                    <span>{{customerData.BillingAddress}}</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>Physical Visit</label>
+                <div>
+                    <span *ngIf="customerData.IsPhysicalVisit">Yes</span>
+                    <span *ngIf="!customerData.IsPhysicalVisit">No</span>
+                    <p-inputSwitch name="IsActive" *ngIf="isTelleyCaller" [(ngModel)]="customerData.IsPhysicalVisit" (ngModelChange)="IsPhysicalVisit(customerData)">
+                    </p-inputSwitch>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>Tags</label>
+                <div>
+                    <span>{{customerData.CRMTags}}</span>
+                </div>
+            </div>
+           </div>
+           <div class="row tp">
+            <div class="col-md-2">
+                <label>Total Orders</label>
+                <div>
+                    <span>{{customerData.TotalOrder}}({{customerData.LastOrderBeforeDays}} days ago)</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>AOV</label>
+                <div>
+                    <span>{{customerData.AOV | number : '1.0-2'}}</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>TOV</label>
+                <div>
+                    <span>{{customerData.TOV}}</span>
+                </div>
+            </div>
+            <!-- <div class="col-md-2">
+                <label>Tags</label>
+                <div>
+                    <span>5000</span>
+                </div>
+            </div> -->
+            <div class="col-md-2">
+                <label>Total Calls</label>
+                <div>
+                    <span>{{customerData.TotalCalls}}({{customerData.LastCallDays}} days ago)</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label>Total Visit</label>
+                <div>
+                    <span>{{customerData.TotalVisit}}</span>
+                </div>
+            </div>
+           </div>
+           <div class="col-md-12">
+            <p-tabView (onChange)="onActionChange($event)">
+                 <!-- =========Calls Section Start here=========== [(first)]="first"  -->
+                <p-tabPanel header="Calls" [selected]="true">
+                    <h5>Calls</h5>
+                    <p-table [value]="callList">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>CallConnect</th>
+                                <th>Order Taken</th>
+                                <th>Order Comments</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-cat>
+                            <tr>
+                                <td>{{cat.ActionDate | date : 'medium'}}</td>
+                                <td>{{cat.ActionTime | date : 'medium'}}</td>
+                                <td>{{cat.CallConnect}}</td>
+                                <td>{{cat.OrderTaken}}</td>
+                                <td>{{cat.OtherComment}}</td>
+                                <td>
+                                    <a (click)="onClickView(cat)" href="javascript:void(0)" style="margin-right: 70px;">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </p-tabPanel>
+                <!-- =========Calls Section End here=========== [(first)]="first"  -->
+                <!-- =========Visit Section Start here=========== [(first)]="first"  -->
+                <p-tabPanel header="Visit">
+                 <h5>Visit</h5>
+                 <p-table [value]="visitList">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Successful Visit</th>
+                            <th>Order Taken</th>
+                            <th>Order Comments</th>
+                            <th>Action</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-cat>
+                        <tr>
+                            <td>{{cat.ActionDate}}</td>
+                            <td>{{cat.ActionTime}}</td>
+                            <td>{{cat.Duration}}</td>
+                            <td>{{cat.OrderTaken}}</td>
+                            <td>{{cat.OtherComment}}</td>
+                            <td>
+                                <a (click)="onClickView(cat)" href="javascript:void(0)" style="margin-right: 70px;">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </p-tabPanel>
+                <!-- =========Visit Section End here=========== [(first)]="first"  -->
+            </p-tabView>
+           </div>
+        </p-tabPanel>
+        <!-- =========Profile Section End here=========== -->
+
+        <!-- =========Purchase Section Start here=========== -->
+
+        <!-- <p-tabPanel header="Purchase">
+            <div class="row">
+                <div class="col-md-4">
+                    <p-table [value]="custCategoryList">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Category</th>
+                                <th>Sales(%Share)</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-cat>
+                            <tr>
+                                <td>{{cat.Category}}</td>
+                                <td>{{cat.sales}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="col-md-4">
+                    <p-table [value]="custCompanyList">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Company</th>
+                                <th>Sales(%Share)</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-company>
+                            <tr>
+                                <td>{{company.Company}}</td>
+                                <td>{{company.sales}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="col-md-4">
+                    <p-table [value]="custBrandList">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Brand</th>
+                                <th>Sales(%Share)</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-brand>
+                            <tr>
+                                <td>{{brand.Brand}}</td>
+                                <td>{{brand.sales}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="col-md-12">
+                    <p-table [value]="purchaseList">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>ItemNumber</th>
+                                <th>ItemName</th>
+                                <th>Category</th>
+                                <th>Company</th>                                
+                                <th>Brand</th>
+                                <th>Quantity</th>
+                                <th>Value</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr>
+                                <td>{{item.ItemNumber}}</td>
+                                <td>{{item.ItemName}}</td>
+                                <td>{{item.Category}}</td>
+                                <td>{{item.Company}}</td>
+                                <td>{{item.Brand}}</td>
+                                <td>{{item.Quantity}}</td>
+                                <td>{{item.Value}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </p-tabPanel> -->
+        <!-- =========Purchase Section End here=========== -->
+        <!-- =========Back Section Start here=========== -->
+        <!-- <p-tabPanel header="Back">
+        </p-tabPanel> -->
+        <!-- =========Back Section End here=========== -->
+    </p-tabView>
+</div>
+<div *ngIf="isOpenCallHistorySummary">
+    <p-dialog [(visible)]="isOpenCallHistorySummary" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '50%',height: '50%'}">
+    <p-header>
+      Call And History Summary
+    </p-header>
+    <div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12 bx">
+                <div ><span class="lbl">FeedBackDate : </span> <span class="val">{{callandHistorySummaryDc.ActionDate | date : 'medium'}}</span></div>
+                <div ><span class="lbl">CallConnected : </span> <span class="val">{{callandHistorySummaryDc.CallConnect}}</span></div>
+            </div>
+            <div class="col-md-12 bx">
+                <div ><span class="lbl">Is Customer Interested To Talk : </span> <span class="val">{{callandHistorySummaryDc.IsCustomerInterested}}</span></div>
+                <div ><span class="lbl">Order Taken : </span> <span class="val">{{callandHistorySummaryDc.OrderTaken}}</span></div>
+                <div ><span class="lbl">OrderId & Order Amount : </span> <span class="val">{{callandHistorySummaryDc.OrderId}}-{{callandHistorySummaryDc.OrderAmount}}</span></div>
+            </div> 
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="col-md-12 bx">
+            <div ><span class="hdr">Customer Enquiry : </span></div>
+            <div class="tp_mr"><span class="lbl">About Any Tech product/Scheme & Promotion : </span> <span class="val">{{callandHistorySummaryDc.TechProductInquiry}}</span></div>
+            <div ><span class="lbl">About Any SKU : </span> <span class="val">{{callandHistorySummaryDc.SKUInquiry}}</span></div>
+            <div ><span class="lbl">Item/Product Required If Any : </span> <span class="val">{{callandHistorySummaryDc.RequiredItemInquiry}}</span> </div>
+            <div class="tp_mr"><span class="hdr">Did You Explain App Tools : </span></div>
+            <div class="tp_mr"><span class="lbl">Offer/Freebies/Trade Offer : </span> <span class="val">{{callandHistorySummaryDc.Offer}}</span></div>
+            <div ><span class="lbl">My Target : </span> <span class="val">{{callandHistorySummaryDc.MyTarget}}</span></div>
+            <div ><span class="lbl">Game Section : </span> <span class="val">{{callandHistorySummaryDc.GameSection}}</span> </div>
+            <div ><span class="lbl">Other Comments : </span> <span class="val">{{callandHistorySummaryDc.OtherComment}}</span> </div>
+        </div>
+    </div>
+    </div>
+  </p-dialog>
+</div>

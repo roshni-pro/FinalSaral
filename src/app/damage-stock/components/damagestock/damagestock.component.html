@@ -1,0 +1,115 @@
+
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>TRANSFER ITEM IN DAMAGE STOCK</b></h3>
+    </div>
+</div>
+<div class="container-fluid">
+    
+    <div class="card">
+        Please select Item to Transfer in Damage
+        <div class="card-body">
+             
+            <div class="row">
+                    <div class="col-md-3">                  
+                        <div class="form-group">
+                            <label for="published">Select Warehouse</label><br>
+                            <select id="zone" name="zone" class="form-control" (change)="getHubVal($event.target.value)"  required="1">
+                                <option value="">--select--</option>
+                                <option *ngFor="let city of cityList" value="{{city.WarehouseId}}">
+                                    {{ city.WarehouseName }}  {{city.CityName}}                          
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                 
+                    <div class="form-group col-md-3">
+                        <div class="form-group">
+                            <label for="published">Select Items then Click GetData</label><br>
+                            <p-multiSelect [style]="{minWidth:'10em'}" appendTo="body" [options]="regions" [(ngModel)]="selectedBuyer" (onPanelHide)="onPanelHide()" (change)="getRegionVal($event.target.value)"
+                              name="hub" optionLabel="itemname" >
+                            </p-multiSelect>
+                          </div>
+                    </div>
+                    <!-- <div class="form-group">
+                        <label for="published">hubs</label><br>
+                        <p-multiSelect [style]="{minWidth:'10em'}" appendTo="body" [options]="hubs" [(ngModel)]="selectedBuyer" (onPanelHide)="onPanelHide()" (change)="getHubVal($event.target.value)"
+                          name="hub" optionLabel="WarehouseName" >
+                        </p-multiSelect>
+                      </div> -->
+                    <div class="col-md-3">                  
+                        <div class="form-group">
+                            <label for="published">Select Stock Type to Transfer</label><br>
+                            <select id="zone" name="zone" class="form-control"  required="1" [(ngModel)]="dstocktype" (change)="getDStock($event.target.value)">
+                                <option value="">--select--</option>
+                                <option value="1">Damage Stock                              
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                  <div class="col-md-2">
+                <div class="form-group" style="margin-top: 29px;">
+                    <button type="button" (click)="Search()" 
+                        class="btn btn-raised btn-raised btn-success mt">GetData</button>    
+                    
+                </div>      
+                
+            </div>
+            <div class="col-md-3"> 
+                        <div class="form-group">
+                            <button id="btnExport" (click)="btnClick();"
+                class="btn btn-raised btn-raised btn-info mt ml-2">DAMAGE STOCK ITEM</button> 
+                         </div>
+                    </div>
+            
+                  
+                <p-table #dt [globalFilterFields]="cols"  [value]="search" [totalRecords]="totalRecords" 
+                    [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="caption">
+                        <!-- <div style="text-align: right">        
+                            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                            <input type="text" pInputText size="50" placeholder="Search by Skcode/Order No." (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                        </div> -->
+                    </ng-template>    
+                    <ng-template pTemplate="header" >
+                        <tr>
+                          <th *ngFor="let col of cols" [pSortableColumn]="col.field"  style="text-align: center" >
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th>
+                        <!--  <th>Action</th> -->
+                       
+                        </tr>
+                       
+                      </ng-template>
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;">
+                            <td *ngFor="let col of cols" >
+                                {{item[col.field]}}
+                                <div *ngIf="col.field=='Action'">
+                                    <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="Detail(item ,$event)">Confirm</button>
+                                </div>
+                                <div *ngIf="col.field=='Action1'">
+                                    <input id="number" type="number" value="" style="width: 80px;"  min="0" [(ngModel)]="item.qty" (change)="onQuantity($event.target.value)">
+                                  </div>
+                                  <div *ngIf="col.field=='Action2'">
+                                    <input id="text" type="text" value="" style="width: 80px;" [(ngModel)]="item.reason" (change)="onReason($event.target.value)">
+                                  </div>
+                            </td>
+            
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+        <div class="card-footer"></div>
+    </div>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

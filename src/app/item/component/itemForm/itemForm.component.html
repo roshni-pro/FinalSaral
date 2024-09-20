@@ -1,0 +1,1119 @@
+<div class="ui-fluid">
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <h4 *ngIf="!itemDetails" style="padding-top: 20px; padding-left: 20px"><b>Add New Items</b></h4>
+  <h4 *ngIf="itemDetails" style="padding-top: 20px; padding-left: 20px"><b>Edit Items</b></h4>
+</div>
+<hr>
+<div class="mt-2" *ngIf="!isWarehouse">
+  <!-- <ngb-tabset #t="ngbTabset">
+    <ngb-tab id="tab1" title="Step1">
+      <ng-template ngbTabContent>
+        <br /> <br /> -->
+  <form class="form" name="infoForm" #infoForm="ngForm" autocomplete="off">
+    <div class="row">
+
+      <div class="col-6">
+
+        <div class="form-group" *ngIf="!itemDetails">
+          <label for="name"> Item Base Name<span style="color:red"> *</span></label>
+          <span class="ui-fluid">
+            <p-autoComplete styleClass="wid100" [(ngModel)]="selectedItem" [suggestions]="groupedItemList1"
+              (completeMethod)="getCentralItems($event)" field="itemBaseName" [size]="30"
+              placeholder="enter at least 3 chars" [minLength]="3" (onSelect)="onSelect()"
+              (ngModelChange)="onmodelChange(selectedItem)" name="itemname" required="true" #itemBaseName="ngModel"
+              [disabled]="isSelected || itemDetails">
+            </p-autoComplete>
+          </span>
+          <!-- <div *ngIf="isInvalid && !itemBaseName.valid">
+            <code> Item Base Name is required</code>
+          </div> -->
+        </div>
+        <div class="form-group" *ngIf="itemDetails">
+          <label for="name"> Item Base Name</label>
+          <input type="text" id="basename" class="form-control" name="basename" [(ngModel)]="item.itemBaseName"
+            [readonly]="true">
+        </div>
+
+        <div class="form-group">
+          <label for="name"> MRP Price</label>
+          <input type="number" id="mrp" class="form-control" name="mrp" [(ngModel)]="item.price"
+            [readonly]="isSelected  || itemDetails" placeholder="MRP Price">
+          <!-- <div *ngIf="isInvalid && !lastName.valid && lastName.errors.required">
+              <code>MRP Price is required</code>
+            </div> -->
+        </div>
+        <div class="form-group">
+          <label for="name">Is Sensitive(Unit Of Measurement) </label>
+          <select class="form-control" id="issensitive" name="issensitive" [(ngModel)]="item.IsSensitive"
+            (change)="itemname(item)">
+            <option selected>--Select--</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Category<span style="color:red"> *</span></label>
+          <select id="state" class="form-control" name="Category" [disabled]="isSelected && !itemDetails"
+            [(ngModel)]="item.Categoryid" required="1" #Category="ngModel" (change)="onCategoryChange(item.Categoryid)" >
+            <option value="">--Select--</option>
+            <option *ngFor="let c of categoryList" [ngValue]="c.Categoryid">
+              {{ c.CategoryName }}
+            </option>
+          </select>
+          <!-- <div *ngIf="isInvalid && !Category.valid && Category.errors.required">
+            <code>Please select Category</code>
+          </div> -->
+        </div>
+
+        <div class="form-group">
+          <label for="site-name">Season Name<span style="color:red;">*</span></label><br />
+          <select class="form-control" id="SeasonId" name="SeasonId"  [(ngModel)]="item.SeasonId" required="1"
+            #SeasonId="ngModel">
+            <option *ngFor="let allsea of allSeasonConfig" [ngValue]="allsea.SeasonId">
+              {{allsea.SeasonName}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="!itemDetails">
+          <label for="name">Select Sub Sub Category<span style="color:red"> *</span></label>
+          <select id="state" class="form-control" name="SubSubCategory" (change)="getItemCode(item)"
+            [(ngModel)]="item.SubsubCategoryid" required="1" #SubSubCategory="ngModel"
+            [disabled]="(!item.SubCategoryId || isSelected) && !itemDetails">
+            <option value="">--Select--</option>
+            <option *ngFor="let sub of subSubCategoryList" [ngValue]="sub.SubsubCategoryid">
+              {{ sub.SubsubcategoryName }}
+            </option>
+
+          </select>
+          <!-- <div *ngIf="isInvalid && !SubSubCategory.valid && SubSubCategory.errors.required">
+            <code>Please select Sub Sub Category</code>
+          </div> -->
+        </div>
+
+        <div class="form-group" *ngIf="itemDetails">
+          <label for="name">Select Sub Sub Category<span style="color:red"> *</span></label>
+          <select id="state" class="form-control" name="SubSubCategory" [(ngModel)]="item.SubsubCategoryid" required="1"
+            #SubSubCategory="ngModel" [disabled]="(!item.SubCategoryId || isSelected) && !itemDetails">
+            <option value="">--Select--</option>
+            <option *ngFor="let sub of subSubCategoryList" [ngValue]="sub.SubsubCategoryid">
+              {{ sub.SubsubcategoryName }}
+            </option>
+
+          </select>
+          <!-- <div *ngIf="isInvalid && !SubSubCategory.valid && SubSubCategory.errors.required">
+            <code>Please select Sub Sub Category</code>
+          </div> -->
+        </div>
+
+        <div class="form-group">
+          <label for="name">Item Number<span style="color:red"> *</span></label>
+          <input type="text" id="ItemNumber" class="form-control" name="ItemNumber" [(ngModel)]="item.Number"
+            placeholder="Item Number" required="1" #ItemNumber="ngModel" [readonly]="isSelected || itemDetails" />
+          <!-- <div *ngIf="isInvalid && !ItemNumber.valid && ItemNumber.errors.required">
+            <code>Item Number is required</code>
+          </div> -->
+        </div>
+
+        <!-- <div class="form-group">
+          <label for="name">Item Bar Codes<span style="color:red"> *</span></label>
+          <div class="row">
+            <input type="text" id="ItemBarCodes" class="form-control col-md-9 mar-left" name="ItemBarCodes" [(ngModel)]="item.Barcode"
+            placeholder="Item Bar Codes" required="1" minlength="13" maxlength="13" #barCodes="ngModel"/>
+            <button type="button"
+                *ngIf="item.Barcode != null && item.Barcode.length > 0"
+                class="cr" name="_barcode" id="_barcode"
+                (click)="onChangeBarcode(item)">Verify</button> 
+          </div>
+          <div *ngIf="isInvalid && !barCodes.valid && barCodes.errors.minlength">
+            <code>Item Bar Codes is required Minlength 13</code>
+          </div> 
+        </div> -->
+
+        <div class="form-group">
+          <label for="name">Purchase SKU</label>
+          <input type="text" id="PurchaseSKU" class="form-control" name="PurchaseSKU" [(ngModel)]="item.PurchaseSku"
+            placeholder="Item PurchaseSKU" [readonly]="isSelected || itemDetails" />
+
+        </div>
+
+        <div class="form-group">
+          <label for="name">Minimum Purchase Order qty<span style="color:red"> *</span></label>
+          <input type="number" id="MinimumPurchaseOrderqty" class="form-control" name="MinimumPurchaseOrderqty"
+            [(ngModel)]="item.PurchaseMinOrderQty" (change)="purchaseUnitname(item)"
+            placeholder="Purchase Min Order Qty" required="1" #MinimumPurchaseOrderqty="ngModel" />
+          <!-- <div *ngIf="isInvalid && !MinimumPurchaseOrderqty.valid && MinimumPurchaseOrderqty.errors.required">
+            <code>Minimum Purchase Order qty is required</code>
+          </div> -->
+        </div>
+
+        <div class="form-group">
+          <label for="name"> Discount %</label>
+          <input type="text" id="Discount" class="form-control" name="Discount" [(ngModel)]="item.Discount"
+            placeholder="Discount %" />
+        </div>
+
+
+
+        <div class="form-group">
+          <label for="name">Cess Group Name</label>
+          <select id="state" class="form-control" name="CessGroupName" (change)="onChangeState()"
+            [(ngModel)]="item.CessGrpID">
+            <option value="">--Select--</option>
+            <option *ngFor="let taxGroup of taxGroupList" [ngValue]="taxGroup.GruopID">
+              {{ taxGroup.TGrpName }}
+            </option>
+
+          </select>
+          <!-- <div *ngIf="isInvalid && !CessGroupName.valid && CessGroupName.errors.required">
+            <code>please select state</code>
+          </div> -->
+        </div>
+        <div class="form-group">
+          <label for="name"> Purchase Unit Name</label>
+          <input type="text" id="PurchaseUnitName" class="form-control" name="PurchaseUnitName"
+            [(ngModel)]="item.PurchaseUnitName" placeholder="Purchase Unit Name" disabled />
+        </div>
+
+        <div class="form-group">
+          <label for="name">Hindi Name</label>
+          <input type="text" id="HindiName" class="form-control" name="HindiName" [(ngModel)]="item.HindiName"
+            placeholder="Hindi Name" />
+
+        </div>
+
+        <div class="form-group">
+          <label for="name">Promo Point</label>
+          <input type="text" id="PromoPoint" class="form-control" name="PromoPoint" [(ngModel)]="item.promoPoint"
+            placeholder="Promo Point" />
+
+        </div>
+
+        <div class="form-group">
+          <label for="name">DefaultBaseMargin</label>
+          <input type="text" id="DefaultBaseMargin" class="form-control" name="DefaultBaseMargin"
+            [(ngModel)]="item.DefaultBaseMargin" placeholder="DefaultBaseMargin" />
+        </div>
+
+        <div class="form-group">
+          <label for="name">Shelf Life</label>
+          <input type="number" id="ShelfLife" class="form-control" name="ShelfLife" [(ngModel)]="item.ShelfLife"
+            placeholder="ShelfLife" />
+
+        </div>
+        <div class="form-group">
+          <label for="name">Item Type</label>
+          <select class="form-control" id="itemtype" name="itemtype" [(ngModel)]="item.Type" required="1"
+            #itemtype="ngModel">
+            <option selected>--Select--</option>
+            <option value=1>Finished Good</option>
+            <option value=2>Raw Material</option>
+            <option value=3>Work In Progress</option>
+            <option value=4>Outer bag</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="name">Company Code</label>
+          <input type="text" id="CompanyCode" class="form-control" name="CompanyCode" [(ngModel)]="item.CompanyCode"
+            placeholder="CompanyCode" />
+        </div>      
+
+        <div class="form-group"  *ngIf="!itemDetails">
+          <label for="name">Company Stock Code</label>
+          <input type="text" id="CompanyStockCode" class="form-control" name="CompanyStockCode" [(ngModel)]="item.CompanyStockCode"
+            placeholder="CompanyStockCode" />
+        </div>
+
+        <div class="form-group" *ngIf="sellerStoreShowStatus == true">
+          <div *ngIf="item.IsSensitive == true && item.IsSensitiveMRP == true">
+            <label for="active">Is Seller Store Item</label>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input class="custom-control-input" id="IsSellerStoreItem" name="IsSellerStoreItem" type="checkbox"
+                [(ngModel)]="item.IsSellerStoreItem">
+              <label class="custom-control-label" for="IsSellerStoreItem"></label>
+            </div>
+          </div>
+        </div>
+       
+        <div class="form-group">
+          <div class="form-group">
+            <label for="ptr">PTR <span style="color:red"> *</span></label>
+            <input type="number" id="PTR" class="form-control" name="PTR" [disabled]="item.PTR"
+              [(ngModel)]="item.PTR" placeholder="PTR" required="1" #PTR="ngModel" />
+          </div>
+          <div *ngIf="isInvalid">
+            <code>PTR is required</code>
+          </div>
+        </div>
+
+        
+        <!-- <div class="form-group">
+          <div class="form-group">
+            <label for="ptr">Clearance ShelfLife To <span style="color:red"> *</span></label>
+            <input type="number" id="To" class="form-control" name="To" [disabled]="item.PTR"
+              [(ngModel)]="item.PTR" placeholder="To" required="1" #PTR="ngModel" />
+          </div>
+          <div *ngIf="isInvalid">
+            <code>Clearance ShelfLife To is required</code>
+          </div>
+        </div> -->
+      </div>
+
+
+
+      <div class="col-6">
+        <div class="form-group">
+          <label for="name">Unit Of Quantity<span style="color:red"> *</span></label>
+          <input type="text" id="UnitOfQuantity" class="form-control" name="UnitOfQuantity"
+            [readonly]="isSelected || itemDetails" [(ngModel)]="item.UnitofQuantity" placeholder="Unit Of Quantity"
+            required="1" #UnitofQuantity="ngModel" />
+          <!-- <div *ngIf="isInvalid && !UnitofQuantity.valid && UnitofQuantity.errors.required">
+            <code>Unit Of Quantity is required</code>
+          </div> -->
+        </div>
+
+        <div class="form-group">
+          <label for="UOM">Unit Of Measurement:<span style="color:red;"></span></label><br />
+          <select class="form-control" id="site-name" name="unit" [(ngModel)]="item.UOM" (change)="itemname(item)"
+            [disabled]="isSelected || itemDetails" required="1" #UOM="ngModel">
+            <option value="Gm">Gm</option>
+            <option value="Ml">Ml</option>
+            <option value="Kg">Kg</option>
+            <option value="Ltr">Ltr</option>
+            <option value="Pc">Pc</option>
+            <option value="Size">Size</option>
+            <option value="Combo">Combo</option>
+          </select>
+          <!-- <div *ngIf="isInvalid && !UOM.valid && UOM.errors.required">
+            <code>Unit Of Measurement</code>
+          </div> -->
+        </div>
+        <div class="form-group">
+          <!-- *ngIf="item.IsSensitive =='true' || itemDetails"-->
+          <label for="name">Is Sensitive MRP</label>
+          <select class="form-control" id="IsSensitiveMRP" name="IsSensitiveMRP" [(ngModel)]="item.IsSensitiveMRP"
+            (change)="itemname(item)" [disabled]="isSelected">
+            <option selected>--Select--</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="itemDetails">
+          <label for="site-name">Display Name</label><br />
+          <input type="text" name="displayname" class="form-control" readonly value="{{item.itemname}}"
+            [(ngModel)]="item.itemname" />
+        </div>
+
+        <div class="form-group">
+          <label for="site-name">Select Sub Category<span style="color:red;">*</span></label><br />
+
+          <select id="NIsusucat" class="form-control" name="NIsubsubcategory"
+            (change)="onSubCategoryChange(item.SubCategoryId)" [(ngModel)]="item.SubCategoryId"
+            [disabled]="(!item.Categoryid || isSelected) && !itemDetails" required="1" #subsubcategory="ngModel">
+            <option value="">--Select--</option>
+            <option *ngFor="let subcategory of subCategoryList" [ngValue]="subcategory.SubCategoryId">
+              {{ subcategory.SubcategoryName }}
+            </option>
+          </select>
+          <!-- <div *ngIf="isInvalid && !subsubcategory.valid && subsubcategory.errors.required">
+            <code>subcategory is required</code>
+          </div> -->
+        </div>
+
+        <div class="form-group" *ngIf="!itemDetails">
+          <label for="site-name">Display Name</label><br />
+          <input type="text" name="displayname" class="form-control" readonly value="{{item.itemname}}"
+            [(ngModel)]="item.itemname" />
+        </div>
+
+        <div class="form-group" *ngIf="!itemDetails">
+          <label for="site-name">Item Code </label><br />
+
+          <input id="NIcod" name="NIcode" type="text" class="form-control" placeholder="Enter Item Code "
+            change="validateUpload()" [(ngModel)]="item.itemcode" [readonly]="isSelected || itemDetails" />
+        </div>
+
+        <div class="form-group" *ngIf="!itemDetails">
+          <label for="site-name">Selling SKU <span style="color:red;">*</span></label><br />
+          <select class="form-control" id="NISKU" name="NIsellingsk" [disabled]="!item.SubsubCategoryid || itemDetails"
+            required="1" #SellingSku="ngModel" [(ngModel)]="item.SellingSku">
+            <!-- <option value="">---SELECT---</option> -->
+            <option value="{{item.Number}}A"
+              [hidden]="item.Number + 'A'== SKUMutiHide[0]||item.Number + 'A'==SKUMutiHide[1]||item.Number + 'A'==SKUMutiHide[2]||item.Number + 'A'==SKUMutiHide[3]||item.Number + 'A'==SKUMutiHide[4]||item.Number + 'A'==SKUMutiHide[5]||item.Number + 'A'==SKUMutiHide[6]||item.Number + 'A'==SKUMutiHide[7]||item.Number + 'A'==SKUMutiHide[8]||item.Number + 'A'==SKUMutiHide[9]">
+              {{item.Number}}A</option>
+            <option value="{{item.Number}}B"
+              [hidden]="item.Number + 'B'== SKUMutiHide[0]||item.Number + 'B'==SKUMutiHide[1]||item.Number + 'B'==SKUMutiHide[2]||item.Number + 'B'==SKUMutiHide[3]||item.Number + 'B'==SKUMutiHide[4]||item.Number + 'B'==SKUMutiHide[5]||item.Number + 'B'==SKUMutiHide[6]||item.Number + 'B'==SKUMutiHide[7]||item.Number + 'B'==SKUMutiHide[8]||item.Number + 'B'==SKUMutiHide[9]">
+              {{item.Number}}B</option>
+            <option value="{{item.Number}}C"
+              [hidden]="item.Number + 'C'== SKUMutiHide[0]||item.Number + 'C'==SKUMutiHide[1]||item.Number + 'C'==SKUMutiHide[2]||item.Number + 'C'==SKUMutiHide[3]||item.Number + 'C'==SKUMutiHide[4]||item.Number + 'C'==SKUMutiHide[5]||item.Number + 'C'==SKUMutiHide[6]||item.Number + 'C'==SKUMutiHide[7]||item.Number + 'C'==SKUMutiHide[8]||item.Number + 'C'==SKUMutiHide[9]">
+              {{item.Number}}C</option>
+            <option value="{{item.Number}}D"
+              [hidden]="item.Number + 'D'== SKUMutiHide[0]||item.Number + 'D'==SKUMutiHide[1]||item.Number + 'D'==SKUMutiHide[2]||item.Number + 'D'==SKUMutiHide[3]||item.Number + 'D'==SKUMutiHide[4]||item.Number + 'D'==SKUMutiHide[5]||item.Number + 'D'==SKUMutiHide[6]||item.Number + 'D'==SKUMutiHide[7]||item.Number + 'D'==SKUMutiHide[8]||item.Number + 'D'==SKUMutiHide[9]">
+              {{item.Number}}D</option>
+            <option value="{{item.Number}}E"
+              [hidden]="item.Number + 'E'== SKUMutiHide[0]||item.Number + 'E'==SKUMutiHide[1]||item.Number + 'E'==SKUMutiHide[2]||item.Number + 'E'==SKUMutiHide[3]||item.Number + 'E'==SKUMutiHide[4]||item.Number + 'E'==SKUMutiHide[5]||item.Number + 'E'==SKUMutiHide[6]||item.Number + 'E'==SKUMutiHide[7]||item.Number + 'E'==SKUMutiHide[8]||item.Number + 'E'==SKUMutiHide[9]">
+              {{item.Number}}E</option>
+            <option value="{{item.Number}}F"
+              [hidden]="item.Number + 'F'== SKUMutiHide[0]||item.Number + 'F'==SKUMutiHide[1]||item.Number + 'F'==SKUMutiHide[2]||item.Number + 'F'==SKUMutiHide[3]||item.Number + 'F'==SKUMutiHide[4]||item.Number + 'F'==SKUMutiHide[5]||item.Number + 'F'==SKUMutiHide[6]||item.Number + 'F'==SKUMutiHide[7]||item.Number + 'F'==SKUMutiHide[8]||item.Number + 'F'==SKUMutiHide[9]">
+              {{item.Number}}F</option>
+              <option value="{{item.Number}}G"
+              [hidden]="item.Number + 'G'== SKUMutiHide[0]||item.Number + 'G'==SKUMutiHide[1]||item.Number + 'G'==SKUMutiHide[2]||item.Number + 'G'==SKUMutiHide[3]||item.Number + 'G'==SKUMutiHide[4]||item.Number + 'G'==SKUMutiHide[5]||item.Number + 'G'==SKUMutiHide[6]||item.Number + 'G'==SKUMutiHide[7]||item.Number + 'G'==SKUMutiHide[8]||item.Number + 'G'==SKUMutiHide[9]">
+              {{item.Number}}G</option>
+              <option value="{{item.Number}}H"
+              [hidden]="item.Number + 'H'== SKUMutiHide[0]||item.Number + 'H'==SKUMutiHide[1]||item.Number + 'H'==SKUMutiHide[2]||item.Number + 'H'==SKUMutiHide[3]||item.Number + 'H'==SKUMutiHide[4]||item.Number + 'H'==SKUMutiHide[5]||item.Number + 'H'==SKUMutiHide[6]||item.Number + 'H'==SKUMutiHide[7]||item.Number + 'H'==SKUMutiHide[8]||item.Number + 'H'==SKUMutiHide[9]">
+              {{item.Number}}H</option>
+              <option value="{{item.Number}}I"
+              [hidden]="item.Number + 'I'== SKUMutiHide[0]||item.Number + 'I'==SKUMutiHide[1]||item.Number + 'I'==SKUMutiHide[2]||item.Number + 'I'==SKUMutiHide[3]||item.Number + 'I'==SKUMutiHide[4]||item.Number + 'I'==SKUMutiHide[5]||item.Number + 'I'==SKUMutiHide[6]||item.Number + 'I'==SKUMutiHide[7]||item.Number + 'I'==SKUMutiHide[8]||item.Number + 'I'==SKUMutiHide[9]">
+              {{item.Number}}I</option>
+              <option value="{{item.Number}}J"
+              [hidden]="item.Number + 'J'== SKUMutiHide[0]||item.Number + 'J'==SKUMutiHide[1]||item.Number + 'J'==SKUMutiHide[2]||item.Number + 'J'==SKUMutiHide[3]||item.Number + 'J'==SKUMutiHide[4]||item.Number + 'J'==SKUMutiHide[5]||item.Number + 'J'==SKUMutiHide[6]||item.Number + 'J'==SKUMutiHide[7]||item.Number + 'J'==SKUMutiHide[8]||item.Number + 'J'==SKUMutiHide[9]">
+              {{item.Number}}J</option>
+          </select>
+          <!-- <div *ngIf="isInvalid && !SellingSku.valid && SellingSku.errors.required">
+            <code>Selling Sku is required</code>
+          </div> -->
+        </div>
+        <!-- </div> -->
+        <div class="form-group" *ngIf="itemDetails">
+          <label for="site-name">Selling SKU </label><br />
+          <input id="NIcodSelling" name="NISelling" type="text" class="form-control" change="validateUpload()"
+            [(ngModel)]="item.SellingSku" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <!--style="background-color:lightcyan!important"-->
+          <label for="site-name">SK Bar Codes</label><br />
+          <input id="itemcode" name="skbarcode" type="text" class="form-control" placeholder="Enter Item barcode "
+            [(ngModel)]="item.Number" disabled="true" />
+        </div>
+
+        <div class="form-group">
+          <label for="site-name">Minimum Selling Order qty <span style="color:red;">*</span></label><br />
+          <input id="NIMSOQ" name="NIminsellingqty" type="number" class="form-control"
+            placeholder="Enter Minimum Selling Order qty" min="1" maxlength="1000" [(ngModel)]="item.MinOrderQty"
+            (change)="SellingUnitname(item)" required="1" #NIminsellingqty="ngModel" />
+          <!-- <div *ngIf="isInvalid && !NIminsellingqty.valid && NIminsellingqty.errors.required">
+              <code>Minimum Selling Order qty is required</code>
+            </div> -->
+        </div>
+
+        <div class="form-group">
+          <label for="site-name">General Customer Price</label><br />
+          <input id="NIGCP" name="NIGcustmerprice" type="text" class="form-control"
+            placeholder="Enter General Customer Price " [(ngModel)]="item.GeneralPrice" />
+        </div>
+
+        <div class="form-group">
+          <label for="site-name">Tax Group Name <span style="color:red;">*</span></label><br />
+          <select class="form-control" id="NITGN" name="NItaxgroupname" [(ngModel)]="item.GruopID" required="1"
+            #NItaxgroupname="ngModel">
+            <option value="">---SELECT---</option>
+            <option *ngFor="let tax of taxGroupList" [ngValue]="tax.GruopID">
+              {{tax.TGrpName}}
+            </option>
+          </select>
+          <!-- <div *ngIf="isInvalid && !NItaxgroupname.valid && NItaxgroupname.errors.required">
+              <code>Tax Group is required</code>
+            </div> -->
+        </div>
+
+        <div class="form-group">
+          <label for="site-name">HSN Code <span style="color:red;">*</span></label><br />
+
+          <input id="NIHSNC" name="NIhsn_code" type="text" class="form-control" placeholder="Enter HSNCODE "
+            required="1" #HSNCode="ngModel" [(ngModel)]="item.HSNCode" minlength="8" maxlength="8" />
+            <div *ngIf="HSNCode.errors?.minlength">
+             <label style="color:red;"> HSN Code Must Be 8 Digit.</label>
+            </div>
+          <!-- <div *ngIf="isInvalid && !HSNCode.valid && HSNCode.errors.required">
+                <code>HSN Code is required</code>
+              </div> -->
+        </div>
+
+        <div class="form-group">
+          <label for="site-name"> Selling Unit Name</label><br />
+
+          <input id="NI_SUN" name="NI_sellingun" type="text" class="form-control" [(ngModel)]="item.SellingUnitName"
+            readonly />
+        </div>
+
+        <div class="form-group">
+          <label for="site-name"> Margin</label><br />
+          <input id="NImar" name="NI_MArgins" type="text" class="form-control" placeholder="Enter Margin "
+            [(ngModel)]="item.Margin" />
+        </div>
+
+        <div class="form-group">
+          <label for="IsDailyEssential">Is Daily Essential</label><br />
+          <select class="form-control" id=NIIDE name=NI_isdailyessential [(ngModel)]="item.IsDailyEssential">
+            <option value="">---SELECT---</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="ShowTypes">Show Types:</label><br />
+          <select class="form-control" id="site-name" name="show" [(ngModel)]="item.ShowTypes">
+            <option value="">---SELECT---</option>
+            <option value="Fast">Fast</option>
+            <option value="Slow">Slow</option>
+            <option value="Non Moving">Non Moving</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="itemDetails">
+          <label for="Reason">Reason for Deactive item:</label><br />
+          <select class="form-control" id="site-name" name="Reason" [(ngModel)]="item.Reason">
+            <option value="" selected>---SELECT---</option>
+            <option value="MRP Issue">MRP Issue</option>
+            <option value="Stock Unavailable">Stock Unavailable</option>
+            <option value="Price Issue">Price Issue</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <!-- <div class="form-group" *ngIf="itemDetails">
+            <label for="active" >Is Trade Item</label>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1" type="checkbox" [(ngModel)]="item.IsTradeItem">
+              <label class="custom-control-label" for="customCheckboxInline1"></label>
+            </div>
+          </div> -->
+        <!-- <div class="form-group" *ngIf="itemDetails">
+          <label for="active">Is Replace Able</label>
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input class="custom-control-input" id="IsReplaceable" name="IsReplaceable" type="checkbox"
+              [(ngModel)]="item.IsReplaceable" (click)="checkIsReplaceable(item)">
+            <label class="custom-control-label" for="IsReplaceable"></label>
+          </div>
+        </div> -->
+        <div class="form-group">
+          <div class="form-group">
+            <label for="weight">Weight:<span style="color:red;"></span></label><br />
+            <input  type="number" class="form-control" required id="weight" name="weight" [(ngModel)]="item.weight">
+          </div>
+           <div *ngIf="isInvalid">
+                <code>Weight is required</code>
+              </div>
+        </div>
+
+        <div class="form-group">
+          <label for="WeightType">Weight Type :</label><br />
+          <select class="form-control" id="weighttype" name="weighttype" [(ngModel)]="item.weighttype">
+            <option value="Gm">Gm</option>
+            <option value="Kg">Kg</option>
+          </select>
+        </div> 
+        
+
+        <div class="form-group">
+          <div class="form-group">
+            <label for="baseScheme">Base Scheme <span style="color:red"> *</span></label>
+            <input type="number" id="BaseScheme" class="form-control" name="BaseScheme"
+              [(ngModel)]="item.BaseScheme" placeholder="BaseScheme" required="1" #PBaseSchemeTR="ngModel" />
+          </div>
+          <div *ngIf="isInvalid">
+            <code>Base Scheme is required</code>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-group">
+              <div class="row">
+                <div class="col-6">
+                  <label for="ptr">Clearance ShelfLife From <span style="color:red"> *</span></label>
+                  <input type="number" id="ClearanceFrom" class="form-control" name="ClearanceFrom" [disabled]="isDisable"
+                    [(ngModel)]="item.ClearanceFrom"  placeholder="CL-From" #CLFrom="ngModel" />
+                    <div *ngIf="isInvalid">
+                      <code>Clearance ShelfLife From is required</code>
+                    </div>
+                   
+                  </div>
+                
+                <div class="col-6">
+                  <label for="ptr">Clearance ShelfLife To <span style="color:red"> *</span></label>
+                  <input type="number" id="ClearanceTo" class="form-control" name="ClearanceTo" [disabled]="isDisable"
+                    [(ngModel)]="item.ClearanceTo"  placeholder="CL-To"  #CLTo="ngModel" />
+                    <div *ngIf="isInvalid">
+                      <code>Clearance ShelfLife To is required</code>
+                    </div>
+                   
+                  </div>
+                
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <label for="ptr">NonSellable ShelfLife From <span style="color:red"> *</span></label>
+                  <input type="number" id="NSFrom" class="form-control" name="NSFrom" [disabled]="isDisable"
+                    [(ngModel)]="item.NonsellableFrom"  placeholder="NS-From"  #NSFrom="ngModel" />
+                    <div *ngIf="isInvalid">
+                      <code>NonSellable ShelfLife From is required</code>
+                    </div>
+                    
+                  </div>
+                <div class="col-6">
+                  <label for="ptr">NonSellable ShelfLife To <span style="color:red"> *</span></label>
+                  <input type="number" id="NonSellableTo" class="form-control" name="NonSellableTo" [disabled]="isDisable"
+                    [(ngModel)]="item.NonsellableTo"  placeholder="NS-To"  #NSTo="ngModel" />
+                    <div *ngIf="isInvalid">
+                      <code>NonSellable ShelfLife To is required</code>
+                    </div>
+                    
+                  </div>
+              </div>
+          </div>
+        </div>
+     
+        
+        
+        
+    
+        
+      </div>
+    </div>
+    <br />
+    <div *ngIf="item.Type == 2 || item.Type == 4">
+      <h4 style="text-align: center; font-family:Arial, Helvetica, sans-serif ;"><b>Insert Packing Material Details</b>
+      </h4>
+      <br>
+      <div class="row ">
+        <!-- <div class="col-6">
+            <div class="form-group">
+                <label for="name">Select Supplier<span style="color:red"> *</span></label>
+                <select id="supplier" class="form-control" name="supplier" [(ngModel)]="data.SupplierId" required="1"
+                    #supplier="ngModel">
+                    <option value="">--Select--</option>
+                    <option *ngFor="let s of SupplierList" [ngValue]="s.SupplierId">
+                        {{ s.Name }}
+                    </option>
+
+                </select>
+            </div>
+        </div> -->
+
+        <!-- <div class="col-6">
+            <div class="form-group">
+                <label for="name">Material Name<span style="color:red"> *</span></label>
+                <select id="Material" class="form-control" name="Material" [(ngModel)]="materialData.BagId" required="1" [disabled]="itemDetails"
+                    #Material="ngModel">
+                    <option value="">--Select--</option>
+                    <option *ngFor="let s of BagList" [ngValue]="s.OuterBagId">
+                        {{ s.BagName }}
+                    </option>
+
+                </select>
+            </div>
+        </div> -->
+
+        <div class="col-6">
+          <div class="form-group">
+            <label for="UOM">Unit Of Measurement:<span style="color:red;"></span></label><br />
+            <input type="text" class="form-control" id="MAterialUOM" name="MAterialUOM" [(ngModel)]="item.UOM" disabled>
+          </div>
+        </div>     
+        <div class="col-6"></div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="UOM">From Conversion:<span style="color:red;"></span></label><br />
+            <select class="form-control" id="FromC" name="FromC" [(ngModel)]="materialData.FromConversion" required="1"
+              [disabled]="itemDetails" #FromC="ngModel">
+              <option selected="item.UOM">{{item.UOM}}</option>
+              <!-- <option value="Pc">Pc</option> -->
+            </select>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="UOM">To Conversion:<span style="color:red;"></span></label><br />
+            <select class="form-control" id="ToC" name="ToC" [(ngModel)]="materialData.ToConversion" required="1"
+              [disabled]="itemDetails" #ToC="ngModel">
+              <option value="Kg">Kg</option>
+              <option value="Pc">Pc</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="name">From Conversion Value<span style="color:red"> *</span></label>
+            <input type="number" id="FromV" class="form-control" name="FromV" [(ngModel)]="materialData.FromValue"
+              [disabled]="itemDetails" required="1" #FromV="ngModel" />
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group">
+            <label for="name">To Conversion Value<span style="color:red"> *</span></label>
+            <input type="number" id="ToV" class="form-control" name="ToV" [(ngModel)]="materialData.ToValue"
+              [disabled]="itemDetails" required="1" #ToV="ngModel" />
+          </div>
+        </div>       
+      </div>
+      <div class="row " *ngIf="materialData.FromConversion && materialData.ToConversion">
+        <div class="col-6 " style="font-family:Arial, Helvetica, sans-serif">
+          <h4><b>HEADING </b></h4>
+        </div>
+        <div class="col-3 " style="font-family:Arial, Helvetica, sans-serif">
+          <h4><b>{{materialData.FromConversion}}</b></h4>
+        </div>
+        <div class="col-3 " style="font-family:Arial, Helvetica, sans-serif">
+          <h4><b>{{materialData.ToConversion}}</b></h4>
+        </div>
+        <div class="col-6 " style="margin-bottom: 10px;font-family:Arial, Helvetica, sans-serif">
+          <h6><b>Po</b></h6>
+        </div>
+        <div class="col-3 " style="margin-bottom: 10px;">
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <!-- <input class="custom-control-input" *ngIf="POUom1!=null"  [checked]=true value="materialData.FromConversion" [disabled]="itemDetails" id="POUom1" name="POUom1" type="checkbox" [(ngModel)]="POUom1" (change)="onPOBoxChange(materialData.FromConversion , POUom1 , 'POUom1')">
+              <input class="custom-control-input" *ngIf="POUom1==null"  [checked]=false value="materialData.FromConversion" [disabled]="itemDetails" id="POUom1" name="POUom1" type="checkbox" [(ngModel)]="POUom1" (change)="onPOBoxChange(materialData.FromConversion , POUom1 , 'POUom1')"> -->
+
+            <input class="custom-control-input" id="POUom1" [disabled]="disabledEdit" name="POUom1" type="checkbox"
+              [(ngModel)]="POUom1">
+
+
+            <label class="custom-control-label" for="POUom1"></label>
+          </div>
+        </div>
+        <div class="col-3 " style="margin-bottom: 10px; ">
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <!-- <input class="custom-control-input" value="materialData.ToConversion" [disabled]="itemDetails" id="POUom2"
+              name="POUom2" type="checkbox" [(ngModel)]="POUom2"
+              (change)="onPOBoxChange(materialData.ToConversion,POUom2 , 'POUom2')"> -->
+            <input class="custom-control-input" id="POUom2" name="POUom2" [disabled]="disabledEdit" type="checkbox"
+              [(ngModel)]="POUom2">
+
+            <label class="custom-control-label" for="POUom2"></label>
+          </div>
+        </div>
+        <div class="col-6 " style="margin-bottom: 10px;font-family:Arial, Helvetica, sans-serif">
+          <h6><b>GR/IR</b></h6>
+        </div>
+        <div class="col-3 " style="margin-bottom: 10px;">
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input class="custom-control-input" id="GRIRUom1" name="GRIRUom1" [disabled]="disabledEdit" type="checkbox"
+              [(ngModel)]="GRIRUom1">
+
+            <!-- <input class="custom-control-input" id="GRIRUom1" name="GRIRUom1" [disabled]="itemDetails" type="checkbox"
+              [(ngModel)]="GRIRUom1" (change)="onGRBoxChange(materialData.FromConversion , GRIRUom1 , 'GRIRUom1')"> -->
+            <label class="custom-control-label" for="GRIRUom1"></label>
+          </div>
+        </div>
+        <div class="col-3 " style="margin-bottom: 10px;">
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input class="custom-control-input" id="GRIRUom2" name="GRIRUom2" [disabled]="disabledEdit" type="checkbox"
+              [(ngModel)]="GRIRUom2">
+
+            <!-- <input class="custom-control-input" id="GRIRUom2" name="GRIRUom2" [disabled]="itemDetails" type="checkbox"
+              [(ngModel)]="GRIRUom2" (change)="onGRBoxChange(materialData.ToConversion , GRIRUom2 , 'GRIRUom2')"> -->
+            <label class="custom-control-label" for="GRIRUom2"></label>
+          </div>
+        </div>
+        <div class="col-6 " style="margin-bottom: 10px;font-family:Arial, Helvetica, sans-serif">
+          <h6><b>Issued/Dispatch</b></h6>
+        </div>
+        <div class="col-3 " style="margin-bottom: 10px;">
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input class="custom-control-input" id="IssueDispatchUom1" [disabled]="disabledEdit"
+              name="IssueDispatchUom1" type="checkbox" [(ngModel)]="IssueDispatchUom1">
+
+            <!-- <input class="custom-control-input" id="IssueDispatchUom1" name="IssueDispatchUom1" [disabled]="itemDetails"
+              type="checkbox" [(ngModel)]="IssueDispatchUom1"
+              (change)="onIssueDispatchBoxChange(materialData.FromConversion , IssueDispatchUom1 , 'IssueDispatchUom1')"> -->
+            <label class="custom-control-label" for="IssueDispatchUom1"></label>
+          </div>
+        </div>
+        <div class="col-3 " style="margin-bottom: 10px;">
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <!-- <input class="custom-control-input" id="IssueDispatchUom2" name="IssueDispatchUom2" [disabled]="itemDetails"
+              type="checkbox" [(ngModel)]="IssueDispatchUom2"
+              (change)="onIssueDispatchBoxChange(materialData.ToConversion , IssueDispatchUom2 , 'IssueDispatchUom2')"> -->
+
+            <input class="custom-control-input" id="IssueDispatchUom2" [disabled]="disabledEdit"
+              name="IssueDispatchUom2" type="checkbox" [(ngModel)]="IssueDispatchUom2">
+
+            <label class="custom-control-label" for="IssueDispatchUom2"></label>
+          </div>
+        </div>
+        <div class="col-6 " style="margin-bottom: 10px;font-family:Arial, Helvetica, sans-serif">
+          <h6><b>Inventory</b></h6>
+        </div>
+        <div class="col-3 " style="margin-bottom: 10px;">
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <!-- <input class="custom-control-input" id="Inventory1" name="Inventory1" type="checkbox"
+              [disabled]="itemDetails" [(ngModel)]="Inventory1"
+              (change)="onInventoryBoxChange(materialData.FromConversion , Inventory1 , 'Inventory1')"> -->
+            <input class="custom-control-input" id="Inventory1" name="Inventory1" [disabled]="disabledEdit"
+              type="checkbox" [(ngModel)]="Inventory1">
+
+            <label class="custom-control-label" for="Inventory1"></label>
+          </div>
+        </div>
+        <div class="col-3 " style="margin-bottom: 10px;">
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input class="custom-control-input" id="Inventory2" name="Inventory2" [disabled]="disabledEdit"
+              type="checkbox" [(ngModel)]="Inventory2">
+
+            <!-- <input class="custom-control-input" id="Inventory2" name="Inventory2" type="checkbox"
+              [disabled]="itemDetails" [(ngModel)]="Inventory2"
+              (change)="onInventoryBoxChange(materialData.ToConversion , Inventory2 , 'Inventory2')"> -->
+            <label class="custom-control-label" for="Inventory2"></label>
+          </div>
+        </div> 
+        <!-- <div class="form-actions right col-sm-12 p-3">
+            <button type="submit" class="btn btn-raised btn-primary mr-1" (click)="onSave(infoForm)">
+               
+                Save
+            </button>
+            <button type="button" class="btn btn-raised btn-primary mr-1" (click)="back()">Back</button>
+        </div>
+    </div>-->
+      </div>
+    </div>
+    <div class="form-footer m-2">Fields with * sign are mandatory to fill</div>
+    <div class="form-actions right col-sm-12 p-3">
+      <button type="button" class="btn btn-raised btn-warning mr-1" (click)="oncancel()">
+        Cancel
+      </button>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="onclick(infoForm)">
+        Save
+      </button>
+
+    </div>
+    <!-- </div>  -->
+
+  </form>
+  <!-- 
+      </ng-template>
+    </ngb-tab> -->
+
+
+
+
+
+  <!-- <ngb-tab id="tab2" title="Step2"
+    [disabled]="!id">
+
+      <ng-template ngbTabContent>
+        <br /> <br />
+        <form class="form" name="imageuploadform" #imageuploadform="ngForm">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="uploadAdvertisements" >Upload Id_Proof:</label><br />
+              <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*" (change)="upload($event.target.files)" />
+              <br />
+              <button type="button" class="btn btn-raised btn-primary " (click)="uploadIdProof()">
+                   Upload
+              </button>
+              <div class="form-group">
+                <img alt="" src="{{baseURL}}{{people.Id_Proof}}" class="img-square" *ngIf="people.Id_Proof">
+              </div>
+            </div>
+
+
+            <div class="form-group">
+              <label for="uploadAdvertisements">Address_Proof:</label><br />
+              <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*" (change)="upload($event.target.files)" />
+              <br />
+              <button type="button" class="btn btn-raised btn-primary " (click)="uploadAddressProof()">
+                Upload
+              </button>
+              <div class="form-group">
+                <img alt="" src="{{baseURL}}{{people.Address_Proof}}" class="img-square " *ngIf="people.Address_Proof">
+              </div>
+            </div>
+          </div>
+
+      <div class="col-md-6">
+            <div class="form-group">
+              <label for="uploadAdvertisements">MarkSheet:</label><br />
+              <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*" (change)="upload($event.target.files)"  />
+              <br />
+                <button type="button" class="btn btn-raised btn-primary" (click)="uploadMarksheet()">
+                Upload
+              </button>
+              <div class="form-group">
+                <img alt="" src="{{baseURL}}{{people.MarkSheet}}" class="img-square"  *ngIf="people.MarkSheet">
+              </div>
+            </div> 
+
+      <div class="form-group">
+              <label for="uploadAdvertisements">Pre_Salary:</label><br />
+              <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*" (change)="upload($event.target.files)"  />
+              <br />
+               <button type="button" class="btn btn-raised btn-primary " (click)="uploaderPresalary()">
+               
+                Upload
+              </button>
+              <div class="form-group">
+                <img alt="" src="{{baseURL}}{{people.Pre_SalarySlip}}" class="img-square"  *ngIf="people.Pre_SalarySlip">
+              </div>
+            </div>
+          </div>
+
+
+
+
+        </div>
+        <div class="form-actions right col-sm-12 p-3">
+          <button type="button" class="btn btn-raised  btn-warning mr-1 " (click)="t.select('tab1')">
+            Previous
+          </button>
+           <button type="submit" class="btn btn-raised btn-primary mr-1" *ngIf="peopleDetails"
+           
+            (click)="onSave(imageuploadform)">
+            Save
+          </button>
+          <button type="submit" class="btn btn-raised btn-primary mr-1" *ngIf="!peopleDetails"
+           
+          (click)="close()">
+          Save
+        </button>
+        </div>
+</form>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset> -->
+
+</div>
+<div class="mt-3 " *ngIf="isWarehouse">
+  <form class="form" name="war" #war="ngForm" autocomplete="off">
+    <div class="row">
+      <h6 style="margin-left: 30px;"><b>Selling Unit Name<span style="color:red;">* {{item.SellingUnitName}}</span> -
+          Number(SellingSKu) : <span style="color:green;">{{item.Number}} </span>({{item.SellingSku}})</b></h6>
+      <br /><br />
+    </div>
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label for="site-name">Select Supplier:<span style="color:red;">*</span></label><br />
+        <select class="form-control" id="NIsuppler" name="NIsuppler" [(ngModel)]="item.SupplierId"
+          (change)="getDepotDetails(item.SupplierId)" required="1" #SupplierM="ngModel">
+          <option value="">---SELECT---</option>
+          <option *ngFor="let s of supplierList" [ngValue]="s.SupplierId">
+            {{s.Name}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="site-name">Select Depo:</label><br />
+        <select class="form-control" id="NIDepot" name="NIDepot" [(ngModel)]="item.DepoId">
+          <option value="">---SELECT---</option>
+          <option *ngFor="let s of depotList" [ngValue]="s.DepoId">
+            {{s.DepoName}}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="site-name">Select Buyer:</label><br />
+        <select class="form-control" id="NIBuyer" name="NIBuyer" [(ngModel)]="item.BuyerId">
+          <option value="">---SELECT---</option>
+          <option *ngFor="let s of buyerList" [ngValue]="s.PeopleID">
+            {{s.DisplayName}}
+          </option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">Purchase Price<span style="color:red;">*</span></label><br />
+        <input id="PurchasePrice" name="PurchasePrice" type="text" class="form-control"  placeholder="Enter Item Price "
+          [(ngModel)]="item.PurchasePrice" required="1" #PurchasePrice="ngModel" />
+        <div *ngIf="isInvalid && !PurchasePrice.valid && PurchasePrice.errors.required">
+          <code>PurchasePrice not greater than MRP Price</code>
+        </div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">Unit Price<span style="color:red;">*</span></label><br />
+        <input id="UnitPrice" name="UnitPrice" type="text" class="form-control" placeholder="Enter Unit Price " [disabled]="item.EnableAutoPrice"
+          [(ngModel)]="item.UnitPrice" required="1" #unitPrice="ngModel" (ngModelChange)="onChangeUnitPrice(item.UnitPrice)"/>
+        <div class="col-md-6"></div>
+        <div *ngIf="isInvalid && !UnitPrice.valid && UnitPrice.errors.required">
+          <code>UnitPrice not greater than MRP Price</code>
+        </div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">Trade Price<span style="color:red;">*</span></label><br />
+        <input id="TradePrice" name="TradePrice" type="text" class="form-control" placeholder="Enter Trade Price " [disabled]="item.EnableAutoPrice"
+          [(ngModel)]="item.TradePrice" required="1" #TradePrice="ngModel" (ngModelChange)="onChangeUnitPrice(item.TradePrice)"/>
+        <div class="col-md-6"></div>
+        <div *ngIf="isInvalid && !TradePrice.valid && TradePrice.errors.required">
+          <code>TradePrice not greater than MRP Price</code>
+        </div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">WholeSale Price<span style="color:red;">*</span></label><br />
+        <input id="WholeSalePrice" name="WholeSalePrice" type="text" class="form-control" placeholder="Enter WholeSale Price " [disabled]="item.EnableAutoPrice"
+          [(ngModel)]="item.WholeSalePrice" required="1" #WholeSalePrice="ngModel" (ngModelChange)="onChangeUnitPrice(item.WholeSalePrice)"/>
+        <div class="col-md-6"></div>
+        <div *ngIf="isInvalid && !WholeSalePrice.valid && WholeSalePrice.errors.required">
+          <code>WholeSalePrice not greater than MRP Price</code>
+        </div>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">MRP<span style="color:red;" *ngIf="item.IsSensitive && !item.IsSensitiveMRP"> Live MRP is
+            {{item.price}}</span></label><br />
+        <select class="form-control" id="MRP" name="MRP" [(ngModel)]="item.ItemMultiMRPId" (change)="onMRPChange(item)">
+          <!--  -->
+          <option value="">---SELECT---</option>
+          <option *ngFor="let s of ItemPriceData" [ngValue]="s.ItemMultiMRPId">
+            MRP {{s.MRP}} (MRPID : {{s.ItemMultiMRPId}}, UOM : {{s.UnitofQuantity + ' ' + s.UOM}})
+          </option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">Unit Of Quantity</label> 
+        <input id="UOQ" name="UOQ" type="text" class="form-control" placeholder="Enter UnitofQuantity"
+          [(ngModel)]="item.UnitofQuantity" readonly />
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="UOM">Unit Of Magerment:<span style="color:red;"></span></label><br />
+        <input id="UOM" name="UOM" type="text" class="form-control" placeholder="Enter UOM " [(ngModel)]="item.UOM"
+          readonly />
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">Minimum Purchase Order qty<span style="color:red;">*</span></label><br />
+        <input type="number" id="MinimumPurchaseOrderqty" name="MinimumPurchaseOrderqty" class="form-control"
+          placeholder="Enter Minimum Order quantity" min="1" maxlength="1000" [(ngModel)]="item.PurchaseMinOrderQty"
+          (change)="purchaseUnitname(item)" required="1" #MinimumPurchaseOrderqty="ngModel" />
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="site-name">item Name</label><br />
+        <input type="text" id="itemName" name="itemName" class="form-control" readonly [(ngModel)]="item.itemname" />
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">Purchase Unit Name</label><br />
+        <input type="text" id="PurchaseUnitName" name="PurchaseUnitName" class="form-control" readonly
+          [(ngModel)]="item.PurchaseUnitName" />
+      </div>
+      <div class="form-group col-md-6">
+        <label for="ShowTypes">Show Types:</label><br />
+        <select class="form-control" id="site-name" name="show" [(ngModel)]="item.ShowTypes">
+          <option value="">---SELECT---</option>
+          <option value="Fast">Fast</option>
+          <option value="Slow">Slow</option>
+          <option value="Non Moving">Non Moving</option>
+        </select>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">Distribution Price<span style="color:red;"></span></label><br />
+        <input type="number" id="DistributionPrice" name="DistributionPrice" class="form-control"
+          placeholder="DistributionPrice" [(ngModel)]="item.DistributionPrice" />
+        <!-- required="item.DistributorShow == 1" #DistributionPrice="ngModel"  <div *ngIf="isInvalid && item.DistributorShow && !DistributionPrice.valid && DistributionPrice.errors.required">
+            <code>PurchasePrice not greater than MRP Price</code>
+          </div> -->
+      </div>
+      <div class="form-group col-md-6">
+        <label for="site-name">Item App Type<span style="color:red;">*</span></label><br />
+        <select class="form-control" id="ItemAppType" name="ItemAppType" [(ngModel)]="item.ItemAppType">
+          <option value="0">All</option>
+          <option value="1">Retailer App</option>
+          <option value="2">Distributor App</option>
+          <option value="6">Seller Store</option>
+
+        </select>
+      </div>
+
+      <div class="form-group col-md-6" *ngIf="itemDetails && IsBrandConfig">
+        <label for="active">Is Replace Able</label>
+        <div class="custom-control custom-checkbox custom-control-inline">
+          <input class="custom-control-input" id="IsReplaceable" name="IsReplaceable" type="checkbox"
+            [(ngModel)]="item.IsReplaceable" (click)="checkIsReplaceable(item)">
+          <label class="custom-control-label" for="IsReplaceable"></label>
+        </div>
+      </div>
+
+      <div class="form-group col-md-6" *ngIf="itemDetails">
+        <label for="active">Is Distributor Show</label>
+        <div class="custom-control custom-checkbox custom-control-inline">
+          <input class="custom-control-input" id="DistributorShow" name="DistributorShow" type="checkbox"
+            [(ngModel)]="item.DistributorShow">
+          <label class="custom-control-label" for="DistributorShow"></label>
+        </div>
+      </div>
+
+      <div class="form-group col-md-6" *ngIf="itemDetails">
+        <label for="active">Is DisContinued</label>
+        <div class="custom-control custom-checkbox custom-control-inline">
+          <input class="custom-control-input" id="IsDisContinued" name="IsDisContinued" type="checkbox"
+            [(ngModel)]="item.IsDisContinued">
+          <label class="custom-control-label" for="IsDisContinued"></label>
+        </div>
+      </div>
+
+      <div class="form-group col-md-6" *ngIf="itemDetails">
+        <div *ngIf="item.IsSensitive == true && item.IsSensitiveMRP == true">
+          <label for="active">Is Seller Store Show</label>
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input class="custom-control-input" id="IsSellerStoreItem" name="IsSellerStoreItem" type="checkbox"
+              [(ngModel)]="item.IsSellerStoreItem" disabled>
+            <label class="custom-control-label" for="IsSellerStoreItem"></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-6" *ngIf="itemDetails">
+        <label for="site-name">Seller Store Price</label><br/>
+        <input id="SellerStorePrice" name="SellerStorePrice" type="number" class="form-control" placeholder="Enter Seller Store Price" 
+          [(ngModel)]="item.SellerStorePrice" (keypress)="decimalFilter($event)" disabled />
+          <span style="color: red;" *ngIf="item.price<=item.SellerStorePrice">Note - Seller Store Price Not More than MRP Price</span>
+      </div>
+
+      <div class="form-group col-md-6" *ngIf="itemDetails">
+          <label for="active">Is Commodity</label>
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input class="custom-control-input" id="IsCommodity" name="IsCommodity" type="checkbox"
+              [(ngModel)]="item.IsCommodity" >
+            <label class="custom-control-label" for="IsCommodity"></label>
+          </div>
+      </div>
+
+      <div class="form-actions right col-sm-12 p-3">
+        <button type="button" class="btn btn-raised btn-warning mr-1" (click)="oncancel()">cancel</button>
+
+        <ng-container *ngIf="item.price>item.SellerStorePrice else second">
+          <button type="button" class="btn btn-raised btn-primary mr-1" (click)="onSave(war)">Save</button>
+        </ng-container>
+        <ng-template #second>
+          <ng-container>
+            <button type="button" disabled class="btn btn-raised btn-primary mr-1">Save</button>
+          </ng-container>
+        </ng-template>
+
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="onAdd(war)">Add</button>
+
+      </div>
+
+    </div>
+  </form>
+  <!-- <div *ngIf = "isMaterial">
+      <app-add-material-item-master ></app-add-material-item-master>
+    </div> -->
+  <div class="form-footer m-2">Fields with * sign are mandatory to fill</div>
+</div>
+
+
+
+<div *ngIf="displayBasic">
+  <p-dialog [header]="RunBothMRPProduct" [(visible)]="displayBasic" [style]="{width: '50vw'}" [resizable]="false"
+    appendTo="body" [baseZIndex]="10000">
+    <div class="form-group col-md-6">
+      <label for="active" icon="pi pi-exclamation-triangle">Do you want to sell previous MRP and current MRP in the same
+        time?</label>
+    </div>
+    <p-footer>
+      <button type="button" pButton icon="pi pi-check" (click)="RunBothMRP(true)" label="Yes"></button>
+      <button type="button" pButton icon="pi pi-times" (click)="RunBothMRP(false)" label="No"
+        class="ui-button-secondary"></button>
+    </p-footer>
+  </p-dialog>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

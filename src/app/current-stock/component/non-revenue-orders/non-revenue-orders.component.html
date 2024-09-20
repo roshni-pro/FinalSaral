@@ -1,0 +1,90 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Non Revenue Orders</h3>
+    </div>
+</div>
+<div class="form-footer m-2">Fields with <span style="color:red"> *</span> sign are mandatory to fill
+</div>
+<div class="ui-fluid shadow p-2 m-2 bg-white rounded table table-hover">
+    <div class="row ml-2" >
+        <!-- <div class="col-md-6 text-left">
+            <div class="form-footer m-2">Fields with <span style="color:red"> *</span> sign are mandatory to fill
+            </div>
+          </div> -->
+        
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Select Warehouse <span style="color:red"> *</span></b></label>
+            <p-multiSelect [options]="warehouseList" [(ngModel)]="warehouseID" defaultLabel="Select a warehouse"  
+                 optionLabel="label" selectedItemsLabel="{0} Warehouse selected"></p-multiSelect>
+        </div>
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Customer Type</b></label>
+            <p-multiSelect id="CustomerType" name="CustomerType" [options]="CustomerType"
+             [(ngModel)]="SelectedCustomerType"  optionLabel="name" optionValue="code"
+                 placeholder="Select Customer Type">
+            </p-multiSelect>
+         
+        </div>
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Order Status</b></label>
+            <p-multiSelect id="Categorys" name="Categorys" [options]="OrderStatus" [(ngModel)]="SelectedStatus"  optionLabel="name" optionValue="code"
+                selectedItemsLabel="{0} Status selected" placeholder="Select Order Status">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Select Date Range</b></label><br>
+             <p-calendar  selectionMode="range" [showIcon]="true" showButtonBar="true" [(ngModel)]="rangeDates"   [maxDate]="maxDate"
+                    [readonlyInput]="true" inputId="range" placeholder="select date range"  [style]="{'width':'100%'}" ></p-calendar>
+        </div>
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Search</b></label>
+            <input type="text" class="form-control" [(ngModel)]="keyword" placeholder="Enter SKcode,Order ID"
+                style="width:100%; border-radius: 19px; height: 50%;">
+        </div>
+        <div class="col-md-4 mt-4">
+            <button class="btn btn-primary mr-2" (click)="ForSearchHit();onSearch($event)">Search</button>
+            <button class="btn btn-Success" (click)="ExportSearch($event)" [disabled]="!showExport">Export</button>
+        </div>
+    </div>
+    <p-table [value]="NonRevnueList" [(first)]="first" (onLazyLoad)="load($event)"  [paginator]="true" [rows]="10" [scrollable]="true"  [totalRecords]="TotalRecords"
+     scrollHeight="45vh" text-align: cente
+[lazy]="true">
+   <ng-template pTemplate="header">
+       <tr>
+           <th>Order Number</th>
+           <th>Order Date</th>
+           <th>Warehouse</th>
+           <th>Customer Details</th>
+           <th>Order Status</th>
+           <th>View Reason</th>
+       </tr>
+   </ng-template>
+   <ng-template pTemplate="body" let-item>
+       <tr>
+           <td>{{item.OrderId}}</td>
+           <td>{{item.OrderDate | date: 'dd-MM-yyyy'}}</td>
+           <td>{{item.WarehouseName}}</td>
+           <td>{{item.customerDetails}} <br> {{item.Skcode}}</td>
+           <td>{{item.status}}</td>
+           <td><button class="btn btn-Success" (click)="ViewReason(item)" >View </button></td>
+       </tr>
+   </ng-template>
+   <ng-template pTemplate="emptymessage" let-columns>
+       <tr>
+         <td colspan="13" style="text-align: center;">
+           <br>
+           <h4><b>No Data Found.</b></h4>
+         </td>
+       </tr>
+   </ng-template>
+</p-table>
+</div>
+
+<p-dialog header="Reason" [(visible)]="ReasonDialog"   [resizable]="true" [modal]="true" appendTo="body" [closable]="true"  [style]="{width: '25vw',left: '370px',top: '10px'}" [baseZIndex]="10000" >
+    <h5 style="font-weight: 500;">{{reason}}</h5>
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

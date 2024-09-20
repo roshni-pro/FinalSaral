@@ -1,0 +1,145 @@
+<div #customizer class="customizer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block"
+    [ngClass]="{open: isOpen}">
+    <a class="customizer-close" (click)="closeCustomizer()">
+        <i class="ft-x font-medium-3"></i>
+    </a>
+    <a class="customizer-toggle bg-danger" id="customizer-toggle-icon" (click)="toggleCustomizer()">
+        <i class="ft-settings font-medium-4 fa fa-spin white align-middle"></i>
+    </a>
+    <div *ngIf="isOpen" class="customizer-content p-3 ps-container ps-theme-dark text-left"
+        data-ps-id="df6a5ce4-a175-9172-4402-dabd98fc9c0a">
+        <h4 class="text-uppercase mb-0 text-bold-400">Settle Virtual Stock</h4>
+        <p>Settle it with proper answer</p>
+        <hr>
+        <div style="height: 80%; overflow-y: auto;">
+            <table class="table table-bordered">
+                <tr>
+                    <!-- <th>Transaction Id</th> -->
+                    <th>FromStock</th>
+                    <th>ToStock</th>
+                    <th>Qty</th>
+                    <th>Created User</th>
+                </tr>
+                <tr [ngClass]="{'rd': 0 > stock.RemainingQty, 'grn':  stock.RemainingQty > 0}"
+                    *ngFor="let stock of unSettledVirtualStockList; let i = index;">
+                    <!-- <td>{{stock.TransactionId}}</td> -->
+                    <td>{{stock.FromStock}}</td>
+                    <td>{{stock.ToStock}}</td>
+                    <td>{{stock.ClientQty}}</td>
+                    <td>
+                       
+                        <a class="arw" (click)="settleStock(stock)" href="javascript:void(0)">
+                            <i class="fa fa-arrow-right fa-2x" aria-hidden="true"></i>
+                        </a>
+                        <a class="inf" (click)="showStock(stock)" href="javascript:void(0)">
+                            <i class="fa fa-info fa-2x" aria-hidden="true"></i>
+                        </a>
+                        {{stock.CreatedByEmails}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <!-- Layout Options-->
+
+    </div>
+</div>
+
+<div *ngIf="showSettleDialog" id="t-1-st">
+    <p-blockUI [blocked]="showSettleDialog"></p-blockUI>
+    <p-dialog header="Settle stock" appendTo="body" [(visible)]="showSettleDialog" [style]="{width: '75vw'}"
+        [baseZIndex]="10000">
+        <p-toast [style]="{marginTop: '30px'}"></p-toast>
+        <table class="table table-bordered">
+            <tr>
+              
+                <th>Transaction Id</th>
+                <th>FromStock</th>
+                <th>ToStock</th>
+                <th>Qty</th>
+                <th>Created User</th>
+            </tr>
+            <tr [ngClass]="{'rd': 0 > selectedStock.RemainingQty, 'grn':  selectedStock.RemainingQty > 0}">
+                
+                <td>{{selectedStock.TransactionId}}</td>
+                <td>{{selectedStock.FromStock}}</td>
+                <td>{{selectedStock.ToStock}}</td>
+                <td>{{selectedStock.ClientQty}}</td>
+                <td>
+                    {{selectedStock.CreatedByEmails}}
+                    
+                </td>
+            </tr>
+        </table>
+
+        <br>
+        <table class="table table-bordered">
+            <tr>
+                <th>Action</th>
+                <th>Transaction Id</th>
+                <th>FromStock</th>
+                <th>ToStock</th>
+                <th>Qty</th>
+                <th>Created User</th>
+            </tr>
+            <tr [ngClass]="{'rd': 0 > stock.RemainingQty, 'grn':  stock.RemainingQty > 0}"
+                *ngFor="let stock of counterStockList; let i = index;">
+                <td>
+
+                    <a href="javascript:void(0)" (click)="checkUncheckStock(stock)">
+                        <i *ngIf="stock.IsChecked" class="fa fa-check-square-o fa-2x"></i>
+                        <i *ngIf="!stock.IsChecked"  class="fa fa fa-square-o fa-2x"></i>
+                    </a>
+                </td>
+                <td>{{stock.TransactionId}}</td>
+                <td>{{stock.FromStock}}</td>
+                <td>{{stock.ToStock}}</td>
+                <td>{{stock.ClientQty}}</td>
+                <td>
+                    {{stock.CreatedByEmails}}
+                  
+                </td>
+            </tr>
+        </table>
+
+
+        <br><br>
+        <p-footer>
+            <button [disabled]="isActionPerformed" type="button" pButton (click)="saveSettledStock()" label="Save"></button>
+            <button type="button" pButton (click)="showSettleDialog=false" label="Cancel"
+                class="ui-button-secondary"></button>
+        </p-footer>
+    </p-dialog>
+</div>
+
+<div *ngIf="showTransactionPopup" id="t-1-st">
+    <p-blockUI [blocked]="showTransactionPopup"></p-blockUI>
+    <p-dialog header="Transaction related stock" appendTo="body" [(visible)]="showTransactionPopup" [style]="{width: '75vw'}"
+        [baseZIndex]="10000">
+        <p-toast [style]="{marginTop: '30px'}"></p-toast>
+        
+        <table class="table table-bordered">
+            <tr>
+                <th>FromStock</th>
+                <th>ToStock</th>
+                <th>Qty</th>
+                <th>Created User</th>
+                <th>Reason</th>
+            </tr>
+            <tr [ngClass]="{'rd': 0 > stock.RemainingQty, 'grn':  stock.RemainingQty > 0}"
+                *ngFor="let stock of transactionStockList; let i = index;">
+                <td>{{stock.FromStock}}</td>
+                <td>{{stock.ToStock}}</td>
+                <td>{{stock.ClientQty}}</td>
+                <td>{{stock.CreatedByEmails}}</td>
+                <td>{{stock.Reason}}</td>
+            </tr>
+        </table>
+
+
+        <br><br>
+        <p-footer>
+            <button type="button" pButton (click)="showTransactionPopup=false" label="Cancel"
+                class="ui-button-secondary"></button>
+        </p-footer>
+    </p-dialog>
+</div>

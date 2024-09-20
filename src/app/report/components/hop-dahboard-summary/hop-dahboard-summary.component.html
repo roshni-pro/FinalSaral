@@ -1,0 +1,750 @@
+<div class="">
+
+    <div class="col-md-12 d-flex  bg-white p-2 mt-3" style="height: 78px; padding-top:16px !important;">
+        <div class="col-md-1 togl pt-2">
+            <input id="toggl-on" class="toggl toggl-left" name="toggle" type="radio" [checked]="monthlyQtrlyView"
+                (click)="getSwitchVal('1')">
+            <label for="toggl-on" class="btnn">Month</label>
+
+            <!-- <input id="toggl-off" class="toggl toggl-right" name="toggle"  type="radio" [checked]="!monthlyQtrlyView" (click)="getSwitchVal('2')">
+            <label for="toggl-off" class="btnn">Quarter</label><br> -->
+            <!-- <p-calendar [(ngModel)]="monthsValue" placeholder="Select Month" view="month" dateFormat="mm/yy" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030" *ngIf="monthTable"></p-calendar> -->
+        </div>
+        <div class="col-md-9" style="display:flex;">
+            <div style="margin-left:0;">
+                <!-- <h3 style="font-size: 14px;padding-top: 20px;margin-bottom:10px;">KPI</h3>
+                <p-chips [(ngModel)]="chipsArrSales" >{{chipsArrSales}}</p-chips> -->
+            </div>
+            <div class="mtlft">
+                <!-- <h3 style="font-size: 14px;padding-top: 0px;margin-bottom:15px;font-weight: bold;">Business Unit</h3> -->
+                <p-chips [(ngModel)]="chipsArrBusiness" (onRemove)="removeBusinessData()" placeholder="Business Unit">
+                    {{chipsArrBusiness}}</p-chips>
+            </div>
+            <div style="margin-left:25px; ">
+                <!-- <h3 style="font-size: 14px;padding-top: 0px;margin-bottom:15px;font-weight: bold;">Warehouse</h3> -->
+                <p-chips [(ngModel)]="chipsArrWarehouse" (onRemove)="removeWarehouseData()" placeholder="Warehouse">
+                    {{chipsArrWarehouse}}</p-chips>
+            </div>
+            <div>
+                <!-- <h3 style="font-size: 14px;padding-top: 20px;margin-bottom:10px;">Brand</h3>
+                <p-chips [(ngModel)]="chipsArrBrand" >{{chipsArrBrand}}</p-chips> -->
+            </div>
+            <div class="ml-2">
+                <p-dropdown [options]="dropdownHeads" optionLabel="HeadName" [(ngModel)]="selectedHead"
+                    (onChange)="changePlantypeDropdown()"></p-dropdown>
+            </div>
+            <div class="ml-2">
+                <p-dropdown [options]="dropdownSubHeads" optionLabel="name" filter="true" [(ngModel)]="selectedPlanType"
+                    (onChange)="test()">
+                </p-dropdown>
+            </div>
+            <!-- <div>
+                <button (click)="test()">test</button>
+            </div> -->
+
+        </div>
+    </div>
+    <div class="col-md-12 bg-white p-2 mt-3">
+        <!-- <div style="text-align: left">
+            <input type="text" pInputText size="40" placeholder="Search" style="width:auto" class="input_search">
+          </div>
+        <br> -->
+
+        <div class="header-content">
+            <span style="padding: 10px 0px !important;">KPI Summary</span> <br><br>
+            <p-table [value]="tableArr">
+                <ng-template pTemplate="header">
+                    <tr style="text-align:center;">
+                        <th>Header</th>
+                        <th rowspan="1" colspan="2">KPI / Month</th>
+                        <th rowspan="1" colspan="3">{{curMonName}} - {{curYear}}</th>
+                        <th rowspan="1" colspan="3">{{firstLastMonth}} - {{firstYear}}</th>
+                        <th rowspan="1" colspan="3">{{secondLastMonth}} - {{secondYear}}</th>
+                    </tr>
+                    <tr style="text-align:center;">
+                        <th class="bor"
+                            style="background-color:#fff !important;color:#000 !important;border: solid 1px #ddd !important;">
+                        </th>
+                        <th colspan="2" class="bor"
+                            style="background-color:#fff !important;color:#000 !important;border: solid 1px #ddd !important;">
+                            &nbsp; </th>
+                        <th rowspan="2"
+                            style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                            class="bor txt-left">Target</th>
+                        <th rowspan="2"
+                            style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                            class="bor txt-left">Actual</th>
+                        <th rowspan="2"
+                            style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                            class="bor txt-left">Achieved %</th>
+                        <th rowspan="2"
+                            style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                            class="bor txt-left">Target</th>
+                        <th rowspan="2"
+                            style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                            class="bor txt-left">Actual</th>
+                        <th rowspan="2"
+                            style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                            class="bor txt-left">Achieved %</th>
+                        <th rowspan="2"
+                            style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                            class="bor txt-left">Target</th>
+                        <th rowspan="2"
+                            style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                            class="bor txt-left">Actual</th>
+                        <th rowspan="2"
+                            style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                            class="bor txt-left">Achieved %</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr style="text-align:center;color: #0C0A00; cursor: pointer;" (click)="getKpiRecord(item)">
+                        <td class="bor pad">{{item.headerName}} <p></p>
+                        </td>
+                        <td colspan="2" class="bor pad">{{item.heading}} <p></p>
+                        </td>
+
+
+                        <td class="bor pad">{{item.TargetThree | number : '1.0-2'}} </td>
+                        <td class="bor pad">{{item.ActualThree | number : '1.0-2'}} </td>
+                        <td class="bor pad">
+                            <ng-container>
+                                {{item.AchievedThree}} &nbsp;
+                                <i class="fa fa-caret-up" aria-hidden="true"
+                                    *ngIf="item.AchievedThree != 0 && item.DirectionThree == 'UP'"></i>
+                                <i class="fa fa-caret-down" aria-hidden="true"
+                                    *ngIf="item.AchievedThree != 0 && item.DirectionThree == 'DOWN'"></i>
+                            </ng-container>
+                            <!-- <ng-container *ngIf="item.AchievedThree > 0.90 && item.AchievedThree!='' else second  ">
+                                {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                    aria-hidden="true"></i>
+                            </ng-container>
+                            <ng-template #second>
+                                <ng-container *ngIf="item.AchievedThree < 0.90 && item.AchievedThree!=''">
+                                    {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                        aria-hidden="true"></i>
+                                </ng-container>
+                            </ng-template> -->
+                        </td>
+
+
+
+
+                        <td class="bor pad">{{item.TargetTwo | number : '1.0-2'}} </td>
+                        <td class="bor pad">{{item.ActualTwo | number : '1.0-2'}} </td>
+                        <td class="bor pad">
+                            <ng-container>
+                                {{item.AchievedTwo}} &nbsp;
+                                <i class="fa fa-caret-up" aria-hidden="true"
+                                    *ngIf="item.AchievedTwo != 0 && item.DirectionTwo == 'UP'"></i>
+                                <i class="fa fa-caret-down" aria-hidden="true"
+                                    *ngIf="item.AchievedTwo != 0 && item.DirectionTwo == 'DOWN'"></i>
+                            </ng-container>
+                            <!-- <ng-container *ngIf="item.AchievedTwo > 0.90  && item.AchievedTwo!='' else second">
+                                {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                    aria-hidden="true"></i>
+                            </ng-container>
+                            <ng-template #second>
+                                <ng-container *ngIf="item.AchievedTwo < 0.90  && item.AchievedTwo!=''">
+                                    {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                        aria-hidden="true"></i>
+                                </ng-container>
+                            </ng-template> -->
+                        </td>
+
+
+
+
+
+                        <td class="bor pad">{{item.TargetOne | number : '1.0-2'}} </td>
+                        <td class="bor pad">{{item.ActualOne | number : '1.0-2'}} </td>
+                        <td class="bor pad">
+                            <ng-container>
+                                {{item.AchievedOne}} &nbsp;
+                                <i class="fa fa-caret-up" aria-hidden="true"
+                                    *ngIf="item.AchievedOne != 0 && item.DirectionOne == 'UP'"></i>
+                                <i class="fa fa-caret-down" aria-hidden="true"
+                                    *ngIf="item.AchievedOne != 0 && item.DirectionOne == 'DOWN'"></i>
+                            </ng-container>
+                            <!-- <ng-container *ngIf="item.AchievedOne > 0.90 && item.AchievedOne!='' else second">
+                                {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                    aria-hidden="true"></i>
+                            </ng-container>
+                            <ng-template #second>
+                                <ng-container *ngIf="item.AchievedOne < 0.90 && item.AchievedOne!='' ">
+                                    {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                        aria-hidden="true"></i>
+                                </ng-container>
+                            </ng-template> -->
+                        </td>
+
+                        `
+
+
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <!-- [style]="{'width':'200%'}" -->
+    <div class="content p-0 mt-3">
+        <div class="cont-left">
+            <div style="padding: 10px 0px;">
+                <span class="mt-1">Location</span>
+                <span style="float: right;cursor: pointer;"> <span (click)="showLocationModal()"> <i
+                            class="pi pi-external-link" style="font-size: 2rem"></i> </span> </span>
+            </div><br>
+            <div style=" overflow: scroll !important;clear: both;">
+                <table style="width: 200% !important;">
+                    <thead style="position: sticky; top:0px;">
+                        <tr style="text-align:center;">
+                            <th rowspan="1" colspan="2">WH/Month</th>
+                            <th rowspan="1" colspan="3">{{curMonName}} - {{curYear}}</th>
+                            <th rowspan="1" colspan="3">{{firstLastMonth}} - {{firstYear}}</th>
+                            <th rowspan="1" colspan="3">{{secondLastMonth}} - {{secondYear}}</th>
+                        </tr>
+                        <tr style="text-align:center;">
+                            <th colspan="2"
+                                style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;">
+                                &nbsp; </th>
+                            <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                rowspan="2">Target</th>
+                            <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                rowspan="2">Actual</th>
+                            <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                rowspan="2">Achieved %</th>
+                            <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                rowspan="2">Target</th>
+                            <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                rowspan="2">Actual</th>
+                            <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                rowspan="2">Achieved %</th>
+                            <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                rowspan="2">Target</th>
+                            <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                rowspan="2">Actual</th>
+                            <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                rowspan="2">Achieved %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="text-align:center; cursor: pointer;" *ngFor="let item of pureColumnsWarehouse"
+                            (click)="getPlanWarehouseId(item)">
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                colspan="2" class="pad"> {{item.warehouse}}</td>
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                class="pad">{{item.TargetThree | number : '1.0-2'}}</td>
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                class="pad">{{item.ActualThree | number : '1.0-2'}}</td>
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                class="pad">
+                                <ng-container>
+                                    {{item.AchievedThree}} &nbsp;
+                                    <i class="fa fa-caret-up" aria-hidden="true"
+                                        *ngIf="item.AchievedThree != 0 && item.DirectionThree == 'UP'"></i>
+                                    <i class="fa fa-caret-down" aria-hidden="true"
+                                        *ngIf="item.AchievedThree != 0 && item.DirectionThree == 'DOWN'"></i>
+                                </ng-container>
+                                <!-- <ng-container *ngIf="item.AchievedThree >= 90.00 && item.AchievedThree !='' else three">
+                                    {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                        aria-hidden="true"></i>
+                                </ng-container>
+                                <ng-template #three>
+                                    <ng-container *ngIf="item.AchievedThree < 90.00 && item.AchievedThree !='' ">
+                                        {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                            aria-hidden="true"></i>
+                                    </ng-container>
+                                </ng-template> -->
+                            </td>
+
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                class="pad">{{item.TargetTwo | number : '1.0-2'}}</td>
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                class="pad">{{item.ActualTwo | number : '1.0-2'}}</td>
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                class="pad">
+                                <ng-container>
+                                    {{item.AchievedTwo}} &nbsp;
+                                    <i class="fa fa-caret-up" aria-hidden="true"
+                                        *ngIf="item.AchievedTwo != 0 && item.DirectionTwo == 'UP'"></i>
+                                    <i class="fa fa-caret-down" aria-hidden="true"
+                                        *ngIf="item.AchievedTwo != 0 && item.DirectionTwo == 'DOWN'"></i>
+                                </ng-container>
+                                <!-- <ng-container *ngIf="item.AchievedTwo >= 90.00 && item.AchievedTwo!='' else two">
+                                    {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                        aria-hidden="true"></i>
+                                </ng-container>
+                                <ng-template #two>
+                                    <ng-container *ngIf="item.AchievedTwo < 90.00 &&  item.AchievedTwo!=''">
+                                        {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                            aria-hidden="true"></i>
+                                    </ng-container>
+                                </ng-template> -->
+
+                            </td>
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                class="pad">{{item.TargetOne | number : '1.0-2'}}</td>
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                class="pad">{{item.ActualOne | number : '1.0-2'}}</td>
+                            <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                class="pad">
+                                <ng-container>
+                                    {{item.AchievedOne}} &nbsp;
+                                    <i class="fa fa-caret-up" aria-hidden="true"
+                                        *ngIf="item.AchievedOne != 0 && item.DirectionOne == 'UP'"></i>
+                                    <i class="fa fa-caret-down" aria-hidden="true"
+                                        *ngIf="item.AchievedOne != 0 && item.DirectionOne == 'DOWN'"></i>
+                                </ng-container>
+                                <!-- <ng-container *ngIf="item.AchievedOne >= 90.00 && item.AchievedOne !='' else one">
+                                    {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                        aria-hidden="true"></i>
+                                </ng-container>
+                                <ng-template #one>
+                                    <ng-container *ngIf="item.AchievedOne < 90.00 && item.AchievedOne !=''">
+                                        {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down ghghh"
+                                            aria-hidden="true"></i>
+                                    </ng-container>
+                                </ng-template> -->
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="cont-right">
+            <div class="B-unit  bg-white p-2">
+                <div style="padding-top:10px;padding-bottom:5px;">
+                    <span>Business Unit</span>
+                    <span style="float: right;cursor: pointer;"> <span (click)="showBusinessModal()"> <i
+                                class="pi pi-external-link" style="font-size: 2rem"></i> </span> </span>
+
+                </div><br>
+                <div style=" overflow: scroll !important;clear: both;">
+                    <table style="width: 150%;">
+                        <thead style="position: sticky; top:0px;">
+                            <tr>
+                                <th colspan="2">Group/Month</th>
+                                <th rowspan="1" colspan="3">{{curMonName}} - {{curYear}}</th>
+                                <th rowspan="1" colspan="3">{{firstLastMonth}} - {{firstYear}}</th>
+                                <th rowspan="1" colspan="3">{{secondLastMonth}} - {{secondYear}}</th>
+                            </tr>
+                            <tr style="text-align:center;">
+                                <th colspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;">
+                                    &nbsp; </th>
+                                <th rowspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="txt-left">Target</th>
+                                <th rowspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="txt-left">Actual</th>
+                                <th rowspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="txt-left">Achieved %</th>
+                                <th rowspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="txt-left">Target</th>
+                                <th rowspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="txt-left">Actual</th>
+                                <th rowspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="txt-left">Achieved %</th>
+                                <th rowspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="txt-left">Target</th>
+                                <th rowspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="txt-left">Actual</th>
+                                <th rowspan="2"
+                                    style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="txt-left">Achieved %</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;color: #0C0A00;background-color:#fff !important;color:#000 !important; cursor: pointer;"
+                                (click)="getBusinessUnit(item)" *ngFor="let item of pureColumnsStore">
+                                <td style="                                  
+                                    border: 1px solid #ddd !important;color:#000 !important;text-align: center !important;"
+                                    colspan="2" class="pad">{{item.store}}</td>
+                                <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                                    class="pad">{{item.TargetThree | number : '1.0-2'}}</td>
+                                <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                                    class="pad">{{item.ActualThree | number : '1.0-2'}}</td>
+                                <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                                    class="pad">
+                                    <ng-container>
+                                        {{item.AchievedThree}} &nbsp;
+                                        <i class="fa fa-caret-up" aria-hidden="true"
+                                            *ngIf="item.AchievedThree != 0 && item.DirectionThree == 'UP'"></i>
+                                        <i class="fa fa-caret-down" aria-hidden="true"
+                                            *ngIf="item.AchievedThree != 0 && item.DirectionThree == 'DOWN'"></i>
+                                    </ng-container>
+                                    <!-- <ng-container
+                                        *ngIf="item.AchievedThree > 90.00  && item.AchievedThree!=''  else three">
+                                        {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                            aria-hidden="true"></i>
+                                    </ng-container>
+                                    <ng-template #three>
+                                        <ng-container *ngIf="item.AchievedThree < 90.00 && item.AchievedThree!=''">
+                                            {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                                aria-hidden="true"></i>
+                                        </ng-container>
+                                    </ng-template> -->
+                                </td>
+
+                                <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                                    class="pad">{{item.TargetTwo | number : '1.0-2'}}</td>
+                                <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                                    class="pad">{{item.ActualTwo | number : '1.0-2'}}</td>
+                                <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                                    class="pad">
+                                    <ng-container>
+                                        {{item.AchievedTwo}} &nbsp;
+                                        <i class="fa fa-caret-up" aria-hidden="true"
+                                            *ngIf="item.AchievedTwo != 0 && item.DirectionTwo == 'UP'"></i>
+                                        <i class="fa fa-caret-down" aria-hidden="true"
+                                            *ngIf="item.AchievedTwo != 0 && item.DirectionTwo == 'DOWN'"></i>
+                                    </ng-container>
+                                    <!-- <ng-container *ngIf="item.AchievedTwo > 90.00  && item.AchievedTwo!=''  else two">
+                                        {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                            aria-hidden="true"></i>
+                                    </ng-container>
+                                    <ng-template #two>
+                                        <ng-container *ngIf="item.AchievedTwo < 90.00 && item.AchievedTwo!=''">
+                                            {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                                aria-hidden="true"></i>
+                                        </ng-container>
+                                    </ng-template> -->
+                                </td>
+                                <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                                    class="pad">{{item.TargetOne | number : '1.0-2'}}</td>
+                                <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                                    class="pad">{{item.ActualOne | number : '1.0-2'}}</td>
+                                <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                                    class="pad">
+                                    <ng-container>
+                                        {{item.AchievedOne}} &nbsp;
+                                        <i class="fa fa-caret-up" aria-hidden="true"
+                                            *ngIf="item.AchievedOne != 0 && item.DirectionOne == 'UP'"></i>
+                                        <i class="fa fa-caret-down" aria-hidden="true"
+                                            *ngIf="item.AchievedOne != 0 && item.DirectionOne == 'DOWN'"></i>
+                                    </ng-container>
+                                    <!-- <ng-container *ngIf="item.AchievedOne > 90.00 && item.AchievedOne!='' else one">
+                                        {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                            aria-hidden="true"></i>
+                                    </ng-container>
+                                    <ng-template #one>
+                                        <ng-container *ngIf="item.AchievedOne < 90.00 && item.AchievedOne!=''">
+                                            {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                                aria-hidden="true"></i>
+                                        </ng-container>
+                                    </ng-template> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="brand col-md-12 p-2 mt-3 table bg-white table-hover">
+                <div>
+                    <span>Brand</span>
+                    <span style="float: right;cursor: pointer;"> <span (click)="showBrandModal()"> <i
+                                class="pi pi-external-link" style="font-size: 2rem"></i> </span> </span>
+                </div><br>
+                <div style=" overflow-y: scroll !important;clear: both;width:100% !important;height: 300px !important;">
+                    <table style="width:100% !important;">
+                        <thead style="position: sticky; top:0px;">
+                            <tr>
+                                <th>Brand</th>
+                                <th>{{curMonName}} - {{curYear}}</th>
+                                <th>{{firstLastMonth}} - {{firstYear}}</th>
+                                <th>{{secondLastMonth}} - {{secondYear}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- (click)="getBrandData(item)" -->
+                            <tr style="text-align:center;color: #0C0A00;" *ngFor="let item of pureColumnsBrand">
+                                <td style="text-align:center !important;background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="pad">{{item.store}}</td>
+                                <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="pad"> {{item.AchievedValue_3 }}</td>
+
+                                <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="pad">{{item.AchievedValue_2 }}</td>
+                                <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                    class="pad">{{item.AchievedValue_1 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- location dialog box start -->
+<p-dialog header="Location" [(visible)]="displayLocationModal" [modal]="true" [style]="{width: '95%', height: '65%',overflow : 'auto'}"
+    [draggable]="false" appendTo="body">
+    <div class="cont-left" style="max-height:500px !important;">
+        <div>
+            <h4 class="mt-1">Location</h4>
+        </div>
+        <table>
+            <thead>
+                <tr style="text-align:center;">
+                    <th rowspan="1" colspan="2">WH/Month</th>
+                    <th rowspan="1" colspan="3">{{curMonName}} - {{curYear}}</th>
+                    <th rowspan="1" colspan="3">{{firstLastMonth}} - {{firstYear}}</th>
+                    <th rowspan="1" colspan="3">{{secondLastMonth}} - {{secondYear}}</th>
+                </tr>
+                <tr style="text-align:center;">
+                    <th colspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;">
+                        &nbsp; </th>
+                    <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        rowspan="2">Target</th>
+                    <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        rowspan="2">Actual</th>
+                    <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;font-size:12px !important;"
+                        rowspan="2">Achieved %</th>
+                    <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        rowspan="2">Target</th>
+                    <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        rowspan="2">Actual</th>
+                    <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        rowspan="2">Achieved %</th>
+                    <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        rowspan="2">Target</th>
+                    <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        rowspan="2">Actual</th>
+                    <th style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        rowspan="2">Achieved %</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="text-align:center;" (click)="getPlanWarehouseId(item)"
+                    *ngFor="let item of pureColumnsWarehouse">
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        colspan="2" class="pad"> {{item.warehouse}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">{{item.TargetThree | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">{{item.ActualThree | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">
+                        <ng-container *ngIf="item.AchievedThree > 90.00 && item.AchievedThree!='' else three">
+                            {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                aria-hidden="true"></i>
+                        </ng-container>
+                        <ng-template #three>
+                            <ng-container *ngIf="item.AchievedThree < 90.00 && item.AchievedThree!=''">
+                                {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                    aria-hidden="true"></i>
+                            </ng-container>
+                        </ng-template>
+                    </td>
+
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">{{item.TargetTwo | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">{{item.ActualTwo | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">
+                        <ng-container *ngIf="item.AchievedTwo > 90.00 && item.AchievedTwo!='' else two">
+                            {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                aria-hidden="true"></i>
+                        </ng-container>
+                        <ng-template #two>
+                            <ng-container *ngIf="item.AchievedTwo < 90.00 && item.AchievedTwo!=''">
+                                {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                    aria-hidden="true"></i>
+                            </ng-container>
+                        </ng-template>
+                    </td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">{{item.TargetOne | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">{{item.ActualOne | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">
+                        <ng-container *ngIf="item.AchievedOne > 90.00 && item.AchievedOne!='' else one">
+                            {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                aria-hidden="true"></i>
+                        </ng-container>
+                        <ng-template #one>
+                            <ng-container *ngIf="item.AchievedOne < 90.00 && item.AchievedOne!=''">
+                                {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                    aria-hidden="true"></i>
+                            </ng-container>
+                        </ng-template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</p-dialog>
+<!-- location dialog box end -->
+
+
+
+<!-- business unit dialog box start -->
+<p-dialog header="Business Unit" [(visible)]="displayBusinessModal" [modal]="true"
+    [style]="{width: '95%', height: '60%'}" [draggable]="false" appendTo="body">
+    <div class="B-unit bg-white p-2">
+        <div>
+            <h4>Business Unit</h4>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th colspan="2">Group/Month</th>
+                    <th rowspan="1" colspan="3">{{curMonName}} - {{curYear}}</th>
+                    <th rowspan="1" colspan="3">{{firstLastMonth}} - {{firstYear}}</th>
+                    <th rowspan="1" colspan="3">{{secondLastMonth}} - {{secondYear}}</th>
+                </tr>
+                <tr style="text-align:center;">
+                    <th colspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;">
+                        &nbsp; </th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Target</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Actual</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Achieved %</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Target</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Actual</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Achieved %</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Target</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Actual</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Achieved %</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="text-align:center;color: #0C0A00;background-color:#fff !important;color:#000 !important; "
+                    (click)="getBusinessUnit(item)" *ngFor="let item of pureColumnsStore">
+                    <td style="                                  
+                            border: 1px solid #ddd !important;color:#000 !important;text-align: center !important;"
+                        colspan="2" class="pad">{{item.store}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                        class="pad">{{item.TargetThree | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                        class="pad">{{item.ActualThree | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                        class="pad">
+                        <ng-container *ngIf="item.AchievedThree > 90.00  && item.AchievedThree!='' else three">
+                            {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                aria-hidden="true"></i>
+                        </ng-container>
+                        <ng-template #three>
+                            <ng-container *ngIf="item.AchievedThree < 90.00  && item.AchievedThree!=''">
+                                {{item.AchievedThree | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                    aria-hidden="true"></i>
+                            </ng-container>
+                        </ng-template>
+                    </td>
+
+                    <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                        class="pad">{{item.TargetTwo | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                        class="pad">{{item.ActualTwo | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                        class="pad">
+                        <ng-container *ngIf="item.AchievedTwo > 90.00  && item.AchievedTwo!='' else two">
+                            {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                aria-hidden="true"></i>
+                        </ng-container>
+                        <ng-template #two>
+                            <ng-container *ngIf="item.AchievedTwo < 90.00 && item.AchievedTwo!=''">
+                                {{item.AchievedTwo | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                    aria-hidden="true"></i>
+                            </ng-container>
+                        </ng-template>
+                    </td>
+                    <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                        class="pad">{{item.TargetOne | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                        class="pad">{{item.ActualOne | number : '1.0-2'}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;;border:solid 1px #ddd !important;"
+                        class="pad">
+                        <ng-container *ngIf="item.AchievedOne > 90.00 && item.AchievedOne!=''  else one">
+                            {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-up"
+                                aria-hidden="true"></i>
+                        </ng-container>
+                        <ng-template #one>
+                            <ng-container *ngIf="item.AchievedOne < 90.00 && item.AchievedOne!=''">
+                                {{item.AchievedOne | number : '1.0-2'}} &nbsp; <i class="fa fa-caret-down"
+                                    aria-hidden="true"></i>
+                            </ng-container>
+                        </ng-template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</p-dialog>
+<!-- business unit dialog box end -->
+
+
+
+<!-- brand dialog box start -->
+<p-dialog header="Brand" [(visible)]="displayBrandModal" [modal]="true" [style]="{width: '95%', height: '80%'}"
+    [draggable]="false" appendTo="body">
+
+    <div class="brand col-md-12 p-2 table table-hover" style="height:500px !important;">
+        <div>
+            <h4>Brand</h4>
+        </div>
+        <p-table [value]="pureColumnsBrand">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Brand</th>
+                    <th style="text-align: center;">{{curMonName}} - {{curYear}}</th>
+                    <th style="text-align: center;">{{firstLastMonth}} - {{firstYear}}</th>
+                    <th style="text-align: center;">{{secondLastMonth}} - {{secondYear}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <!-- (click)="getBrandData(item)" -->
+                <tr style="text-align:center;color: #0C0A00;">
+                    <td style="text-align:left !important;background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">{{item.store}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad"> {{item.AchievedValue_3}}</td>
+
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">{{item.AchievedValue_2}}</td>
+                    <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="pad">{{item.AchievedValue_1}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-dialog>
+<!-- brand dialog box end -->
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

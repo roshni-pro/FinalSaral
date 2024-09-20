@@ -1,0 +1,92 @@
+
+
+<section id="customer-master">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="m-2">Purchase Register</h3>
+    </div>
+  </div>
+  <div class="row ">
+    <div class="col-md-2">
+    <div class="form-group">
+      <label for="name" >Select Warehouse</label>
+      <!-- <p-multiSelect [options]="warehouseList" name=" warehouse" [(ngModel)]="people.selectedWarehouse" [panelStyle]="{minWidth:'12em'}" optionLabel="WarehouseName" ></p-multiSelect>                 -->
+      <p-multiSelect [options]="warehouseList" name="WarehouseName" [(ngModel)]="searchModel.warehouseid" [panelStyle]="{minWidth:'25em'}" optionLabel="label">
+                          
+      </p-multiSelect>               
+    </div>
+  </div>
+    <div class="col-md-2">
+      <div class="form-group">
+        <label for="projectinput3">From Date</label>
+        <br>
+        <p-calendar name="startDateInput" [(ngModel)]="searchModel.FromDate" [showIcon]="true" name="fromDate">
+        </p-calendar>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group">
+        <label for="projectinput4">To Date</label>
+        <br>
+        <p-calendar name="endDateInput" [(ngModel)]="searchModel.ToDate" [showIcon]="true" name="toDate">
+        </p-calendar>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group">
+        <label>&nbsp;</label>
+        <div></div>
+        <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="search(searchModel)">
+          Search
+        </button>
+      </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <div></div>
+          <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="export()">
+            Export
+          </button>
+        </div>
+      </div>
+  </div>
+</section>
+<div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+<div class="position-relative">
+<div class="position-relative">
+      <p-table  #dt [columns]="cols" [value]="preport" [paginator]="true" [rows]="20" dataKey="PurchaseOrderId" [scrollable]="true" scrollHeight="65vh"  text-align: center>
+       <ng-template pTemplate="caption">
+        <div style="text-align: right">
+            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+            <input type="text" pInputText size="50" placeholder="Search"
+                (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+        </ng-template>   
+         <ng-template pTemplate="header" >
+          <tr>
+            <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="text-align: center">
+              {{col.header}}
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+          </tr>
+          </ng-template>
+           <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+              <tr   (click)="openDetails(rowData,$event)">
+              <td *ngFor="let col of cols" style="text-align: center">
+                {{rowData[col.field]}}
+              </td>
+          </tr>
+        </ng-template> 
+        </p-table>
+     </div>
+  </div>
+ </div>
+
+ <p-blockUI [blocked]="blocked"></p-blockUI>
+ <p-progressSpinner *ngIf="blocked"
+     [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+     fill="#EEEEEE" animationDuration=".5s">
+ </p-progressSpinner>
+
+

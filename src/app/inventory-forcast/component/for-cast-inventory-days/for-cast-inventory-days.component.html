@@ -1,0 +1,168 @@
+
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Inventory Restriction</h3>
+    </div>
+</div>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<div class="container-fluid contPad" *ngIf="regionSourcingRole || hqMasterRole">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="justify-content-between bg-white p-3">
+                <div class=" sel-opt d-flex justify-content-between">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label><b>Select WareHouse<span class="required">*</span></b></label>
+                                <p-dropdown [options]="masterwarehouseList" name="warehouseInput" defaultLabel="Select Warehouse" placeholder="select warehouse"
+                                    [(ngModel)]="selectedwarehouse" id="ware" [style]="{'width':'100%'}" [panelStyle]="{width:'100%'}" [filter]="true"
+                                    optionLabel="WarehouseName">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-md-2">
+                                <label><b>Select Store<span class="required">*</span></b></label>
+                                <p-multiSelect id="id" name="Name" defaultLabel="Select Store" placeholder="Select Store" [style]="{'width':'100%'}" [panelStyle]="{width:'100%'}"
+                                 [options]="allStoreList" [(ngModel)]="selectedStore" optionLabel="Name">
+                                </p-multiSelect>
+                            </div>
+                            <!-- <div class="col-md-2">
+                                <p-multiSelect id="Category" name="Category" [options]="CategoryList" defaultLabel="Select Category"
+                                    [(ngModel)]="selectedCatregory" [style]="{'width':'100%'}" [panelStyle]="{width:'100%'}"
+                                    (onClick)="getSubCatList(selectedCatregory)" optionLabel="CategoryName">
+                                </p-multiSelect>
+                            </div>
+                            <div class="col-md-2">
+                                <p-multiSelect id="SubCategoryName" name="SubCategoryName" [options]="subCatList" defaultLabel="Select SubCategory"
+                                    [(ngModel)]="selectedSubCat" (onClick)="getBrandsnew(selectedSubCat)"
+                                    [style]="{'width':'100%'}" [panelStyle]="{width:'100%'}" optionLabel="SubCategoryName">
+                                </p-multiSelect>
+                            </div> -->
+                            <div class="col-md-2">        
+                                <label><b>Search </b></label>
+                                <input type="text"  class="form-control"  name="Title" placeholder=""  [(ngModel)]="selectedBrand"  />
+                            </div> 
+                            <div class="col-md-3 d-flex" style="margin-top: 29px;">
+                                <button type="button" class="btn btn-primary" (click)="searchResult()">Search</button> &nbsp;
+                                <button type="button" class="btn btn-primary" (click)="clear()">Clear</button> &nbsp;
+                                <button class="btn btn-success mr-2" (click)="Exportpopupbtn()" >Export</button>
+                            </div>
+                            <!-- <div class="col-md-1"></div> -->
+                            <div class="col-md-2 mt-4 text-right">
+                                <button class="btn" type="submit" (click)="downloadSample()" style=" background-color: #119150;color: white;width: 150px;">Download Sample</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="justify-content-between bg-white">
+                <div class=" sel-opt d-flex justify-content-between">
+                    <div class="col-12">
+                        <div class="col-sm-6  d-flex ">
+                            <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                            (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+                            <code>*</code>
+                        </p-fileUpload>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="bg-white p-3 mt-3 rounded">
+                <div class="table-responsive table-wrapper-scroll-x my-custom-scrollbar mt-3">
+                    <!-- <div *ngIf="!listData">
+                            <h3>Please Enter Correct Info or No Data Found </h3>
+                        </div> -->
+                    <p-table [value]="listData" [paginator]="true" [rows]="10" [lazy]="true" scrollHeight="70vh" text-align: center 
+                        responsiveLayout="scroll" [totalRecords]="TotalRecord" (onLazyLoad)="load($event)"
+                        [scrollable]="true">
+                        <ng-template pTemplate="header">
+                            <tr >
+                                <th >Store</th>
+                                <th>Category</th>
+                                <th >Sub Category</th>
+                                <!-- <th >Category Name</th> -->
+                                <th >BrandName</th>
+                                <th >Current Avg. Int Days</th>
+                                <th >No of Inventory Days</th>
+                                <th> Safety Days</th>
+                                <th >Update</th>
+                                <th >History</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body"  let-item let-rowIndex="rowIndex">
+                            <tr >
+                                <td >{{item.StoreName}}</td>
+                                <td>{{item.CateName}}</td>
+                                <td >{{item.SubCateName}} </td>
+                                <!-- <td >{{item.CateName}}</td> -->
+                                <td >{{item.BrandName}}</td>
+                                <td >{{item.CalculateInventoryDays}}</td>
+                                
+                                <!-- <td >{{item.InventoryDays}}</td> -->
+                                <td><input style="width: 60px;" [(ngModel)]="item.InventoryDays" type="number"/></td>  
+                                <td><input style="width: 60px;" [(ngModel)]="item.SafetyDays" type="number"/></td>  
+                                <td><button  class="btn btn-primary " (click)="updateitem(item)">Update</button></td>
+                                <td><button  class="btn btn-primary" (click)="History(item)">History</button></td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>       
+
+<div *ngIf="isHistoryOpen">
+    <p-dialog header="History" [(visible)]="isHistoryOpen" [blockScroll]="true" appendTo="body"
+        [style]="{width: '75vw', height:'75vh'}" [modal]="true" [positionTop]="0" appendTo="body"><br>
+        <h3 style="font-weight: 800; color: blueviolet;">BrandName: &nbsp;{{selectedItem.BrandName}}</h3>
+        <div class="cnt">
+            <app-history [entity]="entity" [id]="selectedItem.Id"></app-history>
+        </div>
+    </p-dialog>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+    
+<p-dialog header="InventoryRestrictionExport" [modal]="true" appendTo="body" [style]="{ width: '30%'}"[draggable]="false" [(visible)]="exportpopup">
+    <!-- <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast> -->
+    <div class="row">
+        <div class="col-4 ">
+            <label><b>Select WareHouse<span class="required">*</span></b></label>
+            <p-multiSelect id="Category" name="Category" [options]="masterwarehouseList"  [filter]="true" (onChange)="onchangewareexport()"
+             [(ngModel)]="selectedWare" optionLabel="WarehouseName" placeholder="Select WareHouse">
+            </p-multiSelect >
+        </div>
+
+        <div class="col-6" style="margin-top:28px;" >
+            <button class="btn btn-success mr-2"  (click)="Exporttt()" >Export</button>
+        </div>
+    </div>
+    <br><br><br><br><br><br>
+</p-dialog>
+
+<p-confirmDialog #cd [style]="{width: '45vw'}"  appendTo="body"	 >
+    <ng-template pTemplate="header">
+        <h3>Header Content</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog>
+    

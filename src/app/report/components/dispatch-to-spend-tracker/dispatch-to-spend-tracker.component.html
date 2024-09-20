@@ -1,0 +1,86 @@
+<div class="my-2 justify-content-between align-items-center mt-3">
+    <div class="header">
+        <h3 class="m-2">Dispatch To Spend Tracker</h3>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="mt-0 justify-content-between bg-white p-3">
+                <div class=" sel-opt d-flex justify-content-between">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <p-multiSelect [options]="hubList" defaultLabel="Select Hub"
+                                    [(ngModel)]="selectedHub" [style]="{'width':'100%'}"
+                                    [panelStyle]="{width:'100%'}" optionLabel="WarehouseName"
+                                    (onChange)="getClusterList(selectedHub)">
+                                </p-multiSelect>
+                            </div>
+                            <div class="col-md-2">
+                                <p-multiSelect [options]="clusterList" defaultLabel="Select Cluster"
+                                    [(ngModel)]="selectedCluster" [style]="{'width':'100%'}"
+                                    [panelStyle]="{width:'100%'}" optionLabel="ClusterName"
+                                    (onChange)="getCustomerList(selectedCluster)">
+                                </p-multiSelect>
+                            </div>
+                            <div class="col-md-2">
+                                <p-multiSelect [options]="personList" defaultLabel="Select Person"
+                                    [(ngModel)]="selectedPerson" [style]="{'width':'100%'}"
+                                    [panelStyle]="{width:'100%'}" optionLabel="ExecutiveName">
+                                </p-multiSelect>
+                            </div>
+                            <div class="col-md-2">
+                                <p-dropdown [options]="dateList" placeholder="Select Date Type"
+                                    [(ngModel)]="selectedDateType" [style]="{'width':'100%'}"
+                                    [panelStyle]="{width:'100%'}" optionLabel="dateName" (onChange)="getSelectedDate(selectedDateType)">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-md-2" *ngIf="orderDateBol">
+                                <p-calendar placeholder="Ordered Date" selectionMode="range" [readonlyInput]="true" 
+                                [minDate]="minDateValue" [maxDate]="curDateVal"  [(ngModel)]="selOrderDate" (onSelect)="dateForOrderDate($event)" 
+                                [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"></p-calendar>
+                            </div>
+                            <div class="col-md-2" *ngIf="dispatchDateBol">
+                                <p-calendar placeholder="Dispatch Date" selectionMode="range" [readonlyInput]="true" [maxDate]="curDateVal"
+                                [minDate]="minDateValue" [(ngModel)]="selDispatchDate" (onSelect)="dateForDispatchDate($event)" 
+                                [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"></p-calendar>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary" (click)="getExportReport()">Export</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="row">
+        <div class="col-lg-12">
+            <div class="bg-white p-3 mr-2 ml-2 mt-3 rounded">
+                <div class="table-responsive table-wrapper-scroll-x my-custom-scrollbar mt-3">
+                    <p-table [value]="" [paginator]="true" [rows]="50"
+                        responsiveLayout="scroll"  [scrollable]="true">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item let-i="rowIndex">
+
+                            <tr>
+                                
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div> -->
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

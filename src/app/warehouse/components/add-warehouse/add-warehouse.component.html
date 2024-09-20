@@ -1,0 +1,414 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form-inline" name="form" #warehouseForm="ngForm" autocomplete="off">
+                <!-- <input autocomplete="false" name="hidden" type="text" style="display:none;"> -->
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Warehouse Info</h4>
+                  <div class="row">
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2 ">
+                        <label for="fname" class="col-md-6"> Warehouse Name</label>
+                        <input type="text" id="fname" class="form-control col-md-6" name="fname"
+                          [(ngModel)]="warehouse.WarehouseName" placeholder="Enter Name" required="1" maxlength="20"
+                          minlength="2" #firstName="ngModel" />
+                        <div class="col-md-6"></div>
+                        <span *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code>Warehouse Name is required</code>
+                        </span>
+                        <span *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                          <code>Minlength 2</code>
+                        </span>
+                        <span *ngIf="isInvalid && !firstName.valid && firstName.errors.maxlength">
+                          <code>Maxlength 20</code>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="alias" class="col-md-6"> Address</label>
+                        <input type="text" id="alias" class="form-control col-md-6" name="alias"
+                          [(ngModel)]="warehouse.Address" placeholder="Enter Address" required="1" minlength="5"
+                          #address="ngModel" />
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !address.valid && address.errors.required">
+                          <code>Warehouse Address is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !address.valid && address.errors.minlength">
+                          <code>Minlength 5</code>
+                        </div>
+                        <div *ngIf="isInvalid && !address.valid && address.errors.maxlength">
+                          <code>Maxlength 20</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="gst" class="col-md-6"> GSTin No.</label>
+                        <input type="tel" id="gst" class="form-control col-md-6" name="gst"
+                          [(ngModel)]="warehouse.GSTin" placeholder="Enter GSTin No" required="1" maxlength="20"
+                          minlength="2" #gstno="ngModel" />
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !gstno.valid && gstno.errors.required">
+                          <code>GSTin No. is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !gstno.valid && gstno.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div>
+                        <div *ngIf="isInvalid && !gstno.valid && gstno.errors.maxlength">
+                          <code>Maxlength 20</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="email" class="col-md-6"> Email-ID</label>
+                        <!-- <input type="email" id="email" pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" class="form-control col-md-6"  -->
+                        <!-- <input type="email" id="email" pattern="^\S*[@]\S*[.]\S*$" class="form-control col-md-6" 
+                        
+                          name="email" [(ngModel)]="warehouse.Email" placeholder="name@email.com" required="1"
+                          minlength="2" #email="ngModel" /> -->
+                        <input type="email" id="email" class="form-control col-md-6" name="email"
+                          [(ngModel)]="warehouse.Email" placeholder="name@email.com" #email="ngModel" />
+
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="phone" class="col-md-6"> Phone No.</label>
+                        <input type="tel" id="mobile" class="form-control col-md-6" name="mobile"
+                          [(ngModel)]="warehouse.Phone" placeholder="Enter Phone Number" required="1"
+                          (keypress)="keyPress($event)" minlength=10 maxlength=10 #phoneno="ngModel" />
+                        <div class="col-md-6"></div>
+
+                        <div *ngIf="isInvalid && !phoneno.valid && phoneno.errors.required">
+                          <code>Phone no. is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !phoneno.valid && phoneno.errors.minlength">
+                          <code>Minlength 10</code>
+                        </div>
+                        <div *ngIf="isInvalid && !phoneno.valid && phoneno.errors.maxlength">
+                          <code>Maxlength 10</code>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- 
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="country" class="col-md-6">Country Name:</label>
+                        <select id="country" name="country" class="form-control col-md-6"
+                          [(ngModel)]="warehouse.CountryId" placeholder="Select Country Name" required="1" maxlength="50" minlength="2"
+                          #CountryId="ngModel" >
+                          <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !CountryId.valid && CountryId.errors.required">
+                          <code>Country Name is required</code>
+                        </div>                                                                                      
+                          <option *ngFor="let country of countryList" [ngValue]="country.CountryId">
+                            {{ country.CountryName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  
+                  <div class="col-md-6">
+                    <div class="form-group m-2">
+                    <label for="zone" class="col-md-6">Zone Name:</label>
+                  <select id="zone" name="zone" class="form-control col-md-6" [(ngModel)]="warehouse.ZoneId"
+                    placeholder="Select Zone Name" required="1" maxlength="50" minlength="2"
+                    #ZoneId="ngModel" >
+                    <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !ZoneId.valid && ZoneId.errors.required">
+                    <code>Zone Name is required</code>
+                  </div>                                                            
+                    <option *ngFor="let zone of zoneList" [ngValue]="zone.ZoneId">
+                      {{ zone.ZoneName }}
+                    </option>
+                  </select>
+                </div>
+               </div> -->
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="region" class="col-md-6">Region Name:</label>
+                        <select id="region" name="region" class="form-control col-md-6" [(ngModel)]="warehouse.RegionId"
+                          placeholder="Select Region Name" required="1" maxlength="50" minlength="2"
+                          #RegionName="ngModel">
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !RegionName.valid && RegionName.errors.required">
+                            <code>Region  Name is required</code>
+                          </div>
+                          <option *ngFor="let region of regionList" [ngValue]="region.RegionId">
+                            {{ region.RegionName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-md-6">
+                  <div class="form-group m-2">
+                    <label for="people" class="col-md-6">Warehouse Manager Name:</label>
+                    <select id="people" name="people" class="form-control col-md-6"
+                      [(ngModel)]="warehouse.WarehouseManagerId" placeholder="Select Warehouse Manager Name" required="1" maxlength="50" minlength="2"
+                      #WarehouseManagerId="ngModel" >
+                      <div class="col-md-6"></div>
+                    <div *ngIf="isInvalid && !WarehouseManagerId.valid && WarehouseManagerId.errors.required">
+                      <code>Warehouse Manager Name is required</code>
+                    </div>                                        
+                      <option *ngFor="let people of peopleList" [ngValue]="people.PeopleID">
+                        {{ people.DisplayName }}
+                      </option>
+                    </select>
+                  </div>
+                </div> -->
+
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="state" class="col-md-6">Select State:</label>
+                        <select id="state" name="state" class="form-control col-md-6" [(ngModel)]="warehouse.Stateid"
+                          (change)="onStateChange(warehouse.Stateid , 'state')" placeholder="Select State" required="1"
+                          maxlength="50" minlength="2" #state="ngModel">
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !state.valid && state.errors.required">
+                            <code>State is required</code>
+                          </div>
+                          <option value="">--Select--</option>
+                          <option *ngFor="let s of stateList" [ngValue]="s.Stateid">
+                            {{ s.StateName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="City" class="col-md-6"> Select City:</label>
+                        <select id="city" name="city" class="form-control col-md-6" [(ngModel)]="warehouse.Cityid"
+                          placeholder="Select City" required="1" maxlength="50" minlength="2" #city="ngModel">
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !city.valid && city.errors.required">
+                            <code>City is required</code>
+                          </div>
+                          <option value="">--Select--</option>
+                          <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                            {{ city.CityName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="pincode" class="col-md-6"> Pin Code</label>
+                        <input type="tel" id="pincode" class="form-control col-md-6" name="pincode"
+                          [(ngModel)]="warehouse.PinCode" placeholder="Enter Pin Code" required="1"
+                          (keypress)="keyPress($event)" minlength=6 maxlength=6 #pincode="ngModel" />
+                        <div class="col-md-6"></div>
+
+                        <div *ngIf="isInvalid && !pincode.valid && pincode.errors.required">
+                          <code>Pin Code is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !pincode.valid && pincode.errors.minlength">
+                          <code>Minlength 6</code>
+                        </div>
+                        <div *ngIf="isInvalid && !pincode.valid && pincode.errors.maxlength">
+                          <code>Maxlength 6</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="tgrup" class="col-md-6"> Select Tax Group Name:</label>
+                        <select id="tgrup" name="tgrup" class="form-control col-md-6" [(ngModel)]="warehouse.GruopID"
+                          placeholder="Select Tax Group">
+                          <option value="">--Select--</option>
+                          <option *ngFor="let t of taxGroup" [ngValue]="t.GruopID">
+                            {{ t.TGrpName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="phone" class="col-md-6"> Capacity in Amount</label>
+                        <input type="tel" id="capacityinAmount" class="form-control col-md-6" name="capacityinAmount"
+                          [(ngModel)]="warehouse.CapacityinAmount" placeholder="Enter Capacity in Amount" required="1"
+                          #capacityinAmount="ngModel" />
+                        <div class="col-md-6"></div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="active" class="col-md-6"> Active</label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1"
+                            type="checkbox" [(ngModel)]="warehouse.active">
+                          <label class="custom-control-label" for="customCheckboxInline1"></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="Createactive" class="col-md-6"> Create Warehouse Item</label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="customCheckboxInline2" name="customCheckboxInline2"
+                            type="checkbox" [(ngModel)]="warehouse.Createactive">
+                          <label class="custom-control-label" for="customCheckboxInline2"></label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="iskpp" class="col-md-6"> Is KPP</label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="customCheckboxInline3" name="customCheckboxInline3"
+                            type="checkbox" [(ngModel)]="warehouse.IsKPP">
+                          <label class="custom-control-label" for="customCheckboxInline3"></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2 ">
+                        <label for="fname" class="col-md-6"> FSSAI License Number</label>
+                        <input type="text" id="licenseno" class="form-control col-md-6" name="LicenseNo"
+                          [(ngModel)]="warehouse.FSSAILicenseNumber" placeholder="Enter License Number" required="1"
+                          maxlength="20" minlength="2" #license="ngModel" />
+                        <div class="col-md-6"></div>
+                        <span *ngIf="isInvalid && !license.valid && license.errors.required">
+                          <code>License Number is required</code>
+                        </span>
+                        <span *ngIf="isInvalid && !license.valid && license.errors.minlength">
+                          <code>Minlength 2</code>
+                        </span>
+                        <span *ngIf="isInvalid && !license.valid && license.errors.maxlength">
+                          <code>Maxlength 20</code>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2 ">
+                        <label class="col-md-6"> FSSAI License Date</label>
+                        <!-- <p-calendar name="FSSAILicenseDate" placeholder="Month" [(ngModel)]="warehouse.FSSAILicenseDate"
+                          [showIcon]="true"></p-calendar>
+                          <br /> -->
+                        <p-calendar name="FSSAILicenseDate" [(ngModel)]="warehouse.FSSAILicenseDate"
+                        dateFormat="yy-mm-dd" [showIcon]="true">
+                        </p-calendar>
+                        <div class="col-md-6"></div>
+                        <span >
+                         <code>YYYY-MM-DD</code>
+                       </span>
+                        <!-- <input type="text" id="licensedate" class="form-control col-md-6" name="Licensedate"
+                          [(ngModel)]="warehouse.FSSAILicenseDate" placeholder="Enter License Date" required="1" maxlength="20"
+                          minlength="2" #licensedate="ngModel" /> -->
+                        <div class="col-md-6"></div>
+                        <!-- <span *ngIf="isInvalid && !licensedate.valid && licensedate.errors.required">
+                          <code>License Date is required</code>
+                        </span>
+                        <span *ngIf="isInvalid && !licensedate.valid && licensedate.errors.minlength">
+                          <code>Minlength 2</code>
+                        </span>
+                        <span *ngIf="isInvalid && !licensedate.valid && licensedate.errors.maxlength">
+                          <code>Maxlength 20</code>
+                        </span> -->
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2 ">
+                        <label for="fname" class="col-md-6"> FSSAI License Expiry Date</label>
+                        <!-- <input type="text" id="LicenseExpdate" class="form-control col-md-6" name="LicenseexpDate"
+                          [(ngModel)]="warehouse.FSSAILicenseExpiryDate" placeholder="Enter License Expiry Date" required="1" maxlength="20"
+                          minlength="2" #liceseexpdate="ngModel" /> -->
+                        <!-- <p-calendar name="FSSAILicenseExpiryDate" dateFormat="dd/mm/yy"
+                          [(ngModel)]="warehouse.FSSAILicenseExpiryDate" [showIcon]="true">
+                        </p-calendar> -->
+                        <p-calendar name="FSSAILicenseExpiryDate" [(ngModel)]="warehouse.FSSAILicenseExpiryDate"
+                        dateFormat="yy-mm-dd" [showIcon]="true">
+                      </p-calendar>
+                        <br />
+                        <div class="col-md-6"></div>
+                         <span >
+                          <code>YYYY-MM-DD</code>
+                        </span>
+                       <!-- <span *ngIf="isInvalid && !liceseexpdate.valid && liceseexpdate.errors.minlength">
+                          <code>Minlength 2</code>
+                        </span>
+                        <span *ngIf="isInvalid && !liceseexpdate.valid && liceseexpdate.errors.maxlength">
+                          <code>Maxlength 20</code>
+                        </span> -->
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="cnf" class="col-md-6"> IsCNF</label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="customCheckboxCNF" name="customCheckboxCNF"
+                            type="checkbox" [(ngModel)]="warehouse.IsCnF">
+                          <label class="custom-control-label" for="customCheckboxCNF"></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="isstore" class="col-md-6"> IsStore</label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="customCheckboxStore" name="customCheckboxStore"
+                            type="checkbox" [(ngModel)]="warehouse.IsStore">
+                          <label class="custom-control-label" for="customCheckboxStore"></label>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="tax">Tax Group Name:</label>
+                          <select id="tax" name="tax" class="form-control" [(ngModel)]="warehouse.Cityid"
+                          placeholder="">
+                          <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                            {{ city.CityName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div> -->
+                    <!-- <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="fname"> </label>
+                        <input type="text" id="fname" class="form-control" name="fname"
+                          [(ngModel)]="accountType.Name" placeholder="Enter Name">
+                      </div>
+                    </div> -->
+                    <!-- <div class="col-sm-8">
+                      <div class="form-group">
+                        <label for="des">Description</label>
+                        <textarea type="text" id="des" class="form-control" name="des"
+                        [(ngModel)]="warehouse.TDiscription" placeholder="Enter Description"></textarea>
+                      </div>
+                    </div> -->
+
+
+                  </div>
+                </div>
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    <i class="ft-x"></i> Cancel
+                  </button>
+                  <!-- [disabled]="!addwarehousee" -->
+                  <button type="submit" class="btn btn-raised btn-primary" (click)="onclick(warehouseForm)">
+                    <i class="fa fa-check-square-o"></i> Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

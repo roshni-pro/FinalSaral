@@ -1,0 +1,114 @@
+<!-- <p>viewdepotpage works!</p> -->
+<!-- <p>newsupplierlist works!</p> -->
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<br>
+<div class="row">
+    <div class="col-sm-2">
+        <h3>Depo List</h3>
+    </div>
+    <div class="col-sm-8">
+        <!-- <div class="row">
+            
+          
+            <div class="col-md-6">
+              <div class="form-group m-2">
+                <label for="a"> Choose Status </label>
+                <select id="sstatus" name="sstatus" class="form-control" [(ngModel)]="sstatus" >
+                  <option>--select--</option>
+                  <option *ngFor="let sta of Status" [ngValue]="sta"> {{ sta }} </option>
+                </select>
+              </div>
+            </div>
+          
+            <div class="col-md-6">
+              <div class="form-actions right col-sm-12">
+                <label class="col-md-12"> &nbsp;</label>
+                <button type="button" class="btn btn-raised btn-primary" (click)="getSupplierList(Status)">
+                  <i class="fa fa-check-square-o"></i> Search
+                </button>
+              </div>
+            </div>
+          </div> -->
+
+    </div>
+    <div class="col-sm-2 pull-right">
+        
+        <!-- <button type="button" class="btn btn-primary" (click)="addnew()">Add New Supplier</button> -->
+
+    </div>
+</div>
+
+<p-table [value]="dePotList" #dt [globalFilterFields]="['DepoName','StateName','DepoCodes','SupplierName']" [paginator]="true" [rows]="take" [scrollable]="true" scrollDirection="horizontal">
+    
+  <ng-template pTemplate="caption">
+    <div style="text-align: right">
+        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')"
+            style="width:auto">
+    </div>
+</ng-template>
+      <ng-template pTemplate="header">
+    
+          <tr>
+                <th style="width: 50px;">Sr No</th>
+                <!-- <th>Id</th> -->
+              <!-- <th>DepoId</th> -->
+              <!-- <th>Supplier Id</th> -->
+              <th style="width: 120px;">DepoCode</th>
+              <th style="width: 100px;">SupplierCode</th>
+              <th style="width: 100px;">Depo Name</th>
+              <th style="width: 200px;">Supplier Name</th>
+              <th style="width: 200px;">CreatedDate</th>     
+               <th style="width: 150px;">GST Number</th>   
+              <!-- <th>CompanyId</th> -->
+              <!-- <th>Created Date</th> -->
+              <!-- <th>Edit Depot</th> -->
+              <th style="width: 100px;">StateName</th>
+              <th style="width: 100px;">CityName</th>
+              <th style="width: 80px;">Active</th>
+              <th style="width: 80px;">Edit</th>
+              <th style="width: 90px;">Status</th>
+          </tr>
+    
+      </ng-template>
+    
+      <ng-template pTemplate="body" let-config  let-rowIndex="rowIndex">
+    
+          <tr>
+              <!-- <td>{{config.Id}}</td> -->
+              <td style="width: 50px;">{{rowIndex+1}}</td>
+              <!-- <td>{{config.Id}}</td> -->
+              <!-- <td>{{config.DepoId}}</td> -->
+              <!-- <td>{{config.SupplierId}}</td> -->
+            <td style="width: 120px;">{{config.DepoCodes}} </td>
+              <td style="width: 100px;">{{config.SupplierCode}}</td>
+              <td style="width: 100px;">{{config.DepoName}}</td>
+              <td style="width: 200px;">{{config.SupplierName}}</td>
+              <td style="width: 200px;">{{config.CreatedDate | date:'medium'}}</td>
+              <td style="width: 150px;">{{config.GSTin}} </td>
+               <!-- <td>{{config.CompanyId}}</td> -->
+               <td style="width: 100px;">{{config.StateName}}</td>
+               <td style="width: 100px;">{{config.CityName}}</td>
+               <td *ngIf="config.IsActive==true" style="width: 80px;">Yes</td>
+               <td *ngIf="config.IsActive==false" style="width: 80px;">No</td>
+
+               <td style="width: 80px;">
+                   <button type="button" class="btn btn-primary btn-sm" (click)="editDepot(config)">Edit</button>
+               </td>
+               <td style="width: 90px;">{{config.Status}}</td>
+          </tr>
+    
+      </ng-template>
+    
+    </p-table>
+
+
+<!-- 
+    <div  *ngIf="displayBasic">
+      <p-dialog header="Supplier History" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
+          <p>Supplier History</p>
+        
+          
+      </p-dialog> 
+  </div> -->

@@ -1,0 +1,58 @@
+
+ <head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script>
+    $.urlParam = function (name) {
+      var results = new RegExp('[\?&]' + name + '=([^&#]*)')
+        .exec(window.location.search);
+
+      return (results !== null) ? results[1] || 0 : false;
+    }
+    $(document).ready(function () {
+      var custid = $.urlParam('customerid');
+      var lang = $.urlParam('lang');
+      var wid = $.urlParam('wid');
+      $("#Param").text("CustomerId :" + custid + " <br /> WarehouseId :" + wid + " <br /> Language :" + lang);
+    });
+  </script>
+</head>
+
+ <div class="container">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="kisandanHeader">
+      <div class="row">
+        <div class="col-md-6">
+          <h4 class="m-2">आपका दान</h4>
+        </div>
+        <!-- <div class="col-md-6">
+          <h3>Total Daan: 12,0000</h3>
+        </div> -->
+      </div>     
+    </div>
+  </div>
+
+  <table width="100%" >    
+    <thead>
+      <tr>
+        <th>Order Id</th>
+        <th>KK Amt</th>
+        <th>KD Amt</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let Kdan of custKishandata">
+        <td data-label="Order Id">{{Kdan.OrderId}}</td>        
+        <td data-label="Kk Amount">{{Kdan.KisanKiranaAmount}}</td>
+        <td data-label="KDan Amount">{{Kdan.KisanDanAmount}}</td>	 
+        <td data-label="Date">{{Kdan.CreatedDate}}</td>
+      </tr>     
+     
+    </tbody>
+  </table>
+  </div>

@@ -1,0 +1,403 @@
+<p-toast [style]="{marginTop: '10px'}"></p-toast>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-sm-5">
+        <div class="content-header">Ledger Report</div>
+        <!-- <form #testForm="ngForm">
+          <app-ledger-auto-complete name="auto-ledgr" [(ngModel)]="ldgr" required></app-ledger-auto-complete>
+        </form>
+
+        <br> {{ ldgr? (ldgr| json) : ''}}  ----- {{testForm.valid}} -->
+      </div>
+      <div class="col-sm-7">
+        <button class="btn btn-raised btn-raised btn-primary  pull-right pl" (click)="OpenledgerEntry()"> Adjust
+        </button>
+        <button *ngIf="ledgerCode =='Customer' || ledgerCode =='Supplier'"
+          class="btn btn-raised btn-raised btn-primary  pull-right pl mr-10" (click)="downloadConsolidatedLadger()">
+          Consolidated Reoprt </button>
+      </div>
+    </div>
+    <hr>
+    <div class="row text-left">
+      <div class="col-sm-12">
+        <div class="px-3">
+          <form class="form" #ledgerForm="ngForm">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group" *ngIf="ledgerTypeList">
+                    <label for="projectinput3">Ledger Type</label>
+                    <br>
+
+                    <select id="desg" name="desg" class="form-control" [(ngModel)]="inputModel.LedgerTypeID"
+                      (ngModelChange)="onLedgerTypeChange()">
+                      <option *ngFor="let ledgerType of ledgerTypeList" [ngValue]="ledgerType.ID">
+                        {{ ledgerType.code }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput3">Party Name*</label>
+                    <br>
+                    <p-autoComplete [(ngModel)]="selectedLedger" [suggestions]="ledgerList"
+                      (completeMethod)="getLedgerList($event)" field="Name" [size]="30"
+                      placeholder="enter at least 3 chars" [minLength]="1" name="ledgerName"
+                      (ngModelChange)="onSelectLedger()" name="ledgerName" required="true" #ledgerName="ngModel">
+                    </p-autoComplete>
+                    <div [hidden]="!(isInvalid && !ledgerName.valid)">
+                      <code>Required!</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2" *ngIf="reportTypeList">
+                  <div class="form-group">
+                    <label for="orderType">Report Type</label>
+                    <select id="orderType" name="orderType" class="form-control" [(ngModel)]="inputModel.ReportCode">
+                      <option *ngFor="let ot of reportTypeList" [ngValue]="ot.value">
+                        {{ ot.label }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput3">From Date</label>
+                    <br>
+                    <p-calendar name="startDateInput" dataType="string" [(ngModel)]="inputModel.FromDate"
+                      dateFormat="dd/mm/yy" [showIcon]="true" name="fromDate" required #fromDate="ngModel"
+                      [monthNavigator]="true" [yearNavigator]="true" [yearRange]="yearRangeForCalender"></p-calendar>
+                   
+                    <div [hidden]="!(isInvalid && !fromDate.valid)">
+                      <code>Required!</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput4">To Date</label>
+                    <br>
+                    <p-calendar name="endDateInput" dataType="string" [(ngModel)]="inputModel.ToDate" dateFormat="dd/mm/yy"
+                      [showIcon]="true" name="toDate" [monthNavigator]="true" [yearNavigator]="true"
+                      [yearRange]="yearRangeForCalender" required #toDate="ngModel"></p-calendar>
+                    <div [hidden]="!(isInvalid && !toDate.valid)">
+                      <code>Required!</code>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-1" style="padding-top: 30px">
+                  <div class="form-group">
+
+                    <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                      (click)="generate(ledgerForm)">
+                      Generate
+                    </button>
+                  </div>
+                </div>
+                <div class="col-md-1" style="padding-top: 30px">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-raised btn-raised btn-primary pull-right mr-l-10"
+                      (click)="generateReport(true, ledgerForm)">
+                      <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                      (click)="generateReport(false, ledgerForm)">
+                      <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn btn-raised btn-raised btn-primary pull-right mr-l-10"
+                      (click)="generateReportExcel(true, ledgerForm)">
+                      <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-2" *ngIf="ledgerCode =='Agent'">
+                  <div class="form-group" *ngIf="ledgerTypeList">
+                    <label for="projectinput3">Agent Reports</label>
+                    <br>
+                    <select id="art" name="art" class="form-control" [(ngModel)]="inputModel.AgentReportType">
+                      <option value="TR">Transaction</option>
+                      <option value="CO">Commission</option>
+                      <option value="FI">Final</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-2" *ngIf="depoList">
+                  <div class="form-group">
+                    <label for="depoType">Depo List</label>
+                    <select id="depoType" name="depoType" class="form-control" [(ngModel)]="inputModel.DepoId">
+                      <option [ngValue]="null">Select Depo</option>
+                      <option *ngFor="let ot of depoList" [ngValue]="ot.DepoId">
+                        {{ ot.DepoName }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="rpt-body" *ngIf="customerLedgerData && customerLedgerData.LadgerItem">
+      <div class="rpt-innerbody">
+        <div class="row">
+          <div class="col-sm-12 lr-head">
+            <h3>{{(customerLedgerData.LadgerItem.Name ? customerLedgerData.LadgerItem.Name : '-' )| titlecase}} Ledger
+            </h3>
+          </div>
+          <div class="col-sm-12">
+            <div class="lr-brd"></div>
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-4 sd-head">
+                Name
+              </div>
+              <div class="col-sm-8">
+                {{customerLedgerData.LadgerItem.Name ? customerLedgerData.LadgerItem.Name : '-'}}
+              </div>
+              <div class="col-sm-4 sd-head">
+                Alias
+              </div>
+              <div class="col-sm-8">
+                {{customerLedgerData.LadgerItem.Alias ? customerLedgerData.LadgerItem.Alias : '-'}}
+              </div>
+              <div class="col-sm-4 sd-head">
+                Address
+              </div>
+              <div class="col-sm-8">
+                {{customerLedgerData.LadgerItem.Address ? customerLedgerData.LadgerItem.Address : '-'}}
+              </div>
+              <div class="col-sm-4 sd-head">
+                Country
+              </div>
+              <div class="col-sm-8">
+                {{customerLedgerData.LadgerItem.Country ? customerLedgerData.LadgerItem.Country : '-'}}
+              </div>
+              <div class="col-sm-4 sd-head">
+                Pin Code
+              </div>
+              <div class="col-sm-8">
+                {{customerLedgerData.LadgerItem.PinCode ? customerLedgerData.LadgerItem.PinCode : '-'}}
+              </div>
+            </div>
+
+          </div>
+          <div class="col-sm-6">
+            <div class="row">
+              <div class="col-sm-6 sd-head">
+                From Date
+              </div>
+              <div class="col-sm-6">
+                {{inputModel.FromDate }}
+              </div>
+              <div class="col-sm-6 sd-head">
+                To Date
+              </div>
+              <div class="col-sm-6">
+                {{inputModel.ToDate }}
+              </div>
+              <div class="col-sm-6 sd-head">
+                PAN
+              </div>
+              <div class="col-sm-6">
+                {{customerLedgerData.LadgerItem.PAN ? customerLedgerData.LadgerItem.PAN : '-'}}
+              </div>
+              <div class="col-sm-6 sd-head">
+                GSTno
+              </div>
+              <div class="col-sm-6">
+                {{customerLedgerData.LadgerItem.GSTno ? customerLedgerData.LadgerItem.GSTno : '-'}}
+              </div>
+              <div class="col-sm-6 sd-head">
+                Date
+              </div>
+              <div class="col-sm-6">
+                {{ '-'}}
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row" >
+          <div class="col-sm-12">
+            <table class="fixHeaderTbl table lr-tbl table-fixed"
+              *ngFor="let ledgerEntryTable of ledgerEntryGroup; let i = index">
+              <thead>
+                <tr class="tr-hd">
+                  <th>#</th>
+                  <th>Date</th>
+                  <!-- <th>IRID</th> -->
+                  <th>Particular</th>
+                  <th>Ref No</th>
+                  <th>Vch Type</th>
+                  <th>Debit</th>
+                  <th>Credit</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="tr-ttl">
+                  <td class="lgWidth" colspan="5">
+                    Opening Balance:
+                  </td>
+                  <td colspan="2"></td>
+                  <td>
+                    <div>
+                      {{customerLedgerData.OpeningBalanceString}}
+                      <!-- {{customerLedgerData.OpeningBalance | currency:'INR':'symbol':'1.2-2'}} -->
+                    </div>
+                  </td>
+
+                </tr>
+                <tr *ngFor="let row of ledgerEntryTable.orderList; let j = index"
+                  [ngClass]="{'rd': row.ColorCode == 'Red'}">
+                  <td>
+                    {{j+1}}.
+                  </td>
+                  <td>
+                    {{row.PrintDate }}
+                  </td>
+                  <!-- <td>
+                  {{row.IRID}}
+                </td> -->
+                  <td>
+                    <!-- {{row.Particulars}} -->
+                    {{row.AffactedLadgerName}}
+                  </td>
+                  <td>
+                    <div *ngIf="inputModel.LedgerTypeID === 12" (click)="redirectIr(row.ID)">
+                      {{row.IRID}}
+                    </div>
+                    <div *ngIf="inputModel.LedgerTypeID === 12 && poid>0 && IsShowId==row.ID">
+                      POId:- {{poid}}
+                    </div>
+
+                    <div *ngIf="inputModel.LedgerTypeID !== 12 ">
+                      {{row.ObjectID}}
+
+                    </div>
+                    {{row.RefNo}}
+                  </td>
+                  <td>
+                    {{row.VoucherName}}
+                  </td>
+                  <td>
+                    <!-- {{row.Debit | currency:'INR':'symbol':'1.2-2'}} -->
+                    {{row.DebitString }}
+
+                  </td>
+                  <td>
+                    <!-- {{row.Credit | currency:'INR':'symbol':'1.2-2'}} -->
+                    {{row.CreditString }}
+                  </td>
+                  <td>
+                    {{row.DayBalanceString}}
+                    <!-- {{row.DayBalance != null? (row.DayBalance | currency:'INR':'symbol':'1.2-2') : ''}} -->
+                  </td>
+                </tr>
+              </tbody>
+              <!-- <tr class="tr-ttl">
+                <td colspan="5">
+                  <div class="pull-right">Opening Balance:</div>
+                </td>
+                <td colspan="3">{{customerLedgerData.OpeningBalance | currency:'INR':'symbol':'1.2-2'}} </td>
+
+              </tr> -->
+              <!-- <tr class="tr-ttl">
+                <td colspan="5">
+                  <div class="pull-right">Current Total:</div>
+                </td>
+                <td>{{ledgerEntryTable.debitSum | currency:'INR':'symbol':'1.2-2'}} </td>
+                <td>{{ledgerEntryTable.creditSum | currency:'INR':'symbol':'1.2-2'}} </td>
+                <td></td>
+              </tr>
+              <tr class="tr-ttl">
+                <td colspan="5">
+                  <div class="pull-right">Closing Balance:</div>
+                </td>
+                <td></td>
+                <td>
+                  {{ledgerEntryTable.debitSum  - ledgerEntryTable.creditSum + customerLedgerData.OpeningBalance  | currency:'INR':'symbol':'1.2-2'}}
+                </td>
+                <td></td>
+              </tr> -->
+            </table>
+          </div>
+          <hr>
+
+          <div class="col-lg-12" *ngIf="customerLedgerData.LadgerItem">
+            <hr>
+
+            <div class="row  totcredit">
+              <div class="col-md-3">
+                Opening Balance: {{customerLedgerData.OpeningBalance |number:'1.0-2' }}
+              </div>
+              <div class="col-md-3">
+                Closing Balance:
+                {{customerLedgerData.TotalDebit  - customerLedgerData.TotalCredit + customerLedgerData.OpeningBalance |number:'1.0-2'  }}
+              </div>
+              <div class="col-md-3">
+                Total Debit: {{customerLedgerData.TotalDebit |number:'1.0-2' }}
+              </div>
+              <div class="col-md-3">
+                Total Credit: {{customerLedgerData.TotalCredit |number:'1.0-2'  }}
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="col-lg-12" *ngIf="customerLedgerData.IRTotalSum>0 || customerLedgerData.GRTotalSum>0 ">
+            <hr>
+            <div class="row totsum">
+              <div class="col-md-2">
+                IRPendingApproval:
+              </div>
+              <div class="col-md-2">
+                {{customerLedgerData.IRTotalSum}}
+              </div>
+
+              <div class="col-md-2">
+                GRIRDiffence:
+              </div>
+              <div class="col-md-2">
+                {{customerLedgerData.GRTotalSum}}
+              </div>
+              <div class="col-md-1">
+                Total:
+              </div>
+              <div class="col-md-2">
+                {{customerLedgerData.GRTotalSum+customerLedgerData.IRTotalSum}}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</div>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+
+<br>

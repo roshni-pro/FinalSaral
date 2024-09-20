@@ -1,0 +1,141 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+
+
+<app-add-trade-item [ID]="itemID" (refreshParent)="reLoad()" (isdetailsclose)="CancelV1($event)" *ngIf="istrue">
+</app-add-trade-item>
+<div *ngIf="!istrue">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="m-2"> Accept Customer Request <i class="icon-user-following"></i> </h3>
+
+    </div>
+    <button type="button" class="btn btn-raised btn-raised btn-primary c1" style="margin-left:10px"
+      (click)="exportCustomer()">
+      Export Customer List
+    </button>
+  </div>
+
+  <p-table #dt [columns]="cols" [value]="Items" dataKey="Id" [paginator]="true" [rows]="8" [scrollable]="true"
+    scrollHeight="70vh">
+
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Search"
+          (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr style="text-align: center;">
+        <th *ngFor="let col of columns">
+          {{col.header}}
+        </th>
+        <!-- <th style="text-align: center;">Action</th>      -->
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr [ngClass]="{'apr': rowData.IsApproved, 'rej': rowData.IsReject}" style="text-align: center;">
+        <td *ngFor="let col of columns">
+          {{rowData[col.field]}}
+          <div style="align-content: center;" *ngIf="col.bool==true">
+            <div class="row" *ngIf="!rowData.IsApproved && !rowData.IsReject">
+              <button style="color: #009DA0" class="btn" (click)="edit(rowData, true)">Aprrove</button>
+              <button style="color:red" class="btn" (click)="edit(rowData, false)">Reject</button>
+            </div>
+          </div>
+        </td>
+        <td style="text-align: center;">
+          <button style="color: rgb(240, 120, 50)" class="btn" (click)="remark(rowData, false)">Remarks</button>
+
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+</div>
+
+<div *ngIf="selectedQue">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '65%',height: 'auto', overflow: 'auto'}">
+    <p-header>
+      Remarks
+    </p-header>
+    <div class="ui-fluid">
+      <form #storyForm="ngForm">
+        <div class="ui-g">
+          <div class="ui-g-6">
+            <div class="ui-g">
+              <!-- <div class="col-md-8"  *ngIf="isRemark == false">
+                <label for="input"><b> Enter Remark Here:</b><p style="color: red;">(Max. length 150 Characters)*</p></label>
+                <textarea id="sellrequest" rows="5" class="txt-area form-control" name="comment" [(ngModel)]="selectedQue.remarks" placeholder="Enter Text Here.(Max. 150 Characters)"> </textarea> <br>                              
+              </div> -->
+              <div class="col-md-8">
+                <label for="input"><b> Enter Remark Here:</b>
+                  <p style="color: red;">(Max. length 150 Characters)*</p>
+                </label>
+                <textarea id="sellrequest" rows="5" class="txt-area form-control" name="comment" [(ngModel)]="remarks"
+                  (ngModelChange)="onremarksChange(remarks)"
+                  placeholder="Enter Text Here.(Max. 150 Characters)"> </textarea> <br>
+                <div *ngIf="isFormInvalid" style="font-size: 16px;">
+                  <code>Remark is required.</code>
+                </div>
+                <div *ngIf="isdisabled" style="font-size: 16px;">
+                  <code>Allow Only 150 Characters!!You exceeds Maximum length.</code>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="ui-g-12" *ngIf="isRemark == false">
+            <div class="bdry"> </div>
+            <button class="btn btn-raised btn-raised btn-primary pull-right"
+              (click)="Saveremarks(storyForm, titleInput)" [disabled]="isdisabled">Save</button>
+          </div>
+          <div class="ui-g-12" *ngIf="isRemark == true">
+            <div class="bdry"> </div>
+            <button class="btn btn-raised btn-raised btn-primary pull-right"
+              (click)="Rejectremarks(storyForm, titleInput)" [disabled]="isdisabled">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </p-dialog>
+</div>
+
+<p-dialog [(visible)]="OpenSellerPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+  [style]="{height: 'auto', overflow: 'auto'}">
+  <p-header>
+    Select Seller Type
+  </p-header>
+  <div class="ui-fluid">
+    <form #storyForm="ngForm">
+      <div class="ui-g">
+        <div class="ui-g-12">
+          <div class="ui-g">
+            <div class="row">
+              <div class="col-md-6">
+                  <label for="input">Trade Seller</label><br>
+                  <p-inputSwitch [(ngModel)]="customer.IsSeller" id="isSeller" name="isSeller"></p-inputSwitch>
+              </div>
+              <div class="col-md-6">
+                  <label for="name">Zaruri Seller</label>
+                  <p-inputSwitch [(ngModel)]="customer.IszaruriSeller" id="zaruriSeller" name="zaruriSeller">
+                  </p-inputSwitch>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <p-footer>
+    <button type="button" pButton (click)="approveSeller(customer)" label="Save" class="ui-button-primary"></button>
+  </p-footer>
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

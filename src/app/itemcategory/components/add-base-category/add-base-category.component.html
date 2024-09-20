@@ -1,0 +1,155 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <!-- <form class="form form-inline" name="form" #testForm="ngForm" autocomplete="off" ngNativeValidate> -->
+              <form class="form form-inline" name="form" #basecategoryForm="ngForm">
+                <!-- <input autocomplete="false" name="hidden" type="text" style="display:none;"> -->
+                <div class="form-body">
+                  <h4 class="form-section" *ngIf="!isEditMode"><i class="ft-user"></i><b> Add Base Category Info</b>
+                  </h4>
+                  <h4 class="form-section" *ngIf="isEditMode"><i class="ft-user"></i><b> Edit Base Category Info</b>
+                  </h4>
+                  <div class="row col-md-12" *ngIf="baseCategory">
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="basecategoryname" class="col-md-6"><b> Base Category Name:<span style="color:red">
+                              *</span></b></label>
+                        <input type="text" id="basecategoryname" class="form-control col-md-6" name="basecategoryname"
+                          [(ngModel)]="baseCategory.BaseCategoryName" placeholder="Enter Name" required="1"
+                          (keydown)="space($event)" maxlength="50" minlength="2" #BaseCategoryName="ngModel" />
+
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !BaseCategoryName.valid && BaseCategoryName.errors.required">
+                          <code>BaseCategory Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !BaseCategoryName.valid && BaseCategoryName.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="hindiname" class="col-md-6"><b> Hindi Name:<span style="color:red">
+                              *</span></b></label>
+                        <input type="text" id="hindiname" class="form-control col-md-6" name="hindiname"
+                          (keydown)="space($event)" [(ngModel)]="baseCategory.HindiName" placeholder="Enter Name"
+                          required="1" maxlength="50" minlength="2" #HindiName="ngModel" />
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !HindiName.valid && HindiName.errors.required">
+                          <code>Hindi Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !HindiName.valid && HindiName.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="code" class="col-md-6"> <b>Category Code:<span style="color:red">
+                              *</span></b></label>
+                        <input type="text" id="code" class="form-control col-md-6" name="Category code"
+                          (keydown)="space($event)" [(ngModel)]="baseCategory.Code" placeholder="Enter Code"
+                          required="1" maxlength="50" minlength="2" #Code="ngModel" />
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !Code.valid && Code.errors.required">
+                          <code>Code is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !Code.valid && Code.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <div class="col-sm-4">
+                      <div class="form-group">
+                        <label for="pgroup"> Tax Percent</label>
+                        <input type="text" id="pgroup" class="form-control" name="pgroup"
+                          [(ngModel)]="taxGroup.TPercent" placeholder="Enter Percent">
+                      </div>
+                    </div> -->
+                    <!-- <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="fname"> </label>
+                        <input type="text" id="fname" class="form-control" name="fname"
+                          [(ngModel)]="accountType.Name" placeholder="Enter Name">
+                      </div>
+                    </div> -->
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="des" class="col-md-6"><b>Description:</b></label>
+                        <textarea type="text" id="des" class="form-control col-md-6" name="des"
+                          [(ngModel)]="baseCategory.Discription" placeholder="Enter Discription" maxlength="50"
+                          minlength="2" #Discription="ngModel"></textarea>
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !Discription.valid && Discription.errors.required">
+                          <code>Description  is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !Discription.valid && Discription.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <div class="col-md-6">
+                        <div class="form-group m-2">
+                      <label for="uploadAdvertisements" class="col-md-3">Upload Image:</label>
+                      <input class="btn btn-primary" id="file" type="file" nv-file-select="" uploader="uploader" />
+                      <div ng-repeat="item in uploader.queue">
+                        </div>  
+                      </div>
+                    </div>-->
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="uploadAdvertisements" class="col-md-6">Upload Image:<span style="color:red"> *</span></label>
+                        <input class="btn btn-primary col-md-6" #myInput id="file" type="file" accept="image/*"
+                          (change)="upload($event.target.files)" />
+
+                        <div class="col-md-6"></div>
+                        <img alt="" [src]="baseCategory.LogoUrl" height="100" *ngIf="baseCategory.LogoUrl">
+                        <!-- <img alt="" [src]="uploadedImage" height="100" *ngIf="!baseCategory.LogoUrl && uploadedImage"> -->
+                      </div>
+                    </div>
+                    <div class=" col-md-6">
+                      <div class="form-group m-2">
+                        <label for="active" class="col-md-6"> <b>Active:</b></label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="isActiveCheck" name="isActiveCheck" type="checkbox" 
+                            [(ngModel)]="baseCategory.IsActive">
+                          <label class="custom-control-label" for="isActiveCheck"></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <div class="col-md-6"></div>
+                        <button type="button" class="btn btn-raised btn-primary " *ngIf="imageEnable" (click)="uploader1()">
+                          Upload
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- </div> -->
+                </div>
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    <i class="ft-x"></i> Cancel
+                  </button>
+                  <button *ngIf="!isEditMode"  type="submit" class="btn btn-raised btn-primary" (click)="onclick(basecategoryForm)">
+                    <i class="fa fa-check-square-o" ></i> Save</button>
+                  <button *ngIf="isEditMode" type="submit" class="btn btn-raised btn-primary" (click)="onclick(basecategoryForm)">
+                    <i class="fa fa-check-square-o" ></i> Update</button>
+                </div>
+                <!-- </form> -->
+                <!-- </div> -->
+                <!-- </div> -->
+                <!-- </div> -->
+                <!-- </div>
+    </div> -->
+                <!-- </section>
+</div> -->

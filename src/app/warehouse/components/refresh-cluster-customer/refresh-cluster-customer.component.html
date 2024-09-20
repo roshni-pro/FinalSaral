@@ -1,0 +1,88 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2"><b>Refresh Cluster </b></h3>
+    </div>
+  </div>
+  <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+  
+  
+  <div class="row">
+    <div class="col-md-12">
+      <div class="px-3">
+        <form class="form">
+          <div class="form-body">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="projectinput3">Select City</label>
+                  <!-- <select id="city" name="city" class="form-control" [(ngModel)]="CityId"> -->
+                      <select id="city" name="city" class="form-control" [(ngModel)]="Cityid">
+                    <!-- (ngModelChange)="onsearch(CityId)"> -->
+                    <!-- <option value="">Select City</option> -->
+                    <option *ngFor="let city of cities" [ngValue]="city.Cityid">{{city.CityName}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+        
+              <div class="col-md-8">
+                <br>
+                <!-- <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="SearchRefreshData(CityId)"> -->
+                    <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="SearchRefreshData(Cityid)">
+                   Search
+                </button>
+                <!-- <button type="button" class="btn btn-raised btn-warning mr-1 shadow mr-24"
+                (click)="refreshclustercustomerprocess(CityId) " >Refresh Cluster</button>     -->
+                <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24"
+                (click)="refreshclustercustomerprocess(Cityid) " >Refresh Cluster</button>    
+                <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="onCancel()">
+                    Back
+                 </button>                           
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="position-relative">
+    <div class="position-absolute cluster-details" >
+    </div>
+
+    <div class="position-relative">
+      <p-table #dt [columns]="cols" [value]="refreshdataList" [paginator]="true" [rows]="20" dataKey="CityId">
+        <ng-template pTemplate="header">
+          <tr>
+
+            <th *ngFor="let col of cols" style="text-align: center">
+              {{col.header}}
+              <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+            </th>            
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+            <td *ngFor="let col of columns" style="text-align: center">
+              {{rowData[col.field]}}
+            </td>          
+          </tr>
+        </ng-template>
+      </p-table>
+      <br><br>
+    </div>
+  </div>
+
+  
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

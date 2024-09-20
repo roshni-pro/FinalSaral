@@ -1,0 +1,46 @@
+<div class="col-xl-12 col-lg-12">
+    <p-table [value]="orderDetailList" #dt [globalFilterFields]="['ClusterName']">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Product Name</th>  
+            <th>Item Number</th> 
+            <th>Qty</th>
+            <th>Unit Price</th>
+            <th>Total Amount</th>
+            <th>Size Per Unit</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+          <tr >
+            <td>{{rowData.itemname}}</td>
+            <td>{{rowData.itemNumber}}</td>
+            <td>{{rowData.qty}}</td>
+            <td>{{rowData.UnitPrice}}</td>
+            <td>{{rowData.TotalAmt}}</td>
+            <td>{{rowData.SizePerUnit | number : '1.2-2'}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <hr>
+      <div *ngIf="freeItemList">
+      <h4>Free Item</h4>
+
+    <p-table [value]="freeItemList" #dt>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Product Name</th>  
+            <th>Free Qty</th>
+            <th>Item Mrp</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+          <tr >
+            <td>{{rowData.itemname}}</td>
+            <td>{{rowData.qty}}</td>
+            <td>{{rowData.mrp}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+</div>

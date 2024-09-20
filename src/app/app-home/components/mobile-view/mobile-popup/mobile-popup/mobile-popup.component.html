@@ -1,0 +1,16 @@
+<!-- <ng-container *ngFor="let popup of section">
+    <p-dialog [closable]="false" [header]="popup.SectionItemID + ' - ' +  popup.BannerName  " [(visible)]="popup.displayPopup"
+        styleClass="emulator">
+        <img style="height: 100px; width: 100%;" [src]=popup.BannerImage alt="text">
+    </p-dialog>
+</ng-container> -->
+
+<ng-container *ngFor="let popup of section">
+    <div *ngIf="popup.displayPopup">
+        <ng-container *ngIf="!popup.Deleted || popup.Deleted == 'false'">
+            <img style="width: 100%;" [src]="popup.BannerImage" alt="text"
+                *ngIf="popup && popup.BannerImage">
+            <p style=" text-align: center;  font-weight: bold;">Popup - {{popupType}}</p>
+            <hr>
+        </ng-container>
+    </div>

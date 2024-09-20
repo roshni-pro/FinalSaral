@@ -1,0 +1,283 @@
+<p-toast [style]="{marginBottom: '80px'}" position="bottom-center" appendTo="body"></p-toast>
+<p-toast [style]="{marginTop: '80px'}" styleClass="custom-toast" key="custom" position="bottom-center"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <!-- <form class="form form-inline" name="form"  #testForm="ngForm" autocomplete="off" ngNativeValidate>
+                 <input autocomplete="false" name="hidden" type="text" style="display:none;"> -->
+              <form class="form form-inline" name="form" #subcategoryForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> <b>Add Sub Category Info</b></h4>
+                  <div class="row">
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="subcategoryname" class="col-md-6"><b> Sub Category Name: </b>:<span
+                            style="color:red"> *</span></label>
+                        <input type="text" id="subcategoryname" class="form-control col-md-6" name="subcategoryname"
+                          [(ngModel)]="subCategory.SubcategoryName" placeholder="Enter SubcategoryName" required="1"
+                          maxlength="50" minlength="2" #SubcategoryName="ngModel" />
+                          
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !SubcategoryName.valid && SubcategoryName.errors.required">
+                          <code>Sub Category Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !SubcategoryName.valid && SubcategoryName.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-md-6">       
+                    <div class="form-group m-2">
+                      <label for="Category" class="col-md-6">Select Category:</label>
+                      <select class="form-control" id="Category" ng-model="SubCategoryData.Categoryid" required>
+                          <option value="">--select--</option>
+                          <option  value="{{category.Categoryid}}" ng-for="category in categorys" ng-click="showDetails = ! showDetails"> {{category.CategoryName}}</option>
+                      </select>
+                  </div>
+                </div>-->
+
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="code" class="col-md-6"><b>Sub Category Code: </b>:<span style="color:red">
+                            *</span></label>
+                        <input type="text" id="code" class="form-control col-md-6" name=" sub category code"
+                          [(ngModel)]="subCategory.Code" placeholder="Enter Code" required="1" maxlength="50"
+                          minlength="1" #Code="ngModel" />
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !Code.valid && Code.errors.required">
+                          <code>Sub Category Code is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !Code.valid && Code.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-md-6"*ngIf="!SubCategoryId">
+                      <div class="form-group m-2">
+                        <label for="cname" class="col-md-6"><b> Select Category:</b></label>
+                        <select id="category" name="category" class="form-control col-md-6"
+                          [(ngModel)]="subCategory.Categoryid" placeholder="Select Category">
+                          <option *ngFor="let category of categoryList" [ngValue]="category.Categoryid">
+                            {{ category.CategoryName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div> -->
+
+                    <div class="col-md-6" *ngIf="!SubCategoryId">
+                      <div class="form-group m-2">
+                        <label for="names" class="col-md-6">Select Category:<span style="color:red"> *</span></label>
+                        <p-multiSelect id="Category=" name="Category" [options]="EditCategoryData"
+                          [(ngModel)]="selectedCategory" (onChange)="selectedWarehouses()" #Category="ngModel"
+                          [panelStyle]="{minWidth:'25em'}" optionLabel="Name" required="1" ></p-multiSelect>
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !Category.valid && Category.errors.required">
+                            <code>Select Category is required</code>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6" *ngIf="SubCategoryId">
+                      <div class="form-group m-2">
+                        <label for="names" class="col-md-6">Select Category:<span style="color:red"> *</span></label>
+                        <p-multiSelect id="Category=" name="Category" [options]="EditCategoryData"
+                          [(ngModel)]="selectedCategory" (onChange)="selectedWarehouses()" #role="ngModel"
+                          optionLabel="Name"></p-multiSelect>
+                      </div>
+                    </div>
+
+
+
+
+
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="hindiname" class="col-md-6"><b> Hindi Name</b></label>
+                        <input type="text" id="hindiname" class="form-control col-md-6" name="hindiname"
+                          [(ngModel)]="subCategory.HindiName" placeholder="Enter Name" />
+                        <!-- <div class="col-md-6"></div> ----- required="1" maxlength="50"
+                          minlength="2" #HindiName="ngModel"          -->
+                        <!-- <div *ngIf="isInvalid && !HindiName.valid && HindiName.errors.required">
+                          <code>Hindi Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !HindiName.valid && HindiName.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div> -->
+                      </div>
+                    </div>
+
+
+                    <!-- <div class="col-sm-4">
+                      <div class="form-group">
+                        <label for="pgroup"> Tax Percent</label>
+                        <input type="text" id="pgroup" class="form-control" name="pgroup"
+                          [(ngModel)]="taxGroup.TPercent" placeholder="Enter Percent">
+                      </div>
+                    </div> -->
+                    <!-- <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="fname"> </label>
+                        <input type="text" id="fname" class="form-control" name="fname"
+                          [(ngModel)]="accountType.Name" placeholder="Enter Name">
+                      </div>
+                    </div> -->
+
+
+
+                    <div class=" col-md-6">
+                      <div class="form-group m-2">
+                        <label for="active" class="col-md-6"><b> Active: </b></label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1"
+                            type="checkbox" [(ngModel)]="subCategory.IsActive">
+                          <label class="custom-control-label" for="customCheckboxInline1"></label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-md-6">
+                            <div class="form-group m-2">
+                          <label for="uploadAdvertisements" class="col-md-3">Upload Image:</label>
+                          <input class="btn btn-primary" id="file" type="file" nv-file-select="" uploader="uploader" />
+                          <div ng-repeat="item in uploader.queue">
+                            </div>  
+                          </div>
+                        </div>-->
+
+
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="des" class="col-md-6"><b>Description: </b></label>
+                        <textarea type="text" id="des" class="form-control col-md-6" name="des"
+                          [(ngModel)]="subCategory.Discription" placeholder="Enter Description" minlength="2" rows="2"
+                          cols="100" #Discription="ngModel"></textarea>
+                        <div class="col-md-6"></div>
+                        <!-- <div *ngIf="isInvalid && !Discription.valid && Discription.errors.required">
+                          <code>Description is required</code>
+                        </div> -->
+                        <!-- <div *ngIf="isInvalid && !Discription.valid && Discription.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div> -->
+                      </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="uploadAdvertisements" class="col-md-6">Store Image:</label><br />
+                        <input class="btn btn-primary col-md-6" id="file" type="file"
+                          (change)="Storeupload($event.target.files)" />
+                        <br />
+                        <div class="col-md-6"></div>
+                        <img alt="" [src]="baseURL + subCategory.StoreImage" height="100" *ngIf="subCategory.StoreImage">
+                      </div>
+
+                      <div class="form-group m-2">
+                        <div class="col-md-6"></div>
+                        <button type="button" class="btn btn-raised btn-primary " (click)="onUploadStoreImg()">
+                          Upload
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="uploadAdvertisements" class="col-md-6">Upload Image:</label><br />
+                        <input class="btn btn-primary col-md-6" id="file" type="file"
+                          (change)="upload($event.target.files)" />
+                        <br />
+                        <div class="col-md-6"></div>
+                        <img alt="" [src]="subCategory.LogoUrl" height="100" *ngIf="subCategory.LogoUrl">
+                      </div>
+
+                      <div class="form-group m-2">
+                        <div class="col-md-6"></div>
+                        <button type="button" class="btn btn-raised btn-primary " (click)="onUpload()">
+                          Upload
+                        </button>
+                      </div>
+                      <div class="col-md-6"></div>
+                          <div style="text-align: center;" *ngIf="isInvalid && !subCategory.LogoUrl">
+                            <code>Upload Image is required</code>
+                          </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="uploadAdvertisements" class="col-md-6">Store Banner:</label><br />
+                        <input class="btn btn-primary col-md-6" id="file" type="file"
+                          (change)="bannerupload($event.target.files)" />
+                        <br />
+                        <div class="col-md-6"></div>
+                        <img alt="" [src]="baseURL + subCategory.StoreBanner" height="100" *ngIf="subCategory.StoreBanner">
+                      </div>
+
+                      <div class="form-group m-2">
+                        <div class="col-md-6"></div>
+                        <button type="button" class="btn btn-raised btn-primary " (click)="onUploadStoreBanner()">
+                          Upload
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="des" class="col-md-6"><b>Store Type: </b></label>
+                        <select name="Storetype" class="form-control col-md-6" [(ngModel)]="subCategory.StoreType">
+                          <option value="0">None</option>
+                          <option value="1">DIY</option>
+                          <option value="2">SAAS</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="des" class="col-md-6"><b>Sequence: </b></label>
+                        <input type="number" id="Sequence" class="form-control col-md-6" name="Sequence"
+                        [(ngModel)]="subCategory.Sequence" placeholder="Enter Sequence no" />
+                      </div>
+                    </div>
+                    <div class=" col-md-6">
+                      <div class="form-group m-2">
+                        <label for="stop_order" class="col-md-6"><b> Allow Inactive Order To Pending: </b></label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="AllowInactiveOrderToPending" name="AllowInactiveOrderToPending"
+                            type="checkbox" [(ngModel)]="subCategory.AllowInactiveOrderToPending">
+                          <label class="custom-control-label" for="AllowInactiveOrderToPending"></label>
+                        </div>
+                      </div>
+                    </div>
+
+
+                  </div>
+
+                </div>
+
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    <i class="ft-x"></i> Cancel
+                  </button>
+                  <button type="submit" class="btn btn-raised btn-primary" (click)="onclick(subcategoryForm)">
+                    <i class="fa fa-check-square-o"></i> Save</button>
+
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,135 @@
+<div class="ui-fluid">
+  <div class="my-2 justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="mt-3">Inventory Cycle</h3>
+    </div>
+  </div>
+  <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded">
+    <div class="card-content">
+      <div class="col-12">
+        <div class="row">
+          <div class="col-md-3">
+            <p-dropdown [options]="wareHousList" [(ngModel)]="selWhId" optionLabel="label"
+              placeholder="Select Warehouse" [filter]="true"></p-dropdown>
+          </div>
+          <div class="col-md-3">
+            <p-calendar [(ngModel)]="getDate"></p-calendar>
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary" (click)="searchResult()">Search</button>
+            <button class="btn btn-export ml-2" (click)="exportDownload()">Export</button>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded ">
+  <p-table [value]="inventoryList" [paginator]="true" [rows]="10" [lazy]="true" (onLazyLoad)="load($event)"
+    [totalRecords]="TotalRecords" [scrollable]="true" class="center" dataKey="Id">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3%;"></th>
+        <th>Warehouse Name</th>
+        <th>ItemName</th>
+        <th>ABC Classification</th>
+        <th>Batch Code</th>
+        <th>Inventory Count</th>
+        <th>RTP Qty</th>
+        <th>RTD Qty</th>
+        <!-- <th>Damaged Qty</th>
+        <th>Non Sellable Qty</th> -->
+        <th>Past Inventory</th>
+        <th>MRP</th>
+        <th>Comments</th>
+        <th>Diff</th>
+        <th>Date</th>
+        <th style="width: 8%;">Status</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-expanded="expanded">
+      <tr>
+        <td style="width: 3%;">
+          <!-- <button type="button" [pRowToggler]="row" class="btn" style="color: #22a5e8;font-size: 35px;"><i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i></button> -->
+              <i [pRowToggler]="row" [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+        </td>
+        <td>{{row.WarehouseName}}</td>
+        <td>{{row.ItemName}}</td>
+        <td>{{row.ABCClassification}}</td>
+        <td>{{row.BatchCode}}</td>
+        <td>{{row.InventoryCount}}</td>
+        <td>{{row.RtpCount}}</td>
+        <td>{{row.RtdCount}}</td>
+        <!-- <td>{{row.DamagedQty}}</td>
+        <td>{{row.NonSellableQty}}</td> -->
+        <td>{{row.PastInventory}}</td>
+        <td>{{row.MRP}}</td>
+        <td>{{row.Comment}}</td>
+        <td>{{row.Diff}}</td>
+        <td>{{row.CreatedDate | date:'yyyy-MM-dd'}}</td>
+        <td style="width: 8%;">
+          <ng-container *ngIf="row.IsApproved == true else second">
+            <span style="color: green; font-weight: bold;">Submitted</span>
+          </ng-container>
+          <ng-template #second>
+            <ng-container *ngIf="row.IsApproved == false">
+              <span style="color: red; font-weight: bold;">Pending</span>
+            </ng-container>
+          </ng-template>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-row>
+      <tr>
+        <td colspan="14">
+          <div class="p-p-3 cc">
+            <p-table [value]="row.InventoryCycleItemBatchDcs" dataKey="InventCycle_Id">
+              <ng-template pTemplate="header">
+                  <tr>
+                    <th>BatchCode</th>
+                    <th>MFGDate</th>
+                    <th>ExpiryDate</th>
+                    <th>InventoryCount</th>
+                    <!-- <th>DamagedQty</th>
+                    <th>NonSellableQty</th>
+                    <th>DamagedImageUrl</th>
+                    <th>NonSellableImageUrl</th> -->
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                  <tr>
+                    <td>{{item.BatchCode}}</td>
+                    <td>{{item.MFGDate | date:'yyyy-MM-dd'}}</td>
+                    <td>{{item.ExpiryDate | date:'yyyy-MM-dd'}}</td>
+                    <td>{{item.InventoryCount}}</td>
+                    <!-- <td>{{item.DamagedQty}}</td>
+                    <td>{{item.NonSellableQty}}</td>
+                    <td><img src={{item.DamagedImageUrl}} style="width:35%;" (click)='ShowImg(item.DamagedImageUrl)'></td>
+                    <td><img src={{item.NonSellableImageUrl}} style="width:35%;" (click)='ShowImg1(item.NonSellableImageUrl)'></td> -->
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <h5>Data Not Found</h5>
+                </ng-template>
+            </p-table>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <h5>Data Not Found</h5>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog header="Show Damaged Image" appendTo="body" [modal]="true" [(visible)]="displayImage"  width="500">
+<img src={{ImgPic1}} style="width:100%; height:50%;"/>
+</p-dialog>
+<p-dialog header="Show Non-Sellable Image" appendTo="body" [modal]="true" [(visible)]="displayImage1"  width="500">
+  <img src={{ImgPic2}} style="width:100%; height:50%;"/>
+</p-dialog>
+
+<p-confirmDialog appendTo="body" header="Confirmation" [style]="{width: '40vw'}" [baseZIndex]="10000"></p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

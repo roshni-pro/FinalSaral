@@ -1,0 +1,251 @@
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="report">
+        <h3  style="text-align: center;font-weight: 400;margin-top: 13px;"><b><u>Incident Report Open List</u></b></h3>
+        
+        <p-confirmDialog #cd appendTo="body" header="Confirmation">
+          <p-footer>
+            <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+            <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+          </p-footer>
+        </p-confirmDialog>
+        <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+          <div class="col-md-12">
+            <div class="row">
+    <div class="col-md-2 searchField" style="text-align: right" >
+        <label for=""><b>&nbsp;</b></label>
+        <input type="text" id="Search" [(ngModel)]="term" placeholder="Search" name="search" class="form-control">        
+        <i class="fa fa-search"></i>
+    </div>
+    <div class="col-md-2" style="margin-left: 20px;">
+        <label for=""><b>&nbsp;</b></label>
+            <button class="btn btn-raised btn-raised btn-primary"
+            (click)="OrderIdfilter(term)">Search </button>
+            <!-- <a href="javascript:void(0);" (click)="refresh()" style="font-weight: 600;font: message-box;"><b><u><i class="pi pi-refresh" style="font-size: 2em"></i></u></b></a> -->
+    </div>
+    <div class="col-md-2" style="margin-left: -101px;">
+      <label for=""><b>&nbsp;</b></label>
+          <!-- <button class="btn btn-raised btn-raised btn-primary"
+          (click)="OrderIdfilter(term)">Search </button> -->
+          <a href="javascript:void(0);" (click)="refresh()" style="font-weight: 600;font: message-box;"><b><u><i class="pi pi-refresh" style="font-size: 2em"></i></u></b></a>
+  </div>
+    <!-- <div class="ui-g-2" style="margin-left: 680px;margin-top: 11px;">
+      <h6><a href="javascript:void(0);" (click)="refresh()" style="font-weight: 600;font: message-box;"><b><u><i class="pi pi-refresh" style="font-size: 1em"></i></u></b></a></h6>
+  </div> -->
+  <div class="col-md-2" style="margin-top: -3px;margin-left: 343px;">
+    <label for=""><b>&nbsp;</b></label>
+    <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24"
+                    (click)="exportreport() ">Export</button>
+</div>
+  <div class="col-md-2" style="margin-top: -3px;margin-left: -91px;">
+      <label for=""><b>&nbsp;</b></label>
+      <button class="btn btn-raised btn-raised btn-primary"
+      (click)="closedList()"><u>Closed List<i class="pi pi-arrow-circle-right" style="font-size: 1em"></i></u></button>
+      <!-- <h6><a href="javascript:void(0);" (click)="closedList()" style="font-weight: 600;font: message-box;"><b><u>Incident Report Closed List<i class="pi pi-arrow-circle-right" style="font-size: 1em"></i></u></b></a></h6> -->
+  </div>
+    </div>
+  </div>
+        </div>
+    <!-- <a><h5  style="text-align: center;font-weight: 400;margin-top: 13px;"><b><u>Incident Report Closed List</u></b></h5></a> -->
+    <!-- <div class="ui-g-2" style="margin-left: 20px;">
+      <label for=""><b>&nbsp;</b></label>
+          <button class="btn btn-raised btn-raised btn-primary"
+          (click)="OrderIdfilter(term)">Closed </button>
+  </div> -->
+ 
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+              <p-table #dt [value]="IncidentReportList" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header">
+              <tr>
+                  <th>CaseNo</th>   
+                  <th>ReportedBy</th>   
+                  <th>TypeOfLoss</th>   
+                  <th>PersonName</th>  
+                  <!-- <th>IncidentDescription</th>        -->
+                  <th>Status</th>             
+                  <th>DateofIncident</th>   
+                  <th>WHName</th>              
+                  <!-- <th>TimeofIncident</th>                                              
+                  <th>DateOfReport</th>  -->
+                  <th>Status</th>
+                  <th>Description</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr>
+                  <td>{{rowData.CaseNo}}</td>    
+                  <td>{{rowData.ReportedByName}}</td>         
+                  <td>{{rowData.TypeOfLoss}}</td>    
+                  <td>{{rowData.PersonName}}</td>  
+                  <!-- <td>{{rowData.IncidentDescription}}</td>  -->
+                  <td>{{rowData.Status}}</td>  
+                  <td>{{rowData.DateofIncident | date : 'shortDate'}}&nbsp;{{rowData.TimeofIncident}}</td> 
+                  <td>{{rowData.WarehouseName}}</td>   
+                  <!-- <td>{{rowData.TimeofIncident | date : 'shortTime'}}</td> 
+                  <td>{{rowData.DateOfReport | date : 'shortDate'}}</td>   -->
+                  <td>
+                    <p-inputSwitch name="IsActive" [(ngModel)]="rowData.IsActive" (ngModelChange)="ActiveInactive(rowData)"  [disabled]="!rowData.IsActive">
+                    </p-inputSwitch>
+                  </td>
+                  <td>
+                    <h6><a href="javascript:void(0);" (click)="openDescription(rowData,$event)" style="font-weight: 600;font: message-box;"><b><u><i class="pi pi-arrow-circle-right" style="font-size: 3em"></i></u></b></a></h6>
+                    <!-- {{rowData.IncidentDescription}} -->
+                  </td>
+              </tr>
+            </ng-template>
+          </p-table>
+      
+    
+    </div>
+  
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+      </section>
+
+
+      <div *ngIf="isDetails">
+        <!-- <p-dialog [(visible)]="isDetails" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+            [style]="{width: '50%',height: '50%', overflow: 'auto'}">
+            <p-header>
+                <h4 style="position: absolute; top: 8px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;font-weight: normal;">
+                <b><u>Description</u></b>
+                </h4>
+            </p-header>
+          <div style="font-weight: 600;">{{selectedRowDetails}}</div>
+        </p-dialog> -->
+
+        <p-dialog [(visible)]="isDetails" [resizable]="false" [modal]="true" appendTo="body" positionTop="70"
+        [style]="{width: '85%',height: '88%',top: '45px', overflow: 'auto'}">
+          <p-header>
+            <h4 style="position: absolute; top: 8px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;font-weight: normal;color: orangered;">
+              <b><u>Description</u></b>
+              </h4>
+          </p-header>
+          <h5 style="text-align: center;font-weight: 400;color: crimson;"><span ><b><u>Incident Report</u></b></span></h5>
+          <hr>
+          <div class="row" style="color: black;font-weight: 600;">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-6">
+                  <b>Reported By: </b><br>
+                  <b>Location:</b><br>
+                  <b>OutBound Lead:</b><br> 
+                  <b>Reported Role:</b>
+                </div>
+                <div class="col-6" style="color: mediumblue;">
+                  {{selectedRowDetails.ReportedByName}} <br />
+                  {{selectedRowDetails.LocationName}} <br />
+                  {{selectedRowDetails.OutBoundName}} <br />
+                  {{selectedRowDetails.ReportedRole}}
+                </div>
+              </div>
+            </div> 
+    
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-6">
+                  <b>Date Of Report:</b><br>
+                  <b> Case No:</b><br>
+                  <b>InBound Lead:</b> <br>
+                  <b>ReOpen By:</b> <br>
+                </div>
+                <div class="col-6" style="color: mediumblue;">
+                  {{selectedRowDetails.DateOfReport | date : 'shortDate'}} <br />
+                  {{selectedRowDetails.CaseNo}} <br />
+                  {{selectedRowDetails.InBoundName}} <br />
+                  {{selectedRowDetails.ReOpenByName}} 
+                </div>
+              </div>
+            </div> 
+    
+          </div>
+          <hr>
+          <h5 style="text-align: center;font-weight: 400;color: crimson;"><span ><b><u>Incident Information</u></b></span></h5>
+          <hr>
+          <div class="row" style="color: black;font-weight: 600;">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-6">
+                  <b>Person Name: </b><br>
+                  <b>Department Name:</b><br>
+                  <b>Date Of Incident:</b> <br>                  
+                  <b> City Name:</b><br>
+                </div>
+                <div class="col-6" style="color: mediumblue;">
+                  {{selectedRowDetails.PersonName}} <br />
+                  {{selectedRowDetails.DepartmentName}} <br />
+                  {{selectedRowDetails.DateofIncident | date : 'shortDate'}} <br />
+                  {{selectedRowDetails.CityName}}
+                </div>
+              </div>
+            </div> 
+    
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-6">
+                  <b>Person Role:</b><br>
+                  <b> Type Of Loss:</b><br>
+                  <b>Time Of Incident:</b> <br>
+                  <b>Warehouse Name:</b><br>    
+                </div>
+                <div class="col-6" style="color: mediumblue;">
+                  {{selectedRowDetails.PersonRole}} <br />
+                  {{selectedRowDetails.TypeOfLoss}} <br />
+                  {{selectedRowDetails.TimeofIncident}} <br />
+                  {{selectedRowDetails.WarehouseName}}
+                </div>
+              </div>
+            </div> 
+    
+          </div>
+
+    <hr>
+
+    <div class="row" style="color: black;font-weight: 600;">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-6">
+            <b> Witness Name: </b><br>
+            <b> Incident Description: </b>
+          </div>
+          <div class="col-6" style="color: mediumblue;">
+            {{selectedRowDetails.WitnessName}} <br/>
+            {{selectedRowDetails.IncidentDescription}} 
+          </div>
+        </div>
+      </div> 
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-6">
+            <b> MobileNo: </b><br>
+            <b> ReOpen Comment: </b>
+          </div>
+          <div class="col-6" style="color: mediumblue;">
+            {{selectedRowDetails.MobileNo}}  <br/>
+            {{selectedRowDetails.ReOpenComment}} 
+          </div>
+        </div>
+      </div> 
+    </div>
+          <p-footer>
+            <button type="button" pButton  (click)="isDetails=false" label="Close"></button>
+          </p-footer>
+        </p-dialog>
+      </div>
+
+       <p-dialog [(visible)]="commentPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+            [style]="{width: '50%',height: '50%', overflow: 'auto'}">
+            <p-header>
+                <h4 style="position: absolute; top: 8px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;font-weight: normal;">
+                <b><u>Comment</u></b>
+                </h4>
+            </p-header>
+            <!-- {{CommentDetail.CaseNo}} -->
+            <textarea type="text" id="comment" name ="comment" rows="10" style="width: 100%;background-color: rgba(4, 8, 39, 0);" [(ngModel)]="Comment" required="1" #comment="ngModel"></textarea>
+            <p-footer>
+              <button type="button" pButton  (click)="closedCommentPopup(CommentDetail)" label="Close"></button>
+              <button type="button" pButton  (click)="save(CommentDetail,Comment)" label="Save"></button>
+            </p-footer>
+        </p-dialog>

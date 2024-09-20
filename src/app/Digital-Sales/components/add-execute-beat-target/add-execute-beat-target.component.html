@@ -1,0 +1,122 @@
+<section>
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <div *ngIf="IshowAdd">
+                <h3 class="m-2"><b>Add Executive Beat Target</b></h3>
+            </div>
+            <div *ngIf="IshowEdit">
+                <h3 class="m-2"><b>Edit Executive Beat Target</b></h3>
+            </div>
+        </div>
+    </div>
+
+    <form class="form" name="form">
+        <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="">Warehouse:</label>
+                    <select name="wh" value="wh" class="form-control col md-3" [(ngModel)]="SelectedWarehouseId"
+                        (change)="getCluster(SelectedWarehouseId,$event)">
+                        <option Value="0">--Select--</option>
+                        <option *ngFor="let item of WarehouseList" [ngValue]="item.WarehouseId">
+                            {{item.WarehouseName}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="">Cluster:</label>
+                    <select name="Cluster" value="Cluster" class="form-control col md-2" [(ngModel)]="SelectedClusterId"
+                        (change)="onChangeCluster($event)">
+                        <option Value="0">--Select--</option>
+                        <option *ngFor="let item of ClusterList" [ngValue]="item.ClusterId">
+                            {{item.ClusterName}}
+                        </option>
+                    </select>
+
+                </div>
+                <div class="col-md-1" *ngIf="!CustomerCount">
+                </div>
+                <div class="col-md-1" *ngIf="CustomerCount">
+                    <label>Customer</label>
+                    <input type="text" id="txtCustomerCount" name="CustomerCount" autocomplete="off" disabled
+                        class="form-control" [(ngModel)]="CustomerCount">
+                </div>
+                <div class="col-md-3">
+                    <label>Visited Percent</label>
+                    <input type="text" ng-pattern="^(?:[1-9]?\d|100)$" id="txtVisitedPercent" name="VisitedPercent" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode==46)" autocomplete="off"
+                        class="form-control" [(ngModel)]="dataAdd.VisitedPercent">
+                </div>
+                <div class="col-md-3">
+                    <label>Conversion Percent</label>
+                    <input type="text" id="txtConversionPercent" name="ConversionPercent"  onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode==46)" autocomplete="off"
+                        class="form-control" [(ngModel)]="dataAdd.ConversionPercent">
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Customer Percent</label>
+                    <input type="text" id="txtCustomerPercent" name="CustomerPercent" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode==46)" autocomplete="off"
+                        class="form-control" [(ngModel)]="dataAdd.CustomerPercent">
+                </div>
+                <div class="col-md-3">
+                    <label>Order Percent</label>
+                    <input type="text" id="txtOrderPercent" name="OrderPercent"  onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode==46)" autocomplete="off" class="form-control"
+                        [(ngModel)]="dataAdd.OrderPercent">
+                </div>
+                <div class="col-md-3">
+                    <label>Product Pareto</label>
+                    <input type="text" id="txtProductPareto" name="ProductPareto"  onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode==46)" autocomplete="off"
+                        class="form-control" [(ngModel)]="dataAdd.ProductPareto">
+                </div>
+                <div class="col-md-3">
+                    <label>Customer Pareto</label>
+                    <input type="text" id="txtCustomerPareto" name="CustomerPareto"  onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.charCode==46)" autocomplete="off"
+                        class="form-control" [(ngModel)]="dataAdd.CustomerPareto">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Avg Line Item</label>
+                    <input type="text" id="txtAvgLineItem" name="AvgLineItem"  onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" autocomplete="off" class="form-control"
+                        [(ngModel)]="dataAdd.AvgLineItem">
+                </div>
+                <div class="col-md-3">
+                    <label>Avg Order Amount</label>
+                    <input type="text" id="txtAvgOrderAmount"  onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" name="AvgOrderAmount" autocomplete="off"
+                        class="form-control" [(ngModel)]="dataAdd.AvgOrderAmount">
+                </div>
+                <div class="col-md-3">
+                    <label>Start Date</label>
+
+                    <input type="datetime-local" id="StartDate" name="StartDate" class="form-control"
+                        [ngModel]="dataAdd.StartDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="dataAdd.StartDate = $event" />
+                </div>
+                <div class="col-md-3">
+                    <label>End Date</label>
+
+                    <input type="datetime-local" id="EndDate" name="EndDate" class="form-control"
+                        [ngModel]="dataAdd.EndDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="dataAdd.EndDate = $event" />
+                </div>
+            </div>
+
+
+        </div>
+        <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+            <div class="row">
+                <div class="col-md-3">
+                    <button (click)="OnSubmit(dataAdd)"
+                        class="btn btn-raised btn-raised btn-success mt ml-1">Submit</button>
+                    <button id="btnCancle" (click)="Cancle()"
+                        class="btn btn-raised btn-raised btn-danger mt ml-1">Cancle</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</section>

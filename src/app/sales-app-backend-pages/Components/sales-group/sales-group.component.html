@@ -1,0 +1,195 @@
+<div>
+    <h3 class="heading mt-4">Sales Group</h3>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h6 class="heading"><b>Add Group</b></h6>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                     <p>  Show on salesApp: </p>                   
+                    <div class="row mt-2">
+                        <!-- <div class="col-md-12">
+                            <label for="projectinput2">Show on salesApp</label>
+                        </div> -->
+                        <div class="col-md-4 ml-3"  style="display: contents;" >
+                            <p-radioButton name="groupname" value="Yes" [style]="{'margin-left':'13px'}"
+                            [(ngModel)]="Appname"   label="Yes"  >
+                            </p-radioButton>
+                        </div>
+                        <div class="col-md-4" style="display: contents;">
+                            <p-radioButton name="groupname" value="No" [style]="{'margin-left':'29px'}"
+                            [(ngModel)]="Appname"  label="No">
+                            </p-radioButton>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <p>  Group Name: </p>
+                    <input  type="text"  style="width:100%"  placeholder="Enter Group Name" pInputText [(ngModel)]="value2" 
+                    (keypress)="omit_special_char($event)"  name="name"  #name="ngModel" minlength="3" required >
+                </div>
+                <div class="col-md-4.5">
+                    <p> Group Type: </p>
+                    <span style="font-size: medium">
+                        <p-selectButton [options]="SystemType" [(ngModel)]="value3" optionLabel="name" (click)="GroupTypeSelect(value3)" optionValue="value"></p-selectButton>
+                    </span>
+                </div>
+                <div *ngIf="value3.value==2" class="col-md-2">
+                    <p>  Store Name: </p>
+                    <p-dropdown  [options]="StoreList" placeholder="--Select a Store--" optionLabel="Name" [(ngModel)]="Store"></p-dropdown>
+                </div> 
+                <div *ngIf="value3.value==3" class="col-md-2">
+                    <p>  Segment Name: </p>
+                    <p-dropdown  [options]="SegmentNameList"  placeholder="--Select a Segment--" optionLabel="SegmentName" [(ngModel)]="Segment"></p-dropdown>
+                </div> 
+                <div  class="text-right col-md mt-4">
+                    <button style="margin-top: 4px;" *ngIf="value3.value>0" class="btn btn-primary mr-1" (click)="AddGroup()">Add</button>
+                    <button style="margin-top: 4px;" class="btn btn-primary" (click)="Clear()" >Clear</button>
+                    <!-- <button class="btn btn-success mr-1" (click)="Export()" >Export</button>                    -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md mt-2" style="color:red;">* Default Validity end date will be 2099</div>
+                <div class="col-md text-right"><button class="btn btn-success" (click)="Export()">Export</button></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded ">
+    <p-table #dt [value]="GroupList"  [showCurrentPageReport]="true" [paginator]="true" [rows]="10" [scrollable]="true" [lazy]="true"
+     (onLazyLoad)="load($event)"  [totalRecords]="TotalGroupCount" [globalFilterFields]="['GroupName']">
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">
+                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Search Groups" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    style="width:auto;border: solid 1px #ddd;">
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header" >
+            <tr>
+                <th scope="col" style="font-size: 13px; width:60px">S.N</th>
+                <th  scope="col" style="font-size:13px; width:97px">Show on salesApp </th>
+                <th  scope="col" style="font-size:13px;"> Group Type </th>
+                <th  scope="col" style="font-size:13px;"> Group Name</th>
+                <th  scope="col" style="font-size:13px; "> Group Creation Date </th>
+                <th  scope="col" style="font-size:13px;"> Group Validity Date</th>
+                <th scope="col" style="font-size: 13px; width:40px"></th>
+                <th scope="col" style="font-size: 13px; width: 450px;"> Actions </th> 
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+                <td style="width:60px">{{rowIndex+1}}</td>
+                <td style="width:97px"><p-inputSwitch id="cty" name="cty" [(ngModel)]="rowData.type" (onChange)="groupStatusChange(rowData)" ></p-inputSwitch></td>                
+                <td >
+                    <span *ngIf="(rowData.StoreId==-3)">
+                        <label style="color:red;"> <b> CRM :</b> </label><br>
+                    </span>
+                      {{rowData.StoreName!=null?rowData.StoreName:rowData.SegmentName}}</td>
+                <td >{{rowData.GroupName}}</td>
+                <td >{{rowData.CreatedDate | date:'shortDate'}}</td>
+                <td *ngIf="!rowData?.check">{{rowData.ValidityDate | date:'shortDate'}}</td>
+                <!-- <td *ngIf="rowData?.check"> <p-calendar appendTo="body" yearRange="2000:2050" [(ngModel)]="editedDateValue" [minDate]="mindate" [readonlyInput]="true" [showIcon]="true" showButtonBar="true"></p-calendar></td> -->
+                <!-- <input type="date" style="width:90%" [(ngModel)]="editedDateValue" [min]="mindate"  pInputText > -->
+                <td *ngIf="rowData?.check"> 
+                    <p-calendar appendTo="body" 
+                     [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  [(ngModel)]="editedDateValue" 
+                     [minDate]="mindate" [readonlyInput]="true" [showIcon]="true" showButtonBar="true"></p-calendar>
+                    <!-- <p-calendar id="fromDateId" inputId="basic"  [yearNavigator]="true" [monthNavigator]="true" [showIcon]="true"
+                    placeholder="From Date" [disabled]="showGlobal" appendTo="body" monthRange=""
+                    [style]="{'height': '2.5em','minWidth':'100%'}" dateFormat="dd/mm" yearRange="2000:2050">
+                </p-calendar> -->
+                    <!--<p-calendar appendTo="body" view="date" view="month" [showIcon]="true" [style]="{'minWidth':'100%', 'height' : '37px'}" 
+                    [yearNavigator]="true" yearRange="2000:2050" [readonlyInput]="true"
+                    ></p-calendar> -->
+                </td>
+                <td style="width:40px">
+                    <a class="view" (click)="History(rowData,$event)">
+                        <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                    </a>
+                </td>
+                <td style="width: 450px;">
+                    <button class="btn det" (click)="dialogPopup(rowData.GroupName,rowData.StoreName,rowData.GroupId,rowData.StoreId)">Details</button>&nbsp; 
+                    <button style="width: 80px; " class="btn editbtn " *ngIf="rowData?.check" (click)="OnUpdateGroup(rowData)">Update</button>  
+                    <button style="width: 80px;" class="btn editbtn" *ngIf="!rowData?.check" (click)="OneditGroup(rowData)">Edit</button>&nbsp;
+                    <button style="width: 80px;" class="btn actg" *ngIf="rowData.IsActive==1" (click)="IsActive(rowData,rowData.IsActive)">Active</button>
+                    <button style="width: 80px;" class="btn act" *ngIf="rowData.IsActive==0" (click)="IsActive(rowData,rowData.IsActive)">InActive</button>&nbsp;
+                    <button class="btn addbtn" (click)="redirectAddCustomer(rowData)"  [disabled]="(rowData.IsActive==0 || rowData.StoreId==-3)" disabled>Add Customer</button>&nbsp; 
+                    <span class="cursor">
+                    <i class="pi pi-upload" pTooltip="Upload" tooltipPosition="bottom"  (click)="OnuploadIcon(rowData)" [hidden]="(rowData.IsActive==0||rowData.StoreId==-3)"></i>
+                    </span>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog header="Customer Details ( Store - {{storename}}, Group - {{groupname}} ) "  
+ [(visible)]="display" appendTo="body" positionTop="50vh"  [style]="{width: '50vw'}" modal="true">
+    <div class="text-right"><button class="btn btn-primary mt-1" (click)="ExportCustomer()">Export</button></div>
+    <p-table [value]="CoustomerList" [paginator]="true" [rows]="10"  [lazy]="true" [totalRecords]="TotalCustomerCount" (onLazyLoad)="load1($event)" [(first)]="first" [showCurrentPageReport]="true" class="center">
+        <ng-template pTemplate="header" >
+            <tr >
+                <th scope="col" style="font-size: 15px; width:60px"><b> S.n</b></th>
+                <th scope="col" style="font-size: 15px; width:110px" ><b> SkCode</b></th>
+                <th scope="col" style="font-size: 15px;  "><b> Shop Name </b></th>
+                <th scope="col" style="font-size: 15px; "><b> City </b></th>
+                <th scope="col" style="font-size: 15px; "><b> Warehouse</b></th>
+                <th scope="col" style="font-size: 15px; " *ngIf="Storeid!=-2"><b> Actions </b></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex">
+            <tr>
+                <td style="width:60px">{{rowIndex+1}}</td>
+                <td style="width:110px">{{rowData.Skcode}}</td>
+                <td >{{rowData.ShopName}}</td>
+                <td>{{rowData.City}}</td>
+                <td >{{rowData.WarehouseName}}</td>
+                <td *ngIf="Storeid!=-2">
+                    <button class="btn act" (click)="removeCustomer(rowData)">Remove</button>&nbsp; &nbsp;
+                </td> 
+            </tr>
+        </ng-template>
+    </p-table>
+    <p-toast *ngIf="display" [style]="{width: '20vw'}" position="top-right"></p-toast>
+</p-dialog>
+
+<p-toast *ngIf="!Showupload && !display" [style]="{width: '20vw'}" position="top-right"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<p-dialog header="Upload  ( Store - {{uploadStoreName}}, Group - {{uplaodGoupName}} ) " [(visible)]="Showupload" appendTo="body" positionTop="50vh" [style]="{width: '35vw' }" modal="true">
+    <div class="row mt-4" style="text-align:center">
+      <div class="col " >   
+        <p-fileUpload #form name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+            (uploadHandler)="uploadCustomers($event,form)">
+        </p-fileUpload> 
+      </div>
+    </div> 
+    <div class="row mt-4 mb-4" >
+      <div class="col ">
+        <button class="btn addbtn" (click)="ExportSampleFile()" >Download Sample</button>&nbsp; &nbsp;
+      </div>
+    </div>
+    <p-toast *ngIf="Showupload" [style]="{width: '20vw'}" position="top-right"></p-toast>
+</p-dialog>
+
+<div *ngIf="isHistory">
+    <p-dialog [(visible)]="isHistory" 
+    [resizable]="false" [modal]="true" appendTo="body" positionTop="50" [style]="{width: '83%',height: '90%', left : '11px', overflow: 'auto'}">
+        <p-header>
+            <h4
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                <b>History </b>
+            </h4>
+        </p-header>
+        <app-history [entity]="entity" [id]="historyDetailid"></app-history> 
+        <footer></footer>
+    </p-dialog>
+    </div>

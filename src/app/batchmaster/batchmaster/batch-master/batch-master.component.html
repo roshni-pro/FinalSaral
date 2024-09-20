@@ -1,0 +1,63 @@
+<div class="d-flex justify-content-between" style="margin-top: 50px;">
+    <div class="header">
+        <h3 class="m-2">Batch Master</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-3">
+                <label for="">Item Number</label>
+                <input type="text" style="width: 100%;" [(ngModel)]="ItemNumber" pInputText />
+            </div>
+            <div class="col-1 mt-4">
+                <button class="btn btn-primary" (click)="Search();buttonEnable=true;">Search</button>
+            </div>
+        </div>
+        <div *ngIf="ItemNumber && buttonEnable">
+            <p-table [value]="ItemList"  [rows]="10"[lazy]="true" [totalRecords]="totalRecords"
+            (onLazyLoad)="load($event)"  [paginator]="true" [rows]="10" dataKey="ID"[scrollable]="true" scrollHeight="70vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Item Number</th>
+                        <th>Batch Code</th>
+                        <th>MFG Date</th>
+                        <th>Expiry Date</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i>
+                    <tr>
+                        <td>{{i.ItemNumber}}</td>
+                        <td>{{i.BatchCode}}</td>
+                        <td>{{i.MFGDate|date}}</td>
+                        <td>{{i.ExpiryDate|date}}</td>
+                        <td>
+                            <button class="btn btn-primary" (click)="Edit(i)">Edit</button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog  [(visible)]="openDialog"  [resizable]="false" positionTop="50" [modal]="true" appendTo="body" [draggable]="false" 
+        [style]="{width: '40%', top: '30px',height:'25%'}" [closable]="false">
+            <h3>Edit ExpiryDate</h3>
+            <div class="row">
+                <div class="col" *ngIf="popupData">
+                    <label for="">Expiry Data</label><br>
+                    <p-calendar [(ngModel)]="popupData.ExpiryDate" dateFormat="dd-mm-yy" ></p-calendar>
+                    <button class="btn btn-primary ml-2" (click)="Submit()" style="margin-top:6px;">Update</button>
+                    <button class="btn btn-success ml-1" style="background-color:#09925f;margin-top:6px;" (click)="openDialog=false;">Cancel</button>
+                </div>
+            </div>
+          
+        </p-dialog>
+    </div>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

@@ -1,0 +1,114 @@
+<div class="row">
+  <div class="col-sm-12">
+    <div class="content-header">Buyer DashBoard</div>
+  </div>
+</div>
+<div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <form #holidayForm="ngForm">
+    <!-- <div class="row"> -->
+      <div class="row">
+        <div class="form-group">
+          <label for="published"><b>Select Buyers</b></label><br>
+          <p-multiSelect [style]="{minWidth:'22em'}" appendTo="body" [options]="BuyersList" [(ngModel)]="selectedBuyer"
+            name="buyerInput" optionLabel="DisplayName" (onPanelHide)="onPanelHide()">
+          </p-multiSelect>
+          </div>
+  
+  <!-- <div class="col-md-2">
+        <div class="form-group">
+          <label for="name">Select Buyer</label>
+          <select id="PeopleID" value="" name="PeopleID" class="form-control" [(ngModel)]="searchModel.PeopleID" >
+            <option>--select--</option>
+            <option *ngFor="let buyer of BuyersList" [ngValue]="buyer.PeopleID">
+              {{ buyer.DisplayName }}
+            </option>
+          </select>
+        </div>
+   </div> -->
+
+      <div class="col-sm-2">
+        <label for="validfrom">Start Date</label>
+        <p-calendar  placeholder="Start Date" [(ngModel)]="searchModel.StartDate" name="StartDate" [showIcon]="true"></p-calendar>
+      </div>
+      <div class="col-sm-2">
+        <label for="validto">End Date</label>
+        <p-calendar  placeholder="End Date" [(ngModel)]="searchModel.EndDate" name="EndDate" [showIcon]="true"></p-calendar>
+      </div>
+
+   <div class="form-group nu-mt-30">
+       <div class="col-md-6">
+        <button type="submit" class="btn btn-raised btn-warning" name="search" (click)="onSave(searchModel)">
+          Search
+        </button>
+      </div>
+      </div>
+       <div class="col-sm-2 nu-mt-30">
+        <button type="submit" class="btn btn-raised btn-raised btn-success" name="Export" (click)="export()">
+          Export
+        </button>
+
+        <!-- <a [href]="fileUrl"  downloadFile="file.xlsx" >DownloadFile</a> -->
+      </div>
+   </div>
+  </form>
+   <div class="position-relative" > 
+    <p-table [columns]="cols" [value]="BuyerListData"[scrollable]="true" scrollHeight="65vh" text-align: center>
+     <ng-template pTemplate="header">
+        <tr>
+          <th>
+            BuyerName
+          </th>
+          <th>
+            SaleAmount
+          </th>
+          <th>
+            ClosingStock
+          </th>
+          <th>
+            GrossMargin
+          </th>
+          <th>
+            Margin
+          </th>
+          <th>
+            InventoryDays
+          </th>
+          <th>
+            ExportData
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData  >
+        <tr >
+          <td>
+          {{rowData.BuyerName}} 
+          </td>
+          <td>
+            <button class="btn btn-primary1" style="background-color: red;"> {{rowData.SaleAmount | number: '1.0'}}</button>
+          </td>
+          <td>
+            <button class="btn btn-primary1" style="background-color: green;"> {{rowData.ClosingStock | number: '1.0'}}</button> 
+          </td>
+          <td>
+            <button class="btn btn-primary1" style="background-color: skyblue;">{{rowData.GrossMargin | number: '1.2' }}</button> 
+          </td>
+          <td>
+            <button class="btn btn-primary1" style="background-color: skyblue;">0</button> 
+          </td>
+          <td>
+            <button class="btn btn-primary1" style="background-color: plum;">{{rowData.InventoryDays | number: '1.2' }}</button> 
+         </td>
+         <td>
+          <button class="btn btn-primary1" style="background-color: rgb(150, 22, 150);" (click)="exportbuyer(rowData.BuyerId) "> Export</button> 
+       </td>
+        </tr>
+      </ng-template>
+      </p-table> 
+    </div> 
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+</div>
+
+

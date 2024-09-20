@@ -1,0 +1,222 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Product Performance Dashboard</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-9" (click)="toggleSearch()"><h5 class="m-0 text-primary"><b>Search By</b> <i style="margin-left: 20px;" class="fa fa-lg fa-angle-double-right"></i></h5>
+                
+            </div> 
+            <div class="col">
+                 Buyer : <span class="box"></span> 
+                
+            </div>
+            <div class="col">
+                Sales : <span class="box1"></span> 
+               
+           </div>
+        </div>
+       
+    <div *ngIf="isSearch" id="search-content p-2" >
+        <div class="row">
+            <div class="col-md-3">
+                <label><b style="font-weight: 500;">Select warehouse* </b></label><br>
+                <p-dropdown  [options]="warehouseListData1" [filter]="true" name="warehouseInput"
+                placeholder="Select Warehouse" optionLabel="label" [(ngModel)]="SelectedWarehouse"
+                (onChange)="getStore()">
+            </p-dropdown>
+            </div>
+            <div class="col-md-3">
+                <label><b style="font-weight: 500;">Select Store* </b></label><br>
+                <p-dropdown  [options]="StoreList" [filter]="true" [(ngModel)]="selectedStore" optionLabel="StoreName"
+                    optionValue="StoreId" placeholder="Select store" (onChange)="BrandData()">
+                </p-dropdown>
+               
+            </div>
+            <div class="col-md-3">
+                <label><b style="font-weight: 500;">Brand </b></label><br>
+                <p-multiSelect [options]="btandList" placeholder="--Select Brand--" [(ngModel)]="SelectedBrand"
+                    optionLabel="SubsubcategoryName">
+                </p-multiSelect>
+            </div>
+            <div class="col-md-3">
+                <label><b style="font-weight: 500;">Select Status </b></label><br>
+                <p-dropdown  [options]="status" [(ngModel)]="selectedStatus" optionLabel="label"
+                    placeholder="Select Status">
+                </p-dropdown>
+               
+            </div>
+         
+        </div>
+
+        <div class="row mt-2">
+               <div class="col-md-3">
+                <label><b style="font-weight: 500;">Month / Year* </b></label><br>
+                <p-calendar [(ngModel)]="SelectedMonthYear" [showIcon]="true"  placeholder="Select Month/Year" view="month"
+                    dateFormat="mm/yy"   [readonlyInput]="true" inputId="monthpicker"></p-calendar>
+            </div>
+            <div class="col-md-4 mt-4">
+                <button class="btn btn-primary mr-2" (click)="Search()">Search</button>
+                <button class="btn btn-success mr-2" (click)="ExportSearch()">Export</button>
+                <button class="btn btn-success mr-2" (click)="ExportAll()">Export All</button>
+            </div>
+            <div class="col-md-3 mt-4 d-flex">
+                <input #myInput type="file" style="margin-bottom: 10px;" multiple="false"
+                    (change)="onUploadCheque($event.target.files)" name="file" id="myInput" />
+                    <button class="btn btn-primary" accept=".xlsx" (click)="Uploader()">Upload</button>
+            </div>
+        </div>
+   
+</div>
+ 
+            <p-table #dt [value]="quadrantItems" styleClass="p-datatable-gridlines"   [tableStyle]="{'min-width': '50rem'}" responsiveLayout="scroll" [scrollable]="true" scrollHeight="60vh" text-align: center [globalFilterFields]="['ItemNumber','ItemName']">
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                        <input type="text" pInputText size="50" placeholder="Search Item Number / Item Name" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                            style="width:auto;border: solid 1px #ddd;">
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th  pTooltip="Item Number">Num<br>ber</th>
+                        <th pTooltip="item Name">Item<br>Name</th>
+                        <th>MOQ</th> 
+                        <th pTooltip="Average Selling Price">ASP</th>
+                        <th>New<br>ASP</th>
+                        <th pTooltip="Buyer Remark">Buyer<br>Remark</th>
+                        <th pTooltip="Sales Forecast">Sales<br>Forecast</th>
+                        <th pTooltip="Sales Remark">Sales<br>Remark</th>
+                        <th style="text-align: center;" pTooltip="System ForeCast">SF</th>
+                        <th pTooltip="Median">MDN</th>
+                        <th pTooltip="Min value">Min</th>
+                        <th pTooltip="Max value">Max</th>
+                        <th pTooltip="6 Month Dispatch">3 Mnth<br>Disp</th>
+                        <th  pTooltip="Month till date">MTD</th>
+                        <th pTooltip="Achievment Percentage">ACH%</th>
+                        <th pTooltip="Deviation Percentage">DVN%</th>
+                       
+                        <th>Status</th>
+                        <th>Save</th>
+                        <th>History</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-i="rowIndex">
+                    <tr>
+                        <td>{{item.ItemNumber?item.ItemNumber:0}}</td>
+                        <td >{{item.ItemName?item.ItemName:'-'}}</td>
+                        <td><input style="background-color: rgb(200, 243, 242);width: 104%;font-size: small;font-weight: 800;"  class="form-control" id="casesize" name="casesize" type="text" [disabled]="!(depolistarry && IsBuyerEdit) "  pTooltip="{{item.CaseSize}}" [(ngModel)]="item.CaseSize"></td>
+                        <td style="text-align: center;">{{item.ASP?item.ASP:0}}</td>
+                        <td> <input style="background-color: rgb(200, 243, 242);width: 104%;font-size: small;font-weight: 800;"class="form-control " type="text"  [disabled]="!(depolistarry && IsBuyerEdit)"  pTooltip="{{item.NewASP}}" [(ngModel)]="item.NewASP" min="0" /></td>
+                        <td><input style="background-color: rgb(200, 243, 242);width: 104%;font-size: small;font-weight: 800;" class="form-control" id="cty" name="ctyn" type="text" [disabled]="!(depolistarry && IsBuyerEdit) " pTooltip="{{item.BuyerRemark}}"   [(ngModel)]="item.BuyerRemark"></td>
+                        <td ><input class="form-control" style="background-color: bisque;width: 104%;font-size: small;font-weight: 800;"  [disabled]="!(roleListarry && IsHubLeadEdit) ||  item.Status=='Approval Pending' ||  item.Status=='Approved'" type="text"  pTooltip="{{item.CommitedForeCastInCase}}"  [(ngModel)]="item.CommitedForeCastInCase"></td>
+                        <td><input  class="form-control" style="background-color: bisque;width: 104%;font-size: small;font-weight: 800;"    id="SalesRemark" name="SalesRemark" type="text"  [disabled]="!(roleListarry && IsHubLeadEdit)" pTooltip="{{item.SalesRemark}}"  [(ngModel)]="item.SalesRemark" ></td>
+                        <td style="text-align: center;" >{{item.SystemForeCastInCase ? item.SystemForeCastInCase : 0}}</td>
+                        <td style="text-align: center;"><u (click)="MedianHistory(item)">{{item.MedianInCase?item.MedianInCase:0}}</u></td>
+                        <td style="text-align: center;" >{{item.MinValueInCase?item.MinValueInCase:0}}</td>
+                        <td style="text-align: center;" >{{item.MaxValueInCase?item.MaxValueInCase:0}}</td>
+                        <td>{{item.SixMonthDispatch?item.SixMonthDispatch:0}}</td>
+                        <td>{{item.CurrentDispatch ? item.CurrentDispatch : 0}}</td>
+                        <td>{{item.AchievmentPercentage > 0?item.AchievmentPercentage:0}}</td>
+                        <td [ngStyle]="(item.DeviationPercentage > 10 ) ?{'color': 'red'}:{'color':'green'}" >{{item.DeviationPercentage > 0?item.DeviationPercentage:0}}</td>
+
+                        <td>{{item.Status ? item.Status :'-'}}</td>
+                        <td><button class="btn btn-primary mr-2" [disabled]="!(depolistarry || roleListarry)" style="width: 123%;" (click)="SaveChanges(item)" >Save</button></td>
+                        <td><a class="view"(click)="History(item)">
+                            <i style="margin-left: 31%;border:orangered ; color: orangered; margin-bottom: 25%;"  pTooltip="History"  class="fa fa-history fa-2x" aria-hidden="true"></i>
+                        </a></td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                        <td colspan="13" style="text-align: center;">
+                            <br>
+                            <h4><b>No Data Found.</b></h4>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+    </div>
+    
+</div>
+<p-dialog header="Enter Your Comment" [(visible)]="commentDialog" [resizable]="false"  (onHide)="cancelComment()" [modal]="true" appendTo="body"
+    positionTop="100" [style]="{width: '28%',height: '25%'}">
+    <div class="row">
+        <div class="col-md-12 mt-2" style="text-align: center;">
+            <textarea name="" id="" [(ngModel)]="Comment" cols="45" rows="5"></textarea>
+
+        </div>
+        <div class="col-md-12" style="text-align: center; margin-top: 15px;">
+            <button class="btn btn-primary mr-2" (click)="commentSave()">Save</button>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog [(visible)]="MedianDialog" [resizable]="true" [modal]="true" appendTo="body" positionTop="50"
+    [style]="{width: '83vw',height: '28%'}">
+
+    <p-table [value]="getOverAllMedian" styleClass="p-datatable-gridlines" scrollHeight="55vh">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 100px;" *ngFor="let data of getOverAll">{{data}}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td *ngFor="let col of getOverAll">{{product[col]}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="13" style="text-align: center;">
+                    <br>
+                    <h4><b>No Data Found.</b></h4>
+                </td>
+            </tr>
+        </ng-template>
+
+    </p-table>
+</p-dialog>
+
+<p-dialog [(visible)]="Historypopup" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '80%',height: '40%'}">
+
+    <p-table [value]="HistoryList" [scrollable]="true" scrollHeight="45vh">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>MOQ</th>
+                <th>ASP</th>
+                <th> Sales Forecast</th>
+                <th>Buyer Remark</th>
+                <th>Sales Remark</th>
+                <th>CreatedBy</th>
+                <th>CreatedDate</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.CaseSize ? item.CaseSize : 0}}</td>
+                <td >{{item.ASP>0 ? item.ASP : 0}}</td>
+                <td >{{item.Forast>0 ? item.Forast : 0}}</td>
+                <td>{{item.BuyerRemark?item.BuyerRemark:'-'}}</td>
+                <td> {{item.SalesRemark?item.SalesRemark:'-'}}</td>
+                <td>{{item.CreatedBy?item.CreatedBy:'-'}}</td>
+                <td>{{item.CreatedDate | date: 'dd/MM/yyyy HH:mm:ss:aa'}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="13" style="text-align: center;">
+                    <br>
+                    <h4><b>No Data Found.</b></h4>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

@@ -1,0 +1,59 @@
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form" name="form" #testForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section">Add Voucher Type Info</h4>
+                  <div class="row col-md-12" *ngIf="voucherType">
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="fname" class="col-md-6"> Name</label>
+                        <input type="text" id="fname" class="form-control" name="fname" aria-label=""
+                          [(ngModel)]="voucherType.Name" placeholder="Enter Name" required="1" maxlength="50" minlength="2"
+                          #firstName="ngModel" />
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code>Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                            <code>Minlength 2</code>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="Category" class="col-md-6">Category</label>
+                        <select id="Category" name="status" class="form-control" data-toggle="tooltip"
+                        data-trigger="hover" data-placement="top" data-title="Category" placeholder="Select a Category"  [(ngModel)]="voucherType.Category">
+                        <option value="status">--SelectCategory--</option>
+                        <option value="Inventory">Inventory</option>
+                        <option value="Accounting">Accounting</option>
+                      </select>
+                      </div>
+                    </div>
+                 
+  
+                  </div>
+                </div>
+                <div class="form-actions  right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                  Cancel
+                  </button>
+                  <button type="submit" class="btn btn-raised btn-primary" (click) = "onclick(testForm)">
+                  Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,381 @@
+<div class="container-fluid">
+
+
+    <div class="header">
+        <h3 class="m-2"><b>HOP Field DashBoard</b></h3>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="row p-2">
+                    <div class="col-3">
+                        <label>
+                            Warehouse
+                        </label>
+                        <p-dropdown [options]="allWarehouseList" [(ngModel)]="selectedWarehouse"
+                            optionLabel="WarehouseName" (onChange)="loadAllFields()">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-3">
+                        <label>
+                            Heads
+                        </label>
+                        <p-dropdown [options]="HeadNameList" [(ngModel)]="selectedHeadNameList" optionLabel="HeadName"
+                            (onChange)="headChange()">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="graphsValue.length > 0">
+
+        <div class="col-4" *ngFor="let cards of graphsValue; let i=index;">
+            <div class="card height shadow">
+
+                <h5 style="padding-top: 12px; padding-right:12px; padding-left:12px;font-weight:bold;">
+                    {{cards.PlanType}}</h5>
+                <h4 style="padding-top: 12px; padding-right:12px; padding-left:12px;font-weight:bold;">
+                    {{cards.firstMonthValue | number : '1.2-2'}}
+                </h4>
+                <div class="row">
+                    <div class="col-6" style="padding-top:30px;padding-bottom:20px;padding-left:45px; line-height:8px;">
+                        <div class="mrl">
+                            <div>
+                                <p style="color: red;"> Target :
+                                </p>
+                            </div>
+                            <div>
+                                <p style="font-weight:500;">{{cards.firstPlannedValue | number : '1.2-2'}}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row pt-2" *ngIf="cards.ArrowDirection == 'UP'">
+                            <label class="card-subtitle" style="color: green;"> Achieved % :
+                                {{cards.AchievedPercent}} </label>
+                        </div>
+                        <div class="row" *ngIf="cards.ArrowDirection == 'DOWN'">
+                            <label class="card-subtitle" style="color: red;"> Achieved % :
+                                {{cards.AchievedPercent}} </label>
+                        </div>
+                    </div>
+
+                    <div class="col-6 mm">
+
+                        <app-bar-chart-partial chartId="{{'abcc-' +i}}" [cards]="cards"></app-bar-chart-partial>
+                        <!-- <p-chart type="bar" [data]="cards.graph" [options]="optionChart"></p-chart> -->
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-9">
+                            <h4 class="card-title" id="section1">Drilldown Metrics</h4>
+                        </div>
+                        <div class="col-3">
+                            <label> Plantype</label>
+                            <p-dropdown [options]="PlanTypeList" [(ngModel)]="selectedPlanTypeList" optionLabel="name"
+                                (onChange)="loadAllFields()">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <p-table [value]="pureColumns">
+                            <ng-template pTemplate="header">
+                                <tr style="text-align:center;">
+                                    <!-- <th>Header</th> -->
+                                    <th rowspan="1" colspan="2">KPI / Month</th>
+                                    <th rowspan="1" colspan="3">{{curMonName}} - {{curYear}}</th>
+                                    <th rowspan="1" colspan="3">{{firstLastMonth}} - {{firstYear}}</th>
+                                    <th rowspan="1" colspan="3">{{secondLastMonth}} - {{secondYear}}</th>
+                                </tr>
+                                <tr style="text-align:center;">
+                                    <!-- <th class="bor"
+                                            style="background-color:#fff !important;color:#000 !important;border: solid 1px #ddd !important;">
+                                        </th> -->
+                                    <th colspan="2" class="bor"
+                                        style="background-color:#fff !important;color:#000 !important;border: solid 1px #ddd !important;">
+                                        &nbsp; </th>
+
+
+
+
+
+
+
+                                    <th rowspan="2"
+                                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                        class="bor txt-left">Actual</th>
+                                    <th rowspan="2"
+                                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                        class="bor txt-left">Target</th>
+                                    <th rowspan="2"
+                                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                        class="bor txt-left">Achieved %</th>
+
+
+
+
+
+
+
+                                    <th rowspan="2"
+                                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                        class="bor txt-left">Actual</th>
+                                    <th rowspan="2"
+                                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                        class="bor txt-left">Target</th>
+                                    <th rowspan="2"
+                                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                        class="bor txt-left">Achieved %</th>
+
+
+
+
+
+                                    <th rowspan="2"
+                                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                        class="bor txt-left">Actual</th>
+                                    <th rowspan="2"
+                                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                        class="bor txt-left">Target</th>
+                                    <th rowspan="2"
+                                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                        class="bor txt-left">Achieved %</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr style="text-align:center;color: #0C0A00; cursor: pointer;border:solid 1px  #ddd;">
+                                    <!-- <td class="bor pad">{{item.headerName}} <p></p>
+                                    </td> -->
+
+
+                                    <td colspan="2" class="bor pad">{{item.KPI}} <p></p>
+                                    </td>
+
+
+
+                                    <td class="bor pad">{{item.firstAchievedValue | number : '1.0-2'}} </td>
+                                    <td class="bor pad">{{item.firstPlannedValue | number : '1.0-2'}} </td>
+                                    <td class="bor pad">
+                                        <ng-container>
+                                            {{item.firstAchievedPercent | number : '1.0-2'}} &nbsp;
+                                            <i class="fa fa-caret-up" aria-hidden="true"
+                                                *ngIf="item.firstAchievedPercent != 0 && item.firstAchievedPercentDirection == 'UP'"
+                                                style="color: rgb(8, 221, 8);"></i>
+                                            <i class="fa fa-caret-down" aria-hidden="true"
+                                                *ngIf="item.firstAchievedPercent != 0 && item.firstAchievedPercentDirection == 'DOWN'"
+                                                style="color: red;"></i>
+                                        </ng-container>
+                                    </td>
+
+                                    <td class="bor pad">{{item.secondLastAchievedValue | number : '1.0-2'}} </td>
+                                    <td class="bor pad">{{item.secondLastPlannedValue | number : '1.0-2'}} </td>
+                                    <td class="bor pad">
+                                        <ng-container>
+                                            {{item.secondLastAchievedPercent | number : '1.0-2'}} &nbsp;
+                                            <i class="fa fa-caret-up" aria-hidden="true"
+                                                *ngIf="item.secondLastAchievedPercent != 0 && item.secondAchievedPercentDirection == 'UP'"
+                                                style="color:  rgb(8, 221, 8);;"></i>
+                                            <i class="fa fa-caret-down" aria-hidden="true"
+                                                *ngIf="item.secondLastAchievedPercent != 0 && item.secondAchievedPercentDirection == 'DOWN'"
+                                                style="color: red;"></i>
+                                        </ng-container>
+                                        <!-- <ng-template #second>
+                                            <ng-container
+                                                *ngIf="item.secondLastAchievedPercent < 0.90  && item.secondLastAchievedPercent!=''">
+                                                {{item.secondLastAchievedPercent | number : '1.0-2'}} &nbsp; <i
+                                                    class="fa fa-caret-down" aria-hidden="true"></i>
+                                            </ng-container>
+                                        </ng-template> -->
+                                    </td>
+
+
+
+                                    <td class="bor pad">{{item.LastAchievedValue | number : '1.0-2'}} </td>
+                                    <td class="bor pad">{{item.LastPlannedValue | number : '1.0-2'}} </td>
+                                    <td class="bor pad">
+                                        <ng-container>
+                                            {{item.LastAchievedPercent | number : '1.0-2'}} &nbsp;
+                                            <i class="fa fa-caret-up" aria-hidden="true"
+                                                *ngIf="item.LastAchievedPercent != 0 && item.LastAchievedPercentDirection == 'UP'"
+                                                style="color:  rgb(8, 221, 8);;"></i>
+                                            <i class="fa fa-caret-down" aria-hidden="true"
+                                                *ngIf="item.LastAchievedPercent != 0 && item.LastAchievedPercentDirection == 'DOWN'"
+                                                style="color: red;"></i>
+                                        </ng-container>
+                                        <!-- <ng-template #second>
+                                            <ng-container
+                                                *ngIf="item.LastAchievedPercent < 0.90 && item.LastAchievedPercent!='' ">
+                                                {{item.firstAchievedPercent | number : '1.0-2'}} &nbsp; <i
+                                                    class="fa fa-caret-down" aria-hidden="true"></i>
+                                            </ng-container>
+                                        </ng-template> -->
+                                    </td>
+
+
+
+
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <label *ngIf="!isAureColumns">
+                            No Records available
+                        </label>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-6">
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 heightt">
+                            <table style="width:100% !important; border:solid 1px #000;">
+                                <thead style=" position: sticky; top:0px; padding:15px 0px !important;
+                                background-color:#000; color:#fff;">
+                                    <tr class="pad">
+                                        <th class="pad">Cluster</th>
+                                        <th class="pad">{{curMonName}} - {{curYear}}</th>
+                                        <th class="pad">{{firstLastMonth}} - {{firstYear}}</th>
+                                        <th class="pad">{{secondLastMonth}} - {{secondYear}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- (click)="getBrandData(item)" -->
+                                    <tr style="text-align:center;color: #0C0A00;" *ngFor="let item of allClusterList">
+                                        <td style="text-align:center !important;background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">{{item.ObjectName}}</td>
+                                        <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">
+                                            {{item.firstMonthValue }}</td>
+
+                                        <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">
+                                            {{item.midMonthValue }}</td>
+                                        <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">
+                                            {{item.lastMonthValue }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <label *ngIf="!isAllClusterList">
+                                No Records available
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-6">
+
+
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <table
+                                style="width:100% !important; border:solid 1px #000; background-color:#000;color:#fff;">
+                                <thead style="position: sticky; top:0px;">
+                                    <tr>
+                                        <th class="pad">Store</th>
+                                        <th class="pad">{{curMonName}} - {{curYear}}</th>
+                                        <th class="pad">{{firstLastMonth}} - {{firstYear}}</th>
+                                        <th class="pad">{{secondLastMonth}} - {{secondYear}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- (click)="getBrandData(item)" -->
+                                    <tr style="text-align:center;color: #0C0A00;" *ngFor="let item of allStoreList">
+                                        <td style="text-align:center !important;background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">{{item.ObjectName}}</td>
+                                        <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad"> {{item.firstMonthValue }}</td>
+
+                                        <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">{{item.midMonthValue }}</td>
+                                        <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">{{item.lastMonthValue }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <label *ngIf="!isAllStoreList">
+                                No Records available
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="card shadow text-center">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 b-high">
+                            <table style=" width:100% !important;">
+                                <thead style="position: sticky; top:0px;background-color:#000;color:#fff;">
+                                    <tr>
+                                        <th class="pad">Brand</th>
+                                        <th class="pad">{{curMonName}} - {{curYear}}</th>
+                                        <th class="pad">{{firstLastMonth}} - {{firstYear}}</th>
+                                        <th class="pad">{{secondLastMonth}} - {{secondYear}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- (click)="getBrandData(item)" -->
+                                    <tr style="text-align:center;color: #0C0A00;" *ngFor="let item of allBrandList">
+                                        <td style="text-align:center !important;background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">{{item.ObjectName}}</td>
+                                        <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">
+                                            {{item.firstMonthValue }}</td>
+
+                                        <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">
+                                            {{item.midMonthValue }}</td>
+                                        <td style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                                            class="pad">
+                                            {{item.lastMonthValue }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <label *ngIf="!isAllBrandList">
+                                No Records available
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+
+</div>

@@ -1,0 +1,63 @@
+
+<p-toast class="toast"></p-toast><p-toast class="toast"></p-toast>
+
+<!-- <div class="header">
+  <h3 class="m-2"><b>Supplier Payemnt Details</b></h3>
+</div> -->
+<div class="ui-fluid shadow p-3 m-2 mt-4 bg-white rounded table table-hover min-height-80">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2"><b>Supplier Payemnt Details</b></h3>
+        </div>
+    </div>
+  <div class="position-relative">
+      
+      
+      <div class="position-relative ">
+          <p-table  #dt [globalFilterFields]="cols"  [value]="supplierpaymentrequest" [paginator]="true" [rows]="20" dataKey="paymentRequestid" [scrollable]="true" scrollHeight="70vh" class="center">
+              
+            <ng-template pTemplate="header" >
+              <tr>
+                <th>Id</th>
+                <th>SupplierId</th>
+                <th>SupplierCode</th>
+                <th>POId</th>
+                <th>SupplierName</th>
+                <th>CityName</th>
+                <th>Createdby</th>  
+                <th>Amount</th>
+                <th>Status</th>
+                <th>CreatedDate</th>
+                <th>Approved</th>
+                <th>Reject</th>
+                <th>Pay</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData  let-columns="columns"  let-expanded="expanded" >
+              <tr >
+                <td>{{rowData.paymentRequestid}}</td>
+                <td>{{rowData.SupplierId}}</td>
+                <td>{{rowData.SUPPLIERCODES}}</td>
+                <td>{{rowData.POId}}</td>
+                <td>{{rowData.Name}}</td>
+                <td>{{rowData.CityName}}</td>
+                <td>{{rowData.Createdby}}</td>
+                <td>{{rowData.Amount}}</td>
+                <td>{{rowData.status}}</td>
+                <td>{{rowData.CreatedDate}}</td>
+                <td>
+                  <button  class="btn btn-raised btn-primary center" *ngIf="rowData.status=='Pending for Purchase'" (click)="approved(rowData)"> Approved</button>
+                </td>
+                <td>
+                  <button  class="btn btn-raised btn-danger center" *ngIf="rowData.status=='Pending for Purchase'"  (click)="reject(rowData)"> Reject</button>
+                </td>
+                <td>
+                  <button  class="btn btn-raised btn-primary center" *ngIf="rowData.status=='Approved'" (click)="pay(rowData)"> Pay</button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+      </div>
+  </div>
+</div>

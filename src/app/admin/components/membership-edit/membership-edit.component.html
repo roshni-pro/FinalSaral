@@ -1,0 +1,135 @@
+<div class="col-md-12">
+    <div class="card pt-2">
+        <div class="card-content">
+            <div class="px-3">
+
+                <form class="form" name="form" #membershipForm="ngForm">
+                    <!-- <input autocomplete="false" name="hidden" type="text" style="display:none;"> -->
+                    <div class="form-body">
+                        <h5 class="m-1 ml-2"><strong><i class="ft-user"></i><b>Add Membership Details</b></strong></h5>
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="name"><b>Membership Name: </b><span style="color:red">
+                                            *</span></label><br>
+                                    <input type="text" id="name" class="form-control" name="MemberShipName"
+                                        [(ngModel)]="MemberShip.MemberShipName" placeholder="Enter MemberShip Name"
+                                        required="1" maxlength="80" minlength="2" #MemberShipName="ngModel" />
+                                    <div class="col-md-6"></div>
+                                    <div *ngIf="isInvalid && !MemberShipName.valid && MemberShipName.errors.required">
+                                        <code>MemberShip Name  is required</code>
+                                    </div>
+                                    <div *ngIf="isInvalid && !MemberShipName.valid && MemberShipName.errors.minlength">
+                                        <code>Minlength 2</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="name"><b>Membership Name Hindi:</b><span style="color:red">
+                                            *</span></label><br>
+                                    <input type="text" id="name" class="form-control" name="MemberShipHindiName"
+                                        [(ngModel)]="MemberShip.MemberShipHindiName"
+                                        placeholder="Enter MemberShip HindiName" required="1" maxlength="80"
+                                        minlength="2" #MemberShipHindiName="ngModel" />
+                                    <div class="col-md-6"></div>
+                                    <div
+                                        *ngIf="isInvalid && !MemberShipHindiName.valid && MemberShipHindiName.errors.required">
+                                        <code>MemberShip Name  is required</code>
+                                    </div>
+                                    <div
+                                        *ngIf="isInvalid && !MemberShipHindiName.valid && MemberShipHindiName.errors.minlength">
+                                        <code>Minlength 2</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="code"> <b>Amount: </b><span style="color:red">
+                                            *</span></label><br>
+                                    <input type="number" id="code" class="form-control" name="Amount"
+                                        [(ngModel)]="MemberShip.Amount" placeholder="Enter Amount" required="1"
+                                        #Amount="ngModel" />
+                                    <div *ngIf="isInvalid && !Amount.valid && Amount.errors.required">
+                                        <code>Amount  is required</code>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="cname"><b>MemberShip In Month: </b></label>
+                                    <input type="number" id="name" class="form-control" name=">MemberShipInMonth"
+                                        [(ngModel)]="MemberShip.MemberShipInMonth">
+                                </div>
+                            </div>
+                            <div class=" col-md-6">
+                                <div class="form-group">
+                                    <label for="des"><b>Membership Description: </b></label>
+                                    <textarea type="text" id="des" class="form-control" name="des"
+                                        [(ngModel)]="MemberShip.MemberShipDescription" placeholder="Enter Discription"
+                                        rows="4" cols="180"></textarea>
+                                </div>
+                            </div>
+
+                            <div class=" col-md-6">
+                                <div class="form-group">
+                                    <label for="desc1"><b>MemberShip Hindi Description: </b></label>
+                                    <textarea type="text" id="desc1" class="form-control" name="MemberShipHindiDescription"
+                                        [(ngModel)]="MemberShip.MemberShipHindiDescription" placeholder="Enter Discription"
+                                        rows="4" cols="180"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="uploadAdvertisements"><b>Upload MemberShip Logo:</b></label><br />
+                                    <input class="btn btn-primary" id="file" type="file" accept="image/*"
+                                        (change)="upload($event.target.files)" />
+                                    <br>
+                                    <button type="button" class="btn btn-raised btn-primary " (click)="onUpload()">
+                                        Upload
+                                    </button>
+                                    <div class="form-group">
+                                        <img alt="" [src]="MemberShip.MemberShipLogo" height="100"
+                                            *ngIf="MemberShip.MemberShipLogo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" col-md-3">
+                                <div class="form-group">
+                                    <label for="active"><b> Active </b></label>
+                                    <div class="custom-control custom-checkbox custom-control-inline">
+                                        <div class="col-md-3">
+                                            <input class="custom-control-input" id="customCheckboxInline1"
+                                                name="customCheckboxInline1" type="checkbox"
+                                                [(ngModel)]="MemberShip.IsActive">
+                                            <label class="custom-control-label" for="customCheckboxInline1"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-actions right col-sm-12 p-3">
+                        <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()"> Cancel
+                        </button>
+
+                        <button type="submit" class="btn btn-raised btn-primary" (click)="onSave(membershipForm)">
+                            Save</button>
+
+                    </div>
+                    <p-toast style="position: fixed;" [style]="{marginTop: '180px'}"></p-toast>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

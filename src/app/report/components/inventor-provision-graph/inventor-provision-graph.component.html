@@ -1,0 +1,59 @@
+<div class="header">
+    <h3 class="header"><b>inventory Provision Graph </b></h3>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="Warehouse">Select Warehouse</label><br>
+                <p-multiSelect [options]="warehouseList" name="warehouseList" optionLabel="label"  
+                [(ngModel)]="warehouseId" [filter]="true"  placeholder="select warehouse">
+           </p-multiSelect>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="Warehouse">Select Brand</label><br>
+                <p-multiSelect optionLabel="BrandName" [options]="BrandList"
+                    [(ngModel)]="selectedBrands" [filter]="true"  placeholder="select Brand">
+                </p-multiSelect>
+            </div>
+      
+            <!-- <div class="form-group col-md-2 mb-3" >
+                <i class="pi pi-search"></i> <label>Search</label><br>
+                <input type="text" pInputText  placeholder="Global Filter" (input)="filterGlobal($event.target.value)"
+                [(ngModel)]="Filterkeyword" style="width:100%"
+                 >                  
+            </div> -->
+
+            <div class="form-group col-md-1.5">
+                <label>Month Range</label><br>
+                <p-calendar [(ngModel)]="dateRange" view="month" dateFormat="mm/yy" selectionMode="range" [readonlyInput]="true" (ngModelChange)="onDateChange($event)" [showIcon]="true"></p-calendar>
+                <!-- <p-calendar [(ngModel)]="selectedRange" selectionMode="range" (ngModelChange)="onDateChange($event)"  [showIcon]="true" [readonlyInput]="true"></p-calendar><br> -->
+                <!-- <span *ngIf="errorMsg" style="color:red;">Minimum date range should be</span><br>
+                <span *ngIf="errorMsg" style="color:red;"> one month</span> -->
+            </div>
+            <!-- <div class="form-group col-md-2 mt-1">
+                <label></label><br>
+                <p-dropdown [options]="GraphModeList" [disabled]="true" name="GraphModeList" optionLabel="label" [(ngModel)]="GraphMode">
+                </p-dropdown>
+            </div> -->
+            <div class="form-group col-md mt-1 text-right">
+                <label></label><br>
+                <button type="button"   
+                     class="btn btn-primary" (click)="Searchbtn()">Search 
+                </button>
+                <button id="btnExport" class="btn btn-success ml-2"                   
+                (click)="redirect()" >Back
+            </button>
+            </div>             
+        </div>
+    </div>
+</div>
+<div class="card"> 
+    <p-toast [style]="{marginTop: '80px'}"></p-toast>
+    <p-chart type="line" [data]="data" (onDataSelect)="selectData($event)"></p-chart>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

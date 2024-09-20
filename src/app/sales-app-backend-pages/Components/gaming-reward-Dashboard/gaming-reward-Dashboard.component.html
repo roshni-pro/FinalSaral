@@ -1,0 +1,128 @@
+<p-toast></p-toast>
+<h3 class=" heading mt-4 abb" >Gaming Reward Dashboard</h3>
+    <div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-sm-2 mt-2">
+                        <label><b>City</b></label>
+                        <p-dropdown  
+                          placeholder="Select City" [options]="cityListData"  [filter]="true" [(ngModel)]="selectedCities" optionLabel="CityName" (onChange)="getAllHUbList(selectedCities)"></p-dropdown>
+                    </div>     
+                    <div class="col-sm-2 mt-2">
+                      <label><b>SkCode</b></label><br>
+                      <input type="text" class="form-control" type="text" [(ngModel)]="selectedSkCode">
+                     
+                    </div>
+                    <div  class="col-sm-2 mt-2">
+                      <label><b>From Bucket No</b></label>
+                      <input type="number" class="form-control"  [(ngModel)]="fromBucket">
+                    </div>
+                    <div  class="col-sm-2 mt-2">
+                      <label><b>To Bucket No</b></label>
+                      <input type="number" class="form-control"  [(ngModel)]="toBucket">
+                    </div>
+                    <div  class="col-sm-2 mt-4">
+                     <button class="btn btn-primary" (click)="onSearch()">Search</button>
+                     </div>
+                     <div  class="col-sm-2 mt-4">
+                     <button class="btn btn-raised align-self-end ml-5" style="background-color: #148000c9;color:white;float: right" (click)="ExportDashBoardData()">Export</button>
+                    </div>
+                </div>    
+            </div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+          <p-table [value]="rewardDashboardData" [paginator]="true" [rows]="10" [lazy]="true"
+          (onLazyLoad)="load($event)" [totalRecords]="totalRecords" >
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th style="width:1rem"></th>
+                      <th>SkCode </th>
+                      <th>CustomerId </th>
+                      <th >ShopName</th>
+                      <th>CrmBucketNo </th>
+                      <th>Game Level</th>
+                      <th>RewardBucketNo</th>
+                      <th>NextReward
+                        <br>BucketNo</th>
+                      <th>BucketStartDate </th>
+                      <th>BucketEndDate </th>
+                      <th>LastOrderDate </th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                  <tr (click)="showPop(data.SkCode )">
+                      <td style="width:1rem"></td>
+                      <td>{{data.SkCode  }}</td>
+                      <td>{{data.CustomerId }}</td>
+                      <td>{{data.ShopName }}</td>
+                      <td>{{data.CrmBucketNo }}</td>
+                      <td>{{data.CurrentBucket}}</td>
+                      <td>{{data.BucketNo}}</td>
+                      <td>{{data.NextBucketNo}}</td>
+                      <td>{{data.BucketStartDate |date:'dd/MM/yy'}}</td>
+                      <td>{{data.BucketEndDate |date:'dd/MM/yy'}}</td>   
+                      <td>{{data.LastOrderDate |date:'dd/MM/yy'}}</td>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                  <tr>
+                    <td colspan="11" >
+                      <br>
+                      <h3 style="text-align: center;color: blue;">No Data Found.</h3>
+                    </td>
+                  </tr>
+              </ng-template>
+          </p-table>
+          </div>
+          </div>
+        <p-dialog header="GameDashboardDetail" [(visible)]="isShowPOp" [resizable]="false" positionTop="50" [modal]="true"
+    appendTo="body" [draggable]="false" [style]="{width: '80%', top: '70px'}">
+    <!-- <div class="card"> -->
+      <div class="col-12 text-right">
+        <button class="btn btn-primary ml-2" (click)="ExportDashBoardDetails()">Export</button>
+      </div>
+    <p-table  [style]="{height: '80%', overflow:'scroll'}" [value]="GetGameDashboardDetail" [paginator]="true" [rows]="10">
+      <ng-template pTemplate="header">
+          <tr>
+              <th style="width:1rem"></th>
+              <th>Game Level</th>
+              <th>RewardBucketNo</th>
+              <th>OrderId </th>
+              <th>RewardCredit</th>
+              <th>RewardStatus </th>
+              <th>GameBucketRewardCondition</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+          <tr>
+              <td  style="width:1rem"></td>
+              <td>{{item.CurrentBucket}}</td>
+              <td>{{item.BucketNo}}</td>
+              <td>{{item.OrderId }}</td>
+              <td>{{item.RewardCredit}}</td>
+              <td>{{item.RewardStatus}}</td>
+              <td>{{item.gameBucketRewardCondition}}</td>
+              <td>{{item.BucketStartDate |date:'dd/MM/yy'}}</td>
+              <td>{{item.BucketEndDate |date:'dd/MM/yy'}}</td>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" >
+              <br>
+              <h3 style="text-align: center;color: blue;">No Data Found.</h3>
+            </td>
+          </tr>
+      </ng-template>
+  </p-table>
+<!-- </div> -->
+</p-dialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}"
+        strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

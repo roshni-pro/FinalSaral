@@ -1,0 +1,127 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">VAN Transaction </h3>
+    </div>
+
+</div>
+<div class="my-2 card shadow row ">
+    <div class="col-12">
+        <div class="row p-2">
+            <div class="col-lg-3  col-md-6 col-sm-12">
+                <label for="ware"><b>Select City:</b></label>
+                <p-multiSelect [options]="cityList" name="label" [(ngModel)]="selectedCityList"
+                    (onChange)="onSelectCity(selectedCityList)" optionLabel="CityName" #label="ngModel" required="1">
+                </p-multiSelect>
+
+            </div>
+            <div class="col-lg-3  col-md-6 col-sm-12">
+                <label for="ware"><b>Select Hub:</b></label>
+                <p-multiSelect [options]="hubList" name="hublabel" [(ngModel)]="selectedHubList"
+                    (onChange)="getVanTransactionByFilter()" optionLabel="WarehouseName">
+                </p-multiSelect>
+
+            </div>
+            <div class="col-3">
+                <label><b> SK-Code </b></label>
+                <input class="form-control" type="text" [(ngModel)]="keyword">
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary" (click)="getVanTransactionBySKcode()" style="margin-top: 2em;">Search</button>
+                <button class="btn btn-primary ml-2" (click)="exportDownload()" style="margin-top: 2em;">Export</button>
+            </div>
+            <!-- <div class="col-1">
+                <button class="btn btn-primary" style="margin-top: 2em;">Export To
+                    Excel</button>
+            </div> -->
+        </div>
+    </div>
+    <div class="col-12 text-center">
+        <div class=" p-2">
+            <p-table [value]="vanTransactionList" dataKey="id" [paginator]="true" [rows]="10" [(first)]="first">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Extand</th>
+                        <th>Warehouse</th>
+                        <th>SK-Code</th>
+                        <th>Reference Number</th>
+                        <th>User Reference Number</th>
+                        <th>Name</th>
+                        <th>Mobile</th>
+                        <th>Added Amount</th>
+                        <th>Created Date</th>
+                        <th>Mode Of Payment</th>
+                        <th>Used Amount</th>
+                        <th>Remaining Amount</th>
+                        <th>Export</th>
+                    </tr>
+                </ng-template>
+
+
+                <ng-template pTemplate="body" let-rowData let-expanded="expanded">
+                    <tr href="#" [pRowToggler]="rowData">
+                        <td>
+                            <!-- <button type="button" pButton pRipple [pRowToggler]="rowData.Skcode"
+                                class="p-button-text p-button-rounded p-button-plain"
+                                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button> -->
+                            <!-- <a href="#" [pRowToggler]="rowData"> -->
+                                <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                            <!-- </a> -->
+                        </td>
+                        <td>{{rowData.WarehouseName}}</td>
+                        <td>{{rowData.Skcode}}</td>
+                        <td>{{rowData.AlertSequenceNo}}</td>
+                        <td>{{rowData.UserReferenceNumber}}</td>
+                        <td>{{rowData.Name}}</td>
+                        <td>{{rowData.Mobile}}</td>
+                        <td>{{rowData.Amount | currency:'INR'}}</td>
+                        <td>{{rowData.CreatedDate | date : 'medium'}}</td>
+                        <td>RTGS</td>
+                        <td>{{rowData.UsedAmount| currency:'INR'}}</td>
+                        <td>{{rowData.Amount - rowData.UsedAmount | currency:'INR'}}</td>
+                        <td>
+                            <button class="btn btn-success" style="color: white !important;
+                            background-color: green;" (click)="subExcelDownload(rowData.VANOrderLists)">Export</button>
+                        </td>
+                    </tr>
+                </ng-template>
+
+
+
+                <ng-template pTemplate="rowexpansion" let-rowData>
+                    <tr>
+                        <td colspan="9">
+                            <div class="p-3 cc">
+                                <p-table [value]="rowData.VANOrderLists" dataKey="OrderID">
+                                    <ng-template pTemplate="header">
+                                        <tr >
+                                            <th>Date</th>
+                                            <th>OrderID</th>
+                                            <th>Order Amount</th>
+                                            <th>Used Amount</th>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="body" let-order>
+                                        <tr >
+                                            <td>{{order.CreatedDate | date : 'medium'}}</td>
+                                            <td>{{order.ObjectId}}</td>
+                                            <td>{{order.OrderAmount| currency:'INR'}}</td>
+                                            <td>{{order.UsedAmount | currency:'INR'}}</td>
+                                        </tr>
+                                    </ng-template>
+
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td>There are no order for this product yet.</td>
+                                        </tr>
+                                    </ng-template>
+
+                                </p-table>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

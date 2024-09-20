@@ -1,0 +1,195 @@
+
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>CURRENT NET STOCK (DEMAND EXCLUDED)</b></h3>
+    </div>
+    
+</div>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                    <div class="col-md-3">
+                     
+                        <div class="form-group">
+                            <label for="published">Hub</label><br>
+                            <select id="zone" name="zone" class="form-control" (change)="getHubVal($event.target.value)"  required="1">
+                                <option value="">--select--</option>
+                                <option *ngFor="let city of cityList" value="{{city.WarehouseId}}">
+                                    {{ city.WarehouseName }}                               
+                                </option>
+                            </select>
+                        </div><br><br><br>
+                        <div class="row">
+                            Net Stock Amount {{NetTotalamount | number:'1.2-2'}}
+                        </div>  
+                    </div>
+                    
+                 
+                    <!-- <div class="col-md-3">
+                     
+                        <div class="form-group">
+                            <label for="published">Showing </label><br>
+                                    {{ length }}
+                         </div>
+                    </div> -->
+                  <div class="col-md-3">
+                <div class="form-group" style="margin-top: 29px;">
+                    <button type="button" (click)="Search()"
+                        class="btn btn-raised btn-raised btn-success mt">Search</button>    
+                    <button id="btnExport" (click)="ExportData()"
+                        class="btn btn-raised btn-raised btn-info mt ml-2">Export Net Stock</button> 
+                        
+                        <div class="form-group">
+                            <label for="published">Is Active</label><br>
+                            <select id="isActive" name="isActive" class="form-control" (change)="getIsActiveVal($event.target.value)"  required="1">
+                                <option value="">--All--</option>
+                                <option value="0">Active</option>
+                                <option value="1">In Active</option>
+                            </select>
+                        </div>
+                          
+                </div>      
+                       
+            </div>
+          
+            <div class="col-md-3"> 
+                        <div class="form-group">
+                            <p class="ng-binding">Showing <br>
+                                    {{length}} / {{length}} entries
+                            </p>
+                         </div>
+                    </div>
+            
+                  
+                <p-table #dt [globalFilterFields]="cols"  [value]="search" [totalRecords]="totalRecords" 
+                    [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="caption">
+                        <div style="text-align: right">        
+                            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                            <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                        </div>
+                    </ng-template>    
+                    <ng-template pTemplate="header" >
+                        <tr>
+                          <th *ngFor="let col of cols" [pSortableColumn]="col.field"  style="text-align: center" >
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th>
+                        <!--  <th>Action</th> -->
+                       
+                        </tr>
+                       
+                      </ng-template>
+                      
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;">
+                            <td *ngFor="let col of cols" >
+                                <div *ngIf="col.field=='ItemNumber'">
+                                    <td class=" bg-danger text-white">{{item[col.field]}}</td>
+                                </div>
+                                <div *ngIf="col.field=='IsActive'">
+                                    <!-- <td class=" badge badge-info text-white">{{item[col.field] == 1 ? 'True' : 'False'}}</td> -->
+                                    <!-- <td class="badge text-white"  [ngClass]="item[col.field] == 1 ? 'green-classname' ? 'red-classname'">{{item[col.field] == 1 ? 'True' : 'False'}}</td> -->
+                                    <td class="badge text-white"  [ngClass]="item[col.field] == 1 ? 'badge-success' : 'badge-danger'">{{item[col.field] == 1 ? 'True' : 'False'}}</td>
+                                </div>
+                                <div *ngIf="col.field=='CurrentNetInventory'">
+                                    <td class=" badge badge-info text-white">{{item[col.field]}}</td>
+                                </div>
+                                <div *ngIf="col.field=='AverageAging'">
+                                    <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="openAvgDetail(item, $event)">{{item[col.field]}}</button>
+                                    <!-- <td class=" bg-info text-white">{{item[col.field]}}</td> -->
+                                </div>
+                                <div *ngIf="col.field=='FreestockNetInventory'">
+                                    <td class=" badge badge-info text-white">{{item[col.field]}}</td>
+                                </div>
+                                <!-- <ng-container *ngIf="col.field=='CurrentDeliveryCanceledInventory'">
+                                    <option *ngIf="CurrentDeliveryCanceledInventory !='0'" >   
+                                        <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="ExportRowData()">{{item[col.field]!= 0 }}</button>
+                                    </option>
+                                </ng-container> -->
+                                <div *ngIf="col.field=='CurrentDeliveryCanceledInventory'">
+                                    <td><span *ngIf="item[col.field]!= 0" class=" badge badge-info text-white">{{item[col.field]}}</span>
+                                    <button *ngIf="item[col.field]!= 0" type="button"
+                                     Class="btn btn-raised btn-success mr-1 btn-sm" (click)="ExportRowData(item)"><i class="ft-download"></i></button>
+                                </td>
+                                </div>
+                                <div>
+                                    <span *ngIf="col.field=='ItemMultiMrpId'">{{item[col.field]}}</span>
+                                    <span *ngIf="col.field=='MRP'">({{item[col.field]}})</span>
+                                </div>
+                                <!-- <ng-template #IsActive> <td class=" bg-danger text-white">{{item[col.field]}}</td></ng-template> -->
+                                <div *ngIf="col.field=='ItemName' || col.field=='ItemMultiMrpId(MRP)' || col.field=='NetInventory' || col.field=='OpenPOQTy'|| col.field=='DeliveryCancelDetails' || col.field=='AgingAvgPurchasePrice' || col.field=='ABCClassification'|| col.field=='Unitprice' || col.field=='CurrentNetStockAmount'|| col.field=='AveragePurchasePrice' || col.field=='MarginPercent'">
+                                    {{item[col.field]}}
+                                </div>
+                            </td>
+            
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+        <div class="card-footer"></div>
+    </div>
+</div>
+<div *ngIf="isdetails">
+    <p-dialog [header]="'Average details'" [(visible)]="isdetails" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+        class="testme" [style]="{width: '85%',height: '100%', overflow: 'auto'}">
+        <!-- <p-header> -->
+            <div>
+                <button id="btnExport1" (click)="exportAvgData()"
+                        class="btn btn-warning btn-raised btn-info mt ml-2">Export</button>
+                <div class="container-fluid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                
+                            <p-table #dt [globalFilterFields]="cols"  [value]="DamageorderDetails" [totalRecords]="DamageorderDetails" 
+                    [paginator]="true" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="caption">
+                        <div >        
+                         </div>
+                    </ng-template>    
+                    <ng-template pTemplate="header" >
+                        <tr>
+                       
+                          <th *ngFor="let col of colmns" [pSortableColumn]="col.field"  style="text-align: center" >
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th>
+                        <!--  <th>Action</th> -->
+                       
+                        </tr>
+                       
+                      </ng-template>
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;">
+                            
+                            <td *ngFor="let col of colmns" >
+                                <div *ngIf="col.field=='MinOrderQtyPrice'">
+                                  {{item[col.field]}
+                                </div>
+                               
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+                <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+            </div>
+                    </div>
+                  </div>
+                  
+                </div>
+                <div></div>
+            </div>
+        <!-- </p-header> -->
+      
+    </p-dialog>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

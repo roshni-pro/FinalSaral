@@ -1,0 +1,92 @@
+<section id="shoppinglist">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="content-header">Complaint Master</div>
+      </div>
+    </div>
+
+    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+      <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+      </p-footer>
+    </p-confirmDialog>
+
+    <form name="newForm" #holidayForm="ngForm">
+      <div class="form-footer m-2">Fields with * sign are mandatory to fill</div>
+      <div class="row">
+  
+           
+          <div class="col-sm-2">
+           
+                <label for="a" class="col-md-4">Type<span style="color:red"> *</span></label>
+                <select id="suppCat" name="suppCat" required="1"  class="form-control col-md-8" [(ngModel)]="data.UserType"
+                    (change)="Type(data.UserType)">
+                    <option value="People" selected>People</option>
+                    <option value="Customer">Customer</option>
+                </select>
+            </div>
+       
+    
+        <div class="col-md-2">
+            <label for="CategoryId">Category Name<span style="color:red"> *</span></label>
+            <input id="CategoryId" required="1" class="form-control" type="text" pInputText 
+                name="CategoryName" [(ngModel)]="data.CategoryName" placeholder="Category Name"  #catname="ngModel"  (keypress)="keypress($event,data.CategoryName)">
+          </div>    
+      
+          <div class="col-sm-2" style="margin-top:1.7%;" >
+            <button type="button" class="btn btn-raised btn-primary" name="search"  (click)="OnClick(data, holidayForm)">
+              Save
+            </button>
+          </div>
+      </div>
+    </form>
+
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+        <div class="position-relative">
+          <p-table [value]="ticketlist" [paginator]="true"  [rows]="10"
+          dataKey="OrderId" [scrollable]="true" scrollHeight="130vh" text-align: center>
+    
+            <ng-template pTemplate="header">
+              <tr>
+                <th>
+                    CategoryId
+                </th>
+             
+                <th>
+                    CategoryType
+                </th>
+                <th>
+                    CategoryName
+                </th>
+  <th>
+    IsActive
+  </th>
+         
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+              <tr >
+                <td>
+                  {{rowData.CategoryId}}
+                </td>
+                <td>
+                  {{rowData.CategoryType}}
+                </td>
+                <td>
+                  {{rowData.CategoryName}}
+                </td>
+                <td>
+                  <p-inputSwitch name="IsActive" [(ngModel)]="rowData.IsActive" (ngModelChange)="ActiveInactive(rowData)">
+                  </p-inputSwitch>
+                </td>
+              
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+    </div>
+    
+</section>
+  
+

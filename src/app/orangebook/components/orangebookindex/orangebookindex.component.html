@@ -1,0 +1,175 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="header">
+  <h3> <br>Orange Book (The Shopkirana Guide) </h3>
+</div>
+
+<div class="row">
+  <!-- <div>
+    <button (click)="NewPage()">I agree button</button>
+  </div> -->
+
+  <div class="ui-fluid shadow p-3 mb-2 bg-white rounded table table-hover min-height-80">
+    <div class="position-relative scroll h-100">
+      <div class="position-absolute subcategory-details" *ngIf="isDetails">
+        <app-orangebook-index-edit [details]="selectedRowDetails" (isdetailsclose)="isDetailsFalse($event)"
+          (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)" class="d-flex justify-content-end">
+        </app-orangebook-index-edit>
+      </div>
+      <div class="position-relative">
+        <div class="Card">
+          <h3 class="m-2 style:padding-left:50px;"><b>Index</b></h3>
+          <div *ngIf="OBActiveVersion != null">
+            <!-- <a href="{{url}}{{OBActiveVersion.FilePath}}" target="blank"> -->
+              <div class="text-right"> <strong style="color:orangered;font-size: medium;">
+                  Orange Book Version : {{OBActiveVersion.Version}}
+                </strong>
+              </div>
+            <br />
+          </div>
+          <ul *ngFor=" let O of OBVersionListnew">
+            <li> <a href="javascript:void(0)" (click)="openDetails(O)"
+                *ngIf="O.orangeBookSubCategory.length == 0 && IsUpload == true">
+                <i class="fa fa-upload" aria-hidden="true" ngbTooltip="Upload File"
+                [openDelay]="300" [closeDelay]="500"></i> </a>
+              &nbsp;&nbsp; <a href="javascript:void(0)" (click)="readCategoryfile(O)" ngbTooltip="Read File"
+              [openDelay]="300" [closeDelay]="500"
+                *ngIf="O.orangeBookSubCategory.length == 0"><i class="fa fa-book" aria-hidden="true"></i></a>
+              &nbsp;&nbsp; <a href="javascript:void(0)" *ngIf="O.orangeBookSubCategory.length == 0 && IsUpload == true" >
+                <i class="fa fa-history" aria-hidden="true" (click)="opencat(O)" ngbTooltip="History"
+                [openDelay]="300" [closeDelay]="500"></i> </a>
+              &nbsp;&nbsp;<b>{{O.CategoryName}}&nbsp;{{O.Version}} </b>&nbsp;<i class="fa fa-check icon"
+                *ngIf="!O.IsAccept && O.orangeBookSubCategory.length == 0" aria-hidden="true"></i>
+              <i class="fa fa-check icongreen" *ngIf="O.IsAccept && O.orangeBookSubCategory.length == 0"
+                aria-hidden="true"></i>
+
+              <ul *ngFor="let OBSC of O.orangeBookSubCategory">
+                <li> <a href="javascript:void(0)" (click)="openDetails(OBSC)" *ngIf="IsUpload == true"><i
+                      class="fa fa-upload" aria-hidden="true" ngbTooltip="Upload File"
+                      [openDelay]="300" [closeDelay]="500"></i></a> &nbsp;&nbsp; <a href="javascript:void(0)"
+                    (click)="readSubCategoryfile(OBSC)" ngbTooltip="Read File"
+                    [openDelay]="300" [closeDelay]="500"><i class="fa fa-book" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                  <a href="javascript:void(0)" *ngIf="IsUpload == true"><i class="fa fa-history" aria-hidden="true"
+                      (click)="opensubcat(OBSC)" ngbTooltip="History"
+                      [openDelay]="300" [closeDelay]="500"></i></a> &nbsp;&nbsp;
+                  &nbsp;&nbsp; {{OBSC.SubCategoryName}}&nbsp;{{OBSC.Version}}&nbsp;
+                  <i class="fa fa-check icon" *ngIf="!OBSC.IsAccept" aria-hidden="true"></i>
+                  <i class="fa fa-check icongreen" *ngIf="OBSC.IsAccept" aria-hidden="true"></i>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PopUp Functionality for history -->
+<div *ngIf="isOpenPopup">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+    <p-header>
+      Orange Book Version History
+    </p-header>
+
+    <div class="position-relative">
+      <p-table #dt [columns]="cols" [value]="OBVersionHistory" [paginator]="true" [rows]="20" dataKey="Id"
+        [scrollable]="true" scrollHeight="70vh" text-align: center>
+
+        <ng-template pTemplate="caption">
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of cols" style="text-align: center">
+              {{col.header}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+          <tr (click)="openDetails(rowData,$event)">
+            <td *ngFor="let col of columns" style="text-align: initial">
+              <div *ngIf="col.field!='FilePath'">
+                {{rowData[col.field]}}
+              </div>
+              <div *ngIf="col.field =='FilePath'">
+
+                <a href="{{url}}{{rowData[col.field]}}" target="blank"> {{rowData[col.field]}} </a>
+              </div>
+              <!-- {{rowData[col.field]}} -->
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-dialog>
+</div>
+
+
+<!-- PopUp Functionality for file upload -->
+<div *ngIf="isUploadPopup">
+  <p-dialog [(visible)]="isUploadPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '60%',height: '24%', overflow: 'auto'}">
+    <p-header>
+      File upload
+    </p-header>
+    <div class="position-relative">
+
+
+      <div class="row">
+        <br />
+        <h2> &nbsp;&nbsp;&nbsp;{{Name}} </h2>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <input class="btn btn-primary btn-raised" id="file" type="file" (change)="upload($event.target.files)" />
+            <label>Upload File (PDF Only)*</label>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="form-group">
+            <button type="button" class="btn btn-raised btn-primary" (click)="uploader()" [disabled]="!IsExtension">
+              Upload
+            </button>
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="form-actions right">
+            <button type="button" class="btn btn-raised btn-primary" (click)="AddOrangeBookVersion()">
+              <i class="fa fa-check-square-o"></i> Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</div>
+
+<!-- PopUp Functionality for readfile -->
+<div *ngIf="isPDF">
+  <p-dialog [(visible)]="isPDF" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%',height: '90%', overflow: 'auto'}">
+    <p-header>
+      View File
+    </p-header>
+    <div class="position-relative">
+      <iframe [src]="safeSrc" height="600px" width="100%"></iframe>
+      <div align="center">
+        <!-- <div align="center"> -->
+          <input type="checkbox" [(ngModel)]="IsAccept" [disabled]="IsAccept"> Is Accept <br/>
+          <button type="button" class="btn btn-raised btn-primary" *ngIf="!versionaccept" (click)="UserAcceptance()">
+            <i class="fa fa-check-square-o"></i> Save
+          </button>
+        <!-- </div> -->
+      </div>
+    </div>
+
+  </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

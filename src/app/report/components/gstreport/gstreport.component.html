@@ -1,0 +1,80 @@
+ <section id="customer-master">
+     <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header"> 
+
+        <div class="card-header">
+            <h1 class="h4"> GST Report<i class="fa fa-file-powerpoint-o"></i></h1>
+            </div>
+    <!-- <h3 align="center" >GST Report</h3> -->
+    </div>
+   
+    </div> 
+    <div class="row"> 
+      <div>
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    
+    </div>
+    
+    <div class="col-md-2">
+        <div class="form-group">
+          <label for="projectinput3">From Date</label>
+          <br>
+          <p-calendar name="startDateInput" [(ngModel)]="searchModel.FromDate" [showIcon]="true" 
+            name="fromDate" ></p-calendar>
+          <!-- <div [hidden]="!(isInvalid && !fromDate.valid)">
+            <code>Required!</code>
+          </div> -->
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label for="projectinput4">To Date</label>
+          <br>
+          <p-calendar name="endDateInput" [(ngModel)]="searchModel.ToDate" [showIcon]="true" name="toDate"
+            ></p-calendar>
+          <!-- <div [hidden]="!(isInvalid && !toDate.valid)">
+            <code>Required!</code>
+          </div> -->
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="name">Select State<span style="color:red"> *</span></label>
+        <select id="state" class="form-control"  name="state" (change)="onChangeState(searchModel.Stateid)" 
+        [(ngModel)]="searchModel.Stateid"
+        required="1" #state="ngModel" >
+        <option value="">--Select--</option>  
+        <option *ngFor="let state of stateList" [ngValue]="state.Stateid">
+            {{ state.StateName }}
+          </option>
+        
+        </select>
+        <div *ngIf="!state.valid && state.errors.required">
+          <code>please select state</code>
+        </div>
+      </div>
+      <!-- <div class="col-md-2" style="padding-top: 30px">
+        <div class="form-group">
+
+          <button type="button" class="btn btn-raised btn-raised btn-primary  "
+            (click)="search(searchModel)">
+             Search
+          </button>
+         
+         
+        </div>
+      </div> -->
+      <div class="col-md-2" style="margin-left:30px">
+        <button type="button" class="btn btn-raised btn-raised btn-primary e1 " (click)="search(searchModel)"style="margin-left:15px">
+          <!-- <i class="fa fa-file-excel-o" aria-hidden="true"></i> -->
+          Export GSTREPORT List
+        </button>
+        
+      </div>
+
+     
+      </div>
+      
+    <!-- </section> -->
+    

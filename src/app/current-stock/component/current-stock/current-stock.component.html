@@ -1,0 +1,203 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="Item">
+
+    <div class="d-flex justify-content-between" style="margin-top: 50px;">
+        <div class="header">
+            <h3 class="m-2">Current Stock</h3>
+        </div>
+        <div>
+            <button label="Upload Current Stock" class="btn btn-raised btn-primary m-2 shadow" (click)=freeStock()>Free
+                Stock</button>
+            <button label="Export Full Current Stock" class="btn btn-raised btn-primary m-2 shadow"
+                (click)="_exportFullCurrentStock()">Export Full Current Stock</button>
+            <button label="Export Full Current Stock" class="btn btn-raised btn-primary m-2 shadow"
+                (click)="_exportFullStock()">Export Mannual Data</button>
+            <button class="btn btncolor m-2 shadow" (click)="BatchcodewiseExport()">Batchcodewise Report</button>
+        </div>
+
+    </div>
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+            (click)="toggleSearch()">
+            <h5 class="m-0">Search By</h5>
+            <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+        </div>
+        <div id="search-content p-2" *ngIf="isSearch">
+            <!-- <p-accordion>
+        <p-accordionTab header="Search" [selected]="false"> -->
+            <div class="row p-2 px-5">
+                <div class="col-md-6 border-right border-right-1">
+                    <div class="form-group m-2 form-inline">
+                        <label for="warehouse" class="col-md-6">Warehouse</label>
+                        <!-- <select type="text" id="warehouse" (change)="onWarehouseChange($event.target.value);"
+                            [(ngModel)]="warehouseId" class="form-control col-md-6" name="warehouse"> -->
+                            <!-- <option [value]="1">--select--</option> -->
+                            <!-- <option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId"  >
+                                {{warehouse.WarehouseName}} {{warehouse.CityName}}</option>
+                        </select> -->       
+                        <!-- aartimukati -->
+                        <p-dropdown  [options]="warehouseList" [filter]="true"  class="col-md-6" (onChange)="onWarehouseChange(wareId);"
+                            [(ngModel)]="wareId" optionLabel="label" >
+                        </p-dropdown>
+                    </div>
+                </div>
+
+                <div class="col-md-6 border-right border-right-1">
+                    <div class="form-group m-2 form-inline">
+                        <!-- <label for="ab" class="col-md-4">Search</label> -->
+                        <!-- <span class="col-md-8"> -->
+                        <input type="text" id="ab" placeholder="&#xF002; Enter text here"
+                            class="form-control col-md-8 col-12" style="font-family:Arial, FontAwesome" name="ab"
+                            [(ngModel)]="searchKey">
+                        <!-- <i class="fa fa-search search_iconinpt" aria-hidden="true"></i> -->
+
+                        <span class="col-md-1 col-12"></span>
+                        <button class="btn btn-primary col-md-3" (click)="onSearch()">
+                            Search</button>
+                        <!-- </span> -->
+                    </div>
+                </div>
+
+            </div>
+            <!-- </p-accordionTab>
+    </p-accordion> -->
+        </div>
+    </div>
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+
+        </div>
+        <div id="search-content p-2">
+            <div class="row p-2 px-5">
+                <div class="col-md-6 border-right border-right-1">
+                    <div class="row">
+                        <div class="col-md-2"> <label for="ab">
+                                <h5 class="m-0" style="color: red;">Today's Manual Edit</h5>
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            <label>
+                                <h6>Inventory In</h6>
+                            </label>
+                            <button *ngIf="TodayAdd != 0" (click)=exportTodayAddList()>Export</button>
+                            <br />
+                            <label for="ab">
+                                <h6>{{TodayAdd}}</h6>
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            <label>
+                                <h6>Inventory Out</h6>
+                            </label>
+                            <button *ngIf="Todaysub != 0" (click)=exportTodaysubList()>Export</button>
+                            <br />
+                            <label for="ab">
+                                <h6>{{Todaysub}}</h6>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 border-right border-right-1">
+                    <div class="row">
+                        <div class="col-md-2"> <label for="ab">
+                                <h5 class="m-0" style="color: blue;">Monthly Manual Edit</h5>
+                            </label> </div>
+                        <div class="col-md-5">
+                            <label>
+                                <h6>Inventory In</h6>
+                            </label>
+                            <button *ngIf="MonthADD != 0" (click)=exportMonthADDList()>Export</button>
+                            <br />
+                            <label for="ab" class="col-md-6">
+                                <h6>{{MonthADD}}</h6>
+                            </label>
+                        </div>
+                        <div class="col-md-5">
+                            <label>
+                                <h6>Inventory Out</h6>
+                            </label>
+                            <button *ngIf="MonthSub != 0" (click)=exportMonthSubList()>Export</button>
+                            <br />
+                            <label for="ab" class="col-md-6">
+                                <h6>{{MonthSub}}</h6>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="table-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+            <h5 class="m-0">Current-Stock-Table</h5>
+            <div><i class="fa fa-lg fa-angle-double-down"></i></div>
+        </div>
+        <div id="table-content">
+            <div id="supplier-table">
+                <div class="position-relative">
+                    <div class="position-absolute supplier-details" *ngIf="isDetails">
+                        <app-current-stock-details [details]="selectedRowDetails" [activeFields]="activeFields"
+                            (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="referesh()"
+                            (deleteInfo)="onDelete($event)" class="d-flex justify-content-end">
+                        </app-current-stock-details>
+                    </div>
+
+
+                    <div class="position-relative" id="dataTable">
+                        <p-table [value]="currentStockList" [lazy]="true" [totalRecords]="totalRecords"
+                            (onLazyLoad)="load($event)" [paginator]="true" [rows]="20" [scrollable]="true"
+                            scrollHeight="65vh">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th *ngFor="let col of cols" style="text-align: center">
+                                        <!--  [pSortableColumn]="col.field" -->
+                                        {{col.header}}
+                                        <!-- <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon> -->
+                                    </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-rowData>
+                                <tr class="classForHoverEffect">
+                                    <td *ngFor="let col of cols" style="text-align: center" class="ui-resizable-column"
+                                        (click)="openDetails(rowData,$event)" [ngStyle]="{'color': col.color}">
+                                        <ng-container *ngIf="col.field != 'CurrentInventory'">
+                                            {{rowData[col.field]}}
+                                        </ng-container>                                       
+                                        <ng-container *ngIf="col.field == 'CurrentInventory'">
+                                            <a href="javascript:void(0);" class="nav-link"  (click)="onSave(rowData,$event)" >{{rowData[col.field]}}</a>
+                                        </ng-container>
+                                    </td>
+                                </tr>
+
+                                <!-- <tr class="edit"><td colspan="5"><app-addSupplier></app-addSupplier></td></tr>
+                                   -->
+                            </ng-template>
+                            <!-- <ng-template  *ngIf="isDetails" > -->
+
+                            <!-- </ng-template> -->
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<div >
+    <app-confirm-dialog ></app-confirm-dialog>
+    <!-- (close)="onClose($event)" -->
+</div>
+<!-- <app-confirm-dialog [isHit]="true" [StockId]="20" [StockName]="'abc'"></app-confirm-dialog> -->
+<!-- <app-confirm-dialog [isHit]="true" [StockId]="20" [StockName]="'abc'" [WarehouseId]="1"></app-confirm-dialog>
+<div *ngIf="selectedRowDetails"> -->
+<!-- <app-confirm-dialog [isHit]="true" [StockId]="20" [StockName]="'abc'" ></app-confirm-dialog> -->
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+

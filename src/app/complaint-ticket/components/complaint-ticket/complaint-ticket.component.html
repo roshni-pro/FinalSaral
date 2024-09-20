@@ -1,0 +1,231 @@
+<section id="ticketlist">
+  <div class="header">
+    <h3 class="content-header">Complaint Ticket</h3>
+  </div>
+
+  <div class="ui-fluid shadow p-3 bg-white rounded table table-hover">
+    <form #holidayForm="ngForm">
+      <div class="row">
+        <div class="col-sm-2">
+          <label for="Warehouse"> <b>warehouses:</b></label>
+          <select id="Warehouse" name="WarehouseName" class="form-control col-md-6" [(ngModel)]="data.WarehouseId">                       
+            <option *ngFor="let WareHouse of warehouses" [ngValue]="WareHouse.WarehouseId"> {{WareHouse.WarehouseName}}</option>
+          </select>    
+        </div>
+        <div class="col-sm-2">
+          <label for="a" class="col-md-4">Type</label>
+          <select id="suppCat" name="suppCat" class="form-control col-md-8" [(ngModel)]="data.UserType" (change)="Type(data.UserType)">
+              <option value="People" selected>People</option>
+              <option value="Customer">Customer</option>            
+              <option *ngIf="WarehouseId" value="People">People</option>
+              <option *ngIf="WarehouseId" value="Customer">Customer</option> 
+          </select>
+        </div>
+
+        <div class="col-sm-2">         
+          <label for="a" class="col-md-9">Status</label>
+          <select id="statusid" name="status" class="form-control" [(ngModel)]="selectstatus" (change)="Status1(Status)">
+              <option value="Open" selected>Open</option>
+              <option value="Pending">Pending</option>
+              <option value="Review">Review</option>
+              <option value="InProgress">InProgress</option>
+              <option value="Close">Close</option>   
+
+          </select>
+        </div>
+
+        <div class="col-sm-2">
+          <label for="CategoryId"> <b>Category:</b></label>
+          <select id="CategoryId" name="CategoryName" class="form-control col-md-6" [(ngModel)]="SelectName1">                       
+            <option *ngFor="let Category of categorylist" [ngValue]="Category.CategoryId">{{Category.CategoryName}}</option>
+          </select>    
+        </div>
+
+         <div class="col-sm-2">
+          <label for="validto">Search</label>
+          <input class="form-control" type="text" pInputText size="20" name="searchwh" [(ngModel)]="data.Search" placeholder="Search by TicketId">
+        </div>
+    
+        <div class="col-sm-2" style="margin-top:1.7%;">
+          <button type="submit" class="btn btn-raised btn-primary" name="search" (click)="OnClick()"> Search</button>
+        </div>
+      </div> 
+    </form>
+
+    
+    <div class="position-relative">
+    
+      <p-table #dt  [value]="ticketlist" [paginator]="true" [lazy]="true" (onLazyLoad)="load($event)" [rows]="20" [totalRecords]="totalRecords" [scrollable]="true" scrollHeight="130vh" text-align: center>
+   <ng-template pTemplate="header">
+    <tr>
+            <th>Ticket #</th>
+            <th>User Type</th>
+            <th>Requested By</th>
+             <th>Category</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Priority</th> 
+            <th>Date</th>            
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr (click)="openDetails(rowData,$event)">
+            <td>{{rowData.TicketId}}</td>
+            <td>{{rowData.UserType}}</td>
+            <td>{{rowData.UserName}}</td>
+            <td>{{rowData.Category}}</td> 
+            <td>{{rowData.Subject}}</td>
+            <td>{{rowData.Status}}</td>
+            <td>{{rowData.Priority}}</td>
+            <td>{{rowData.CreatedDate | date: 'M/d/yy, h:mm a'}}</td> 
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</section>
+
+<div class="chatPop">
+  <div class="" *ngIf="isOpenPopup">
+    
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" class="chatMainContainer">
+      <p-header>TicketId  # {{selecteddetail}}</p-header>
+
+      <!-- <section class="chat-app-window" #scrollMe [scrollTop]="scrollMe.scrollHeight"> -->
+      <section class="chat-app-window">
+        <div class="ui-g-10 mainBox">
+          <div class="topChatSection">
+            <div class ="row">
+              <div *ngIf="Document">
+                <p-carousel [value]="Document" numScroll="4" [numVisible]="1" [circular]="false" [autoplayInterval]="3000">
+                  <p-header><h3>Basic</h3></p-header>
+                  <ng-template let-col pTemplate="item"><img src="{{col.Document}}" /></ng-template>
+                </p-carousel>
+              </div>
+              <div class="col-md-4">
+                <label><strong>Status</strong></label>       
+                <select id="statusname" name="statusname" class="form-control" [(ngModel)]="selectstatus1" (change)="Status1(Status)">
+                    <option value="Open" selected>Open</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Review">Review</option>
+                    <option value="InProgress">InProgress</option>
+                    <option value="Close">Close</option>        
+                </select>    
+              </div>
+              <div class="col-md-4">
+                <label><strong>Priority</strong></label>
+                <select id="Priority" name="Priority" class="form-control" [(ngModel)]="SelectPriority" (change)="Priority(SelectPriority)">
+                    <option value="Low" >Low</option>
+                    <option value="High">High</option>      
+                </select>    
+              </div>
+
+              <div class="col-md-4 ">
+                <br>
+                <button type="submit" class="btn btn-raised btn-primary" name="save" (click)="OnSaveStatus()" style="margin-top: 8px;">Save</button>
+              </div>
+            </div>
+
+            <ng-container *ngIf="imgArr && imgArr.length > 1">
+              <div class ="row">
+                <div class="col-md-8" >
+                  <h6> Category : {{selectcategory}}</h6>
+                  <h6> Description : {{subject}}</h6>
+                  </div>
+              </div>
+            <ng-container *ngFor="let img of imgArr">
+              <div class="row">
+                <div class="col-md-12 text-right ">
+                  <div class="imgBox">
+                    <img src={{img}}>
+                    <div class="message-time text-align-right"><b>{{Selectdate | date:'medium'}}</b></div>               
+                  </div>         
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="imgArr && imgArr.length == 1">
+            <div class="row" class="content-header">
+              <div>
+                <strong>Category : {{selectcategory}}
+                Description : {{subject}}</strong>
+              </div>
+              <div class="col-md-8">
+              </div>
+              <div class="col-md-4 text-right ">
+                <div class="imgBox" >
+                  <img src={{url}}{{selectimg}}>
+                  <div class="message-time text-align-right"><b>{{Selectdate | date:'medium'}}</b></div>               
+                </div>          
+              </div>
+            </div>
+          </ng-container>
+            <h4 class="chatHeading" style="text-align: center;">Message History</h4>
+          </div>       
+          <section class="chat-app-form bg-blue-grey bg-lighten-5">
+            <form class="chat-app-input row mt-2 sileft" name="form" (ngSubmit)="sendMessage(chatMessage)">
+              <fieldset class="form-group col-12 position-relative has-icon-left">
+                <div class="msgContainer">
+                  <div class="msgBox" *ngFor="let message of selectedRowDetails">
+                  <div *ngIf="message.Attachment != null">
+                    <div class="imgBox">
+                      <img src={{url}}{{message.Attachment}}  >              
+                    </div>
+                    <div class="message-time text-align-right"><b>{{message.CreationDate | date:'medium'}}</b></div> 
+                  </div>
+                    <div *ngIf="message.Attachment == null">
+                      <div  *ngIf="message.IsUser == false" style="text-align: right;" >  
+                        <div class="supp-name"><b>{{message.ResolverName}}</b></div>
+                        <!-- <div *ngIf="message.Discussion" class="p-2 bg-white shadow rounded messageChat" style="text-align: right;"> -->
+                        <div *ngIf="message.Discussion" class="p-2 msgSent rounded messagediscusion">
+                          <b> {{message.Discussion}}</b>
+                        </div>
+                        <div class="message-time text-align-right"><b>{{message.CreationDate | date:'medium'}}</b></div>               
+                      </div>
+
+                      <div  *ngIf="message.IsUser == true" style="text-align: left;">  
+                        <div class="supp-name"><b>{{selectname}} </b></div>
+                        <!-- <div *ngIf="message.Discussion" class="p-2 bg-white shadow rounded messageChat" style="text-align: left;"> -->
+                          <div *ngIf="message.Discussion" class="p-2 msgRec ounded messagediscusion" style="text-align: left;">
+                        <b> {{message.Discussion}}</b>
+                        </div>
+                        <div class="message-time text-align-right"><b>{{message.CreationDate | date:'medium'}}</b></div>               
+                      </div>        
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </section>
+        </div>
+
+        <div class="ui-g-10 mainBox1">
+          <section class="chat-app-form bg-blue-grey bg-lighten-5">
+            <form class="chat-app-input row mt-2" name="form" (ngSubmit)="sendMessage(chatMessage)">
+              <fieldset class="form-group position-relative has-icon-left col-lg-9 col-8 m-0 px-3">
+                <div class="form-control-position">
+                  <i class="icon-emoticon-smile"></i>
+                </div>
+                <input type="text" name="msg" class="form-control" id="iconLeft4" placeholder="Type your message" [(ngModel)]="chatMessage" (keypress)="keypress($event,chatMessage)">
+                <div class="form-control-position control-position-right">
+                  <i class="ft-image mr-1"></i>
+                </div>
+              </fieldset>
+                   <button type="submit" class="btn btn-raised btn-primary" >
+                      <i class="fa fa-paper-plane-o d-block d-xl-inline-block d-lg-none p-0" ></i>
+                      <span class="d-none d-lg-inline-block ml-1" >Send</span>
+                    </button>
+            </form>
+          </section>
+        </div>
+      </section>
+    </p-dialog>
+  </div>
+</div>
+
+
+
+              
+          
+            
+        

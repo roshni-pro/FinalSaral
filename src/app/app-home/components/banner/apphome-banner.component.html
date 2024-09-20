@@ -1,0 +1,722 @@
+<div class="panel-heading card-header" role="tab">
+  <div class="panel-title">
+    <div>
+      <div class="panel-body card-block card-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <!-- <ng-container *ngIf="item.SectionSubType!= 'Slider'"> -->
+                <!-- {{item.SectionSubType}}{{item.WebViewUrl}}{{item.AppItemsList.length}} -->
+                <ng-container *ngIf="item.SectionSubType != 'Slider' && item.SectionSubType != 'DynamicHtml' ">
+                  <div class="form-group" *ngIf="activeItemsLength < 1">
+                    <button class="btn cle" id="newrows" (click)="createNewBannerItem()">Add New Banner Item </button>
+                  </div>
+
+                </ng-container>
+              <!-- </ng-container> -->
+
+
+              <!-- <ng-container *ngIf="item.SectionSubType"> -->
+                <ng-container *ngIf="item.SectionSubType == 'Slider'">
+                  <div class="form-group" *ngIf="activeItemsLength < 1">
+                    <button class="btn cle" id="newrows" (click)="createNewBannerItem();reset();Search=''"
+                     >Add New Banner Item </button>
+                  </div>
+                </ng-container>
+              <!-- </ng-container> -->
+
+
+            </div>
+          </div>
+        </div>
+        <ng-container
+          *ngIf="item.AppItemsList && item.AppItemsList.length > 0 || item.SectionSubType=='DynamicHtml' &&  item.AppItemsList.length == 0 ">
+          <div class="row" *ngIf="item.AppItemsList && item.AppItemsList.length > 0 ">
+            <ng-container *ngFor="let mainimage of item.AppItemsList; let j = index">
+              <ng-container *ngIf="!mainimage.Deleted || mainimage.Deleted == 'false'">
+
+                <div class="rowSection" class="col-md-12" style="position: relative;">
+                  <div class="panel-body card-block card-body" [ngClass]="{
+                    'validOfferForm': item.SectionSubType == 'Offer' && (mainimage.BannerImage && mainimage.BannerImage != '' && mainimage.BannerImage != 'null' && mainimage.BannerName && mainimage.BannerName != 'null' && mainimage.BannerName != '' && mainimage.RedirectionID && mainimage.RedirectionID != '' && mainimage.RedirectionID != 'null')&& mainimage.RedirectionType !='Page'
+                , 'invalidOfferForm': item.SectionSubType == 'Offer' && (!mainimage.BannerImage || !mainimage.BannerName || !mainimage.RedirectionID )&& mainimage.RedirectionType !='Page'
+                  , 'validFlashDealForm': item.SectionSubType == 'Flash Deal' && ( mainimage.BannerImage && mainimage.BannerName && mainimage.RedirectionID && mainimage.RedirectionID && mainimage.OfferStartTime && mainimage.OfferEndTime && mainimage.MOQ && mainimage.FlashDealQtyAvaiable && mainimage.FlashDealSpecialPrice && mainimage.UnitPrice && mainimage.PurchasePrice && mainimage.FlashDealMaxQtyPersonCanTake) && mainimage.RedirectionType !='Page'
+                  , 'invalidFlashDealForm': item.SectionSubType == 'Flash Deal' && ( !mainimage.BannerImage || !mainimage.BannerName || !mainimage.RedirectionID || !mainimage.RedirectionID || !mainimage.OfferStartTime || !mainimage.OfferEndTime || !mainimage.MOQ || !mainimage.FlashDealQtyAvaiable || !mainimage.FlashDealSpecialPrice || !mainimage.UnitPrice || !mainimage.PurchasePrice || !mainimage.FlashDealMaxQtyPersonCanTake) && mainimage.RedirectionType !='Page'
+            ,'validBaseCategoryForm': item.SectionSubType == 'Base Category' && (mainimage.BannerImage && mainimage.BannerName && mainimage.RedirectionID) && mainimage.RedirectionType !='Page'
+            ,'invalidBaseCategoryForm': item.SectionSubType == 'Base Category' && (!mainimage.BannerImage || mainimage.BannerImage == '' || mainimage.BannerImage == 'null' || !mainimage.BannerImage || mainimage.BannerImage == 'null' || mainimage.BannerName == '' || !mainimage.RedirectionID || mainimage.RedirectionID == 'null')&& mainimage.RedirectionType !='Page'
+            ,'validCategoryForm': item.SectionSubType == 'Category' && (mainimage.BannerImage && mainimage.BannerName && mainimage.RedirectionID)&& mainimage.RedirectionType !='Page'
+            ,'invalidCategoryForm': item.SectionSubType == 'Category' && (!mainimage.BannerImage || mainimage.BannerImage == '' || mainimage.BannerImage == 'null' || !mainimage.BannerImage || mainimage.BannerImage == 'null' || mainimage.BannerName == '' || !mainimage.RedirectionID || mainimage.RedirectionID == 'null')&& mainimage.RedirectionType !='Page'
+            ,'validItemForm': item.SectionSubType == 'Item' && (mainimage.BannerImage && mainimage.BannerName && mainimage.RedirectionID)&& mainimage.RedirectionType !='Page'
+            ,'invalidItemForm': item.SectionSubType == 'Item' && (!mainimage.BannerImage || mainimage.BannerImage == '' || mainimage.BannerImage == 'null' || !mainimage.BannerImage || mainimage.BannerImage == 'null' || mainimage.BannerName == '' || !mainimage.RedirectionID || mainimage.RedirectionID == 'null')&& mainimage.RedirectionType !='Page'
+            ,'validSliderForm': item.SectionSubType == 'Slider' && (mainimage.BannerImage)
+            ,'invalidSliderForm': item.SectionSubType == 'Slider' && (!mainimage.BannerImage)
+            ,'validBrandForm': item.SectionSubType == 'Brand' && (mainimage.BannerImage && mainimage.BannerName && mainimage.RedirectionID)&& mainimage.RedirectionType !='Page'
+            ,'invalidBrandForm': item.SectionSubType == 'Brand' && (!mainimage.BannerImage || mainimage.BannerImage == '' || mainimage.BannerImage == 'null' || !mainimage.BannerImage || mainimage.BannerImage == 'null' || mainimage.BannerName == '' || !mainimage.RedirectionID || mainimage.RedirectionID == 'null')&& mainimage.RedirectionType !='Page',
+            'validSubForm': item.SectionSubType == 'SubCategory' && (mainimage.BannerImage && mainimage.BannerName && mainimage.RedirectionID)&& mainimage.RedirectionType !='Page'
+            ,'invalidSubForm': item.SectionSubType == 'SubCategory' && (!mainimage.BannerImage || mainimage.BannerImage == '' || mainimage.BannerImage == 'null' || !mainimage.BannerImage || mainimage.BannerImage == 'null' || mainimage.BannerName == '' || !mainimage.RedirectionID || mainimage.RedirectionID == 'null' || mainimage.RedirectionUrl== 'null') && mainimage.RedirectionType !='Page',
+            'validPageForm': item.SectionSubType!='DynamicHtml' && (mainimage.RedirectionType && mainimage.BannerImage)
+            ,'invalidPageForm': item.SectionSubType!='DynamicHtml'  && (!mainimage.BannerImage || mainimage.BannerImage == '' || mainimage.BannerImage == 'null' || !mainimage.BannerImage || !mainimage.RedirectionType) ,
+            'validDynamicForm': item.SectionSubType=='DynamicHtml' && (item.WebViewUrl)
+            ,'invalidDynamicForm': item.SectionSubType=='DynamicHtml'  && (!item.WebViewUrl)
+          }">
+<!-- && mainimage.BannerActivity!='Bucket Game' -->
+
+                    <button class="btn cle2" (click)="showDialog(j);onCheckComplete()"
+                      style="float: right;width: 17%;margin-top: 7px;">Edit Item
+                      <i aria-hidden="true" class="pi pi-info-circle"></i>
+                    </button>
+
+<!-- {{j}} -->
+                    <!-- <img class="imageShow" style="height: 350px; width: 80%;"  *ngIf="ifUploaded"
+                      src="imageSrc" alt="text"> -->
+                    <img class="imageShow" style="height: 350px; width: 80%;" *ngIf="mainimage && mainimage.BannerImage"
+                      src="{{mainimage.BannerImage}}">
+                    <!-- <div><input type="file" (change)="upload($event.target.files, i, j)" />
+                    </div> -->
+
+                    <div class="sectionItemContent">
+                      <div class="row" *ngIf="item.SectionSubType!='DynamicHtml' ">
+                        <div [ngClass]="{'col-md-6': !showMobileView, 'col-md-12' : showMobileView }">
+                          <div class="form-group">
+                            <label for="maxQuant">Redirection Type : </label>
+                            {{mainimage.RedirectionType == 'null' ? '' : mainimage.RedirectionType}}
+                          </div>
+                          <div class="form-group">
+                            <label for="totalQuantity">Banner Name</label>
+                            {{mainimage.BannerName}}
+                          </div>
+                          <div class="form-group">
+                            <!-- {{mainimage.HasOffer}} -->
+                            <label for="maxQuant">Has Offer : </label>
+                            {{mainimage.HasOffer == true ? 'yes' : 'no'}}
+                          </div>
+                          <div class="form-group" *ngIf="mainimage.HasOffer">
+                            <label for="maxQuant">Offer Start Time : </label>
+                            {{mainimage.OfferStartTime}}
+                          </div>
+                          <div class="form-group" *ngIf="mainimage.HasOffer">
+                            <label for="maxQuant">Offer End Time : </label>
+                            {{mainimage.OfferEndTime}}
+                          </div>
+                          <div *ngIf="item.SectionSubType == 'Flash Deal'">
+                            <h3>Flash Deal Details</h3>
+                            <div class="form-group">
+                              <label for="maxQuant">Minimum Order Quantity : </label>
+                              {{mainimage.MOQ}}
+                            </div>
+                            <div class="form-group">
+                              <label for="maxQuant">Total Quantity : </label>
+                              {{mainimage.FlashDealQtyAvaiable}}
+                            </div>
+                            <div class="form-group">
+                              <label for="maxQuant">Flash Deal Special Price : </label>
+                              {{mainimage.FlashDealSpecialPrice}}
+                            </div>
+                            <div class="form-group">
+                              <label for="maxQuant">Purchase Price : </label>
+                              {{mainimage.PurchasePrice}}
+                            </div>
+                            <div class="form-group">
+                              <label for="maxQuant">Flash Deal Max Qty : </label>
+                              {{mainimage.FlashDealMaxQtyPersonCanTake}}
+                            </div>
+                            <div class="form-group">
+                              <label for="maxQuant">Offer Start Time : </label>
+                              {{mainimage.OfferStartTime}}
+                            </div>
+                            <div class="form-group">
+                              <label for="maxQuant">Offer End Time : </label>
+                              {{mainimage.OfferEndTime}}
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+
+
+                    </div>
+
+
+                    <p-footer class="deletRow">
+                      <div class="text-right">
+                        <ng-container>
+                          <div style="position: relative;">
+
+
+                            <button class="btn cle" id="newrows" (click)="deleteItem(j)" *ngIf="item.AppItemsList != []"
+                              style="float: right;">Delete Item
+                              <i aria-hidden="true" class="fa fa-trash"></i>
+                            </button>
+
+
+
+                          </div>
+                        </ng-container>
+                      </div>
+                    </p-footer>
+
+                  </div>
+                </div>
+                <div class="text-right">
+                </div>
+              </ng-container>
+
+              <!-- </ng-container>
+           </div> -->
+            </ng-container>
+
+          </div>
+          <ng-container *ngIf="item.SectionSubType=='DynamicHtml' &&  item.AppItemsList.length == 0 ">
+            <button class="btn cle2" (click)="showDialog(j)" style="float: right;width: 17%;margin-top: 7px;">Edit Item
+              <i aria-hidden="true" class="pi pi-info-circle"></i>
+            </button>
+
+            <div class="row" *ngIf="item.SectionSubType=='DynamicHtml' ">
+              <div [ngClass]="{'col-md-12': (!item.TileBackgroundImage || item.TileBackgroundImage == ''),
+               'col-md-6' : (item.TileBackgroundImage != '')}">
+                <label for="" style="padding-top: 35px">Dynamic Url :</label>
+                <input type="text" [(ngModel)]="item.WebViewUrl" class="form-control" disabled>
+                <hr>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+
+
+
+
+        <!-- background images    -->
+        <div class="panel-title" *ngIf="item.SectionSubType != 'Slider'">
+          <!--  <div class="accordion-toggle" role="button" aria-expanded="false"> -->
+          <!---->
+          <!-- <p-footer>
+              <p-accordion>
+                <p-accordionTab>
+                  <p-header>
+                    <span class="title">View Tile Header Settings</span>
+                  </p-header>
+                  <p-accordion>
+                    <div>
+
+                      <p-accordionTab>
+                        <p-header>
+                          <span class="title">Tile Header</span>
+                        </p-header>
+                        <div class="panel-title" style="border: 1px solid black">
+                          <div class="accordion-toggle" role="button" aria-expanded="false"> -->
+          <!---->
+
+          <!-- <div class="panel-body card-block card-body">
+                              <p-toggleButton (onChange)="item.HasBackgroundColor != !item.HasBackgroundColor"
+                                onLabel="Has Tile Background Image" offLabel="Has Tile Background Color"
+                                onIcon="fa fa-picture-o" offIcon="fa fa-paint-brush" iconPos="right"
+                                [(ngModel)]="item.HasBackgroundImage"></p-toggleButton>
+                              <div *ngIf="item.HasBackgroundImage" class="panel-body card-block card-body">
+                                <img class="imageShow" style="height: 350px;"
+                                  *ngIf="item && item.TileSectionBackgroundImage"
+                                  [src]=photoURL(item.TileSectionBackgroundImage) alt="text">
+                                <p *ngIf="!item.TileSectionBackgroundImage">Please upload Title Background Image</p>
+                                <div><input type="file"
+                                    (change)="uploadBackground($event.target.files, 'TileSectionBackgroundImage', j)" />
+                                </div>
+                              </div>
+                              <div *ngIf="!item.HasBackgroundImage">
+
+
+                                <label>Choose Color</label>
+                                <p-colorPicker (onChange)="disableImageSelection('TileSectionBackgroundImage')"
+                                  [(ngModel)]="item.TileHeaderBackgroundColor"></p-colorPicker>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </p-accordionTab>
+                      <br />
+                      <p-accordionTab>
+                        <p-header>
+                          <span class="title">Tile Header Background</span>
+                        </p-header>
+                        <div class="panel-body card-block card-body">
+                          <p-toggleButton (onChange)="item.HasHeaderBackgroundColor != !item.HasHeaderBackgroundColor"
+                            onLabel="Has Header Background Image" offLabel="Has Header Background Color"
+                            onIcon="fa fa-picture-o" offIcon="fa fa-paint-brush" iconPos="right"
+                            [(ngModel)]="item.HasHeaderBackgroundImage"></p-toggleButton>
+                          <div *ngIf="item.HasHeaderBackgroundImage" class="panel-body card-block card-body">
+                            <img class="imageShow" style="height: 350px;" *ngIf="item && item.TileHeaderBackgroundImage"
+                              [src]=photoURL(item.TileHeaderBackgroundImage) alt="text">
+                            <p *ngIf="!item.TileBackgroundImage">Please upload Title Background Image</p>
+                            <div><input type="file"
+                                (change)="uploadBackground($event.target.files, 'TileHeaderBackgroundImage', j)" />
+                            </div>
+                          </div>
+                          <div *ngIf="!item.HasHeaderBackgroundImage">
+
+
+                            <label>Choose Color</label>
+                            <p-colorPicker (onChange)="disableImageSelection('TileHeaderBackgroundImage')"
+                              [(ngModel)]="item.TileBackgroundColor"></p-colorPicker>
+                          </div>
+                        </div>
+                      </p-accordionTab>
+                      <br />
+
+                      <p-accordionTab>
+                        <p-header>
+                          <span class="title">Tile Area Header Background</span>
+                        </p-header>
+                        <div class="panel-body card-block card-body">
+                          <div class="panel-body card-block card-body">
+                            <img class="imageShow" style="height: 350px;"
+                              *ngIf="item && item.TileAreaHeaderBackgroundImage"
+                              [src]=photoURL(item.TileAreaHeaderBackgroundImage) alt="text">
+                            <p *ngIf="!item.TileAreaHeaderBackgroundImage">Please upload Area Header Background
+                              Image</p>
+                            <div><input type="file"
+                                (change)="uploadBackground($event.target.files, 'TileAreaHeaderBackgroundImage')" />
+                            </div>
+                          </div>
+                        </div>
+                      </p-accordionTab>
+                      <br />
+                      <p-accordionTab>
+                        <p-header>
+                          <span class="title">Tile Section</span>
+                        </p-header>
+                        <div class="panel-body card-block card-body">
+                          <img class="imageShow" style="height: 350px;" *ngIf="item && item.sectionBackgroundImage"
+                            [src]=photoURL(item.sectionBackgroundImage) alt="text">
+                          <p *ngIf="!item.sectionBackgroundImage">Please upload Section Background Image</p>
+                          <div><input type="file" (change)="uploadBackground($event.target.files, 'sectionBackgroundImage')" />
+                          </div>
+                        </div>
+
+                      </p-accordionTab>
+
+                      <br>
+                      <p-accordionTab>
+                        <p-header>
+                          <span class="title">Select Tile Text Color</span>
+                        </p-header>
+                        <label>Choose Color</label>
+                        <p-colorPicker (onChange)="disableImageSelection('tileTextColor', 0)"
+                          [(ngModel)]="item.HeaderTextColor"></p-colorPicker>
+                      </p-accordionTab>
+                    </div>
+                  </p-accordion>
+                </p-accordionTab>
+              </p-accordion>
+            </p-footer>
+          </div>
+        </div> -->
+        </div>
+
+        <button class="btn cle" id="newrows" (click)="saveSectionItem(); display = false;" style="width: 13%;"
+          [disabled]=" !enableSave || !disableSelect" disabled>Save
+          <i aria-hidden="true" class="pi pi-info-circle"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <ng-container *ngIf="currentAppItem">
+    <p-dialog [header]="currentAppItem.BannerName" [(visible)]="display" [modal]="true" appendTo="body"  positionTop="50vh"
+      [style]="{width: '60vw', left: '440px'}">
+      <div style="max-height: 400px !important;overflow: scroll;">
+      <form #itemForm="ngForm">
+        <!--  src="{{currentAppItem.BannerImage}}"    [src]="imageSrc"-->
+        <!--  *ngIf="currentAppItem && currentAppItem.BannerImage"   -->
+        <!-- {{currentAppItem.BannerImage}} -->
+        <div class="row">
+          <div class="col-md-6">
+            <!-- {{currentAppItem.BannerImage}}
+          <br>
+          {{imageSrc}} -->
+            <!-- <img class="imageShow" *ngIf="!ifUploaded && item.SectionSubType != 'DynamicHtml'" [src]="currentAppItem.BannerImage"> -->
+            <!-- <img class="imageShow" *ngIf="!ifUploaded" [src]="currentAppItem.BannerImage" alt="text"> -->
+            <!-- <img class="imageShow"   *ngIf="ifUploaded && item.SectionSubType != 'DynamicHtml'" [src]="currentAppItem.BannerImage"> -->
+            <!-- {{currentAppItem.BannerImage}} -->
+            <img class="imageShow" style="width: 50%;;height:200px !important"
+              *ngIf="currentAppItem && currentAppItem.BannerImage && item.SectionSubType != 'DynamicHtml'"
+              src="{{currentAppItem.BannerImage}}" alt="text">
+              <p *ngIf="!currentAppItem.BannerImage">Please upload Banner Image</p>
+              <hr>
+              Banner Image
+            <div class="d-flex" *ngIf="item.SectionSubType!='DynamicHtml'">
+              <input #myInput type="file" ng-model="files" id="filUpload" name="filUpload"
+                (change)="upload($event.target.files, i, currentItemIndex)" />
+              
+              <button class="btn cle ml-2" (click)="reset()" type="button">Remove
+                Image</button>
+                <!--  ng-click="angular.copy(files)"  -->
+            </div>
+
+          </div>
+          <div class="col-md-6" *ngIf="currentAppItem.RedirectionType=='DynamicItem'">
+            <img class="imageShow" style="width: 50%;height:200px !important " *ngIf="currentAppItem && currentAppItem.DynamicHeaderImage"
+            [src]=photoURL(currentAppItem.DynamicHeaderImage) alt="text">
+            <p *ngIf="!currentAppItem.DynamicHeaderImage">Please upload Dynamic Header Image</p>
+            <hr>
+            Dynamic Image
+            <div *ngIf="currentAppItem.RedirectionType=='DynamicItem'">
+              <input type="file"  #myInput2
+              (change)="upload($event.target.files, 'DynamicItem', currentItemIndex)" />
+  
+             <button class="btn cle ml-2" (click)="reset('DynamicItem')" type="button">Remove
+               Image</button>
+            </div>
+
+           
+         </div>
+        </div>
+
+
+        <!-- (change)="onFileChange($event)" -->
+        <!-- <div *ngIf="item.SectionSubType!='DynamicHtml'">
+        <input type="file" (change)="upload($event.target.files, i, currentItemIndex)"
+          *ngIf="item.SectionSubType!='DynamicHtml && !currentAppItem.BannerImage'"
+          [(ngModel)]="currentAppItem.BannerImage" name="fileup" />
+      </div> -->
+        <div class="row">
+          <div class="col-md-2">
+            <!-- {{item.SectionSubType}} {{currentAppItem.RedirectionType}} -->
+            <div class="redirectionType" *ngIf="item.SectionSubType != 'DynamicHtml'">
+              <label>Redirection Type</label>
+              <select [(ngModel)]="currentAppItem.RedirectionType" class="form-control" name="redirectionType" required #redirType>
+                <!-- <option [value]="null"
+                  [selected]="!currentAppItem.RedirectionType || currentAppItem.RedirectionType == 'null' || currentAppItem.RedirectionType == '' || currentAppItem.RedirectionType == undefined">
+                  ----- Select Redirection Type -----</option> -->
+                <option [value]="'Category'" [selected]="currentAppItem.RedirectionType=='Category'"
+                  *ngIf="item.SectionSubType=='Category' || item.SectionSubType=='Slider' ||item.SectionSubType=='Offer' ">
+                  Category
+                </option>
+                <option [value]="'Base Category'" [selected]="currentAppItem.RedirectionType=='Base Category'"
+                  *ngIf="item.SectionSubType=='Base Category' ||item.SectionSubType=='Offer' && item.SectionSubType!='Slider'">
+                  Base Category</option>
+                <option [value]="'Item'" [selected]="currentAppItem.RedirectionType=='Item'"
+                  *ngIf="item.SectionSubType=='Item' || item.SectionSubType=='Slider' ||item.SectionSubType=='Offer'">
+                  Item</option>
+                <option [value]="'Brand'" [selected]="currentAppItem.RedirectionType=='Brand'"
+                  *ngIf="item.SectionSubType=='Brand'|| item.SectionSubType=='Slider' ||item.SectionSubType=='Offer'">
+                  Brand</option>
+                <option [value]="'SubCategory'" [selected]="currentAppItem.RedirectionType=='SubCategory'"
+                  *ngIf="item.SectionSubType=='SubCategory'&& item.SectionSubType!='Slider' ||item.SectionSubType=='Offer'">
+                  Sub Category
+                </option>
+                <option [value]="'Other'" [selected]="currentAppItem.RedirectionType=='Other'"
+                  *ngIf=" item.SectionSubType=='Slider' ">Other</option>
+                <!-- <option [value]="'Item'" [selected]="currentAppItem.RedirectionType=='Item'">Offer</option> -->
+
+                <option [value]="'Page'" [selected]="currentAppItem.RedirectionType=='Page'" 
+                  *ngIf="item.SectionSubType=='Page' ||item.SectionSubType=='Other'">Page</option>
+                
+                <!-- for bucket game -->
+                  <option [value]="'BucketGame'" [selected]="currentAppItem.RedirectionType=='BucketGame'" 
+                  *ngIf="item.SectionSubType=='BucketGame'">BucketGame</option>
+                  <option [value]="'DynamicItem'" [selected]="currentAppItem.RedirectionType=='DynamicItem'">DynamicItem
+                  </option>
+              </select>
+
+              <div *ngIf="redirType.invalid && (redirType.dirty || redirType.touched)">
+                <p *ngIf="redirType.errors.required || !redirType.value || redirType.value == 'null'">
+                  Redirection Type is required.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6" *ngIf="currentAppItem.RedirectionType!='BucketGame'" >
+            <div class="redirectionType">
+              <label *ngIf=" currentAppItem.RedirectionType=='DynamicItem'">Dynamic Url</label>
+
+              <label *ngIf="currentAppItem.RedirectionType!='Item' && currentAppItem.RedirectionType!='DynamicItem'">Select Item</label>
+              <ng-container *ngIf="currentAppItem.RedirectionType=='Base Category'">
+                <select class="form-control" [(ngModel)]="currentAppItem.RedirectionID" #redrctId name="redrctionId"
+                  required
+                  (change)="setBannerItemName({redirectionId : $event.target.value, arrayName : 'BaseCategories', nameOfId : 'BaseCategoryId', catName: 'BaseCategoryName', imageName : 'LogoUrl', index : currentItemIndex})">
+                  <option [value]="null"
+                    [selected]="!currentAppItem.RedirectionID || currentAppItem.RedirectionID == 'null' || currentAppItem.RedirectionID == '' || currentAppItem.RedirectionID == undefined">
+                    --- Select Base Category ---</option>
+                  <ng-container *ngFor="let BCategories of BaseCategories">
+                    <option [value]="BCategories.BaseCategoryId"
+                      [selected]="currentAppItem.RedirectionID == BCategories.BaseCategoryId">
+                      {{BCategories.BaseCategoryName}}</option>
+                  </ng-container>
+                </select>
+                <div *ngIf="redrctId.invalid && (redrctId.dirty || redrctId.touched)">
+                  <p *ngIf="redrctId.errors.required || !redrctId.value || redrctId.value == 'null'">
+                    Base Category is required.
+                  </p>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="currentAppItem.RedirectionType=='Category'">
+                <select class="form-control" [(ngModel)]="currentAppItem.RedirectionID" #redrctId name="redrctionId"
+                  [disabled]="!disableSelect" required
+                  (change)="setBannerItemName({redirectionId : $event.target.value, arrayName : 'categorys', nameOfId : 'Categoryid', catName: 'CategoryName', imageName : 'LogoUrl', index : currentItemIndex})">
+                  <option [value]="null"
+                    [selected]="!currentAppItem.RedirectionID || currentAppItem.RedirectionID == null || currentAppItem.RedirectionType == '' || currentAppItem.RedirectionID == undefined || currentAppItem.RedirectionID==0">
+                    Select Category</option>
+                  <option [value]="ccategorys.Categoryid"
+                    [selected]="currentAppItem.RedirectionID == ccategorys.Categoryid"
+                    *ngFor="let ccategorys of categorys"> {{ccategorys.CategoryName}}</option>
+                </select>
+                <div *ngIf="redrctId.invalid && (redrctId.dirty || redrctId.touched)">
+                  <p *ngIf="redrctId.errors.required || !redrctId.value || redrctId.value == 'null'">
+                    Category is required.
+                  </p>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="currentAppItem.RedirectionType=='Brand'">
+                <!-- {{subsubcats | json}} -->
+                <select class="form-control" [(ngModel)]="currentAppItem.RedirectionID" #redrctId name="redrctionId"
+                  [disabled]="!disableSelect" required
+                  (change)="setBannerItemName({redirectionId : $event.target.value, arrayName : 'subsubcats', nameOfId : 'SubsubCategoryid', catName: 'SubsubcategoryName', imageName : 'LogoUrl', index : currentItemIndex})">
+                  <option [value]="null"
+                    [selected]="!currentAppItem.RedirectionID || currentAppItem.RedirectionID == null || currentAppItem.RedirectionType == '' || currentAppItem.RedirectionID == undefined || currentAppItem.RedirectionID==0">
+                    Select Brand</option>
+                  <ng-container *ngFor="let Ssubsubcats of subsubcats">
+                    <option [value]="Ssubsubcats.SubsubCategoryid"> {{Ssubsubcats.SubsubcategoryName +'
+                      ('+Ssubsubcats.CategoryName +')'}}
+                    </option>
+                  </ng-container>
+                </select>
+                <div *ngIf="redrctId.invalid && (redrctId.dirty || redrctId.touched)">
+                  <p *ngIf="redrctId.errors.required || !redrctId.value || redrctId.value == 'null'">
+                    Brand is required.
+                  </p>
+                </div>
+
+
+
+
+              </ng-container>
+
+
+
+              <ng-container *ngIf="currentAppItem.RedirectionType=='Other'">
+                <select class="form-control" [(ngModel)]="currentAppItem.BannerActivity" #redrctId name="redrctionId"
+                  [disabled]="!disableSelect" required (change)="setBannerItemName()">
+                  <option [value]="null"
+                    [selected]="!currentAppItem.BannerActivity || currentAppItem.BannerActivity == null || currentAppItem.BannerActivity == '' || currentAppItem.BannerActivity == undefined">
+                    Select Other</option>
+                  <ng-container *ngFor="let other of othervar">
+                    <option [value]="other.value"> {{other.Label}}
+                    </option>
+                  </ng-container>
+                </select>
+
+
+
+               
+              </ng-container>
+            
+
+
+              <ng-container *ngIf="currentAppItem.RedirectionType=='Page'">
+                <select class="form-control" [(ngModel)]="currentAppItem.BannerActivity" #redrctId name="redrctionId"
+                  [disabled]="!disableSelect" required (change)="setBannerItemName()">
+                  <option [value]="null"
+                    [selected]="!currentAppItem.BannerActivity || currentAppItem.BannerActivity == null || currentAppItem.BannerActivity == '' || currentAppItem.BannerActivity == undefined">
+                    Select Other</option>
+                  <ng-container *ngFor="let other of othervar">
+                    <option [value]="other.value"> {{other.Label}}
+                    </option>
+                  </ng-container>
+                </select>
+               
+
+               
+              </ng-container>
+            
+              <ng-container *ngIf="currentAppItem.RedirectionType=='DynamicItem'" class="col mr-3">
+                <div class="col ">
+                  <input type="text"
+                   [(ngModel)]="currentAppItem.RedirectionUrl"
+                    placeholder="Dynamic URL"  required class="form-control" #redrctId name="redrctionId">
+                </div>
+              </ng-container>
+
+
+
+
+
+
+              <ng-container *ngIf="currentAppItem.RedirectionType=='SubCategory'">
+                <select class="form-control" [(ngModel)]="currentAppItem.RedirectionID" #redrctId name="redrctionId"
+                  [disabled]="!disableSelect" required
+                  (change)="setBannerItemName({redirectionId : $event.target.value, arrayName : 'subcategory', nameOfId : 'SubCategoryId', catName: 'SubcategoryName', imageName : 'LogoUrl', index : currentItemIndex})">
+                  <option [value]="null"
+                    [selected]="!currentAppItem.RedirectionID || currentAppItem.RedirectionID == null || currentAppItem.RedirectionType == '' || currentAppItem.RedirectionID == undefined || currentAppItem.RedirectionID==0">
+                    Select Sub Category</option>
+                  <ng-container *ngFor="let sub of subcategory">
+                    <option [value]="sub.SubCategoryId" [selected]="currentAppItem.RedirectionID == sub.SubCategoryId">
+                      {{sub.SubcategoryName}}
+                    </option>
+                  </ng-container>
+                </select>
+                <div *ngIf="redrctId.invalid && (redrctId.dirty || redrctId.touched)">
+                  <p *ngIf="redrctId.errors.required || !redrctId.value || redrctId.value == 'null'">
+                    Sub Category is required.
+                  </p>
+                </div>
+
+              </ng-container>
+
+              <ng-container *ngIf="item.SectionSubType =='DynamicHtml'" >
+                <div style="height:30%;width:100%">
+                  <label for="">Dynamic Url</label>
+                  <input type="text" [(ngModel)]="item.WebViewUrl" placeholder="Dynamic Url" id="_redirectionUrl"
+                    name="_redirectionUrl"  style="width:50%;margin-left:25%;" class="form-control" />
+                  <!-- <button class="button-01" (click)="getUrl(currentAppItem,RedirectionUrl); display = false;" pButton
+                icon="pi pi-info-circle"  label="Save" *ngIf="item.SectionSubType=='DynamicHtml'" ></button> -->
+                </div>
+
+              </ng-container>
+
+
+
+              <!-- 
+            <ng-container *ngIf="currentAppItem.RedirectionType=='Offer'">
+              <select class="form-control" [(ngModel)]="currentAppItem.RedirectionID" #redrctId name="redrctionId" [disabled]="!disableSelect"
+                required
+                (change)="setBannerItemName({redirectionId : $event.target.value, arrayName : 'Items', nameOfId : 'ItemId', catName: 'itemname', imageName :'LogoUrl', index : currentItemIndex})">
+                <option [value]="null"
+                  [selected]="!currentAppItem.RedirectionID || currentAppItem.RedirectionID == null || currentAppItem.RedirectionType == '' || currentAppItem.RedirectionID == undefined || currentAppItem.RedirectionID==0">
+                  Select Item</option>
+                  <option [value]="Item.ItemId" *ngFor="let Item of Items"> {{Item.itemname}}</option>
+              </select>
+              <div *ngIf="redrctId.invalid && (redrctId.dirty || redrctId.touched)">
+                <p *ngIf="redrctId.errors.required || !redrctId.value || redrctId.value == 'null'">
+                  Item is required.
+                </p>
+              </div>
+
+            </ng-container> -->
+
+
+
+
+
+
+
+
+            <label *ngIf="currentAppItem.RedirectionType=='Item'">Search Item</label>
+              <ng-container *ngIf="currentAppItem.RedirectionType=='Item'">
+                <div class="row">
+                  <div class="col">
+                    <input type="text" #myInput  [(ngModel)]="Search" class="form-control" placeholder="Search items here" name="search" (input)="filterItem(myInput.value)" >
+                  </div>
+                <div class="col">
+                  <select class="form-control" [(ngModel)]="currentAppItem.RedirectionID" #redrctId="ngModel"
+                    [disabled]="!disableSelect" name="redrctionId" required [minlength]="3"
+                    (change)=" setBannerItemName({redirectionId : $event.target.value, arrayName : 'Items', nameOfId : 'ItemId', catName: 'itemname', imageName :'LogoUrl', index : currentItemIndex})">
+                    <option [value]="null"
+                      [selected]="!currentAppItem.RedirectionID || currentAppItem.RedirectionID == null || currentAppItem.RedirectionType == '' || currentAppItem.RedirectionID == undefined || currentAppItem.RedirectionID==0">
+                      Select Items</option>
+                    <option [value]="Item.ItemId" *ngFor="let Item of Items"> {{Item.itemname}}</option>
+                  </select>
+                  <div *ngIf="redrctId.invalid && (redrctId.dirty || redrctId.touched)">
+                    <p *ngIf="redrctId.errors.required || !redrctId.value || redrctId.value == 'null'">
+                      Item is required.
+                    </p>
+                  </div>
+                </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          <div class="col-md-2" *ngIf="currentAppItem.BannerActivity=='ExternalURL' || currentAppItem.BannerActivity=='Bucket Game' || currentAppItem.RedirectionType=='BucketGame'" style="margin-top: 20px;">
+            <div *ngIf="currentAppItem.BannerActivity=='ExternalURL' || currentAppItem.BannerActivity=='Bucket Game' ||currentAppItem.RedirectionType=='BucketGame' ">
+              <!-- {{currentAppItem.RedirectionUrl}} -->
+              <label for="">RedirectionUrl</label>
+              <input type="text" [(ngModel)]="currentAppItem.RedirectionUrl" name="redirect" class="form-control"
+                placeholder="enter Url" />
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="redirectionType" *ngIf="item.SectionSubType !='DynamicHtml' &&  item.SectionSubType !='Other' || currentAppItem.RedirectionType !='Other'">
+              <label>Banner Name</label>
+              <input type="text" [(ngModel)]="currentAppItem.BannerName" placeholder="tile name" #tilenme="ngModel"
+                name="tilenm" required class="form-control">
+              <div *ngIf="tilenme.invalid && (tilenme.dirty || tilenme.touched)">
+                <p *ngIf="tilenme.errors.required || !tilenme.value || tilenme.value == 'null'">
+                  Banner Name req.
+                </p>
+              </div>
+            </div>
+            
+
+
+
+          </div>
+     
+        </div>
+        <br>    <br>
+        <div class="row">
+          <!-- *ngIf="item.SectionSubType == 'Offer'" -->
+          <div class="col-md-4">
+            <div class="redirectionType" *ngIf="item.SectionSubType!='DynamicHtml' && item.SectionSubType !='BucketGame'">
+              <!-- {{currentAppItem.HasOffer}} -->
+              <p-checkbox binary="true" id="Has Offer" name="Has any offer period ?" [(ngModel)]="currentAppItem.HasOffer"
+                label="Has Offer">
+              </p-checkbox>
+            </div>
+          </div>
+
+
+
+
+
+          <div class="col-md-4">
+            <div class="redirectionType" *ngIf="currentAppItem.HasOffer">
+              <p-calendar name="startInput" appendTo="body" [(ngModel)]="currentAppItem.OfferStartTime"
+                [showTime]="true" [hourFormat]="24" [showButtonBar]="true" #ofrStrDate="ngModel" [showIcon]="true">
+              </p-calendar>
+              <div>
+
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="redirectionType" *ngIf="currentAppItem.HasOffer">
+              <p-calendar name="endInput" appendTo="body" [(ngModel)]="currentAppItem.OfferEndTime"
+                #ofrEndDate="ngModel" [showTime]="true" [hourFormat]="24" [showButtonBar]="true" [showIcon]="true">
+              </p-calendar>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4" *ngIf="item.SectionSubType=='Slider'">
+            <div class="redirectionType">
+
+            </div>
+          </div>
+        </div>
+        <!-- <ng-container *ngIf="item.SectionSubType == 'Flash Deal'">
+        <app-flash-deal [mainimage]="currentAppItem" [indexOfItem]='indexOfItem' [BaseCategories]="BaseCategories"
+          [categorys]="categorys" [subsubcats]="subsubcats" [Items]="Items"
+          [RedirectionID]="currentAppItem.RedirectionID" [showMobileView]="showMobileView"
+          [currentToggleIndex]="currentToggleIndex"></app-flash-deal>
+      </ng-container> -->
+
+
+        <p-footer>
+        </p-footer>
+        <div class="text-right">
+          <button class="btn cle" id="newrows" (click)="onSaveValidation(currentAppItem); "
+            style="float:right; margin-right: 25px;margin-bottom:25px;">Save
+            <i aria-hidden="true" class="pi pi-info-circle"></i>
+          </button>
+          <br>
+          <br>
+        </div>
+      </form>
+     </div>
+    </p-dialog>
+
+  </ng-container>
+
+
+  <!-- *ngIf="!disableSelect" -->

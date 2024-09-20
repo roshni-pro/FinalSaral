@@ -1,0 +1,75 @@
+<div class="d-flex justify-content-between" style="margin-top: 50px;">
+    <div class="header">
+        <h3 class="m-2">Auto Configuration For Clearance Items</h3>
+    </div>
+</div>
+
+<div class="row">
+   <div class="col-md-2">
+       <label>Select Store</label>
+     <p-dropdown [options]="storeList" optionLabel="Name" [filter]="true" [resetFilterOnHide]="true" placeholder="Select Store" [(ngModel)]="SelectedStore"
+     ></p-dropdown>
+     <!-- (ngModelChange)="onSearch()" -->
+   </div>
+   <div class="col-md-10 mt-4">
+           <button class="btn btn-raised btn-success" (click)="onSearch()">
+               Search
+            </button>   
+            <button class="btn btn-primary ml-1" (click)="onRefresh()">
+               Refresh
+            </button>      
+       </div> 
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <p-table [value]="tableData">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>StoreName</th>
+                    <th>Discount Percentage</th>
+                    <th>Action</th>
+                    <th>History</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i>
+                <tr>
+                    <td>{{i.StoreName}}</td>
+                    <td>{{i.Discount}}</td>
+                    <td> <button class="btn btn-primary" (click)="Edit(i)">Edit</button></td>
+                    <td><a class="view" (click)="History(i)">
+                            <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-dialog header="Edit Discount" [(visible)]="display" [modal]="true" [style]="{width: '30vw'}"
+        [draggable]="false" [resizable]="false" appendTo="body">
+            <div class="row mt-3" *ngIf="data">
+                <div class="col">
+                    <label for="">{{data.StoreName}}</label>
+                </div>
+                <div class="col">
+                    <input type="text" [(ngModel)]="data.Discount">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-8"></div>
+                <div class="col-2">
+                    <button class="btn btn-primary" (click)="update()">Update</button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-raised btn-success" (click)="display=false;">Cancel</button>
+                </div>
+            </div>
+        </p-dialog>
+        <div *ngIf="isHistory">
+        <p-dialog header="View History" [(visible)]="isHistory" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+        [draggable]="false" [style]="{width: '60%', top: '30px'}" >
+            <app-history [entity]="entity" [id]="Id" ></app-history>
+            <button  class="btn btn-raised btn-success  ml-1" (click)="isHistory=false" style="float:right;">Cancel</button>
+        </p-dialog>
+    </div>
+    </div>
+</div>

@@ -1,0 +1,494 @@
+<div class="row">
+  <h4 style="padding-top: 20px; padding-left: 20px"><b>Order Configuration</b></h4>
+</div>
+<hr>
+<p-toast [style]="{marginTop: '10px'}"></p-toast>
+
+<p-tabView (onChange)="onTabChange($event)">
+  <p-tabPanel header="Minimun Order" [selected]="true">
+
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+      <div class="position-relative">
+        <div class="position-relative">
+          <p-table  #dts  [globalFilterFields]="['cityname','warehousename']" [value]="cityList" [paginator]="true" [rows]="9" [scrollable]="true"
+            scrollHeight="70vh" text-align: initial>
+            <ng-template pTemplate="caption">
+              <div style="text-align: right">        
+                  <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                  <input type="text" pInputText size="50" placeholder="Search City / Warehouse" style="width:auto" (input)="dts.filterGlobal(
+                    $any($event.target).value, 'contains')">
+              </div>
+          </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="text-align: center">
+                  City
+                </th>
+                <th style="text-align: center">
+                 Warehouse
+                </th>
+                <th style="text-align: center">
+                  Minimum Order Value
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr>
+                <!-- <td style="text-align: center">
+                        {{i+1}}
+                      </td> -->
+                <td style="text-align: center">
+                  {{rowData.cityname}}
+                </td>
+                <td style="text-align: center">
+                <ng-template *ngIf="rowData.warehousename == 'NA' else other">
+                </ng-template>
+                <ng-template #other>
+                  <ng-container *ngIf="rowData.warehousename != 'NA'">
+                    {{rowData.warehousename}}
+                  </ng-container>
+                </ng-template>
+              </td>
+                <td style="text-align: center">
+                  <input type="number" name="MinOrderValue" class="form-control" id="MinOrderValue"
+                    [(ngModel)]="rowData.MinOrderValue">
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      <button name="detail" type="button" class="btn btn-raised btn-raised btn-primary "
+        (click)="update(cityList)">Save</button>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel header="Online Payment Configuration">
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+      <div class="position-relative">
+        <div class="position-relative">
+          <p-table #dt  [value]="GetCustomizedPrepaidOrders" [paginator]="true" [rows]="8"
+            [scrollable]="true" scrollHeight="70vh" text-align: initial>
+
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="text-align: center">
+                  Warehouse Name
+                </th>
+                <th style="text-align: center">
+                  Order Amount
+                </th>
+                <th style="text-align: center">
+                  Onilne Percentage %
+                </th>
+                <th style="text-align: center">
+                  Cash Percentage %
+                </th>
+                <th style="text-align: center">
+                  Active
+                </th>
+                <th style="text-align: center">
+                  Delete
+                </th>
+                <th style="text-align: center">
+                  Update
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr>
+                <td>{{rowData.Warehousename}}</td>
+                <td>
+                  <input type="number" name="OrderAmount" class="form-control" id="MinOrderValue"
+                    [(ngModel)]="rowData.OrderAmount">
+                </td>
+                <td>
+                  <input type="text" name="OnlineParcentage" class="form-control" id="MinOrderValue"
+                    
+                    (keyup)="validateNegative($event.target.value, rowData) "
+                    [ngModel]="rowData.OnlineParcentage">
+                </td>
+                <td>
+                  <input type="number" name="CashParcentage" class="form-control" id="MinOrderValue" [disabled]="true"
+                    [(ngModel)]="rowData.CashParcentage">
+                </td>
+
+                <td style="text-align: center">
+                  <p-inputSwitch name="isPublished" [(ngModel)]="rowData.IsActive"></p-inputSwitch>
+                </td>
+                <td style="text-align: center">
+                  <p-inputSwitch name="isPublished" [(ngModel)]="rowData.IsDelete"></p-inputSwitch>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-raised btn-primary"
+                    (click)="updateGetCustomizedPrepaidOrders(rowData)">
+                    update
+                  </button>
+                  
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel header="WheelConfiguration">
+    <div class="row ">
+      <div class="col-sm-12">
+        <!-- <form class="form" #ledgerForm="ngForm"> -->
+          <div class="form-body">
+            <div class="row">
+              <div class="col-md-5">
+                <div class="form-group">
+                  <p-table [value]="getwheel" text-align: center >
+                    <ng-template pTemplate="header" >
+                      <tr>
+                          <th>Order Amount</th>
+                          <th>LineItemCount</th>
+                          <th>IsStore</th>
+                          <th>Action</th>                    
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                      <tr>
+                          <td><input type="number" id="OrderAmount" name="OrderAmount" class="form-control"
+                            [(ngModel)]="rowData.OrderAmount"/></td>
+                          <td> <input type="number" id="LineItemCount" name="LineItemCount" class="form-control"
+                            [(ngModel)]="rowData.LineItemCount"/></td>
+                          <td *ngIf="!rowData.IsStore"></td>
+                          <td *ngIf="rowData.IsStore" ><p-checkbox binary="true" disabled id="IsStore" name="IsStore" [(ngModel)]="rowData.IsStore"></p-checkbox>  </td>
+                          <td>
+                            <button type="button" class="btn btn-raised btn-primary" (click)="updateWheel(rowData)">
+                              Update
+                            </button>
+                          </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                  <!-- <label for="orderType" class="font">Order Amount</label>
+                  <input type="number" id="orderTypeswheel" name="orderTypeswheel" class="form-control"
+                    [(ngModel)]="getwheel.OrderAmount">                   
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="orderType" class="font">LineItemCount</label>
+                  <input type="number" id="LineItemCount" name="LineItemCount" class="form-control"
+                    [(ngModel)]="getwheel.LineItemCount"> -->
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <br>
+               
+                </div>
+              </div>
+            </div>
+          </div>
+        <!-- </form> -->
+      </div>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel header="WheelPointWeightPercentConfig">
+    <div class="row ">
+      <div class="col-sm-12">
+        <form class="form" #ledgerForm="ngForm">
+          <div class="form-body">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="orderType" class="font">Wheel Point</label>
+                  <input type="number" id="WheelPoint" name="WheelPoint" class="form-control"
+                    [(ngModel)]="getwheelweight.WheelPoint">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="orderType" class="font">WheelWeightPercent</label>
+                  <input type="number" id="WheelWeightPercent" name="WheelWeightPercent" class="form-control"
+                    [(ngModel)]="getwheelweight.WheelWeightPercent">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <br>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="updateWheelweight(getwheelweight)">
+                    Update
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel header="Max. Wallet Point Usage On Order">
+    <div class="row ">
+      <div class="col-sm-12">
+        <form class="form" #ledgerForm="ngForm">
+          <div class="form-body">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="orderType" class="font">Max Wallet Points Set</label>
+                  <input type="number" id="MaxWalletPointsSet" name="MaxWalletPointsSet" class="form-control"
+                    [(ngModel)]="MaxWalletPointUsed">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <br>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="updateMaxWalletPointsSet(MaxWalletPointUsed)">
+                    Update
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-3">
+            </div>
+              <div class="col-md-3" style="text-align: end;">
+                <button type="button" class="btn btn-primary" name="history" id="history" (click)="openDetails(updateMaxWalletPoints)">
+                    History
+                </button>
+            </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel header="Up Coming Flash Deal Image">
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+      <div class="position-relative">
+        <div class="position-relative">
+          <p-table #dt  [value]="getFlashDealImage" [paginator]="true" [rows]="8"
+            [scrollable]="true" scrollHeight="70vh" text-align: initial>
+
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="text-align: center">
+                  Warehouse Name
+                </th>
+                <th style="text-align: center">
+                  Images
+                </th>
+                <th style="text-align: center">
+                  Update
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+              <tr>
+                <td>{{rowData.WarehouseName}}</td>
+                <td>
+                  
+                  <div class="img-wrapper">
+                    <img [src]="rowData.ImagePath" alt="ImagePath" onError="this.src='./assets/img/no-image.png';" height="100">
+                  </div>
+
+                </td>
+                <td>
+                  <input class="btn btn-raised btn-info col-md-6" id="file" type="file" accept="image/*" 
+                  (change)="upload($event.target.files)"/>
+                <div class="col-md-6"></div>
+                <!-- <div class="form-group">
+                  <img alt="" [src]="imgURL" height="100">
+                </div> -->
+                  <button type="button" class="btn btn-raised btn-primary"
+                    (click)="uploadFlashDealImage(rowData,$event)">
+                    update
+                  </button>
+                  &nbsp;&nbsp;
+                  <button type="button" class="btn btn-raised btn-primary"
+                    (click)="RemoveFlashDealImage(rowData,$event)">
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </p-tabPanel>
+  <p-tabPanel header="Store Minimum Order">
+    <div class="row ">
+      <div class="col-sm-12">
+        <form class="form" #ledgerForm="ngForm">
+          <div class="form-body">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="Store" class="font">City*</label>
+                 <select id="Store" name="Store" class="form-control" [(ngModel)]="Store.CityId" (change)="getWarehouseList(Store.CityId)">
+                  <option [value]="null">--- Select City --</option>
+                  <option *ngFor="let city of cityMinOrdeList" [ngValue]="city.Cityid">{{city.CityName}}
+                  </option>
+                </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="Store" class="font">WarehouseName*</label>
+                 <select id="Store" name="Store" class="form-control" [(ngModel)]="Store.WarehouseId">
+                  <option [value]="null">--- Select WarehouseName --</option>
+                  <option *ngFor="let warehouse of warehouseLis" [ngValue]="warehouse.WarehouseId">{{warehouse.WarehouseName}}
+                  </option>
+                </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="Store" class="font">Store*</label>
+                 <select id="Store" name="Store" class="form-control" [(ngModel)]="Store.StoreId" (change)="selected = true">
+                  <option [value]="null">--- Select Store --</option>
+                  <option *ngFor="let store of StoreList" [ngValue]="store.Id">{{store.Name}}
+                  </option>
+                </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label for="MinOrderValue" class="font">Minimum Order*</label>
+                  <input type="number" id="MinOrderValue" name="MinOrder" class="form-control"
+                    [(ngModel)]="Store.MinOrderValue">
+                </div>
+              </div>
+                <div class="col-md-2">
+                <div class="form-group">
+                  <label for="MinOrderValue" class="font">Minimum Line Item*</label>
+                  <input type="number" id="MinLineItem" name="MinOrder" class="form-control"
+                    [(ngModel)]="Store.MinLineItem">
+                </div>
+              
+              </div>
+              <div class="col-md-1">
+                <div class="form-group">
+                  <br>
+                  <button type="button" class="btn btn-raised btn-primary" style="margin-top: 9px;" (click)="SaveStoreMinOrder(Store)">
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p-table  #myTab  [globalFilterFields]="['CityName','WarehouseName']" [value]="StoreMinOrderList" scrollHeight="130vh"  [paginator]="true" [rows]="10" [scrollable]="true" text-align: center>
+              <ng-template pTemplate="caption">
+                <div style="text-align: right">        
+                    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                    <input type="text" pInputText size="50" placeholder="Search City / Warehouse" style="width:auto"  (input)="myTab.filterGlobal(
+                      $any($event.target).value, 'contains')">
+                </div>
+              </ng-template> 
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th style="text-align: center;">City</th>
+                      <th style="text-align: center;">Warehouse</th>
+                      <th style="text-align: center;">Store</th>
+                      <th style="text-align: center;">Minimum Order Value</th>
+                      <th style="text-align: center;">Minimum Line Item</th>
+                      <th style="text-align: center;">Action</th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                  <tr>
+                      <td style="text-align: center;">{{rowData.CityName}}</td>
+                      <td style="text-align: center;">
+                        <ng-template *ngIf="rowData.WarehouseName == 'NA' else second">
+                        </ng-template>
+                        <ng-template #second>
+                          <ng-container *ngIf="rowData.WarehouseName != 'NA'">
+                            {{rowData.WarehouseName}}
+                          </ng-container>
+                        </ng-template>
+                      </td>
+                      <td style="text-align: center;">{{rowData.StoreName}}</td>
+                      <!-- <td><input style="width: 90px; margin-left: 35%;"  type="number"/></td>  -->  
+                      <td><input  type="number" title="Numbers only" id="qty"
+                        name="qty{{i}}" style="color: black;margin-left: 20%;" [(ngModel)]="rowData.MinOrderValue"
+                         min="0" ></td> 
+                         <td><input  type="number" title="Numbers only" id="qtyy"
+                          name="qtyy{{i}}" style="color: black;margin-left: 20%;" [(ngModel)]="rowData.MinLineItem"
+                           min="0" ></td> 
+                      <!-- <td style="text-align: center;">{{rowData.MinOrderValue}}</td>
+                      <td style="text-align: center;">{{rowData.MinLineItem}}</td> -->
+                      <td style="text-align: center;"> <button name="detail" type="button" class="btn btn-primary"(click)="eDit(rowData)">Save</button></td>
+                  </tr>
+              </ng-template>
+        </p-table>
+          </div>
+        </form>
+      </div>
+    </div>
+  </p-tabPanel>
+</p-tabView>
+<div *ngIf="selectedopen">
+  <p-dialog [(visible)]="selectedopen" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+
+    <div class="row">
+      <h4 style="padding-top: 20px; padding-left: 20px"><b> Add Order Configuration</b></h4>
+    </div>
+    <hr>
+    <p-toast [style]="{marginTop: '10px'}"></p-toast>
+    <div class="row ">
+      <div class="col-sm-12">
+        <form class="form" #ledgerForm="ngForm">
+          <div class="form-body">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="ware" class="font">Choose Warehous</label>
+                  <br>
+                  <select id="ware" name="ware" class="form-control" [(ngModel)]="searchModel.Warehouseid">
+                    <option value="" disabled>--Select--</option>
+                    <option *ngFor="let w of warehouseList" [ngValue]="w.WarehouseId">
+                      {{ w.WarehouseName }} {{w.CityName}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="orderType" class="font">Order Amount</label>
+                  <input type="number" id="orderTypes" name="orderTypes" class="form-control"
+                    [(ngModel)]="searchModel.OrderAmount">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="orderType" class="font">Onilne Percentage %</label>
+                  <input type="number" id="Onilne" name="Onilne" class="form-control"
+                  (keyup)="addvalidateNegative($event.target.value, searchModel) "
+                    [(ngModel)]="searchModel.OnlineParcentage">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="orderType" class="font">Cash Percentage %</label>
+                  <input type="number" id="Cash" name="Cash" class="form-control"
+                    [(ngModel)]="searchModel.CashParcentage" disabled>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <button type="button" class="btn btn-raised btn-primary" (click)="add(searchModel)">
+                    ADD
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </p-dialog>
+</div>
+<div id="history" *ngIf="popupOpen" >
+  <p-dialog [(visible)]="popupOpen" [resizable]="true"  [modal]="true" appendTo="body" positionTop="70"  [style]="{width: '80%' }">
+    <p-header>
+      History
+    </p-header>
+    <app-history [entity]="entity" [id]="rowDataV1.Id" ></app-history>
+   
+</p-dialog>
+</div>

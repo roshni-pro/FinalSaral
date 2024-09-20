@@ -1,0 +1,35 @@
+<div class="d-flex justify-content-between" style="margin-top: 50px;">
+    <div class="header">
+        <h3 class="m-2">Expected RTD Date</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-2">
+                <label for="">Select Warehouse</label><br>
+                <p-dropdown [options]="allWarehouses" optionLabel="WarehouseName" placeholder="Select Warehouse"
+                [(ngModel)]="selectedWarehouse" ></p-dropdown>
+            </div>
+            <div class="col-3 ml-2">
+                <label for="">Select Date</label><br>
+                <p-calendar  [(ngModel)]="rtdDate"  [showIcon]="true"
+                [minDate]="calendarConfig.minDate"    [maxDate]="calendarConfig.maxDate" placeholder="select date"   ></p-calendar>
+            </div>
+            <div class="col-2">
+                <label for="">Upload Excel</label><br>
+                <input type="file" multiple="false" (change)="UploadFlashDoc($event.target.files)" accept=".xls,.xlsx"  #fileRef/>
+            </div>
+            <div class="col-4 mt-3 ml-5 text-right">
+                <button class="btn btn-primary" id="upload" (click)="onUploadClick()">Upload Excel</button>
+                <button class="btn btn-primary ml-1" (click)="Clear()">Clear</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col mt-1 text-right">
+                <button class="btn btn" id="download"  style="background-color: green;color: white;"  (click)="DownLoadSample()">Download Sample</button>
+            </div>
+        </div>
+    </div>
+</div>
+<p-toast></p-toast>

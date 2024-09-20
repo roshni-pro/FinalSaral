@@ -1,0 +1,246 @@
+<section style="position: relative;">
+    <div class="col-xl-12 col-lg-12">
+        <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">Vehicle Configuration</h4>
+    </div>
+
+    <div class="ui-fluid shadow p-3
+     m-3 bg-white rounded table table-hover">
+        <div class="row m-1">
+            <div class="col-3">
+                <div class="form-group">
+                    <label for="">Select Warehouse</label>
+                    <p-dropdown [options]="warehouseList" name="warehouse" [(ngModel)]="warehouseId" filter="true"
+                        >
+                        <!-- <ng-template let-item pTemplate="selectedItem">
+                            <span style="vertical-align:middle; margin-left: .5em">{{item.label}}</span>
+                        </ng-template>
+                        <ng-template let-car pTemplate="item">
+                            <div class="ui-helper-clearfix" style="position: relative;min-height: 25px;">
+                                <div style="margin-top:4px;">{{car.label}}</div>
+                            </div>
+                        </ng-template> -->
+                    </p-dropdown>
+                </div>
+            </div>
+
+            <div class="col-4"></div>
+          
+
+
+            <div class="col-3">
+                <div class="form-group" style="margin-top: 2rem;">
+                    <button type="button" class="btn btn-raised btn-raised btn-primary " (click)="getList()">
+                        Search</button>
+                    &nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-raised btn-raised btn-primary " (click)="display=true">
+                        Add</button>
+                    &nbsp;&nbsp;&nbsp;
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-12">
+            <p-table [value]="vehicleTyepList">
+                <ng-template pTemplate="header">
+                    <tr class="myheader">
+                        <th>S.No </th>
+                        <th> Type</th>
+                        <th> WareHouseId</th>
+                        <th>ThresholdTouchPoint</th>
+                        <th>ThresholdOrderCount</th>
+                        <th>ThresholdOrderAmount</th>
+                        <th>ThresholdLoadInKg</th>
+                        <th>Active</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+
+
+                    </tr>
+
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                    <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{rowData.Type}}</td>
+                    <td>{{rowData.WarehouseId}}</td>
+                    <td>{{rowData.ThresholdTouchPoint}}</td>
+                    <td>{{rowData.ThresholdOrderCount}}</td>
+                    <td>{{rowData.ThresholdOrderAmount}}</td>
+                    <td>{{rowData.ThresholdLoadInKg}}</td>
+                    <td>{{rowData.IsActive}}</td>
+                    <td><i class="fa fa-fw fa-pencil" (click)="editRowData(rowData)"></i></td>
+                    <td><i class="fa fa-fw fa-trash" (click)="confirm(rowData)"></i></td>
+                </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <!-- <td colspan="18"> -->
+                    <span class="emptymsg">No Record</span>
+                    <!-- </td> -->
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <p-dialog header="Add Vehicle Configuration" [(visible)]="display" [modal]="true" [blockScroll]="true"
+        [style]="{'width': '45vw' ,    'margin-inline': '80px'}" [draggable]="false" [resizable]="false"
+        appendTo="body">
+        <div *ngIf="display">
+
+
+
+
+            <div class="row mt-1" >
+                <div class="col-3">
+                        <label for=""><b>Select Warehouse</b></label>
+                       
+                </div>
+                <div class="col-2">
+                    <p-dropdown [options]="warehouseList" required="1"  [(ngModel)]="warehouseId" filter="true">
+                       
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-3">
+                    <label><b>Type</b></label>
+                </div>
+                <div class="col-3">
+                    <input type="text" class="form-control" name="name" [(ngModel)]="type" placeholder="Enter Type"
+                        required="1" maxlength="50" minlength="1" />
+                </div>
+            </div>
+            <div class="row mt-1">
+
+                <div class="col-3">
+                    <label><b>ThresholdOrderAmount</b></label>
+
+                </div>
+                <div class="col-3">
+                    <input type="number" class="form-control" [(ngModel)]="thresholdOrderAmount" 
+                        placeholder="Enter ThresholdOrderAmount" oninput="validity.valid||(value='');" required="1" min="0" />
+                </div>
+            </div>
+            <div class="row mt-1">
+
+                <div class="col-3">
+                    <label><b>ThresholdTouchPoint</b></label>
+
+                </div>
+                <div class="col-3"> 
+                    <input type="number" class="form-control" [(ngModel)]="thresholdTouchPoint" oninput="validity.valid||(value='');"
+                        placeholder="Enter ThresholdTouchPoint" required="1" max="1000" min="0" />
+                </div>
+            </div>
+            <div class="row mt-1">
+
+                <div class="col-3">
+                    <label><b>ThresholdOrderCount</b></label>
+
+                </div>
+                <div class="col-3">
+                    <input type="number" class="form-control" [(ngModel)]="thresholdOrderCount" oninput="validity.valid||(value='');"
+                        placeholder="Enter ThresholdOrderCount" required="1"   min="0" />
+                </div>
+            </div>
+            <div class="row mt-1">
+
+                <div class="col-3">
+                    <label><b>ThresholdLoadInKg</b></label>
+
+                </div>
+                <div class="col-2">
+                    <p-dropdown [options]="thresholdkgList" [(ngModel)]="thresholdLoadInKg" optionValue="Id" required="1"
+                        placeholder="Select Weight" optionLabel="ThresholdLoadInKg"></p-dropdown>
+
+                </div>
+            </div>
+            <div class="row mt-1" style="margin-left: 20%;">
+
+                <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="insertVehicleConfig()">
+                    Save</button>
+            </div>
+
+
+        </div>
+    </p-dialog>  
+
+
+    <p-dialog header="Edit Vehicle Configuration" *ngIf="editdisplay" [(visible)]="editdisplay" [modal]="true" [blockScroll]="true"
+    [style]="{'width': '45vw' ,    'margin-inline': '80px'}" [draggable]="false" [resizable]="false"
+    appendTo="body">
+        <div class="row mt-1">
+            <div class="col-3">
+                <label>Type</label>
+            </div>
+            
+            <div class="col-3">
+                <input type="text" class="form-control" name="name" [(ngModel)]="rowDataCopy.Type" placeholder="Enter Type" 
+                    required="1" maxlength="50" minlength="1" />
+            </div>
+        </div>
+        <div class="row mt-1">
+
+            <div class="col-3">
+                <label>ThresholdOrderAmount</label>
+
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control" [(ngModel)]="rowDataCopy.ThresholdOrderAmount"
+                    placeholder="Enter ThresholdOrderAmount" required="1" min="0" oninput="validity.valid||(value='');"/>
+            </div>
+        </div>
+        <div class="row mt-1">
+
+            <div class="col-3">
+                <label>ThresholdTouchPoint</label>
+
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control" [(ngModel)]="rowDataCopy.ThresholdTouchPoint"
+                    placeholder="Enter ThresholdTouchPoint" required="1" max="500" min="0"  oninput="validity.valid||(value='');"/>
+            </div>
+        </div>
+        <div class="row mt-1">
+
+            <div class="col-3">
+                <label>ThresholdOrderCount</label>
+
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control" [(ngModel)]="rowDataCopy.ThresholdOrderCount"
+                    placeholder="Enter ThresholdOrderCount" required="1" max="500" min="0" oninput="validity.valid||(value='');" />
+            </div>
+        </div>
+        <div class="row mt-1">
+
+            <div class="col-3">
+                <label>ThresholdLoadInKg</label>
+
+            </div>
+            <div class="col-2"> 
+                
+                <p-dropdown [options]="thresholdkgList" [(ngModel)]="thresholdkgLists" 
+                    placeholder="Select Weight" optionLabel="ThresholdLoadInKg"></p-dropdown>
+
+            </div>
+        </div>
+        <div class="row mt-1" style="margin-left: 20%;">
+
+            <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="editvehicleTypeList()">
+                Save</button>
+        </div>
+
+
+      
+</p-dialog>
+<p-confirmDialog  #ab appendTo="body" header="Confirmation" [style]="{width: '50vw'}">
+    <ng-template pTemplate="header">
+        <h3>Confirmation </h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template></p-confirmDialog>
+</section>
+<p-toast></p-toast>

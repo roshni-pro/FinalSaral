@@ -1,0 +1,141 @@
+<div class="container-fluid"> 
+    <div class="row">
+        <div class="col-md-12 d-flex shadow p-3 mb-3 mt-3 bg-white justify-content-between">
+           <div class="drop d-flex">               
+            <div class="mr-2">
+                <p-multiSelect [options]="warehouseListData" name="warehouseInput" defaultLabel="Select Warehouse" [(ngModel)]="selectedwarehouse"
+                [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName" (onChange)="getWarehouseList(selectedwarehouse)">
+              </p-multiSelect>             
+            </div>
+                <div class="mr-2">
+                    <p-multiSelect [options]="categoryListData" name="CategoryName" defaultLabel="Select Category" [(ngModel)]="selectedCatregory"
+                    [panelStyle]="{minWidth:'25em'}" optionLabel="CategoryName" (onChange)="getSubCatList(selectedCatregory)">
+                  </p-multiSelect>              
+                </div>
+                <div class="mr-2">
+                    <p-multiSelect id="SubCategoryName" name="SubCategoryName" [options]="subCatList" defaultLabel="Select SubCategory"
+                    [(ngModel)]="selectedSubCat" [panelStyle]="{minWidth:'25em'}"  optionLabel="SubCategoryName" (onChange)="getBrandsnew(selectedSubCat)">
+                    </p-multiSelect>               
+                </div>
+                <div class="mr-2">
+                    <p-multiSelect id="Brand" name="Brand" [options]="brandList" [(ngModel)]="selectedSubsubCatregory" defaultLabel="Select Brand"
+                    [panelStyle]="{minWidth:'25em'}" optionLabel="BrandName" (onChange)="getBrandList(selectedSubsubCatregory)">
+                  </p-multiSelect>                 
+                </div>
+                <div class="mr-2">
+                    <p-multiSelect [options]="buyerData" name="BuyerName" defaultLabel="Select Buyer" [(ngModel)]="selectedBuyers"
+                    [panelStyle]="{minWidth:'25em'}" optionLabel="BuyerName" (onChange)="getbuyerList(selectedBuyers)">
+                  </p-multiSelect>                  
+                </div>
+                <div class="mr-2">
+                    <p-calendar [showIcon]="true" id="startDate" [(ngModel)]="startDate"
+                    name="startdate" [readonlyInput]="true" ></p-calendar>                                                 
+                </div>
+                <div class="mr-2">
+                    <p-calendar [showIcon]="true" id="endDate" [(ngModel)]="endDate"
+                    name="endDate" [readonlyInput]="true" ></p-calendar>                                                  
+                </div>
+                <div class="mr-2">
+               <button type="button" (click)="getSearchRecord()" class="btn btn-success" style="background-color: green; color: white;">Search</button>                                                  
+                </div>
+           </div>
+           <div>            
+                 <p-button label="Export" (onClick)="exportDownload()"></p-button>
+           </div>
+        </div>
+    </div>
+    <div class=" row shadow p-3 mb-3 bg-white"> 
+        <div class="col-md-12">
+            <h5 style="font-weight: bold;"> CFR Reports </h5><br>
+            <p-table #dt [value]="CFRTableData" [globalFilterFields]="['buyerName','warehouseName','itembasename','status','itemnumber','CategoryName','SubCategoryName','SubSubCategoryName','IsActive']"  [lazy]="false"  [rows]="50" responsiveLayout="scroll" [paginator]="true" [scrollable]="true"  scrollHeight="450px" scrollDirection="both">
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                      <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                      <input type="text" pInputText size="50" placeholder="Search"
+                        (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                  </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                      <th> Buyer </th>
+                      <th> Item Number  <p-sortIcon field="buyer"></p-sortIcon></th>
+                      <th> Category </th>
+                      <th> Sub Category  </th>
+                      <th> Brand Name </th>
+                      <th> Item Name </th>
+                      <th> MRP </th>
+                      <th> Warehouse <p-sortIcon field="buyer"></p-sortIcon></th>
+                      <th> Limit Value </th>  
+                      <th> Active % </th>
+                      <th> Active Item <p-sortIcon field="buyer"></p-sortIcon></th>
+                      <th> Date <p-sortIcon field="buyer"></p-sortIcon></th>
+                      <th> Status <p-sortIcon field="buyer"></p-sortIcon></th>                     
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item>
+                      <tr>
+                          <td>{{item.buyerName}}</td>
+                          <td>{{item.itemnumber}}</td>
+                          <td>{{item.CategoryName}}</td>
+                          <td>{{item.SubCategoryName}}</td>
+                          <td>{{item.SubSubCategoryName}}</td>
+                          <td>{{item.itembasename}}</td>
+                          <td>{{item.MRP}}</td>
+                          <td>{{item.warehouseName}}</td>
+                          <td>{{item.LimitValue | number: '1.0-2'}}</td>
+                          <td>{{item.Active_per}}</td>
+                          <td>{{item.IsActive}}</td>
+                          <td>{{item.CreatedDate | date : 'medium'}}</td>                         
+                          <td [ngClass]="item.status">{{item.status}}</td>                         
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <h4>Data Not Found</h4>
+            </ng-template>
+          </p-table>
+       </div>
+   </div>
+   <div class="row" *ngIf="isShowChart">
+        <div class="col-md-12 mb-3 bg-white p-3">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5 style="font-weight: bold;"> CFR Chart </h5>
+                </div>
+                <div>
+                    <p-multiSelect [options]="selectedGraphBuyers" name="selectedgraphname" defaultLabel="Select Buyer" [(ngModel)]="selectedBuyerForGraph"
+                    [panelStyle]="{minWidth:'25em'}" optionLabel="BuyerName" (onChange)="getGraphBuyerList(selectedBuyerForGraph)">
+                  </p-multiSelect>
+                </div>
+            </div>            
+             <div class="card">              
+                <p-chart type="line" [data]="basicData"></p-chart>
+            </div> 
+        </div>
+   </div>
+   <div class="row" *ngIf="isShowChart">
+      
+        <div class="col-12 p-3 mb-3 bg-white d-flex justify-content-between">
+            <div class="col-10 bbar">
+                <h5 style="font-weight: bold;"> Summary </h5><br>
+                <div class="progress" style="position:relative;height:20px;">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="font-weight: 400;" [style.width.%]="CFRTotalGreen">
+                      {{CFRTotalGreen}}%
+                     <span class="last-val" style="position:absolute;right:25px;font-weight: 400;">{{CFRTotalRed}}%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 nnone mt-1" style="font-weight: bold;">
+               <div class="mb-2">
+                   <span style="background-color: #38dd31;color: #fff;padding: 5px 10px;border-radius: 3px;"> {{totalGreenCount.length}} </span> &nbsp; For xx number of days
+               </div>
+               <div class="mt-3">
+                <span style="background-color: #ff586b;color: #fff;padding: 5px;padding: 5px 10px;border-radius: 3px;"> {{totalRedCount.length}} </span> &nbsp; For xx number of days
+                </div>
+            </div>
+        </div>
+   </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

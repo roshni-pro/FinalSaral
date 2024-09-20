@@ -1,0 +1,166 @@
+<!-- <p>newsupplierlist works!</p> -->
+<br>
+<div class="row">
+    <div class="col-3">
+        <h3>Supplier List</h3>
+    </div>
+    <div class="col" style="margin-left: 57%;">
+      <button type="button"  class="btn btn-primary ml-1" (click)="addnew()">Add New Supplier</button>
+    </div>
+  </div>
+   <div class="row">
+     <div class="col-3">
+      <label for="a"> Choose Status </label>
+      <select id="sstatus" name="sstatus" class="form-control" [(ngModel)]="sstatus" >
+        <option>--select--</option>
+        <option *ngFor="let sta of Status" [ngValue]="sta"> {{ sta }} </option>
+      </select>
+     </div>
+
+     <div class="col-3">
+      <label for="a"> Keyword </label>
+      <input type="text" id="key" class="form-control" name="key"
+        [(ngModel)]="key" placeholder="SupplierName/ SUPPLIERCODES/ MobileNo/ StateName/ City/ GSTINNO" />
+     </div>
+
+     <div class="col-5" style="margin-top:25px;">
+      <button type="button" class="btn btn-raised btn-primary" (click)="emp();getSupplierList(Status, $event)">
+        <i class="fa fa-check-square-o"></i> Search
+      </button>
+      <button type="button"  class="btn btn-primary ml-2"  (click)="exportdata(sstatus)">Export</button>
+      <button type="button" class="btn btn-primary ml-2" (click)="exportfulldata()" >Export Full Supplier List</button>
+     </div>
+   
+   </div>
+
+<!-- <div class="row">
+<div class="col-sm-2">
+  <button type="button"  class="btn btn-primary"  (click)="exportdata(sstatus)">Export</button>
+  <button type="button" class="btn btn-primary ml-2" (click)="exportfulldata()" >Export Full Supplier List</button>
+</div>
+</div> -->
+
+<p-table [value]="SupplierList" [paginator]="true" [scrollable]="true" [(first)]="first"
+scrollDirection="horizontal" (onLazyLoad)="load($event)" [totalRecords]="TotalRecords"  [lazy]="true" [rows]="10" 
+>
+    
+<!-- <ng-template pTemplate="caption">
+  <div style="text-align: right;">
+      <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+      <input type="text" pInputText [minLength]="3" [size]="30" placeholder="Executive Name" [(ngModel)] = "key"  
+          style="border: solid 4px #ddd; ">
+  </div>
+</ng-template> -->
+      <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 100px;">Sr No</th>
+                <!-- <th>Id</th> -->
+              <th style="width: 100px;">Supplier Code</th>
+              <th style="width: 200px;">Supplier Name</th>
+              <th style="width: 180px;">GST Number</th>  
+              <th style="width: 150px;">Contact Person Name</th>
+              <th style="width: 150px;">Mobile No.</th>     
+              <th style="width: 150px;">Email Id</th>
+              <th style="width: 140px;">City</th>
+              <th style="width: 150px;">State</th>
+              <th style="width: 100px;">Status</th>
+              <th style="width: 110px;">Active/InActive</th>
+              <th style="width: 60px;">Action</th>
+              
+              <th style="width: 60px;">Add Depo</th>
+              <th style="width: 60px;">View Depo</th>
+              <th style="width: 60px;">History</th>
+              <th style="width: 110px;">Created Date</th>
+          </tr>
+      </ng-template>
+    
+      <ng-template pTemplate="body" let-config let-rowIndex="rowIndex">
+          <tr>
+            <td style="width: 100px;">{{rowIndex+1}}</td>
+              <!-- <td>{{config.id}}</td> -->
+            <td style="width: 100px;">{{config.SUPPLIERCODES}} </td>
+             <td style="width: 200px;">{{config.SupplierName}}</td>
+             <td style="width: 180px;">{{config.GSTINNO}} </td>
+             <td style="width: 150px;">{{config.ContactPerson}}</td>
+              <td style="width: 150px;">{{config.MobileNo}}</td>
+              <td style="width: 150px;">{{config.EmailId}}</td>
+              <td style="width: 140px;">{{config.City}}</td>
+              <td style="width: 150px;">{{config.StateName}}</td>
+              <td style="width: 100px;">{{config.Status}}</td>
+              <td style="width: 110px;">{{config.IsVerified ? 'Blocked' : config.Active?'Active':'Deactive'}} </td>
+              <!-- <td>{{config.GSTINNO.length > 0 ? config.GSTINNO :config.TINNo}} </td> -->
+              
+               <td style="width: 60px;">
+                   <!-- <button type="button" (click)="View(config)" class="btn btn-primary btn-sm"> View/Edit</button> -->
+                   <i class="fa fa-pencil" (click)="View(config)" style="font-size: 2rem;"></i>
+                  
+                </td>
+               
+               <td style="width: 60px;" >
+                 <!-- <button type="button" class="btn btn-primary btn-sm"  [disabled]="disabled" (click)="addDpot(config)"> Add Depo</button> -->
+                 <button [disabled]="disabled" style="border: none; background-color: white;"><i class="fa fa-plus-circle" (click)="addDpot(config)"  style="font-size: 2rem;"></i></button>
+                </td>
+               <td style="width: 60px;">
+                <!-- <button type="button" class="btn btn-primary btn-sm" (click)="viewDepot(config)">View Depo</button>   -->
+                <i class="fa fa-eye" (click)="viewDepot(config)" style="font-size: 2rem;"></i>
+               </td >
+               
+               <!-- <td>{{config.Active ? 'Active' : 'Deactive'}} </td> -->
+               <td style="width: 60px;" >
+                <!-- <button type="button" class="btn btn-primary btn-sm" (click)="history(config)">History</button> -->
+                <i class="fa fa-history" (click)="history(config)" style="font-size: 2rem;"></i>
+              </td>
+               <td style="width: 110px;">{{config.CreatedDate}}</td>
+          </tr>
+    
+      </ng-template>
+    
+    </p-table>
+
+
+
+    <div  *ngIf="displayBasic">
+      <p-dialog header="Supplier History" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
+          <p>Supplier History</p>
+          <br>
+         <!--form start-->
+         <p-table [value]="historydata" >
+            <ng-template pTemplate="header">
+                <tr>  
+                    <th>Supplier Code</th>
+                    <th>Supplier Name</th>
+                    <th>Comment</th>     
+                    <th>CreatedBy</th> 
+                    <th>CreatedDate</th> 
+                    <th>Status</th>       
+                </tr>
+          
+            </ng-template>
+          
+            <ng-template pTemplate="body" let-data>
+          
+                <tr>
+                   <td>{{data.SupplierCode}}</td>
+                   <td>{{data.Suppliername}}</td>
+                   <td>{{data.Comment}}</td>
+                   <td>{{data.CreatedBy}}</td>
+                   <td>{{data.CreatedDate}}</td>
+                   <td>{{data.Status}}</td>
+                     
+                </tr>
+          
+            </ng-template>
+          
+          </p-table>
+          <!--form end-->
+          <!-- <ng-template pTemplate="footer">
+              <button type="submit" class="btn-save button primary" form="dboyForma">Save</button>
+          </ng-template> -->
+      </p-dialog> 
+  </div>
+
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,84 @@
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+            <h3 class="m-2"><b>Executive Beat Target List</b></h3>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-2">
+                    <label for="">Warehouse:</label>
+                    <select name="" value="" class="form-control col md-3" [(ngModel)]="SelectedWarehouseId"
+                        (change)="getCluster(SelectedWarehouseId)">
+                        <option Value="0">--Select--</option>
+                        <option *ngFor="let item of WarehouseList" [ngValue]="item.WarehouseId">
+                            {{item.WarehouseName}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-sm-2">
+                    <label for="">Cluster:</label>
+                    <select name="" value="" class="form-control col md-3" [(ngModel)]="SelectedClusterId">
+                        <option Value="0">--Select--</option>
+                        <option *ngFor="let item of ClusterList" [ngValue]="item.ClusterId">
+                            {{item.ClusterName}}
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group mt">
+                    <button type="button" class="btn btn-raised btn-raised btn-success"
+                        (click)="search()">Search</button>
+                    <button id="btnAdd" (click)="AddItem()" class="btn btn-raised btn-raised btn-danger ml-1">Add
+                        Item</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <p-table #dt [value]="ItemList" [paginator]="true" [lazy]="true" [rows]="20" [scrollable]="true"
+                    [totalRecords]="totalRecords" (onLazyLoad)="load($event)" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Warehouse</th>
+                            <th>Cluster</th>
+                            <th>Visited Percent</th>
+                            <th>Conversion Percent</th>
+                            <th>Customer Percent</th>
+                            <th>OrderPercent</th>
+                            <th>Product Pareto</th>
+                            <th>Customer Pareto</th>
+                            <th>AvgLine Item</th>
+                            <th>AvgOrder Amount</th>
+                            <th>Detail</th>
+                            <th>Active/InActive</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                        <tr>
+                            <td>{{item.WarehouseName}}</td>
+                            <td>{{item.ClusterName}}</td>
+                            <td>{{item.VisitedPercent}}</td>
+                            <td>{{item.ConversionPercent}}</td>
+                            <td>{{item.CustomerPercent}}</td>
+                            <td>{{item.ProductPareto}}</td>
+                            <td>{{item.OrderLimit}}</td>
+                            <td>{{item.CustomerPareto}}</td>
+                            <td>{{item.AvgLineItem}}</td>
+                            <td>{{item.AvgOrderAmount}}</td>
+
+                            <td><button id="btnDetail" (click)="OpenDetail(item.Id)"
+                                [disabled]="item.IsActive? false:true"   class="btn btn-primary">Detail</button>
+                            </td>
+                            <td>
+                                <p-inputSwitch name="IsActive" [(ngModel)]="item.IsActive"
+                                  (ngModelChange)="ActiveInactive(item,item.IsActive)">
+                                </p-inputSwitch>&nbsp;&nbsp;
+                              </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>

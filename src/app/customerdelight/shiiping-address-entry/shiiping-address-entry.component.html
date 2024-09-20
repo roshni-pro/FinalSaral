@@ -1,0 +1,144 @@
+<p-dialog [(visible)]="visible && customerAddress" [appendTo]="'body'" modal="true" [positionTop]="20" [blockScroll]="true"
+    (onHide)="hide()">
+    <p-header>
+        Change Shipping Address
+    </p-header>
+    <div class="card">
+        <div class="card-body">
+            <div class="row" *ngIf="customerAddressToView">
+                <div class="col-4">
+                    <p>
+                        <b>City: </b>
+                        <span>{{customerAddressToView.CityName? customerAddressToView.CityName : 'Not Given'}}</span>
+                    </p>
+                    <p>
+                        <b>Area: </b>
+                        <span>{{customerAddressToView.AreaText? customerAddressToView.AreaText : 'Not Given'}}</span>
+                    </p>
+                </div>
+                <div class="col-8">
+                    <b>Shipping Address: </b>
+                    <span>{{customerAddressToView.ShippingAddress? customerAddressToView.ShippingAddress : 'Not
+                        Given'}}</span>
+                </div>
+            </div>
+
+            <div *ngIf="customerAddress">
+                <div class="ui-fluid">
+                    <div class="ui-g">
+                        <!-- city -->
+                        <div class="ui-g-12 ui-md-4">
+                            <label for="">
+                                Shipping city
+
+                            </label>
+                            <div class="ui-inputgroup" *ngIf="customerAddress.CityName">
+
+                                <input type="text" class="form-control" name="shippingCity" pInputText
+                                    placeholder="Shipping city" [(ngModel)]="customerAddress.CityName" disabled>
+                                <button pButton (click)="ClearShipCity()" type="button" icon="pi pi-times"
+                                    class="ui-button-danger"></button>
+                                <!--  -->
+                            </div>
+                            <div class="ui-inputgroup" *ngIf="!customerAddress.CityName">
+                                <p-autoComplete styleClass="lbt-a" styleClass="ldr-hd" inputStyleClass="lbt-a" appendTo="body" [(ngModel)]="cityKeyword"
+                                    [suggestions]="cityList" field="description"  
+                                    (onSelect)="selectCity($event)" #cityautocomplete>
+                                </p-autoComplete>
+                                <button pButton type="button"  icon="pi pi-search" (click)="getcityList(cityautocomplete)"
+                                    class="ui-button-success"></button>
+                            </div>
+                        </div>
+                        <!-- area -->
+                        <div class="ui-g-12 ui-md-8">
+                            <label for="">Shipping Area</label>
+                            <div class="ui-inputgroup" *ngIf="customerAddress.AreaPlaceId">
+
+                                <input type="text" class="form-control" name="shippingArea" pInputText
+                                    placeholder="Shipping Area" [(ngModel)]="customerAddress.AreaText" disabled>
+                                <button (click)="ClearShipArea()" pButton type="button" icon="pi pi-times"
+                                    class="ui-button-danger"></button>
+
+                            </div>
+                            <div class="ui-inputgroup" *ngIf="!customerAddress.AreaPlaceId">
+                                <p-autoComplete styleClass="ldr-hd lbt-a"  inputStyleClass="lbt-a" appendTo="body"
+                                    [suggestions]="areaList" field="description"   [(ngModel)]="areaKeyword"
+                                    (onSelect)="selectArea($event)"  #areaautocomplete>
+                                </p-autoComplete>
+                                <button pButton type="button"  icon="pi pi-search" (click)="getarea(areaautocomplete)"
+                                    class="ui-button-success"></button>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-12">
+                            <label for="">Shipping Address</label>
+                            <div class="ui-inputgroup" *ngIf="customerAddress.AddressPlaceId">
+
+                                <input type="text" class="form-control" pInputText placeholder="Shipping Address"
+                                    [(ngModel)]="customerAddress.AddressText" disabled>
+                                <button (click)="ClearShipAddress()" pButton type="button" icon="pi pi-times"
+                                    class="ui-button-danger"></button>
+                                <!--  -->
+                            </div>
+                            <div class="ui-inputgroup" *ngIf="!customerAddress.AddressPlaceId">
+                                <p-autoComplete appendTo="body" styleClass="ldr-hd lbt-a" inputStyleClass="lbt-a"
+                                    [suggestions]="addressList" field="description" [(ngModel)]="addressKeyword"
+                                    (onSelect)="selectAddress($event)"  #addressautocomplete>
+                                </p-autoComplete>
+                                <button pButton  type="button" icon="pi pi-search"
+                                    class="ui-button-success" (click)="getaddress(addressautocomplete)" ></button>
+                            </div>
+                        </div>
+
+                        <div class="ui-md-6">
+                            <label for=""> Apt, Flat, Floor or Shop Number (optional)</label>
+                            <div class="ui-inputgroup">
+                                <input type="text" class="form-control" placeholder="Apt, Flat, Floor or Shop Number"
+                                    [(ngModel)]="customerAddress.AddressLineOne">
+                            </div>
+                        </div>
+                        <div class="ui-md-6">
+                            <label for="">Landmark (optional)</label>
+                            <div class="ui-inputgroup">
+                                <input type="text" class="form-control" placeholder="Landmark"
+                                    [(ngModel)]="customerAddress.AddressLineTwo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+
+                    <!-- <div class="col-md-3 pt-3">
+                    <label for="">Shipping State</label>
+                    <input type="text" class="form-control" placeholder="Shipping State" [(ngModel)]="customer.State">
+                </div> -->
+                    <div class="col-md-3 pt-3">
+                        <label for="">Shipping Zip Code</label>
+                        <input type="number" class="form-control" placeholder="Shipping Zip Code"
+                            [(ngModel)]="customerAddress.ZipCode">
+                    </div>
+
+
+                </div>
+                <!-- <div class="row">
+                <div class="col-3 pt-3">
+                    <p-checkbox value="selectcheckbox" inputId="checkbox" [(ngModel)]="ischeck"
+                        (click)="fillbillingdetails()"></p-checkbox> &nbsp;
+                    <label for="checkbox" style="color:orangered"> Same As Shipping Address</label>
+                </div>
+            </div> -->
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <div class="row">
+            <div class="col-md-12">
+               
+                <button class="pull-right" (click)="updateAddress()">Update</button>
+                <button (click)="cancel()"> cancel</button>
+            </div>
+        </div>
+
+    </p-footer>
+</p-dialog>

@@ -1,0 +1,80 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Catalog Configuration</h3>
+    </div>        
+    <div>
+        <button class="btn btn-success pi pi-plus" (click)="CreateNew()"> 
+            Create New
+        </button>
+    </div>
+</div>    
+<div class="row mt-2">
+    <div class="col-md-.5"></div>
+    <ng-container *ngFor="let city of Cities;let i = index">
+        <div class="col-md-2" *ngIf="city.Cityid==0">
+            <div class="container-fluid mt-2 " style="height: 135px; border: 2px solid black;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between  " >
+                        <div>
+                            <label *ngIf="city.Cityid==0" style="font-size: 16px;"><b>{{city.CityName}}</b></label>
+                        </div>
+                        <div>
+                            <i class="pi pi-ellipsis-v"  style="font-size: 24px;" (click)="menuu.toggle($event);onClickMenu(city.Cityid)"></i>
+                            <!-- <i class="pi pi-ellipsis-v"  (click)="menu.toggle($event);onClickMenu(city.Cityid)"></i> -->
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between  " style="margin-top: 27px;">
+                        <div>
+                            <label  *ngIf="city.Cityid==0" style="font-size: 16px;"><b>{{city.CreatedDate}}</b></label>
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+
+    <div class="col-md-.5 mt-2 " ></div>
+ <!-- ----------------------->
+    <ng-container *ngFor="let city of Cities ;let i = index" >
+        <div class="col-md-2 mt-2 " *ngIf="city.Cityid>0" >
+            <div style="height: 135px; border: 2px solid black;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between  ">
+                        <div >
+                            <label style="font-size: 16px;"><b>{{city.CityName}}</b></label>
+                        </div>
+                        <div >
+                            <!-- <p-menu #menu [popup]="true" [model]="itemst"></p-menu>    -->
+                            <i class="pi pi-ellipsis-v"  (click)="menu.toggle($event);onClickMenu(city.Cityid)"></i>
+                        </div>    
+                    </div>
+                    <div class="d-flex justify-content-between  " style="margin-top: 27px;">
+                        <div>
+                            <label style="font-size: 16px;"><b>{{city.CreatedDate}}</b></label> 
+                        </div>
+                        <div>
+                            <p-inputSwitch id="cty" name="cty" [(ngModel)]="city.IsDisable" (onChange)="cityStatusChange(city)" ></p-inputSwitch>
+                        </div>
+                    </div>
+                </div>              
+            </div>
+        </div>
+    </ng-container>
+
+</div>  
+<p-menu #menu [popup]="true" [style]="{'width':'150px', 'margin-top':'-45px','margin-left':'5px' }" [model]="itemst" ></p-menu>
+
+<p-menu #menuu [popup]="true" [style]="{'width':'100px', 'margin-top':'-45px','margin-left':'5px' }" [model]="itemstGlobal" ></p-menu>
+<p-confirmDialog #cd [style]="{width: '45vw'}"  appendTo="body"	 >
+    <ng-template pTemplate="header">
+        <h3>Header Content</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog>

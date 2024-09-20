@@ -1,0 +1,119 @@
+<div class="d-flex justify-content-between" style="margin-top: 50px;">
+    <div class="header">
+        <h3 class="m-2">!!! Clearance Performance Dashboard</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            
+            <div class="col-md-2 ml-2">
+                <label for=""><b>Select Warehouse :</b></label>
+                <p-multiSelect [options]="Warehouses" [(ngModel)]="SelectedId" defaultLabel="Select Warehouse"  
+                 optionLabel="WarehouseName"></p-multiSelect>
+            </div>
+            <div class="col-md-2 ml-2">
+                <label for=""><b>Select Brand :</b></label>
+                <p-multiSelect [options]="BrandList" [(ngModel)]="BrandID" defaultLabel="Select a Brand"  
+                 optionLabel="BrandName"></p-multiSelect>
+            </div>
+            <div class="col-md-2 ml-4">
+                <label for=""><b>Select Month :</b></label><br>
+                <p-calendar [style]="{'width':'100%'}" [(ngModel)]="dateValue" view="month" dateFormat="mm/yy"
+                    [showIcon]="true"  ></p-calendar>
+            </div>
+            <div class="col-md-2 ml-3 " >
+                <label for=""><b>Select MTD/YTD :</b></label><br>
+                <select   [(ngModel)]="SelectedValue"   style="width: 114px; height: 37px; margin-top: -2px;" >
+                    <option value="MTD" >MTD</option>
+                    <option value="YTD" >YTD </option>
+                </select> 
+                
+            </div>
+            <div class="col-md-3">
+                <button class="btn1 btn-success ml-3" (click)="Search()">Search</button>
+                <button class="btn3 btn-info ml-3 " (click)="ExportSearch()">Export</button>      
+
+            </div>
+
+        </div> 
+
+    </div>
+
+</div>
+
+<div>
+    <table style="width:100%" >
+        <thead>
+            <tr>
+                <th class="text-center">Status</th>
+                <td *ngIf="TableView!='YTD'">MTDQty</td>
+                <td *ngIf="TableView!='YTD'">MTDValue</td>
+                <td *ngIf="TableView=='YTD'">YTDQty</td>
+                <td *ngIf="TableView=='YTD'">YTDValue</td>
+                <td>Export </td>
+            </tr>
+        </thead>
+        <tbody >
+
+            <tr>
+                <th>Prepare list:</th>
+                <td >{{PrepareItemMTDQty>0?PrepareItemMTDQty:0}}</td>
+                <td >{{PrepareItemYTD>0?PrepareItemYTD:0}}</td>
+                <td><button class="btn4" style="font-size:14px" (click)="GetExportData(1)">Export <i class="fa fa-download "></i></button></td>
+                
+            </tr>
+            <tr >
+                <th>Pending status buyer side pending:</th>
+                <td >{{BuyerPendingMTDQty>0?BuyerPendingMTDQty:0}}</td>
+                <td >{{BuyerPendingYTD>0?BuyerPendingYTD:0}}</td>
+                <td><button class="btn4" style="font-size:14px" (click)="GetExportData(2)">Export <i class="fa fa-download"></i></button></td>
+            </tr>
+            <tr >
+                <th>Physical movement pending operation side:</th>
+                <td >{{ApprovedMTDQty>0?ApprovedMTDQty:0}}</td>
+                <td >{{ApprovedYTD>0?ApprovedYTD:0}}</td>
+                <td><button class="btn4" style="font-size:14px" (click)="GetExportData(3)">Export <i class="fa fa-download"></i></button></td>
+            </tr>
+            <tr>
+                <th>Physically Moved items:</th>
+                <td >{{PhysicallyMovedMTDQty>0?PhysicallyMovedMTDQty:0}}</td>
+                <td >{{PhysicallyMovedYTD >0?PhysicallyMovedYTD:0}}</td>
+                <td><button class="btn4" style="font-size:14px" (click)="GetExportData(4)">Export <i class="fa fa-download"></i></button></td>
+            </tr>
+            <tr >
+                <th>Live items:</th>
+                <td >{{LiveItemMTDQty>0?LiveItemMTDQty:0}}</td>
+                <td >{{LiveItemYTD>0?LiveItemYTD:0}}</td>
+                <!-- <td><button class="btn4" style="font-size:14px" (click)="GetExportData(6)">Export <i class="fa fa-download"></i></button></td> -->
+            </tr>
+            <tr>
+                <th>Inactive Items:</th>
+                <td >{{InActiveItemMTDQty>0?InActiveItemMTDQty:0}}</td>
+                <td >{{InActiveItemYTD>0?InActiveItemYTD:0}}</td>
+                <!-- <td><button class="btn4" style="font-size:14px" (click)="GetExportData(5)">Export <i class="fa fa-download"></i></button></td> -->
+            </tr>
+            
+            <tr>
+                <th>Total Clearance Items:</th>
+                <td >{{TotalCLItemMTDQty?TotalCLItemMTDQty:0}}</td>
+                <td >{{TotalCLItemYTD?TotalCLItemYTD:0}}</td>
+                <!-- <td><button class="btn4" style="font-size:14px" (click)="GetExportData(7)">Export <i class="fa fa-download"></i></button></td> -->
+            </tr>
+            <tr>
+                <th>Total clearance item sale:</th>
+                <td >{{SaleMTDQty>0?SaleMTDQty:0}}</td>
+                <td >{{SaleYTD>0?SaleYTD:0}}</td>
+                <!-- <td><button class="btn4" style="font-size:14px" (click)="GetExportData(9)">Export <i class="fa fa-download"></i></button></td> -->
+            </tr>
+            <tr>
+                <th>Total clearance item cancellation:</th>
+                <td>{{OrderCancelationMTDQty>0?OrderCancelationMTDQty:0}}</td>
+                <td >{{OrderCancelationYTD>0?OrderCancelationYTD:0}}</td>
+                <!-- <td><button class="btn4" style="font-size:14px" (click)="GetExportData(8)">Export <i class="fa fa-download"></i></button></td> -->
+            </tr>
+           
+        </tbody>
+
+    </table>
+</div>

@@ -1,0 +1,104 @@
+  <section id="shoppinglist">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="header">
+        <h3 class="content-header">Customer Dashboard </h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+
+    <form #holidayForm="ngForm">
+      <div class="row">
+        <div class="col-sm-12" style="text-align: right; ">
+          <h3 class="content-header"> KisaanDaan:Rs.{{Total}}</h3>
+        </div>
+      </div> 
+      <div class="row">
+          <div class="form-group"class="col-sm-2">
+              <label for="Warehouse"> <b>warehouses:</b></label><br>
+              <select id="Warehouse" name="WarehouseName" class="form-control col-md-6" [(ngModel)]="data.WarehouseId">                       
+              <option *ngFor="let WareHouse of warehouses" [ngValue]="WareHouse.WarehouseId">
+                {{WareHouse.WarehouseName}}
+              </option>
+            </select>
+        </div>
+
+        <div class="col-sm-2"  style="margin-right: auto;">
+          <label for="validfrom">Start Date</label>
+          <p-calendar name="StartDate" placeholder="Start Date" [(ngModel)]="data.StartDate" [showIcon]="true"  name="StartDate" ></p-calendar>
+        </div>
+
+        <div class="col-sm-2" style="margin-right: inherit;">
+          <label for="validto">End Date</label>
+          <p-calendar  name="EndDate" placeholder="End Date" [(ngModel)]="data.EndDate" [showIcon]="true"  name="EndDate" ></p-calendar>
+        </div>
+
+        <div class="col-sm-2">
+          <label for="validto">SK Code</label>
+          <input class="form-control" type="text" pInputText size="20" name="searchwh" [(ngModel)]="data.Skcode" placeholder="Search">
+        </div>
+
+        <div class="col-sm-2" style="margin-top:1.7%;">
+          <button type="submit" class="btn btn-raised btn-primary" name="search" (click)="OnClick()"> Search</button>
+        </div>
+
+        <div class="col-sm-2" style="margin-top: auto;">
+            <button type="button" class="btn btn-raised btn-raised btn-primary" name="export" (click)="export()">
+              Export
+            </button>
+          </div>
+        </div>
+    </form>
+
+    <div class="position-relative">
+      <p-table [value]="Danlist" [paginator]="true" (onLazyLoad)="load($event)" [rows]="15"
+      [totalRecords]="totalRecords" dataKey="OrderId" [scrollable]="true" scrollHeight="130vh" text-align: center>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              Order Id
+            </th>
+            <th>
+              Sk Code
+            </th>
+            <th>
+         Kisan Kirana Amount(in Rs.)
+            </th>
+            <th>
+         Kisan Dan Amount(in Rs.)
+            </th>
+            <th>
+             Date
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData>
+          <tr (click)="openDetails(rowData,$event)">
+            <td>
+              {{rowData.OrderId}}
+            </td>
+            <td>
+              {{rowData.Skcode}}
+            </td>
+            <td>
+              {{rowData.KisanKiranaAmount}}
+            </td>
+            <td>
+              {{rowData.KisanDanAmount}}
+            </td>
+            <td>
+              {{rowData.strCreatedDate | date:'yyyy-MM-dd'}}
+           </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</section>
+
+
+

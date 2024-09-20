@@ -1,0 +1,442 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+
+
+<div class=" header">
+    <h3>Order Picker<i class="fa fa-shopping-bag" aria-hidden="true"></i></h3>
+</div>
+<div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 justify-content-between " (click)="toggleSearch()">
+        <h5 class="m-0">Filters</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+    <div id="search-content p-2" *ngIf="isSearch">
+
+        <form class="form" #TargetAddForm="ngForm">
+            <div style="padding:0px 35px;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {{data.CustomerId | json}}
+                            <label for="long"><b>Supplier Name:</b></label>
+
+                            <p-autoComplete [suggestions]="sellerslist" (completeMethod)="getSeLlerList($event)"
+                                (onKeyUp)="data.sellerId = null" (onClear)="data.sellerId = null;"
+                                field="CustomerName" [size]="30" (onSelect)="onSelectSeller($event);"
+                                (change)="idnotexist = false" placeholder="enter at least 3 chars"
+                                [minLength]="3" name="sellerid" id="sellerid">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3" *ngIf="clusterList">
+                        <div class="form-group">
+                            <label for="orderType">Cluster</label>
+                            <p-multiSelect id="ClusterId" name="ClusterId" [options]="clusterList"
+                                [(ngModel)]="data.ClusterIdsList" #Cluster="ngModel"
+                                [panelStyle]="{minWidth:'25em'}" optionLabel="ClusterName"></p-multiSelect>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="startdate"><b>Start Date: </b></label><br>
+                            <p-calendar [showIcon]="true" [(ngModel)]="data.StartDate" name="startDate"
+                                required="1" [readonlyInput]="true" required #dateRangeListInput>
+                            </p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="enddate"><b>End Date: </b></label><br>
+                            <p-calendar [showIcon]="true" [(ngModel)]="data.EndDate" name="EndDate" required="1"
+                                [readonlyInput]="true" required #dateRangeListInput>
+                            </p-calendar>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mar-top">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-raised btn-raised btn-primary mr-2"
+                                (click)="onSearch(data)">
+                                Search
+                            </button>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                (click)="onReset()">
+                                Reset
+                            </button> &nbsp;&nbsp;
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    
+                
+    </div>
+</div>
+<div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover"
+    *ngIf="ConsumerOrderList && ConsumerOrderList.length">
+    <div class="position-relative">
+        <div class="position-absolute order-details" *ngIf="isDetails">
+
+            <app-order-assignent-item-details [details]="selectedRowDetails" (isdetailsclose)="isDetailsFalse($event)"
+                (refreshParent)="ngOnInit()" class="d-flex justify-content-end"></app-order-assignent-item-details>
+        </div>
+        <p-table #dt [columns]="cols" [value]="ConsumerOrderList" [lazy]="true" [totalRecords]="totalRecords"
+            (onLazyLoad)="load($event)" [paginator]="true" [rows]="PageSize" dataKey="CartId" [scrollable]="true"
+            scrollHeight="70vh">
+            
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th>Select</th>
+                    <ng-container *ngFor="let col of columns">
+                        <th *ngIf="col.header == 'Buyer Name'" style="text-align: center; width : 31%">
+                            {{col.header}}
+                        </th>
+                        <th *ngIf="col.header != 'Buyer Name'" style="text-align: center">
+                            {{col.header}}
+                        </th>
+                    </ng-container>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr [ngClass]="{'sel':rowData.IsSelected}">
+                    <td style="cursor: pointer; pointer-events: all;" (click)="onRowClick(rowData)">
+                        <i *ngIf="!rowData.IsSelected" class="fa fa-square-o fa-2x" aria-hidden="true"></i>
+                        <i *ngIf="rowData.IsSelected" class="fa fa-check-square-o fa-2x" aria-hidden="true"></i>
+                    </td>
+                    <ng-container *ngFor="let col of columns">
+                        <td *ngIf="col.header == 'Buyer Name'" style="text-align: center; width: 31%">
+
+                            <div>
+                                {{rowData[col.field] + ' '}}
+                            </div>
+                            <div style="color: tomato;">
+                                {{ rowData.ShippingAddress?  (rowData.ShippingAddress + ',') : ''}}
+                            </div>
+                            <div>
+                                {{rowData.BuyerMobile}}
+                            </div>
+                            <i *ngIf=" col.field=='OrderAmount' || col.field=='DeliveryCharges' ||
+                                col.field=='CollectionAmount' " class=" fa fa-inr" aria-hidden="true"></i>
+                            <div *ngIf="col.bools==true">
+                                <button style="color: #009DA0" class="btn"
+                                    (click)="openDetails(rowData,$event)">Details</button>
+                            </div>
+                            
+                            <div *ngIf="col.bool==true" style="text-align: center">
+                                <div class="row"
+                                    *ngIf="rowData.CartStatus=='Delivered' || rowData.CartStatus=='Shipped'|| rowData.CartStatus=='settled' ">
+                                    <button style="color:orangered" class="btn" (click)="PrintInvoice(rowData)">Print
+                                        Invoice</button>
+                                </div>
+                            </div>
+                        </td>
+                        <td *ngIf="col.header != 'Buyer Name'" style="text-align: center;">
+                        
+                            {{col.field == 'InvoiceDate' ?  (rowData.InvoiceDate | date)  : rowData[col.field]  }}
+
+                            <i *ngIf="col.field == 'OrderAmount' || col.field == 'DeliveryCharges' || col.field == 'CollectionAmount'  || col.field == 'AmountExDelivery' "
+                                class="fa fa-inr" aria-hidden="true"></i>
+                                <div *ngIf="col.bools==true">
+                                <button style="color: #009DA0" class="btn"
+                                    (click)="openDetails(rowData,$event)">Details</button>
+                            </div>
+                            
+                            <div *ngIf="col.bool==true" style="text-align: center">
+                                <div class="row"
+                                    *ngIf="rowData.CartStatus=='Delivered' || rowData.CartStatus=='Shipped'|| rowData.CartStatus=='settled' ">
+                                    <button style="color:orangered" class="btn" (click)="PrintInvoice(rowData)">Print
+                                        Invoice</button>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<div *ngIf="order">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '70%',height:'auto', overflow: 'auto'}">
+        <p-header>
+            Change Order Status
+        </p-header>
+        <div class="ui-fluid">
+            <form #statusForm="ngForm">
+                <div class="ui-g">
+                    <div class="ui-g-6">
+                        <div class="ui-g">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name"><b>Order Status</b></label>
+                                        <select id="orderStatus" name="orderStatus" class="form-control"
+                                            [(ngModel)]="order.CartStatus" required="1" #orderStatus="ngModel">
+
+                                            <option *ngFor="let unit of OrderStatus" [value]="unit.value">
+                                                {{ unit.label}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="input"><b> Enter Reason *</b></label>
+                                    <input type="text" name="Reason" class="form-control" id="reason"
+                                        [(ngModel)]="order.Reason" placeholder="Enter Reason" required="1"
+                                        maxlength="50" minlength="2" #Reason="ngModel">
+                                    <div *ngIf="isFormInvalid && !Reason.valid && Reason.errors.required"
+                                        style="font-size: 16px;">
+                                        <code>Reason is required.</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-g-12">
+                        <div class="bdry"> </div>
+                        <button class="btn btn-raised btn-raised btn-primary pull-right"
+                            (click)="Cancel()">Cancel</button>
+                        <button class="btn btn-raised btn-raised btn-primary pull-right" style="margin-right: 20px;"
+                            (click)="saveStatus(order,statusForm)">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </p-dialog>
+</div>
+
+
+<div *ngIf="selectedque">
+    <p-dialog [(visible)]="isDboyPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '70%',height:'auto', overflow: 'auto'}">
+        <p-header>
+            Edit/Dboy Details
+        </p-header>
+        <div class="ui-fluid">
+            <form #DboyForm="ngForm">
+                <div class="ui-g">
+                    <div class="ui-g-6">
+                        <div class="ui-g">
+                            <div class="row">
+                                
+                                <div class="col-md-4">
+                                    <label for="input">Dboy FirstName</label>
+                                    <input type="text" name="dBoyName" class="form-control" id="dBoyName"
+                                        [(ngModel)]="selectedque.FirstName" placeholder="Enter first Name" required="1"
+                                        #dBoyName="ngModel" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="input">Dboy LastName</label>
+                                    <input type="text" name="dBoyLstName" class="form-control" id="dBoyLstName"
+                                        [(ngModel)]="selectedque.LastName" placeholder="Enter Last Name" required="1"
+                                        #dBoyLstName="ngModel" disabled>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="name"><b>DBoy List</b></label>
+                                        <select id="dBoylist" name="dBoylist" class="form-control" required="1">
+                                            <option value="0">--Select---</option>
+                                            <option *ngFor="let db of dBoyList" [ngValue]="db.Id">
+                                                {{ db.FirstName}} {{db.LastName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="name">Address:</label>
+                                    <input type="text" name="Address" class="form-control" id="Address"
+                                        [(ngModel)]="selectedque.Address" placeholder="Enter Address" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="name">Mobile:</label>
+                                    <input type="text" name="Mobile" class="form-control" id="Mobile"
+                                        [(ngModel)]="selectedque.Mobile" placeholder="Enter Mobile" disabled>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-g-12">
+                        <div class="bdry"> </div>
+                        <button class="btn btn-raised btn-raised btn-primary pull-right"
+                            (click)="Cancel()">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </p-dialog>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+
+<div class="rght-windw" style="margin-top: 80px; z-index: -40px;" *ngIf="irSummaryObject">
+    <div class="row">
+        <div class="col-12 tt">
+            <table>
+                <tr>
+                    <th>Head</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Count</td>
+                    <td>{{selectedList.length}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-12">
+            <div class="bt-tb">
+                <div class="cntn" (click)="openPopup()">View / Assign</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<div class="ui-fluid" *ngIf="isBigOpenPopup">
+    <form #irOutstandingForm="ngForm">
+        <p-dialog [(visible)]="isBigOpenPopup" [modal]="true" appendTo="body" [responsive]="true"
+            [style]="{width: '100%', minWidth: '100%'}" [minY]="70" [baseZIndex]="199">
+            <p-header>
+                Assign Dboy
+            </p-header>
+            <div class="ui-fluid" style="overflow: scroll;">
+                <div class="ui-g">
+                    <h3>Assign Dboy</h3>
+                    <div class="ui-g-12">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div style="display: inline-block;"
+                                        (click)="newdboy = !newdboy; deliveryBoyExisting = {}">
+                                        <br>
+                                        <i *ngIf="!newdboy" class="fa fa-square-o fa-2x" aria-hidden="true"></i>
+                                        <i *ngIf="newdboy" (click)="newdboy = true" class="fa fa-check-square-o fa-2x"
+                                            aria-hidden="true"></i>
+                                    </div>
+
+                                    <label style="margin-left: 30px;">Add New Delivery Boy </label>
+                                </div>
+                                <div class="col-md-6">
+                                    <div *ngIf="!newdboy">
+                                        <div class="col-md-8" *ngIf="!newdboy">
+                                            <label for="orderType">Select Delivery Boy.</label>
+
+                                            <select id="selleer" name="dboy" class="form-control" required
+                                                (change)="setDeliveryBoy($event); isBigOpenPopup=false; isBigOpenPopup=true;"
+                                                [(ngModel)]="deliveryBoyExisting.Id" required="1" #dboy="ngModel">
+                                                <option [value]="undefined">
+                                                    SELECT DBOY
+                                                </option>
+                                                <option *ngFor="let delivBoy of deliveryBoyList" [value]="delivBoy.Id">
+                                                    {{ delivBoy.FirstName}}
+                                                    {{ delivBoy.LastName}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <br>
+                        <div class="col-md-16">
+
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="SupplierName">First Name<code> *</code></label><br>
+                                        <input type="text" placeholder="firstname" [disabled]="!newdboy"
+                                            [(ngModel)]="deliveryBoyExisting.FirstName" required #bankInput="ngModel"
+                                            id="firstname" name="firstname" class="form-control">
+                                        <code *ngIf="isValidated && !bankInput.valid">
+                                    First Name is required
+                                </code>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="refinput">Last Name. <code>*</code></label>
+                                        <input type="text" placeholder="lastname" [disabled]="!newdboy"
+                                            [(ngModel)]="deliveryBoyExisting.LastName" required #refno="ngModel"
+                                            id="lastname" name="lastname" class="form-control">
+
+                                    </div>
+                                    <div class="form-group" id="ir-out">
+                                        <label for="projectinput15">Mobile Number<code>*</code></label>
+                                        <input type="number" placeholder="Mobile No" [disabled]="!newdboy"
+                                            [(ngModel)]="deliveryBoyExisting.Mobile" required #paymentDate="ngModel"
+                                            id="Mobile" name="Mobile" class="form-control">
+                                        <p style="color: red;"
+                                            *ngIf="deliveryBoyExisting.Mobile && deliveryBoyExisting.Mobile.toString().length > 10">
+                                            mobile no should be not more than 10 digits
+                                        </p>
+                                    </div>
+                                    <div class="form-group" id="ir-out">
+                                        <label for="projectinput3">Address </label>
+                                        <input type="text" placeholder="address" [disabled]="!newdboy"
+                                            [(ngModel)]="deliveryBoyExisting.Address" #remark="ngModel" id="address"
+                                            name="address" class="form-control">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="ui-g-12">
+                        <table class="table ">
+                            <tr>
+                                <th style="width:60px;">Select</th>
+                                <th>Sno.</th>
+                                <th>Seller Name</th>
+                                <th>BuyerName</th>
+                                <th>InvoiceNo</th>
+                                <th>InvoiceDate</th>
+                                <th>OrderAmount</th>
+                                <th>PaymentMode</th>
+                                <th>BuyerMobile</th>
+
+                            </tr>
+                            <p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+                            <tr *ngFor="let ir of selectedList; let i = index" [ngClass]="{'sel':ir.IsSelected}">
+                                <td (click)="onDeselectIR(ir); isBigOpenPopup=false; isBigOpenPopup=true;"
+                                    style="width:60px;">
+
+                                    <i *ngIf="!ir.IsSelected" class="fa fa-square-o fa-2x" aria-hidden="true"></i>
+                                    <i *ngIf="ir.IsSelected" class="fa fa-check-square-o fa-2x" aria-hidden="true"></i>
+
+                                </td>
+                                <td (click)="onDeselectIR(ir)">{{i+1}}</td>
+                                <td (click)="onDeselectIR(ir)">{{ir.SellerName}}</td>
+                                <td (click)="onDeselectIR(ir)">{{ir.BuyerName}}</td>
+                                <td (click)="onDeselectIR(ir)">{{ir.InvoiceNo}}</td>
+                                <td (click)="onDeselectIR(ir)">{{ir.InvoiceDate}}</td>
+                                <td (click)="onDeselectIR(ir)"> <i class="fa fa-inr"
+                                        aria-hidden="true"></i>{{ir.OrderAmount| number: '1.0-0'}} </td>
+                                <td (click)="onDeselectIR(ir)">{{ir.PaymentMode}}</td>
+                                <td (click)="onDeselectIR(ir)">{{ir.BuyerMobile}}</td>
+
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+
+                <button type="button" pButton icon="pi pi-check" (click)="assignDBoy(irOutstandingForm)"
+                    [disabled]="!deliveryBoyExisting.FirstName  || !deliveryBoyExisting.Mobile || deliveryBoyExisting.Mobile <=0 ||  selectedList.length == 0 || deliveryBoyExisting.Mobile.toString().length < 10 || deliveryBoyExisting.Mobile.toString().length > 10  "
+                    label="Assign Delivery Boy"></button>
+
+            </p-footer>
+        </p-dialog>
+    </form>
+</div>

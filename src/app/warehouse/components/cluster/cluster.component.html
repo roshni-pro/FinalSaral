@@ -1,0 +1,279 @@
+<p-toast [style]="{marginTop: '80px'}" appendTo="body" [baseZIndex]="101"></p-toast >
+<section id="Cluster">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2"><b>Cluster</b></h3>
+    </div>
+  </div>
+
+  <p-confirmDialog #cd appendTo="body" header="Confirmation" appendTo="body" [baseZIndex]="100">
+    <p-footer>
+
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+
+
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <div class="row">
+      <div class="col-md-4 col-12">
+        <div class="card bg-primary">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                  <!-- <span>Total Active Customers</span> -->
+                  <h4>Total Active Customers</h4>
+                  <!-- <input type="number" class="form-control mr-1" name="activecustcount" value="Cityid"
+                           [(ngModel)]="activecount" disabled> -->
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{activecount}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <div class="card bg-warning">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                  <!-- <span>Total Sign-up</span> -->
+                  <h4>Total Sign-up</h4>
+                  <!-- <input type="number" class="form-control mr-1" name="signupcount" value="Cityid"
+                                  [(ngModel)]="customerCount" disabled> -->
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{customerCount}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-4 col-12">
+        <div class="card bg-success">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                  <h4>Total Agent Count</h4>
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{activeagent}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="px-3">
+          <form class="form">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput3">Select City</label>
+                    <select id="city" name="city" class="form-control" [(ngModel)]="CityId"
+                      (ngModelChange)="onsearch(CityId,Active)">
+                      <option value="">Select City</option>
+                      <option *ngFor="let city of cities" [ngValue]="city.Cityid">{{city.CityName}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="name">Status</label>
+                    <select class="form-control" id="status" name="status" [(ngModel)]="Active" #status="ngModel"
+                      (ngModelChange)="onsearch(CityId,Active)">
+                      <option value="">Select</option>
+                      <option value="1">Active</option>
+                      <option value="0">Inactive</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <br>
+                  <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="map(CityId)">
+                    View Map
+                  </button>
+                  <button type="button" (click)="addCluster()" class="btn btn-raised btn-warning mr-1 shadow mr-24"> Add
+                    Cluster </button>
+                  <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24"
+                    (click)="ExportCluster() ">Export Cluster</button>
+                  <!-- <button type="button" class="btn btn-raised btn-warning mr-1 shadow mr-24"
+                    (click)="seencust() ">Before Refresh</button> -->
+                  <button type="button" class="btn btn-raised btn-warning mr-1 shadow mr-24"
+                    (click)="refreshclustercustomer(CityId) ">Refresh Cluster</button>
+                  <!-- <button type="button" class="btn btn-raised btn-warning mr-1 shadow mr-24"
+                    (click)="refreshclustercustomer(CityId) ">Refresh Cluster</button> -->
+                  <button type="button" name="updatecustCluster" class="btn btn-raised btn-warning mr-1 shadow mr-24"
+                    (click)="updatecustomerCluster() ">Update Customer Cluster</button>
+                    <button type="button" name="ClearCache" class="btn btn-raised btn-primary mr-1 shadow mr-24"
+                    (click)="ClearCache() ">Clear Cache</button>
+                    <button type="button" name="ExportExecutiveMapping" class="btn btn-raised btn-primary mr-1 shadow mr-24"
+                    (click)="ExportExecutiveMapping() ">Export Executive Mapping</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-relative">
+      <div class="position-absolute cluster-details" *ngIf="isDetails">
+        <app-cluster-details [details]="selectedRowDetails" [activeFields]="activeFields"
+          (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)"
+          class="d-flex justify-content-end"></app-cluster-details>
+      </div>
+
+      <div class="position-relative">
+        <p-table #dt [columns]="cols" [value]="clusterList" [paginator]="true" [rows]="20" dataKey="ClusterId">
+          <ng-template pTemplate="header">
+            <tr>
+
+              <th *ngFor="let col of cols" style="text-align: center">
+                {{col.header}}
+                <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+              </th>
+              <th>Action</th>
+              <th>Export</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td *ngFor="let col of columns" style="text-align: center">
+                <ng-container *ngIf="col.field == 'ExecutiveName'">
+                  <!-- <div> {{rowData.primeExecutive ? (rowData.primeExecutive + ',') : ''}}</div> -->
+
+                  <!-- <b>{{getExecutiveName(rowData) ? (getExecutiveName(rowData) + ',') : ''}}</b></b>> -->
+                  <!-- <ng-container *ngIf="rowData.primeExecutive != rowData.ExecutiveName">
+                    {{rowData[col.field]}}
+                  </ng-container> -->
+                  <ng-container>
+                    {{rowData[col.field]}}
+                  </ng-container>
+                </ng-container>
+
+                <ng-container *ngIf="col.field != 'ExecutiveName'">
+                  {{rowData[col.field]}}
+                </ng-container>
+              </td>
+              <td>
+                <!-- <p class="m-2" style="text-align: center"><strong>Note:</strong> This will <strong><span
+                  *ngIf="Activevalue">Deactivate</span><span *ngIf="!Activevalue">Activate</span></strong> the
+              cluster in the database.</p>
+              <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+             ><span *ngIf="Activevalue"  (click)="Active(rowData)">Deactivate</span><span
+                *ngIf="!Activevalue"  (click)="InActive(rowData)">Activate</span></button> -->
+                <a href="javascript:void(0);" (click)="InActive(rowData)" *ngIf="Active==0">Active</a>
+
+                <a href="javascript:void(0);" (click)="Activee(rowData)" *ngIf="Active == 1">Inactive</a>
+                &nbsp;| &nbsp;
+                <a href="javascript:void(0);" (click)="openDetails(rowData,$event)">Edit</a>
+              </td>
+              <td>
+                <a href="javascript:void(0);" (click)="ExportDataCluster(rowData)">Export</a>
+
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <br><br>
+      </div>
+    </div>
+
+  </div>
+
+  <div *ngIf="selectedQue">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+      <p-header>
+        Update Customer Cluster
+      </p-header>
+      <div class="ui-fluid">
+        <form class="form" #storyForm="ngForm">
+          <div class="ui-g">
+            <div class="ui-g-6">
+              <div class="ui-g">
+                <div class="form-group">
+                  <label for="clusterproject"><b> City: </b></label>
+                  <select id="city" name="city" class="form-control" [(ngModel)]="CityId"
+                    (change)="getWarehouselist(CityId)">
+                    <option value="">Select City</option>
+                    <option *ngFor="let city of cities" [ngValue]="city.Cityid">{{city.CityName}}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label for="clusterproject"><b>Warehouse: </b></label>
+                    <br>
+                    <select id="des" name="warehouse" class="form-control" [(ngModel)]="WarehouseId"
+                      (change)="getClusterlist(WarehouseId)">
+                      <option value="">--select--</option>
+                      <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                        {{warehouse.WarehouseName}} {{warehouse.CityName}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="clusterproject"><b>Cluster: <span style="color:red"> *</span></b></label>
+                    <select id="cluster" name="cluster" class="form-control" [(ngModel)]="ClusterId" required="1"
+                      #cluster="ngModel">
+                      <option value="">--Select Cluster---</option>
+                      <option *ngFor="let w of Clusters" [ngValue]="w.ClusterId">
+                        {{ w.ClusterName }}
+                      </option>
+                    </select>
+                    <div *ngIf="isFormInvalid && !cluster.valid && cluster.errors.required">
+                      <code>Cluster is required</code>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="col-md-2" style="margin-top: 15px;">
+              <div class="form-group">
+                <label for="clusterproject"><b>IsUpdate Executive:</b></label><br>
+                <p-checkbox name="isUpdateExec" [(ngModel)]="checked" binary="true"></p-checkbox>
+              </div>
+            </div>
+            <div class="ui-g-12">
+              <div class="bdry"> </div>
+              <button class="btn btn-raised btn-raised btn-primary pull-right" (click)="updateCustomerClust(storyForm)"
+                [disabled]="isdisabled">Update</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </p-dialog>
+  </div>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</section>

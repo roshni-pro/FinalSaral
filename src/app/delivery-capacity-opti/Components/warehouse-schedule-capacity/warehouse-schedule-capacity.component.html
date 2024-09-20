@@ -1,0 +1,202 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">!!!Warehouse Schedule & Capacity</h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+            <div class="d-flex">
+                <div class="mr-4">
+                    <label><b>Select Warehouses<span class="required">*</span></b></label>
+                    <p-dropdown id="Category" name="Category" [options]="WareHouseList"  (onChange)="getHolidayWorkingList()" (onClick)="SelectedDefaultData()" [filter]="true" 
+                        [(ngModel)]="selectedWareHouse" optionLabel="label" placeholder="Select WareHouse"  > 
+                    </p-dropdown>
+                </div>
+                <div class="mr-4">
+                    <label><b>Select Weekend<span class="required">*</span></b></label>
+                    <p-multiSelect [options]="Weekends" [(ngModel)]="SelectedWeekend" defaultLabel="Select Weekend"  
+                        optionLabel="name" >
+                    </p-multiSelect>
+                </div>      
+                <div class="">
+                    <label><b>Default Threshold Capacity<span class="required">*</span></b></label><br>
+                    <input [(ngModel)]="DefaultTC" required="1" (keypress)="keyPress($event)" maxlength="5" type="tel" pInputText  
+                    [style.font-size.px]="'24'" />
+                </div>               
+            </div>
+            <div style="margin-top:28px;">                            
+                <button  class="btn btn-primary mr-2 " (click)="postDefaultDeliveryCapacity()" >Submit</button>   
+                <button class="btn btn-primary mr-2" (click)="Clear()" >Clear</button>          
+                 <button class="btn btn-primary" (click)="GetHistroyData()" >History</button>    
+            </div>
+        </div>
+    </div>
+</div>
+
+<yc-year-calendar  (eventDayClicked)="eventDayClickHandler($event)" (onclick)="selectedPopupData()" (click)="YearClick($event)"
+> [(selectedDate)]="currentDate" 
+<!-- (click)="YearClick($event)" -->
+</yc-year-calendar>
+
+
+<p-dialog [(visible)]="display"  [modal]="true" appendTo="body" [style]="{width: '50vw'}">
+    <p-table [value]="updateThresholdDC" >
+        <ng-template pTemplate="header">
+            <tr style="height:40px">
+                <th rowspan="2">
+                    <div class="th">
+                        Warehouse
+                    </div>
+                </th>
+                <th rowspan="2">
+                    <div class="th">
+                        Date
+                    </div>
+                </th>
+                <th rowspan="2">
+                    <div class="th">
+                        Threshold Capacity
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item >
+            <tr>
+                <td>{{item.WarehouseName}}</td>
+                <td>{{item.Date | date : 'dd.MM.y'}}</td>
+                <td><input  required="1" (keypress)="keyPress($event)" maxlength="5" type="tel" pInputText [(ngModel)]="UpdateThresholdCapacity"/></td>   
+            </tr>
+        </ng-template>
+        
+    </p-table>
+    <div class="text-right">
+        <p-button  (click)="display=false" label="Update" (onClick)="updateBtn()" ></p-button> &nbsp;
+        <p-button  (click)="display=false" label="Cancel"></p-button>
+    </div>
+</p-dialog>
+
+
+<div class="row">
+   <div class="col-md-12 d-flex justify-content-between mt-4">
+        <div class="col-md-6 text-center">
+            <p class=" pt-2 pb-2 border" style="background-color:rgb(233, 145, 81) ;"><b>Holiday List</b></p>
+            <p-table [value]="HolidayLists" [scrollable]="false" [paginator]="true" [rows]="5">
+                <ng-template  pTemplate="header">  
+                    <tr style="height:5px;text-align: center;">
+                        <th>
+                            <div class="th text-center">
+                                Warehouse 
+                            </div>
+                        </th>
+                        <th>
+                            <div class="th text-center">
+                                Holiday
+                            </div>
+                        </th>        
+                        <th>
+                            <div class="th text-center">
+                                Capacity
+                            </div>
+                        </th>
+                        <th>
+                            <div class="th text-center">
+                                Updated By
+                            </div>
+                        </th>
+                    </tr>        
+                </ng-template>
+                  <ng-template pTemplate="body" let-item>
+                        <tr style="text-align: center;">
+                            <td>{{item.WarehouseName}}</td>
+                            <td>{{item.Date | date:'dd.MM.y'}}</td>
+                            <td>{{item.UpdateThresholdCapacity }}</td>
+                            <td>{{item.UserName}}</td> 
+                        </tr>
+                    </ng-template>
+            </p-table>
+        </div>
+        <div class="col-md-6 text-center">
+            <p class=" pt-2 pb-2"  style="background-color:rgb(233, 145, 81) ;"><b>Working List</b></p>  
+            <p-table [value]="WorkingLists" [scrollable]="false" [paginator]="true" [rows]="5" >
+                <ng-template  pTemplate="header"> 
+                    <tr style="height:5px;text-align: center;">
+                        <th>
+                            <div class="th text-center">
+                                Warehouse 
+                            </div>
+                        </th>
+                        <th>
+                            <div class="th text-center">
+                                Working
+                            </div>
+                        </th>        
+                        <th>
+                            <div class="th text-center">
+                                Capacity
+                            </div>
+                        </th>
+                        <th>
+                            <div class="th text-center">
+                                Updated By
+                            </div>
+                        </th>
+                    </tr>        
+                </ng-template>
+                  <ng-template pTemplate="body" let-item>
+                        <tr style="text-align: center;">
+                            <!-- <td>{{item.HolidayListDate  | date:'medium'}}</td> -->
+                            <td>{{item.WarehouseName}}</td>
+                            <td>{{item.Date | date : 'dd.MM.y'}}</td>
+                            <td>{{item.UpdateThresholdCapacity}}</td> 
+                            <td>{{item.UserName}}</td> 
+                        </tr>
+                    </ng-template>
+            </p-table>
+        </div>
+   </div>
+</div>
+<p-dialog header="Detail" [(visible)]="showHistroy" [resizable]="false" positionTop="50" [modal]="true"
+appendTo="body" [draggable]="false" [style]="{width: '70%', top: '70px'}">
+<p-table [value]="allHistroy" [paginator]="true" [rows]="5" [(first)]="first">
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width:1rem"></th>
+            <th>Id</th>
+            <th>WarehouseName</th>
+            <th>Holidays</th>
+            <th>Year</th>
+            <th>CreatedDate</th>
+            <th>ModifiedDate</th>
+            <th>IsActive</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+        <tr>
+          <td style="width:1rem"></td>
+          <td>{{item.Id}}</td>
+          <td>{{item.WarehouseName}}</td>
+          <td>{{item.Holidays}}</td>
+          <td>{{item.Year}}</td>
+          <td>{{item.CreatedDate |date:'d/M/yy, h:mm a'}}</td>
+          <td>{{item.ModifiedDate |date:'d/M/yy, h:mm a'}}</td>
+          <td>{{item.IsActive}}</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" >
+            <br>
+            <h3 style="text-align: center;color: blue;margin-left: 36%">No Data Found.</h3>
+          </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

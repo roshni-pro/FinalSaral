@@ -1,0 +1,179 @@
+<section id="Company Target">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="content-header">Show Company Target Levels </h3>
+        </div>
+        <div>
+            <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-bottom: 0;"
+            (click)="back()">
+            <i></i>Back</button>
+          </div> 
+    </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+        <div class="card-body">
+            <div class="position-relative">
+                <p-table [value]="GetBrandTarget" [paginator]="false" [lazy]="false"
+                    [rows]="10"  dataKey="CityId" [scrollable]="true" scrollHeight="130vh"
+                    text-align: center>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="text-align: center"> LowerLimit </th>
+                            <th style="text-align: center"> UpperLimit </th>
+                            <th style="text-align: center"> ValueBy </th>
+                            <th style="text-align: center"> TargetbyValue </th>
+                            <th style="text-align: center"> MinTargetValue </th>
+                            <th style="text-align: center"> NoOfLineItem </th>
+                            <th style="text-align: center"> Type </th>
+                            <th style="text-align: center"> WalletValue </th>
+                            <th style="text-align: center">  </th>
+                            <th style="text-align: center"> Action </th>
+                            <th style="text-align: center">  </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr>
+                            <td style="text-align: center">{{rowData.SlabLowerLimit}}</td>
+                            <td style="text-align: center">{{rowData.SlabUpperLimit}}</td>
+                            <td style="text-align: center">{{rowData.ValueBy}}</td>
+                            <td style="text-align: center">{{rowData.TargetbyValue}}</td>
+                            <td style="text-align: center">{{rowData.MinTargetValue}}</td>
+                            <td style="text-align: center">{{rowData.NoOfLineItem}}</td>
+                            <td style="text-align: center">{{rowData.Type}}</td>
+                            <td style="text-align: center">{{rowData.WalletValue}}</td>
+                            <!-- <td>{{rowData.CreateDate | date: 'M/d/yy, h:mm a'}}</td> -->
+                            <td style="text-align: center">
+                            
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="openBrandspopup(rowData.RequiredTargetBrandDcs)">Req_Brand</button>
+                            </td>
+                            <td style="text-align: center">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="openItemDcs(rowData.RequiredTargetItemDcs)">Req_Item</button>
+                                </td>
+                                <td style="text-align: center">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="freeItemDcs(rowData.TargetFreeItemDcs)">Gift Item</button>
+                            
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+        <!-- <div class="card-footer text-right">
+          <div>
+          <button type="button" class="btn btn-raised btn-warning mr-1" style="float:right;" (click)="SaveData()">
+              Post
+          </button>
+        </div>
+      </div> -->
+    </div>
+</section>
+<div *ngIf="openpopBrands">
+    <p-dialog [(visible)]="openpopBrands" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+        <div class="my-2 d-flex justify-content-between align-items-center">
+            <div class="header">
+                <h3 class="content-header">Show Required Target Brand List </h3>
+            </div>
+        </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+        <div class="card-body">
+            <div class="position-relative">
+                <p-table [value]="listBrands"  [paginator]="false" [lazy]="true" (onLazyLoad)="load($event)"
+                    [rows]="10" [totalRecords]="count" dataKey="CityId" [scrollable]="true" scrollHeight="130vh"
+                    text-align: center>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="text-align: center"> BrandName </th>
+                            <th style="text-align: center"> Value </th>
+                            <th style="text-align: center"> ValueType </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr>
+                            <td style="text-align: center">{{rowData.BrandName}}</td>
+                            <td style="text-align: center">{{rowData.Value}}</td>
+                            <td style="text-align: center">{{rowData.ValueType}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    </p-dialog>
+  </div>
+  <div *ngIf="openpopItemDcs">
+    <p-dialog [(visible)]="openpopItemDcs" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+        <div class="my-2 d-flex justify-content-between align-items-center">
+            <div class="header">
+                <h3 class="content-header">Show Required Target Item List </h3>
+            </div>
+        </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+        <div class="card-body">
+            <div class="position-relative">
+                <p-table [value]="listItem"  [paginator]="false" [lazy]="true" (onLazyLoad)="load($event)"
+                    [rows]="10" [totalRecords]="count" dataKey="CityId" [scrollable]="true" scrollHeight="130vh"
+                    text-align: center>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="text-align: center"> ItemName </th>
+                            <th style="text-align: center"> SellingSku </th>
+                            <th style="text-align: center"> Value </th>
+                            <th style="text-align: center"> ValueType </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr>
+                            <td style="text-align: center">{{rowData.ItemName}}</td>
+                            <td style="text-align: center">{{rowData.SellingSku}}</td>
+                            <td style="text-align: center">{{rowData.Value}}</td>
+                            <td style="text-align: center">{{rowData.ValueType}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    </p-dialog>
+  </div>
+  <div *ngIf="freeItem">
+    <p-dialog [(visible)]="freeItem" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+        <div class="my-2 d-flex justify-content-between align-items-center">
+            <div class="header">
+                <h3 class="content-header">Show Target Free Item List </h3>
+            </div>
+        </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+        <div class="card-body">
+            <div class="position-relative">
+                <p-table [value]="listfreeItem"  [paginator]="false" [lazy]="true" (onLazyLoad)="load($event)"
+                    [rows]="10" [totalRecords]="count" dataKey="CityId" [scrollable]="true" scrollHeight="130vh"
+                    text-align: center>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="text-align: center"> ItemName </th>
+                            <th style="text-align: center"> Qty </th>
+                            <th style="text-align: center"> RewardItemId </th>
+                            <th style="text-align: center"> SellingSku </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr>
+                            <td style="text-align: center">{{rowData.ItemName}}</td>
+                            <td style="text-align: center">{{rowData.Qty}}</td>
+                            <td style="text-align: center">{{rowData.RewardItemId}}</td>
+                            <td style="text-align: center">{{rowData.SellingSku}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+    </p-dialog>
+  </div>
+

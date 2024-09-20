@@ -1,0 +1,365 @@
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>Damage & Non Sellable View Order</b></h3>
+    </div>
+    
+</div>
+<div *ngIf ="alert" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Please Select atleast one warehouse</strong> 
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Zone</label>
+                    <select id="zone" name="zone" class="form-control" (change)="getZoneVal($event.target.value)"  required="1"
+>
+                    <option value="">--select--</option>
+                    <option *ngFor="let city of cityList" value="{{city.ZoneId}}">
+                        {{ city.ZoneName }}
+                    </option>
+                </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Region</label>
+                    <select id="region" name="region" class="form-control" (change)="getRegionVal($event.target.value)"  required="1"
+                    >
+                    <option value="">--select--</option>
+                    <option *ngFor="let city of regions" value="{{city.RegionId}}">
+                        {{ city.RegionName }}
+                    </option>
+                </select>
+                    
+                </div>
+                <!-- <div class="col-md-2">
+                    <label>Hub</label>
+                    <select id="hub" name="hub" class="form-control" (change)="getHubVal($event.target.value)" >
+                      <option value="0">--select--</option>
+                      <option *ngFor="let city of hubs" value="{{city.WarehouseId}}">
+                        {{ city.WarehouseName }}
+                      </option>
+                    </select>
+                  </div> -->
+                  <!-- <div class="row">
+                    <div class="form-group">
+                      <label >Hubs:</label><br>
+                      <p-multiSelect [style]="{minWidth:'22em'}" appendTo="body" (change)="getHubVal($event.target.value)"
+                        name="hub" >
+                        <option value="0">--select--</option>
+                        <option *ngFor="let city of hubs" value="{{city.WarehouseId}}">
+                          {{ city.WarehouseName }}
+                        </option>
+                      </p-multiSelect>
+              
+                    </div> -->
+                    <div class="col-md-3">
+                     
+                        <div class="form-group">
+                          <label for="published">hubs</label><br>
+                          <p-multiSelect [style]="{minWidth:'10em'}" appendTo="body" [options]="hubs" [(ngModel)]="selectedBuyer" (onPanelHide)="onPanelHide()" (change)="getHubVal($event.target.value)"
+                            name="hub" optionLabel="WarehouseName" >
+                          </p-multiSelect>
+                        </div>
+                        </div>
+                    <!-- <div class="row">
+                        <div class="form-group">
+                          <label for="published"><b>Buyers:</b></label><br>
+                          <p-multiSelect [style]="{minWidth:'22em'}" appendTo="body" [options]="buyerList" [(ngModel)]="selectedBuyer"
+                            name="buyerInput" optionLabel="DisplayName" (onPanelHide)="onPanelHide()">
+                          </p-multiSelect>
+                  
+                        </div> -->
+                  
+                  <div class="col-md-2">
+                    <label>Select Status</label>
+                    <select id="Warehouse" name="Warehouse" class="form-control" (change)="getStatusVal($event.target.value)" [(ngModel)]="SelectedWarehouseId">
+                        <option value=""disabled>--Select--</option>
+                        <option value="Show All">Show All</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Ready to Dispatch">Ready to Dispatch</option>
+                        <option value="Issued">Issued</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivery Redispatch">Delivery Redispatch</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Settled">Settled</option>
+                        <option value="Partial Settled">Partial Settled</option>
+                        <option value="Account Settled">Account Settled</option>
+                        <option value="Delivery Canceled">Delivery Canceled</option>
+                        <option value="Order Canceled">Order Canceled</option>
+                        <option value="Post Order Canceled">Post Order Canceled</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <label>Select Order Type</label>
+                    <select id="orderType" name="orderType" class="form-control" [(ngModel)]="SelectedOrderType">
+                        <option value=""disabled>--Select--</option>
+                        <option value="-1">Show All</option>
+                        <option value="0">Damage Order</option>
+                        <option value="1">Non-Sellable Order</option>
+                    </select>
+                  </div>
+     
+                  <div class="col-md-3">
+                <div class="form-group" style="margin-top: 29px;">
+                    <button type="button" (click)="DamageDataFun($event)" 
+                        class="btn btn-raised btn-raised btn-success mt">Get Data</button>    
+                    <button id="btnExport" (click)="ExportOrder()"
+                        class="btn btn-raised btn-raised btn-info mt ml-2">Export</button>
+                </div>
+            </div>
+            <div class="col-md-6" >
+              <div class="form-group form-inline">
+               
+                  <input type="text" id="ab" placeholder="&#xF002; Enter SKcode/Order No."
+                      class="form-control col-md-4 col-8" style="font-family:Arial, FontAwesome" name="ab"
+                      [(ngModel)]="searchKey">
+                  <!-- <i class="fa fa-search search_iconinpt" aria-hidden="true"></i> -->
+
+                  <span class="col-md-1 col-12"></span>
+                  <button class="btn btn-primary col-md-3 mt-2" (click)="getSearchItem($event.target.value)">
+                      Search</button>
+                  <!-- </span> -->
+              </div>
+          </div>
+            
+                
+                <p-table #dt [globalFilterFields]="cols"  [rows]="10" [value]="search" [lazy]="true"
+                (onLazyLoad)="DamageDataFun($event)" [totalRecords]="totalRecords" 
+                    [paginator]="true"  [scrollable]="true" scrollHeight="130vh" text-align: center [(first)]="first">
+                    <ng-template pTemplate="caption">
+                        <!-- <div style="text-align: right">        
+                            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                            <input type="text" pInputText size="50" placeholder="Search by Skcode/Order No."  (keypress)="getSearchItem($event.target.value)"   style="width:auto">
+                            
+                          </div> -->
+                         
+                    </ng-template>    
+                    <!-- <input type="text" id="ab" placeholder="&#xF002; Enter text here"
+                            class="form-control col-md-8 col-12" style="font-family:Arial, FontAwesome" name="ab"
+                            [(ngModel)]="searchKey">
+                        <i class="fa fa-search search_iconinpt" aria-hidden="true"></i> 
+
+                        <span class="col-md-1 col-12"></span>
+                        <button class="btn btn-primary col-md-3" (click)="getSearchItem($event.target.value)">
+                            Search</button> -->
+                    <!-- <ng-template pTemplate="header" >
+                        <tr>
+                       <th>S. No.</th> -->
+                          <!-- <th *ngFor="let col of cols" [pSortableColumn]="col.field"  style="text-align: center" >
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th> -->
+                          <ng-template pTemplate="header">
+                            
+                            <tr>
+                                <th>S. No.</th>
+                                <th *ngFor="let col of cols">                                                        
+                                        
+                                  <span *ngIf="col.header!='Damage Order No.'">
+                                    {{col.header}}   
+                                  </span>                                          
+                                        <span *ngIf="col.header=='Damage Order No.' && SelectedOrderType == '-1'">
+                                          All Order
+                                        </span>    
+                                        <span *ngIf="col.header=='Damage Order No.' && SelectedOrderType == '0'">
+                                          Damage Order
+                                        </span>    
+                                        <span *ngIf="col.header=='Damage Order No.' && SelectedOrderType == '1'">
+                                          Non Sellable Order
+                                        </span>                                                                                              
+                                </th>
+                        <!--  <th>Action</th> -->
+                       
+                        </tr>
+                       
+                      </ng-template>
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;">
+                            <td> {{i+1}}</td>
+                            <td *ngFor="let col of cols" >
+                              <div *ngIf="col.field!='isDamageOrder'">
+                                {{item[col.field]}}
+                              </div>
+                              <div *ngIf="col.field=='isDamageOrder'">
+                                <span *ngIf="item.isDamageOrder == true">
+                                  Non Sellable Order
+                                </span>
+                                <span *ngIf="item.isDamageOrder == false">
+                                  Damage Order
+                                </span>
+                              </div>
+                                
+                                <div *ngIf="col.field=='Action'">
+                                    <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="Detail(item.DamageOrderId, $event,item)">Open</button>
+                                </div>
+                                <div *ngIf="col.field=='Action1'">
+                                    <input type="button" id="btnEdit" [disabled]="item.IsBlocked? true:false" class="btn btn-raised btn-warning " value="Edit"
+                                    (click)="EditDboy(item)">
+                                  </div>
+                            </td>
+            
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+        <div class="card-footer"></div>
+    </div>
+</div>
+<div *ngIf="isdetails">
+  <br><br><br>
+    <p-dialog [header]="'Damage Order details'" [(visible)]="isdetails" [resizable]="false" [modal]="true" appendTo="body" positionTop="30" 
+        class="testme" [style]="{width: '80%',height: '50vh'}">
+        <!-- <p-header> -->
+            
+                <!-- <div class="row">
+                    <div class="col-md-6">
+                        <h2>Damage Order details</h2>
+
+                    </div>                  
+                </div>
+                <div class="col-md-6 text-right ovelFieldForm">
+                    <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                        printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                    <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                        >Close</button>
+                </div> -->
+                <div class="container-fluid mt-4">
+                   
+                            <div class="row mt-4 mb-4"  >
+                                <div class="col-md-12 d-flex" >
+                                    <div class="form-group col-md-3">
+                                      <label>Invoice No.</label><br>
+                                      <input type='text' class="form-control" [value]="getDataList.invoice_no" disabled>  
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Customer Name</label><br>
+                                        <input type='text' class="form-control" [value]="getDataList.CustomerName" disabled>   
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Customer Phone No.</label><br>
+                                        <input type='text' class="form-control" [value]="getDataList.Customerphonenum" disabled>
+                                      </div>
+                                      
+                                      <div class="col-md-3">
+                                        <label>Billing Address</label><br>
+                                        <input type='text' class="form-control" [value]="getDataList.BillingAddress" disabled>
+                                      </div>
+                                </div>  
+                                <div class="col-md-12 d-flex">
+                                      <div class="col-md-3">
+                                        <label>Shipping Address</label><br>
+                                        <input type='text'class="form-control" [value]="getDataList.ShippingAddress" disabled>                        
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Bill Amount</label><br>
+                                        <input type='text' class="form-control" [value]="getDataList.GrossAmount" disabled>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label> Delivery Boy</label><br>
+                                        <select id="region" name="region" class="form-control" [(ngModel)]="dataAdd.DboyId" (change)="getRegionVal($event.target.value)"  required="1" disabled
+                                        >
+                                        <option value="">--select--</option>
+                                        <option *ngFor="let dboy of dboyList" value="{{dboy.PeopleID}}">
+                                        {{ dboy.DisplayName }}
+                                      </option>
+                                    </select> 
+                                  </div>
+                                </div>
+                            </div>
+
+                <p-table #dt [globalFilterFields]="cols"  [value]="DamageorderDetails"  [paginator]="true" [rows]="5" [scrollable]="true" scrollHeight="45vh"   >
+                                    
+                  <!-- <ng-template pTemplate="caption" style="width: 100px;">
+                                       
+                                    </ng-template>     -->
+                                    <!-- <ng-template pTemplate="header" > -->
+                        <!-- <tr>
+                       
+                          <th *ngFor="let col of colmns" [pSortableColumn]="col.field"  style="text-align: center" >
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th>
+                        
+                       
+                        </tr> -->
+                        <ng-template pTemplate="header" style="width: 100px;">
+                            
+                          <tr >
+                            
+                              <th *ngFor="let col of colmns"  style="text-align: center; width: 100px;">                                                        
+                                      {{col.header}}                                                                                                       
+                              </th>
+                      <!--  <th>Action</th> -->
+                     
+                       
+                      </ng-template>
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;">
+                           
+                            <td *ngFor="let col of colmns" style="width: 100px;">
+                                <div *ngIf="col.field=='MinOrderQtyPrice'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='DefaultUnitPrice'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='price'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='AmtWithoutTaxDisc'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='TotalAmountAfterTaxDisc'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='AmtWithoutAfterTaxDisc'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='TaxAmmount'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='TotalAmt'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='TaxPercentage'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                
+                                <div *ngIf="col.field=='Action'">
+                                    <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="Detail(item.DamageOrderId, $event,item)">Open</button>
+                                </div>
+                                <div *ngIf="col.field=='Action1'">
+                                    <input type="button" id="btnEdit" [disabled]="item.IsBlocked? true:false" class="btn btn-raised btn-warning " value="Edit"
+                                    (click)="EditDboy(item)">
+                                  </div>
+                                  <div *ngIf="col.field=='ItemMultiMRPId' || col.field=='itemname'|| col.field=='ABCClassification' || col.field=='itemcode'  || col.field=='UnitPrice'||  col.field=='MinOrderQty'|| col.field=='qty'|| col.field=='CurrentStock'">
+                                    {{item[col.field]}}
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+                <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+                          
+                      
+                  
+                </div>
+               
+            
+        <!-- </p-header> -->
+      
+    </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

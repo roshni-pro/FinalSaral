@@ -1,0 +1,277 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="position-relative" style="padding:0px 15px;">
+<form class="ovelFieldForm form form-inline" name="form"
+    style="position: relative;z-index: 9;">
+    <div id="print-section" style="padding:10px 15px; position: relative;z-index: 9; width: -webkit-fill-available;">
+        <div class="waterMark"
+            style="width: 50%;position: absolute;top: 60%;left: 45%;transform: skew(23deg, -36deg);height: 390px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+            <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+        </div>
+        <div style="position: absolute; right: 15px; margin-top: 40px;">
+            <img src="assets/img/logo/Logo.png" width="200px">
+        </div>
+     
+        <div>
+            <h3 style="text-align:center; margin-top: 10px;color: black;font-weight: bold;">SHOP KIRANA E TRADING PRIVATE LIMITED</h3>
+            <h5 style="text-align:center; margin-top: 10px;color: black;font-weight: bold;">Location :- {{Location}},{{cityName}},{{StateName}}</h5>
+            <hr>
+        </div>
+        <div>
+            <h4 style="text-align:center; margin-top: 10px;color: black;font-weight: bold;"> INCIDENT REPORTING  </h4>
+        </div>
+      
+        <form class="form" name="form" #incidentReport="ngForm">
+        <div class="row" style="color: black;">
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-6">
+                <b>Reported By :- </b>
+                <!-- <span> <code *ngIf="isInvalid && !reportingperson.valid && reportingperson.errors.required">Reported By is required</code></span> -->
+                <!-- <div *ngIf="isInvalid && !reportingperson.valid && reportingperson.errors.required">
+                  <code>Reported By is required</code>
+                </div><br> -->
+                <div style="margin-top: 22px;"><b>Role :-</b>
+                <!-- <div *ngIf="isInvalid && !role.valid && role.errors.required">
+                  <code>Role is required</code>
+                </div> -->
+               </div><br>
+                <div style="margin-top: 0px;"> <b> OutBound Lead :-</b>
+                  <!-- <span> <code *ngIf="isInvalid && !outbound.valid && outbound.errors.required">OutBound is required</code></span> -->
+                </div>
+                <!-- <div *ngIf="isInvalid && !outbound.valid && outbound.errors.required">
+                  <code>OutBound is required</code>
+                </div> -->
+                <br>
+              </div>
+              <div class="col-6">
+                <input type="text" id="reportingperson" name ="reportingperson" class="form-control" style="padding-right: 15px;margin-top: 3px;" [(ngModel)]="selectedReport" disabled /><br>
+                  <!-- <p-multiSelect [style]="{minWidth:''}" id="reportingperson" name="reportingperson" [options]="reportList" [(ngModel)]="selectedReport" (onClick)="casenum(selectedReport)"
+                  required="1" #reportingperson="ngModel" [panelStyle]="{minWidth:'25em'}" optionLabel="DisplayName"></p-multiSelect><br> -->
+                  <input type="text" id="role" name ="role" class="form-control" style="padding-right: 15px;margin-top: 3px;" [(ngModel)]="selectedReportedRole" disabled /><br>
+
+                  <!-- <p-multiSelect [style]="{minWidth:''}" id="role=" name="role" [options]="RoleList" [(ngModel)]="selectedReportedRole"
+                  required="1" #role="ngModel" [panelStyle]="{minWidth:'25em'}" optionLabel="RoleName"></p-multiSelect><br> -->
+                  <!-- <div *ngIf="isInvalid && !role.valid && role.errors.required">
+                    <code>Role is required</code>
+                  </div><br> -->
+                  <div style="margin-top: 3px;" *ngIf="outboundDD == true">
+                    <select id="outbound" name="outbound" class="form-control col-md-12"  
+                    [(ngModel)]="PeopleID" placeholder="OutBound" >
+                    <option value="">Select</option>
+                    <option *ngFor="let outbounddata of outboundList" [ngValue]="outbounddata.PeopleID">
+                      {{ outbounddata.DisplayName }}
+                    </option>
+                  </select>
+                  </div>
+                  <div *ngIf="outboundDD == false">  <input type="text" id="outbound" name ="outbound" class="form-control" style="padding-right: 15px;margin-top: 6px;" [(ngModel)]="selectedOutbound" disabled /></div>
+                <br>
+                  <!-- <p-multiSelect [style]="{minWidth:''}" id="outbound" name="outbound" [options]="outboundList" [(ngModel)]="selectedOutbound"
+                  required="1" #outbound="ngModel" [panelStyle]="{minWidth:'25em'}" optionLabel="DisplayName"></p-multiSelect><br> -->
+                
+              </div>
+            </div>
+          </div> 
+          <div class="col-md-6">
+              <div class="row">
+                <div class="col-6">
+                  <b>Date Of Report :-</b>
+                  <!-- <span> <code *ngIf="isInvalid && !month.valid && month.errors.required">Date of Report is required</code></span> -->
+                  <br>
+                  <div style="margin-top: 22px;"><b>Case No :-:</b>
+                    <!-- <span> <code *ngIf="isInvalid && !reportby.valid && reportby.errors.required">CaseNo is required</code></span> -->
+                   </div> <br>
+                  <div style="margin-top: 0px;"><b>InBound Lead :-</b>
+                    <!-- <span> <code *ngIf="isInvalid && !inbound.valid && inbound.errors.required">InBound is required</code></span> -->
+                  </div><br>
+        
+                </div>
+                <div class="col-6">
+                    <p-calendar name="month" placeholder="Month" [(ngModel)]="data.Month" [showIcon]="true" view="month" [showTime]="true"
+                    dateFormat="dd/mm/yy" disabled required="1" #month="ngModel"></p-calendar><br/>
+                    <input type="text" id="reportby" name ="reportby" class="form-control" style="padding-right: 15px;margin-top: 6px;" [(ngModel)]="data.CaseNo" disabled /><br>
+                    <div style="margin-top: -2px;" *ngIf="inboundDD == false">
+                      <input type="text" id="inbound" name ="inbound" class="form-control" style="padding-right: 15px;margin-top: 6px;" [(ngModel)]="selectedInbound" disabled/></div><br>
+                      <div style="margin-top: -16px;" *ngIf="inboundDD == true">
+                        <select id="inbound" name="inbound" class="form-control col-md-12" 
+                        [(ngModel)]="data.PeopleID" placeholder="Inbound" >
+                        <!-- (ngModelChange)="inboundoo(data.PeopleID)"  -->
+                        <option value="">Select</option>
+                        <option *ngFor="let inbounddata of inboundList" [ngValue]="inbounddata.PeopleID">
+                          {{ inbounddata.DisplayName }}
+                        </option>
+                      </select>
+                      </div>
+                        <!-- <input type="text" id="inbound" name ="inbound" class="form-control" style="padding-right: 133px;margin-top: 6px;" [(ngModel)]="selectedInbound" disabled required="1" #inbound="ngModel"/></div><br> -->
+                      <!-- <p-multiSelect [style]="{minWidth:''}" id="inbound" name="inbound" [options]="inboundList" [(ngModel)]="selectedInbound"
+                  required="1" #inbound="ngModel" [panelStyle]="{minWidth:'25em'}" optionLabel="DisplayName" required="1" #inbound="ngModel"></p-multiSelect></div><br> -->
+                </div>
+              </div>
+            </div> 
+            </div>
+      <hr>
+      <div>
+        <h5 style="text-align:center; margin-top: 10px;color: black;font-weight: bold;"> <u>INCIDENT INFORMATION </u> </h5>
+    </div>
+    <hr>
+            <!-- <input type="text" id="view" name ="view" class="form-control" style="padding-right: 833px;margin-top: 6px;font-weight: 600;color: black;" value="Incident Information" disabled /><br> -->
+            
+        <div class="row" style="color: black; margin-top: 10px;">
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-6">
+                <b>Name of Person:- </b><span> <code *ngIf="isInvalid && !nameofPerson.valid && nameofPerson.errors.required">Name of Person is required</code></span><br>
+                <div style="margin-top: 22px;">
+                  <!-- <b>Department :-</b><span> <code *ngIf="isInvalid && !dep.valid && dep.errors.required">Department is required</code></span> -->
+                  <b>Role :-</b><span> <code *ngIf="isInvalid && !rolee.valid && rolee.errors.required">Role is required</code></span><br>
+                </div><br>
+                <div style="margin-top: 0px;"><b> Date of incident :-</b><span> <code *ngIf="isInvalid && !doi.valid && doi.errors.required">Date of Incident is required</code></span></div><br>
+                <div style="margin-top: 0px;"><b>City :-</b><span> <code *ngIf="isInvalid && !city.valid && city.errors.required">City is required</code></span></div><br>
+              </div>
+              <div class="col-6">
+                  <input type="text" id="nameofPerson" name ="nameofPerson" placeholder="Name of Person" class="form-control" style="padding-right: 15px;" [(ngModel)]="data.Name" required="1" #nameofPerson="ngModel"/><br>
+                  <div style="margin-top: 3px;">
+                    <p-multiSelect [style]="{minWidth:''}" id="rolee" name="rolee" [options]="RoleList" [(ngModel)]="selectedRole"
+                    required="1" #rolee="ngModel" [panelStyle]="{minWidth:'25em'}" optionLabel="RoleName" (ngModelChange)="roeName(selectedRole)"></p-multiSelect><br>
+                    <!-- <select id="dep" name="dep" class="form-control col-md-12"  #dep="ngModel"
+                    [(ngModel)]="data.Dept" placeholder="Department" required="1">
+                    <option value="">Select</option>
+                    <option *ngFor="let dept of deptList" [ngValue]="dept.DepId">
+                      {{ dept.DepName }}
+                    </option>
+                  </select> -->
+                    <!-- <input type="text" id="dep" name ="dep" class="form-control" placeholder="Department" style="padding-right: 145px;" [(ngModel)]="data.Dept" required="1" #dep="ngModel"/> -->
+                  </div><br>
+                  <div style="margin-top: -24px;">
+                    <input type="date" id="doi" name="doi" class="form-control mb-4" placeholder="Select Date"
+          [ngModel]="data.DOI | date:'yyyy-MM-dd'" #doi="ngModel" required="1" (change)="changeDate($event)">
+                    <!-- <p-calendar name="doi" placeholder="Select Date" [(ngModel)]="data.DOI" [showIcon]="true" 
+                    dateFormat="dd/mm/yy" (ngModelChange)="changeDate($event)" required="1" #doi="ngModel"></p-calendar> -->
+                  </div>
+                  <div style="margin-top: -28px;">
+                    <select id="city" name="city" class="form-control col-md-12"  #city="ngModel"
+                    [(ngModel)]="data.City" (ngModelChange)="onsearch(data.City)" placeholder="City" required="1">
+                    <option value="">Select</option>
+                    <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                      {{ city.CityName }}
+                    </option>
+                  </select>
+                    <!-- <input type="text" id="city" name ="city" class="form-control" placeholder="City" style="padding-right: 145px;" [(ngModel)]="data.City" required="1" #city="ngModel"/> -->
+                  </div><br>
+              </div>
+            </div>
+          </div> 
+          <div class="col-md-6">
+              <div class="row">
+                <div class="col-6">
+                  <b>Department :-</b><span> <code *ngIf="isInvalid && !dep.valid && dep.errors.required">Department is required</code></span><br>
+                  <!-- <b>Role :-</b><span> <code *ngIf="isInvalid && !rolee.valid && rolee.errors.required">Role is required</code></span><br> -->
+                  <div style="margin-top: 22px;"><b>Type of Loss :-</b><span> <code *ngIf="isInvalid && !status.valid && status.errors.required">Type of Loss is required</code></span></div><br>
+                  <div style="margin-top: 0px;"><b>Time of Incident :-</b><span style="color: red;"> <code *ngIf="isInvalid && !time.valid && time.errors.required">Time of Incident is required</code></span></div> <br>
+                 <div style="margin-top: 0px;"><b>Warehouse :-</b></div><br>
+                </div>
+                <div class="col-6">
+                  <!-- <div style="margin-top: 7px;" *ngIf="outboundDD == true"> -->
+                    <!-- <select id="rolee" name="rolee" class="form-control col-md-12"  #rolee="ngModel"
+                    [(ngModel)]="RoleName" placeholder="Role" (ngModelChange)="roeName(RoleName)" >
+                    <option value="">Select</option>
+                    <option *ngFor="let rl of RoleList" [ngValue]="rl.RoleId">
+                      {{rl.RoleName}}
+                    </option>
+                  </select> -->
+                  <!-- </div> -->
+                  <select id="dep" name="dep" class="form-control col-md-12"  #dep="ngModel"
+                    [(ngModel)]="data.Dept" placeholder="Department" required="1">
+                    <option value="">Select</option>
+                    <option *ngFor="let dept of deptList" [ngValue]="dept.DepId">
+                      {{ dept.DepName }}
+                    </option>
+                  </select>
+                    <!-- <p-multiSelect [style]="{minWidth:''}" id="rolee" name="rolee" [options]="RoleList" [(ngModel)]="selectedRole"
+                    required="1" #rolee="ngModel" [panelStyle]="{minWidth:'25em'}" optionLabel="RoleName" (ngModelChange)="roeName(selectedRole)"></p-multiSelect><br> -->
+                   <div style="margin-top: 1px;">
+                    <select class="form-control" id="status" name="status" style="padding-right: 15px;" [(ngModel)]="data.loss" #status="ngModel" required="1">
+                        <option value="">Select</option>
+                        <option value="Money Loss">Money Loss</option>
+                        <option value="Inventory Loss">Inventory Loss</option>
+                        <option value="Process Violation">Process Violation</option>
+                        <option value="Other">Other</option>
+                      </select>
+                   </div>
+                   <div style="margin-top: 6px;"> <p-calendar name="time" placeholder="Select Time of Incident "  [(ngModel)]="data.timeofIncident" [timeOnly]="true" required="1" #time="ngModel"></p-calendar></div><br>
+                   <!-- (ngModelChange)="changeTime($event)"  -->
+                   <div style="margin-top: -17px;">
+                    <select id="wh" name="wh" class="form-control" [(ngModel)]="data.Warehouse"
+                    placeholder="Select Warehouse">
+                    <option value="">--Select Warehouse--</option>
+                    <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+                      {{ wh.WarehouseName }}
+                    </option>
+                  </select>
+                  </div><br>
+                </div>
+              </div>
+            </div> 
+            </div>
+      
+            <h6 style="color: black; font-weight: 500;"><b><u>Witness Detail (If Any):-</u></b> </h6>
+            <div class="row" style="color: black;">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-6">
+                    <b>Witness Name :- </b>                
+                  </div>
+                  <div class="col-6">
+                    <input type="text" id="witnessName" name ="witnessName" class="form-control" style="padding-right: 15px;margin-top: 3px;" [(ngModel)]="data.WitnessName"  /><br>
+                  </div>
+                </div>
+              </div> 
+              <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-6">
+                      <b>Mobile :-</b>                 
+                    </div>
+                    <div class="col-6">                    
+                        <input type="tel" id="mobile" name ="mobile" class="form-control" style="padding-right: 15px;margin-top: 6px;" [(ngModel)]="data.MobileNo" (keypress)="keyPress($event)" maxlength="10" /><br>                    
+                    </div>
+                  </div>
+                </div> 
+                </div>
+            <h5 style="font-weight: bold; color: black;">Incident Description in Detail 
+              <span> <code *ngIf="isInvalid && !d.valid && d.errors.required">Incident Report Description is required</code></span></h5>
+            <textarea type="text" id="d" name ="d" rows="10" style="width: 100%;background-color: rgba(4, 8, 39, 0);" [(ngModel)]="data.desc" required="1" #d="ngModel"></textarea>
+          </form>
+          </div>
+
+          <div class="form-actions right col-sm-12 p-3">
+            <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+              Refresh
+            </button>
+            <button type="button" class="btn btn-raised btn-primary" (click)="update(incidentReport,PeopleID,data,selectedRole)">
+              <!-- (click)="update(incidentReport,selectedReport,selectedReportedRole,selectedOutbound,data,selectedInbound,RoleId)" -->
+              Save
+            </button>
+          </div>
+    
+</form>
+</div>
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+      <p-dialog [(visible)]="dateerror" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+            [style]="{width: '20%',height: '22%', overflow: 'auto'}">
+      <div class="position-relative">
+        <h4 style="color: red;">
+          Date of Incident is InValid. Please select Appropriate Date.
+        </h4>
+      </div>
+        <p-footer>
+          <button type="button" pButton
+          (click)="data.DOI = null; dateerror = false" label="Close"></button>
+        </p-footer>
+     
+    </p-dialog>

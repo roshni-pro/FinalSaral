@@ -1,0 +1,75 @@
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <label>City<span style="color:red;">*</span></label>
+                <p-dropdown [options]="cityList" [(ngModel)]="CityId" optionLabel="CityName" (onChange)="GetWareHouse()"  placeholder="Select city"></p-dropdown>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Warehouse<span style="color:red;">*</span></label>
+                    <br>
+                    <p-dropdown [options]="masterwarehouseList" [(ngModel)]="DatafilterWareHouse" optionLabel="WareHouseName" (ngModelChange)="DatafilterStore=[];itemdata=undefined" placeholder="Select warehouse" ></p-dropdown>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Store<span style="color:red;">*</span></label>
+                    <br>
+                    <p-dropdown [options]="masterStoreList" [(ngModel)]="DatafilterStore" optionLabel="Name" (onChange)="getAll()" placeholder="Select store"></p-dropdown>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="">Search by</label>
+                    <br>
+                    <p-autoComplete [suggestions]="ItemList" (completeMethod)="getItemList($event)"
+                         [size]="25" [(ngModel)]="Searchby" field="itemname"
+                        placeholder="Search by item"
+                        [minLength]="3" #agentLeger required (onSelect)="onSelectItem($event)" name="agentid"
+                        id="agentId" ngDefaultControl  >
+                    </p-autoComplete> 
+                </div>
+            </div>
+        
+        </div>
+        <div class="row mt-3" *ngIf="itemdata">
+        <p-table #dt [value]="itemdata"   [reorderableColumns]="true" responsiveLayout="scroll" [columns]="cols" >
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th style="width:3rem"></th>
+                <th>S.no</th>
+                <th *ngFor="let col of columns" pReorderableColumn>
+                    {{col.header}}
+                </th>
+                <th>Store</th>
+                <th>Action</th>
+           </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-index="rowIndex">
+            <tr style="width: 40px;" [pReorderableRow]="index" >
+                <td>
+                    <span class="pi pi-bars" pReorderableRowHandle (onClick)="getIndex()"></span>
+                </td>
+                <td>{{index+1}}</td>
+                <td *ngFor="let col of columns">  {{rowData[col.field]}}</td>
+                <td>{{DatafilterStore.Name}}</td>
+                <td (click)="confirm1(rowData)"><i class="pi pi-trash" style="font-size: 2rem;color: orangered;"></i></td>
+                    <!-- <button class="btn btn-primary" (click)="confirm1(rowData)">Remove</button></td> -->
+                <!-- <input type="button" id="btnEdit" class="btn btn-raised btn-info " value="Remove"
+                        (click)="DeleteItem(item)"> -->
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<div class="row">
+<div class="col-md-12">
+    <div class="form-group">
+        <!-- <button value="Add"  class="btn btn-primary mt-4"  (click)="AddItems()" *ngIf="itemdata">Update Items</button> -->
+        <button style="margin: 45%;"  value="Add"  class="btn btn-primary mt-4" *ngIf="itemdata" (click)="AddItems()">Save</button>
+    </div>
+</div>
+</div>
+    <p-toast position="top-right"></p-toast>
+    </div>
+</div>

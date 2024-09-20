@@ -1,0 +1,176 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Ordered And Delivered Count</h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-3 mt-2">
+                    <label><b>Select WareHouse<span class="required">*</span></b></label>
+                    <p-dropdown id="Category" name="Category" [options]="warehouseList" [(ngModel)]="selectedWareHouse" [filter]="true"
+                        optionLabel="label" placeholder="Select WareHouse">
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3  mt-2">
+                    <label><b> Select Year</b></label>
+                    <p-dropdown [(ngModel)]="selectedYear" placeholder="Select Year" [options]="yearsCalender"
+                        optionLabel="year" optionValue="code">
+
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-2  mt-2">
+                    <label><b> Select Month</b></label>
+                    <p-dropdown [(ngModel)]="selectDate" placeholder="Select Month" [options]="Months"
+                        defaultLabel="Select Month" optionLabel="name">
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-4 btn">
+                    <button type="button" class="btn btn-primary"
+                        (click)="getWarehouseUtilizationList()">Search</button>
+                         &nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary " (click)="clearF()">Reset</button>
+                     &nbsp;&nbsp;
+                    <button type="submit" class=" btn btn-primary " style="background-color: #119150;color: white;"
+                        (click)="exportWarehouseUtilizationList()">Export</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <code> *Note: Vehicle Count Available =  DemandOrderCount (CumulativePendingETACount + CumulativePendingChangeETACount) </code>
+    </div>
+    <!-- value="ODCount" -->
+    <div class="row mt-2">
+        <p-table  [scrollable]="true" [value]="ODCount" scrollHeight="calc(100vh - 437px)"   (onLazyLoad)="onLazyLoad($event)" [paginator]="false" [rows]="10">
+            <ng-template pTemplate="header">
+                <tr style="height:40px">
+                    <th>Default ETA Date </th>
+                    <th>Demand Order Count </th>
+                    <th>Fixed Threshold Count </th>
+                    <th>Planned Threshold Count </th>
+                    <th>Executed Order Count </th>
+                    <th>Order Count Util.. </th>
+                    <th>Delivered Order Count </th>
+                    <th>Delivered% </th>
+                    <th>Cumulative Pending Count </th>
+                    <th>Vehicle Count Available </th>
+                    <!-- <th>Vehicle Count Required </th> -->
+                    <th>Touch Point Capacity </th>
+                    <th>Touch Point Util </th>
+                    <th>Touch Point Util % </th>
+                    <th>Planned Order Amount </th>
+                    <th> Order Amount Util </th>
+                    <!-- <th>Order Amount Util% </th>
+                    <th>Overall Util% </th> -->
+
+                </tr>
+
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr [ngClass]="{'Bg-Colour-Yellow' : item.status == 'Y',  'Bg-Colour-Red' : item.status == 'R'}">
+                    <!-- <td>{{item.WarehouseName}}</td> -->
+                    <td>{{item.ETADate |date}} </td>
+                    <td>{{item.DemandOrderCount}} <br> 
+                        ({{item.CumulativePendingETACount}} / {{item.CumulativePendingChangeETACount}})</td>
+                    <td>{{item.FixedThresholdOrderCount}}</td>
+                    <td>{{item.PlannedThresholdOrderCount }}</td>
+                    <td>{{item.ExecutedOrderCount}}</td>
+                    <td>{{item.OrderCountUtilPercentage}}</td>
+                    <td>{{item.DeliveredOrderCount }}</td>
+                    <td>{{item.DeliveredPercentage }}</td>
+                    <td>{{item.CumulativePendingCount }}</td>
+                    <td style="font-size: larger;" *ngIf="item.isEditable" (click)="onSelect(item)"> <label class = "color"> <u><b>({{item.VehicleCountAvailable }} + {{item.ExtraVehicleCount}}) / {{item.VehicleCountRequired}}</b></u> </label> </td>
+                    <td style="font-size: larger;" *ngIf="!item.isEditable" ><label>({{item.VehicleCountAvailable }} + {{item.ExtraVehicleCount}}) / {{item.VehicleCountRequired}}</label></td>
+                    <!-- <td>{{item.ExtraVehicleCount }} </td> -->
+                    <td>{{item.TouchPointCapacity }}</td>
+                    <td>{{item.TouchPointUtilization }}</td>
+                    <td>{{item.TouchPointUtilPercentage }}%</td>
+                    <td>{{item.PlannedOrderAmount }}</td>
+                    <td>{{item.OrderAmountUtilization }}</td>
+                    <!-- <td>{{item.OrderAmountUtilPercentage }}%</td>
+                    <td>{{item.OverallUtilPercentage }}</td>     -->
+
+                    <!-- <td>{{item.ExtraVehicleCapacityInKg }}</td> -->
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td colspan="7" style="text-align: center;">
+                        <h5><b>No Data Found.</b></h5>
+                    </td>
+                </tr>
+
+            </ng-template>
+        </p-table>
+    </div>
+
+  
+    <div class="row" *ngIf="ODCount.length>0">
+        
+        <div class="col-sm-12">
+            <!-- <div class="row" *ngIf="ODCount.length>0"> -->
+                
+            <!-- </div> -->
+
+            <div class="card">
+                <h5>Graph</h5>
+                &nbsp;&nbsp;&nbsp;<code> *Note: Demand Order Count =  DemandOrderCount + CumulativePendingCount </code>
+                <p-chart type="line" height="100" [data]="basicData" [options]="basicOptions"></p-chart>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<p-dialog header="Update Vehicle Count" [blockScroll]="true" [(visible)]="display" appendTo="body" [modal]="true"
+    [style]="{width: '30vw'}" [draggable]="false" [resizable]="false">
+
+
+
+    <div class="row">
+        <div class="col-6">
+            <span style="font-weight: 600;"> Update Vehicle Count </span>
+        </div>
+        <div class="col-6">
+            <!-- <input type="text" [(ngModel)]="extraVehicleCount" pInputText /> -->
+            <input type="number"  [(ngModel)]="extraVehicleCount"    style="width: 175px;" 
+            min="0" max="1000" oninput="validity.valid||(value='');">
+
+        </div>
+    </div>
+    <div class="row mt-1     ">
+        <div class="col-6">
+            <span style="font-weight: 600;"> ExtraVehicleCapacityInKg </span>
+        </div>
+        <div class="col-6"> 
+            <p-dropdown [(ngModel)]="extraVehicleCapacityInKg" placeholder="Select Weight" [options]="thresholdkgList"
+            optionLabel="ThresholdLoadInKg" optionValue="Id">
+
+        </p-dropdown>
+        </div>
+    </div>
+
+    <div class="p-footer mt-2">
+        <div class="row">
+            <div class="col-2">
+                <button class="btn btn-primary " type="button" (click)="extraVehiclePopUp()">Save</button>
+            </div>
+            <div class="col-6"></div>
+            <div class="col-2">
+                <button class="btn btn-primary" type="button" (click)="cancel()">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+<p-toast></p-toast>

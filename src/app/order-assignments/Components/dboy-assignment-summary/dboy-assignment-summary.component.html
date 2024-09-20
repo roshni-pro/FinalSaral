@@ -1,0 +1,237 @@
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+
+
+<div *ngIf="!isOpenPopup">
+    <div class="header">
+        <h3>Picker Summary</h3>
+    </div>
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="search-head rounded d-flex p-2 px-4 justify-content-between align-items-center"
+            (click)="toggleSearch()">
+            <h5 class="m-0">Filters</h5>
+            <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+        </div>
+        <div style="padding:0px 35px;" id="search-content p-2" *ngIf="isSearch">
+            
+            <form class="form" #DboysummaryForm="ngForm">
+                <div class="form-body">
+                    <div class="row">                        
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="long"><b>Supplier Name:</b></label>
+                                <p-autoComplete [suggestions]="sellerList"
+                                    (completeMethod)="getSeLlerList($event)" field="CustomerName" [size]="30"
+                                    [(ngModel)]="data.CustomerId"
+                                    (ngModelChange)="onsearch(data.CustomerId); exportData = []"
+                                    placeholder="enter at least 3 chars" [minLength]="3" name="sellerid"
+                                    id="sellerid">
+                                </p-autoComplete>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="projectinput3"><b>Dboy<span style="color:red"> *</span></b></label>
+                                <select id="des" name="dboy" [(ngModel)]="data.dboyMobile" class="form-control"
+                                    #dboy="ngModel" required="1">
+                                    <option value="undefined">Select Dboy </option>
+                                    <option *ngFor="let cl of dboyList;" [value]="cl.Mobile">
+                                        {{cl.FirstName + ''}}
+                                        {{cl.LastName}}
+                                    </option>
+                                </select>
+                                <div class="ui-g"></div>
+                                <div *ngIf="isInvalid && !dboy.valid && dboy.errors.required">
+                                    <code>DBoy Name is required</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="startdate"><b>Start Date: </b></label><br>
+                                <p-calendar [showIcon]="true" [(ngModel)]="data.StartDate" name="startDate"
+                                    required="1" [readonlyInput]="true" required #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="enddate"><b>End Date: </b></label><br>
+                                <p-calendar [showIcon]="true" [(ngModel)]="data.EndDate" name="EndDate"
+                                    required="1" [readonlyInput]="true" required #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="onSearchdata(DboysummaryForm,data)">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="row text-left" *ngIf="summaryList && summaryList.length">
+        <div class="col-md-12">
+            <div class="card noneHoverRow">
+                <p-table #dt [columns]="cols" [value]="summaryList" [totalRecords]="summaryList.length" [rows]="1000000"
+                    dataKey="CartId" [scrollable]="true" scrollHeight="70vh">
+                    <ng-template pTemplate="header" let-columns>
+                        <tr style="text-align: center">
+                            <th>Sno</th>
+                            <th>No Of Orders</th>
+                            <th>No Of Items</th>
+                            <th>Picked Date</th>
+                            <th>Export</th>
+                            <th>Details</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
+                        <tr style="text-align: center" [ngClass]="{'sel':rowData.IsSelected}">
+                            <td>{{i+1}}</td>
+                            <td>{{rowData.ConsumerOrderDc.shoppingCartDc.length}}</td>
+                            <td>{{calculateTotalITems(rowData.ConsumerOrderDc.shoppingCartDc)}}
+                            </td>
+                            <td>{{rowData.PickerSummary.CreatedDate | date}} </td>
+                            <td>
+                                <button style="color: #009DA0" class="btn"
+                                    (click)="exportByItems(rowData.ConsumerOrderDc.shoppingCartDc)">
+                                    Export By Items
+                                </button>
+                            </td>
+                            <td>
+                                <button style="color: #009DA0" class="btn" (click)="OPENDETAIL(rowData)">
+                                    View Details
+                                </button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog *ngIf="onhover" [(visible)]="onhover" [resizable]="false" [modal]="true" appendTo="body" positionTop="100">
+    <div class="row">
+        <input type="text" class="form-control" [(ngModel)]="buyer.address">
+        <input type="text" class="form-control" [(ngModel)]="buyer.name">
+
+    </div>
+</p-dialog>
+
+<div *ngIf="isOpenPopup">
+    <div class="ui-fluid shadow mb-2 bg-white rounded mr">
+        <div class="col-md-12 ">
+            <div class="ccs-2">
+                <a href="javascript:void(0);" (click)="closePopup()" style="float: right;">
+                    <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+                </a>
+            </div>
+
+        </div>
+        <ng-container *ngFor="let picker of currentPicker">
+
+            <div class="col-md-12">
+                <div class="row" style="overflow: auto;">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="projectinput15">Invoice Number</label>
+                            <input type="text" placeholder="order id" [disabled]="true" [(ngModel)]="picker.InvoiceNo"
+                                name="invoice number" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="projectinput15">Status</label>
+                            <input type="text" placeholder="status" [disabled]="true" name="cartstats"
+                                [(ngModel)]="picker.CartStatus" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="projectinput15">Invoice Date</label>
+                            <input type="text" placeholder="order id" [disabled]="true" [(ngModel)]="picker.InvoiceDate"
+                                name="invoice date" class="form-control">
+
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="projectinput15"></label>
+
+                        <button *ngIf="picker.CartStatus == 'Picked'"
+                            style="margin-top: 30px  ; color: #009DA0; border-color: #009DA0;" class="btn"
+                            (click)="confirmOrder(picker)">
+                            Confirm Order
+                        </button>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div style="position: fixed;">
+                <p-toast [style]="{marginTop: '20px'}"></p-toast>
+            </div>
+
+            <div class="col-12">
+                <table class="table table-responsive-sm text-center">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Item Name</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Cut Line Item</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of picker.ShoppingCartItems; let i = index">
+                            <ng-container>
+                                <td>{{i+1}}</td>
+                                <td>{{item.ItemName}}</td>
+                                <td>{{item.Qty}}</td>
+                                <td>{{item.Price}}</td>
+                                <td>{{item.Qty * item.Price}}</td>
+                                <td>{{item.OrderStatus ? item.OrderStatus : ' - '}}</td>
+                                <td>
+                                    <button
+                                        *ngIf="(item.OrderStatus == 'Booked' || item.OrderStatus == 'Pending')  && (picker.CartStatus == 'Picked') "
+                                        style="color: firebrick" class="btn" (click)="cutLineItem(item, picker.CartId)">
+                                        Cut Line Item
+                                    </button>
+                                    <div *ngIf="item.OrderStatus != 'Booked'">
+                                        {{item.OrderStatus == 'Confirmed' ? 'Item Confirmed' : '' }}
+                                    </div>
+                                </td>
+                            </ng-container>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="border-top: solid 1px lightslategray;">
+            </div>
+
+        </ng-container>        
+    </div>
+</div>
+
+<div class="position-absolute order-details" *ngIf="isDetails">
+    <app-order-assignent-item-details [details]="selectedRowDetails" (isdetailsclose)="isDetailsFalse($event)"
+        (refreshParent)="ngOnInit()" class="d-flex justify-content-end"></app-order-assignent-item-details>
+</div>

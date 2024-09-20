@@ -1,0 +1,94 @@
+<div class="header">
+  <h3 class="m-2">Request Access</h3>
+</div>
+
+<div class="m-1 d-flex justify-content-between align-items-center">
+  <div class="card" style="width: 150rem;">
+      <div id="RolePagePermission-table" class="ui-fluid  bg-white rounded">
+          <div class="position-relative">
+              <div class="row">
+              <div class="col-md-3">
+                  <div class="form-group m-2">
+                      <label for="ware" class="col-md-6">Role:</label>
+                      <p-multiSelect [options]="roleList" [(ngModel)]="objRequest.selectedRoles" [panelStyle]="{minWidth:'25em'}" optionLabel="label">
+                        
+                      </p-multiSelect>
+ 
+                  </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group m-2">
+                    <label for="ware" class="col-md-6">Page:</label>
+                    <p-multiSelect [options]="pageList" [(ngModel)]="objRequest.selectdPages" [panelStyle]="{minWidth:'25em'}" optionLabel="PageName">
+                        
+                    </p-multiSelect>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group m-2">
+                    <label for="ware" class="col-md-8">Valid From - Valid Till</label>
+                    <p-calendar [(ngModel)]="objRequest.rangeDates"  [minDate]="minimumDate" [maxDate]="maxDate" [readonlyInput]="true"  name="dtranges" selectionMode="range" [readonlyInput]="true" required="required"></p-calendar>
+                </div>
+            </div>
+            
+           
+                    <div class="form-actions right col-sm-12 p-3">
+                       <button type="button" class="btn btn-raised btn-primary float-right" (click)="saveRoleReq(objRequest)">
+                         Save
+                          </button>
+                         <button type="button" class="btn btn-raised btn-warning mr-1 float-right" (click)="goToPage()">
+                         Back
+                          </button>
+                  </div>
+          
+
+            <!-- <div class="form-actions right col-sm-12 p-3">
+                    <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                      Cancel
+                    </button>
+                    <button type="button" class="btn btn-raised btn-primary" (click)="update(countryEditForm)">
+                      Save
+                    </button>
+                  </div> -->
+
+          </div>
+          <hr/>
+              <div class="col-md-6">
+                 <div class="card">
+                  <div class="pr-dv" *ngFor="let role of  rolePageList; let pindex = index;">
+                      <a href="javascript:void(0);" (click)="collapseParent(role)" *ngIf="role.ChildRolePagePermissionDcs && role.ChildRolePagePermissionDcs.length >0">
+                          <i *ngIf="!role.IsVisible" class="fa fa-caret-right fa-lg mr-10" aria-hidden="true"></i>
+                          <i  *ngIf="role.IsVisible" class="fa fa-caret-down fa-lg mr-10" aria-hidden="true"></i>
+                      </a>
+                      <p-checkbox  [ngClass]="{'nt-pr': !(role.ChildRolePagePermissionDcs && role.ChildRolePagePermissionDcs.length >0) }" name="pchk{{pindex}}" [label]="role.PageName" [(ngModel)]="role.IsChecked"
+                          binary="true"  (click)="onParentPageClick(role)" ></p-checkbox>
+                      <div *ngIf="role.IsVisible && role.ChildRolePagePermissionDcs && role.ChildRolePagePermissionDcs.length >0;">
+                          <div class="ch-div" *ngFor="let page of  role.ChildRolePagePermissionDcs; let cindex = index;">
+                              <p-checkbox (click)="onChildPageClick(role)" name="cchk{{cindex}}" [label]="page.PageName" [(ngModel)]="page.IsChecked"
+                                  binary="true"></p-checkbox>
+                          </div>
+                          <!-- let cindex = index; -->
+
+                      </div>
+                     
+                  </div>
+
+                  
+                         
+              
+
+              </div>
+           
+            
+              </div>
+              <!-- <div class="form-actions  right col-sm-12 p-3"> -->
+                      <!-- <button type="button" class="mr-10 btn btn-raised btn-primary float-right" (click) = "saveRole(rolePageList)" [disabled]= !istree >
+                          Save
+                        </button>
+                           -->
+                  <!-- </div>
+             -->
+          </div>
+      </div>
+  </div>
+</div>

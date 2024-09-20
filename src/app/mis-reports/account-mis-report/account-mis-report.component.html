@@ -1,0 +1,116 @@
+<div>
+    <h3 class="heading mt-4">Account Mis Report</h3>
+  </div>
+  <div class="card">
+      <div class="card-body"> 
+            <div class="row">
+                <div class="col-md">
+                    <label for="">Select State</label>
+                    <p-multiSelect [options]="stateList" [(ngModel)]="selectedState" defaultLabel="Select State" (onChange)="getCities(selectedState)"
+                    optionLabel="StateName" ></p-multiSelect>
+                </div>
+              <div class="col-md">
+                  <label for="">Select City</label>
+                  <p-multiSelect [options]="CityList" [(ngModel)]="selectedCity" defaultLabel="Select City" (onChange)="getWarehouseByCityId(selectedCity)"
+                  optionLabel="label" selectedItemsLabel="{0} City selected" ></p-multiSelect>
+              </div>
+              <div class="col-md">
+                  <label for="">Select Warehouse</label>
+                  <p-multiSelect id="WarehouseId" name="WarehouseName"  [options]="warehouseList"   [filter]="true"
+                  [(ngModel)]="warehouseObj" optionLabel="label" optionValue="value" placeholder="--Select Warehouse--">
+                  </p-multiSelect>
+              </div>
+              <div class="col-md-.5">        
+                <label for="">Enter Month</label><br>
+                <p-calendar [style]="{'width':'auto'}" [(ngModel)]="dateValue" view="month" selectionMode="range" dateFormat="mm/yy" [showIcon]="true" ></p-calendar>
+              </div>
+              <div class="col mt-4 ">
+                  <div class="text-right">
+                      <button class="btn btn-primary mr-2" (click)="Search()" >Search</button> 
+                      <button class="btn btn-primary mr-1" (click)="Clear()" >Clear</button>
+                      <button class="btn btn-success ml-1" (click)="Export()" >Export</button>
+                      <button class="btn btn-success ml-1" (click)="ExportAll()" >Export All</button>
+
+                      <button class="btn btn-Warning ml-1" *ngIf="Role" (click)="SelectInsertDate()"  >Run Schedular</button>
+                  </div>
+              </div>
+            </div>  
+      </div>
+  </div>
+
+  
+<p-dialog  [(visible)]="ShowInsertCalen" [resizable]="false" positionTop="350" [modal]="true" appendTo="body" [blockScroll]="true" [closable]="false"
+[style]="{ width: '35%'}" >
+
+<div class="row">
+    <div class="col-md-6 text-center">
+        <label><b>Select Date </b></label><br>
+        <p-calendar [style]="{'width':'max-content'}" [(ngModel)]="insertDate" view="month" dateFormat="mm/yy" [showIcon]="true" ></p-calendar>
+    </div>
+    <div class="col-md-6 text-center">
+        <label></label><br>
+        <button type="button"  class="btn btn-primary mr-2 mt-1" (click)="Insert()" >Submit</button>
+        <button type="button"  class="btn btn-primary mr-2 mt-1" (click)="Close()" >Close</button>
+
+    </div>
+</div>
+
+</p-dialog>
+
+  <div class="container-fluid" *ngIf="MISReport?.length>0">
+    <div class="card">
+        <div class="card-body">
+            <div>
+                <p-table  [columns]="scrollableCols" [frozenColumns]="frozenCols" frozenWidth="500px" [value]="MISReport" [paginator]="true"  [showCurrentPageReport]="true" [scrollable]="true" 
+                     [rows]="19" >
+                   <!-- <ng-template pTemplate="header"  >
+                        <tr>
+                           <th style="width: 160px" *ngFor="let head of MISReport[0] | keys">{{head}}</th>
+                        </tr>
+                    </ng-template> -->
+                    <!-- <ng-template pTemplate="body" let-item>
+                        <tr style="width: 100px;">        
+                            <td style="width: 160px" *ngFor="let list of item | keys">{{item[list]}}</td>
+                        </tr>
+                    </ng-template> -->
+					<ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>                            
+                            <col *ngFor="let col of columns" [ngStyle]="(col.field === 'CityName') 
+                            ? {'width': '120px'}  : (col.field === 'WarehouseName')? {'width': 'rowData[col.field].length * 8'} : 
+                            col.field === 'Particulars' ? {'width': '200px'} :{'width': '200px'} " >     
+                        </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columns">
+                                {{col.header}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
+                        <tr  [ngStyle]="(i+1==2) ? {'background-color': 'white'} : {'background-color':'bisque'} ">
+
+                            <td *ngFor="let col of columns"   >
+                                  <span *ngIf="(rowData[col.field]|keys) === 'number'; else elseBlock">
+                                    {{rowData[col.field] }}
+                                  </span>
+                                  <ng-template #elseBlock>
+                                    {{rowData[col.field]}}
+                                  </ng-template>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+[style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

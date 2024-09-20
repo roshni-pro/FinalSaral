@@ -1,0 +1,180 @@
+<div class="card">
+    <div class="card-header">
+        <h4>
+            <dt>Block Brand List</dt>
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-2">
+                <label for="ware"><b>Warehouse:</b></label>
+                <select name="Warehouse" value="Warehouse" class="form-control col md-3"  [(ngModel)]="selectedWarehouseId" (change)="onSelect($event)">
+                    <option [ngValue]="0">--Select--</option>
+                    <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WarehouseId">{{item.WarehouseName}}</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label><b>App Type</b></label><br>
+                <select class="form-control" id="apptype" name="apptype" [(ngModel)]="AppTypId">
+                    <option value="0">--Select--</option>
+                    <option value="1">Retailer</option>
+                    <option value="2">sales</option>
+                    <!-- <option value="3">Both</option> -->
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label><b>Customer Type</b></label><br>
+                <select class="form-control" id="Cust" name="CustomerType" [(ngModel)]="CustomerTypeId">
+                    <option value="0">--Select--</option>
+                    <option value="1">KPP</option>
+                    <option value="2">Retailer</option>
+                    <!-- <option value="3">Distributer</option> -->
+                    <option value="4">All</option>
+                </select>
+            </div>
+          
+            <div class="form-group srch">
+                <button type="button" class="btn btn-raised btn-raised btn-success mt"
+                    (click)="GetBlockBrandList()">Search</button>
+                <button id="btnRefresh" (click)="Refresh()"
+                    class="btn btn-raised btn-raised btn-info mt ml-2">Refresh</button>
+                <button id="btnAdd" (click)="AddItem()" class="btn btn-raised btn-raised btn-danger mt ml-2">Add
+                    Item</button>
+                    <button type="button" class="btn btn-raised btn-success mt ml-2"  (click)="ExportData()">
+                        Export Block Brand
+                      </button>
+            </div>
+        </div>
+        <div class="row">
+            <p-table [value]="BlockBrandList" [paginator]="true" [rows]="20" [lazy]="true" [scrollable]="true"
+                scrollHeight="130vh" text-align: center [totalRecords]="totalRecords" (onLazyLoad)="load($event)"
+                [rows]="20">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Warehouse</th>
+                        <th>Category Name</th>
+                        <th>Subcategory Name</th>
+                        <th>Brand Name</th>
+                        <th>App Type</th>
+                        <th>Customer Type</th>
+                        <th style="width:8%"> Action </th>
+                        <th style="width:8%"> Action </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr>
+                        <td>{{rowData.WarehouseName}}</td>
+                        <td>{{rowData.CategoryName}}</td>
+                        <td>{{rowData.SubcategoryName}}</td>
+                        <td>{{rowData.SubsubcategoryName}}</td>
+                        <td>{{rowData.ApplicationType}}</td>
+                        <td>{{rowData.CustomerTypeName}}</td>
+                        <td style="width:8%">
+                            <button id="btnActive" *ngIf="rowData.IsActive==false"
+                                (click)="StatusChange(rowData.Id,rowData.IsActive)"
+                                class="btn btn-primary">Active</button>
+                            <button id="btnInActive" *ngIf="rowData.IsActive==true"
+                                (click)="StatusChange(rowData.Id,rowData.IsActive)"
+                                class="btn btn-primary">InActive</button>
+                        </td>
+                        <td style="width:8%">
+                            <button id="btnDel" (click)="DeleteBlockBrand(rowData.Id)"
+                                class="btn btn-primary">Delete</button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+    </div>
+    <div class="card-footer"></div>
+</div>
+<div *ngIf="isOpenPopup">
+    <div class="ui-fluid">
+        <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+            [style]="{width: '70%',height: '65%',left: '323px'}">
+            <p-header>
+                Block Brand
+            </p-header>
+            <form #myForm="ngForm" (ngSubmit)="OnSubmit(Postdata)">
+                <div class="row">
+                    <div class="col-4" *ngIf="categoryList">
+                        <label>Select Category*</label><br>
+                        <select name="Category" value="Category" class="form-control col md-3"
+                            [(ngModel)]="Postdata.CatId" (change)="onSelectCategory()">
+                            <!-- <option [ngValue]="0">--Select--</option> -->
+                            <option *ngFor="let item of categoryList" [ngValue]="item.value">{{item.label}}
+                            </option>
+                        </select>
+
+                    </div>
+                    <div class="col-4">
+                        <label>Select Sub Category*</label><br>
+                        <select name="subCategory" value="subCategory" class="form-control col md-3"
+                            [(ngModel)]="Postdata.SubCatId" (change)="onSelectSubCategory($event)">
+                            <!-- <option [ngValue]="0">--Select--</option> -->
+                            <option *ngFor="let item of subcategoryList" [ngValue]="item.SubCategoryId">{{item.SubcategoryName}}
+                            </option>
+                        </select>
+                        
+                    </div>
+                    <div class="col-4">
+                        <label>Select Brand*</label><br>
+                        <select name="brand" value="brand" class="form-control col md-3"
+                            [(ngModel)]="SubSubCatId"  (change)="onSelectSubSubCategory($event)">
+                            <option [ngValue]="0">--Select--</option>
+                            <option *ngFor="let item of brandList" [ngValue]="item.SubsubCategoryid">{{item.SubsubcategoryName}}
+                            </option>
+                        </select>
+                       
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="ware"><b>Warehouse:</b></label>
+                        <select name="Warehouse" value="Warehouse" class="form-control col md-3"  [(ngModel)]="selectedWarehouseId" (change)="onSelect($event)">
+                            <option [ngValue]="0">--Select--</option>
+                            <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WarehouseId">{{item.WarehouseName}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label><b>App Type*</b></label><br>
+                        <select class="form-control" id="apptype" name="apptype" [(ngModel)]="Postdata.AppType"
+                            (change)="ChangeAppType($event)">
+                            <!-- <option value="0">--Select--</option> -->
+                            <option value="1">Retailer</option>
+                            <option value="2">sales</option>
+                            <!-- <option value="3">Both</option> -->
+                        </select>
+                       
+                    </div>
+                    <div class="col-md-4">
+                        <label><b>Customer Type*</b></label><br>
+                        <select class="form-control" id="Cust" name="CustomerType" [(ngModel)]="Postdata.CustomerType"
+                            (change)="ChangeCustomerType($event)" #CustomerTypeId="ngModel" [disabled]="Isdisable">
+                            <!-- <option value="0">--Select--</option> -->
+                            <option value="1">KPP</option>
+                            <option value="2">Retailer</option>
+                            <!-- <option value="3">Distributer</option> -->
+                            <option value="4" >All</option>
+                        </select>
+                      
+                    </div>
+                    
+                </div>
+                <p-footer>
+                    <input type="submit" [disabled]="!myForm.valid" class="btn btn-raised btn-raised btn-success mt"
+                        value="Submit">
+                    <button id="btnclose" (click)="cancle()"
+                        class="btn btn-raised btn-raised btn-warning mt ml-1">Cancle</button>
+                </p-footer>
+            </form>
+        </p-dialog>
+
+    </div>
+</div>
+
+<!-- <p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> -->

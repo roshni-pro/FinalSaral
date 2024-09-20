@@ -1,0 +1,365 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<div *ngIf="selectedItemAndWarehouse">
+    <app-virtual-stock-auto-settle [warehouseId]="selectedItemAndWarehouse.WarehouseId"
+        [itemMultiMRPId]="selectedItemAndWarehouse.ItemMultiMRPId"  (directionEvent)="getOptions($event)">
+    </app-virtual-stock-auto-settle>
+</div>
+
+<div id="kick-start" class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-8">
+                <h6 class="card-title">Virtual Stock Management</h6>
+                <div class="col-md-12 mb-4">
+                    <form #itemAutoCompleteForm="ngForm">
+                        <!-- {{selectedItemAndWarehouse}} -->
+                        <app-item-auto-complete id="cusAuto" name="customerAutoComplete" #customerValue="ngModel"
+                            [(ngModel)]="selectedItemAndWarehouse" (outputItem)="getStocksList()" [isStockComponent]="manageVirtualStock" (reset)="resetAll()" required>
+                        </app-item-auto-complete>
+                    </form>
+                </div>
+                <div *ngIf="selectedItemAndWarehouse">
+                    <span>Warehouse: </span>{{selectedItemAndWarehouse.warehouseName}} &nbsp;
+                    <span>ItemMultiMRPId: </span>{{selectedItemAndWarehouse.ItemMultiMRPId}} &nbsp;
+                    <span>Item: </span>{{selectedItemAndWarehouse.itemname}} &nbsp;
+                    <span>Item Number: </span>{{selectedItemAndWarehouse.ItemNumber}}
+
+                </div>
+                <div *ngIf="selectedItemAndWarehouse">
+                    <span>ABC Classification: {{selectedItemAndWarehouse.Category}}</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                    pTooltip="View Transactions" tooltipPosition="top" (click)="navToVirtualStockDetailsList()">
+                    <i class="fa fa-eye fa-lg" aria-hidden="true"></i>
+                </button>
+                <!-- [disabled]="!stockTransactionsList.length"  -->
+                <button type="button" style="cursor: pointer;" pTooltip="Save Transaction" tooltipPosition="top"
+                    class="btn btn-raised btn-raised btn-primary pull-right mr-10" (click)="saveTransaction()">
+                    <i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i>
+                </button>
+                <button *ngIf="selectedItemAndWarehouse" type="button" style="cursor: pointer;" pTooltip="Refresh Data"
+                    tooltipPosition="top" class="btn btn-raised btn-raised btn-primary pull-right mr-10"
+                    (click)="getStocksList()">
+                    <i class="fa fa-retweet fa-lg" aria-hidden="true"></i>
+                </button>
+                <button *ngIf="selectedItemAndWarehouse" type="button" style="cursor: pointer;" pTooltip="Reset Page"
+                    tooltipPosition="top" class="btn btn-raised btn-raised btn-primary pull-right mr-10"
+                    (click)="refreshPage()">
+                    <i class="fa fa-eraser fa-lg" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="card-body">
+            <div class="row" *ngIf="!selectedItemAndWarehouse">
+                <!-- <div class="col-md-12">
+                    <form #itemAutoCompleteForm="ngForm">
+                        <app-item-auto-complete id="cusAuto" name="customerAutoComplete" #customerValue="ngModel"
+                            [(ngModel)]="selectedItemAndWarehouse" (outputItem)="getStocksList()" required>
+                        </app-item-auto-complete>
+                    </form>
+                </div> -->
+            </div>
+
+            <div class="row">
+                <div [ngStyle]="{'width': getWidth(), 'margin-bottom': '15px'}"
+                    [ngClass]="{'not-editable':!stock.IsDraggable, 'negetive-entry': stock.CanBeNegetive}"
+                    *ngFor="let stock Of stockList" droppable (onDrop)="onDrop($event, stock);" [id]="stock.StockType">
+                    <div class="mr" droppable (onDrop)="onDrop($event, stock);" [id]="stock.StockType">
+                        <ul class="list-group borderDiv header" [draggable]="stock.IsDraggable"
+                            [dragData]="stock.IsDraggable? stock: null" droppable (onDrop)="onDrop($event, stock);"
+                            [id]="stock.StockType">
+                            <a href="javascript:void(0);" [name]="stock.StockType" [id]="stock.StockType"
+                                (click)="openHistoryPopup(stock)">
+                                <h4 class="card-title" droppable (onDrop)="onDrop($event, stock);"
+                                    [id]="stock.StockType">
+                                    {{stock.DisplayName}}
+                                </h4>
+                            </a>
+                            <div class="list-group-item" droppable (onDrop)="onDrop($event, stock);"
+                                [id]="stock.StockType" style="color: black;">
+                                {{stock.Qty}}
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="stockTransactionsList && stockTransactionsList.length > 0">
+                <div class="col-md-12">
+                    <p-table #table [value]="stockTransactionsList" [totalRecords]="stockTransactionsList.length"
+                        [scrollable]="true" scrollHeight="70vh" text-align: center [paginator]="true" [rows]="10">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>S.no</th>
+                                <th> Batch Code (From)</th>
+                                <th> Mfg. Date </th>
+                                <th> Exp. Date </th>
+                                <th>From Stock</th>
+                                <th>Quantity</th>
+                                <th> Batch Code (To)</th>
+                                <th> Mfg. Date </th>
+                                <th> Exp. Date </th>
+                                <th>To Stock</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                            <tr>
+                                <td>{{i+1}}</td>
+                                <td>{{rowData.SourceStockType == 'VirtualStocks' ? '': rowData.BatchCode }}</td>
+                                <td>{{rowData.MfgDate | date: 'dd/MM/yyyy'}}</td>
+                                <td>{{rowData.ExpDate | date: 'dd/MM/yyyy'}}</td>
+                                <td>{{rowData.SourceStockType}}</td>
+                                <td>{{rowData.Qty}}</td>
+                                <td> {{rowData.DestinationStockType == 'VirtualStocks' ? '': rowData.BatchCode }}</td>
+                                <td>{{rowData.MfgDate | date: 'dd/MM/yyyy'}}</td>
+                                <td>{{rowData.ExpDate | date: 'dd/MM/yyyy'}}</td>
+                                <td>{{rowData.DestinationStockType}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+<div *ngIf="stockEditDc && stockEditDc.isPopupOpened">
+    <p-dialog [(visible)]="stockEditDc.isPopupOpened" [style]="{width: '100vw', height:'100vh'}" [resizable]="false"
+        [modal]="true" appendTo="body" positionTop="0">
+
+        <p-header>
+            <p>{{stockEditDc.fromStock.DisplayName}} TO {{stockEditDc.toStock.DisplayName}}</p>
+        </p-header>
+
+
+
+        <!-- <ul class="list-group"> -->
+        <div class="row">
+
+            <div class="col-12 ml-3">
+                <p>
+                    <label>
+                        Remaining Quantity :
+                    </label>
+                    <b>
+                        {{stockEditDc.fromStock.Qty}}
+
+                    </b>
+                </p>
+            </div>
+
+
+
+            <div class="col-12 mt-3 ml-3">
+                <div class="row" *ngIf="isAnyToPhysicalStockTransfer">
+                    <div class="col-2 mr-4">
+                        <label>
+                            <strong>Search Batch Code :</strong>
+                        </label> <br>
+                        <p-autoComplete [(ngModel)]="barcodeKeyword" [suggestions]="batchcodeList"
+                            (completeMethod)="GetBatchMasterList($event)" field="BatchCode" [size]="30"
+                            placeholder="Search Items (min 3 letters)" [minLength]="1"
+                            (onSelect)="onSelectBatchCode($event)" name="BatchCode" required="true"
+                            #ledgerName="ngModel">
+                        </p-autoComplete>
+                    </div>
+                    <div class="col-3">
+                        <label for=""> <strong> Quantity To Transfer : </strong> </label> <br>
+                        <input type="number" class="form-control" [(ngModel)]="isAnyToPhysicalStockTransferQty"
+                            name="quantity" />
+                    </div>
+                    <div class="col-2" style="margin-top: 28px;">
+                        <button class="btn btn-primary" type="button" (click)="addRow()">Add</button> &nbsp;
+                        <button class="btn btn-primary" type="button" (click)="clearList()">clear List</button>
+                    </div>
+
+                    <!-- (onBlur)="checkValid($event)" -->
+                </div>
+            </div>
+
+
+            <!-- <div class="row text-center"> -->
+
+            <ng-template [ngIf]="isPhysicalToAnyStockTransfer">
+
+                <div class="col-12 d-flex justify-content-center mt-3">
+                    <div class="col-12 ">
+                        <p-table [value]="bachCodeList" [rows]="5" responsiveLayout="scroll"
+                            [totalRecords]="batchCodeTotalRecord" [paginator]="true" [scrollable]="false"
+                            [(selection)]="selectedBactchCode">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <!-- <th style="width: 40px;"> -->
+                                    <!-- <p-tableHeaderCheckbox></p-tableHeaderCheckbox> -->
+                                    <!-- (onChange)="isBatchCodeInputEnable = !isBatchCodeInputEnable"> -->
+                                    <th> Select Batch Codes
+                                    </th>
+                                    <th> Batch Code </th>
+                                    <th> Mfg. Date </th>
+                                    <th> Exp. Date </th>
+                                    <th> Available Quantity </th>
+                                    <th> Quantity </th>
+                                    <th> status </th>
+                                </tr>
+                            </ng-template>
+                            <!-- (keypress)="omit_special_char_and_text($event)" -->
+                            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                <tr>
+                                    <td style="width: 40px;">
+                                        <!-- (onChange)="rowData.selected = !rowData.selected"> -->
+                                        <p-tableCheckbox [value]="rowData" (click)="enableImputs(rowData)">
+                                        </p-tableCheckbox>
+                                    </td>
+                                    <td>{{rowData.BatchCode}}</td>
+                                    <td>{{rowData.MFGDate | date: 'dd/MM/yyyy'}}</td>
+                                    <td>{{rowData.ExpiryDate | date: 'dd/MM/yyyy'}}</td>
+                                    <td>{{rowData.Qty}}</td>
+                                    <td>
+                                        <input type="number" class="form-control" [(ngModel)]="rowData.transferQuantity"
+                                            [disabled]="rowData.selected">
+                                    </td>
+                                    <td>
+                                        <ng-container *ngIf="!rowData.selected">
+                                            <ng-container
+                                                *ngIf="rowData.Qty >= rowData.transferQuantity && rowData.transferQuantity > 0 ">
+                                                <span style="color: green;">OK</span>
+                                            </ng-container>
+                                            <ng-container
+                                                *ngIf="!(rowData.Qty >= rowData.transferQuantity && rowData.transferQuantity > 0)">
+                                                <span style="color: RED;">Invalid Value</span>
+                                            </ng-container>
+                                            <!-- {{rowData.Qty >= rowData.transferQuantity && rowData.transferQuantity > 0 ? "OK"
+                                        : "invalid value" }} -->
+                                        </ng-container>
+                                    </td>
+
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+
+
+            </ng-template>
+
+            <!-- </div> -->
+
+            <ng-template [ngIf]="isAnyToPhysicalStockTransfer">
+
+                <div class="col-12 d-flex justify-content-center mt-3">
+                    <div class="col-12 ">
+                        <p-table [value]="nonPhysicaltoPhysicalBatchCodeList" [rows]="5" responsiveLayout="scroll"
+                            [paginator]="true" [scrollable]="false">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <!-- <th style="width: 40px;"> -->
+                                    <!-- <p-tableHeaderCheckbox></p-tableHeaderCheckbox> -->
+                                    <!-- (onChange)="isBatchCodeInputEnable = !isBatchCodeInputEnable"> -->
+                                    <!-- <th> Select Batch Codes -->
+                                    <!-- </th> -->
+                                    <th> Batch Code </th>
+                                    <th> Mfg. Date </th>
+                                    <th> Exp. Date </th>
+                                    <!-- <th> Available Quantity </th> -->
+                                    <th> Quantity </th>
+                                </tr>
+                            </ng-template>
+                            <!-- (keypress)="omit_special_char_and_text($event)" -->
+                            <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                                <tr>
+                                    <!-- <td style="width: 40px;">
+                                            <!-- (onChange)="rowData.selected = !rowData.selected"> -->
+                                    <!-- <p-tableCheckbox [value]="rowData" (click)="enableImputs(rowData)">
+                                            </p-tableCheckbox> -->
+                                    <!-- </td>  -->
+                                    <td>{{rowData.BatchCode}}</td>
+                                    <td>{{rowData.MFGDate | date: 'dd/MM/yyyy'}}</td>
+                                    <td>{{rowData.ExpiryDate | date: 'dd/MM/yyyy'}}</td>
+                                    <td>{{rowData.transferQuantity}}</td>
+                                    <!-- <td>
+                                            <input type="number" class="form-control" [(ngModel)]="rowData.transferQuantity"
+                                                [disabled]="rowData.selected">
+                                        </td> -->
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </ng-template>
+
+            <div *ngIf="isNonPhysicalToNonPhysicalStrockTransfer" class="col-4 ml-4">
+                <label>
+                    Quantity To Add
+                </label>
+                <input type="number" class="form-control" [(ngModel)]="stockEditDc.qtyToTransfer" name="quantity"
+                    (change)="invalidAmount = false" />
+
+            </div>
+
+            <div class="col-12 ml-4 mt-3 mb-3">
+                <label>
+                    Reason
+                </label>
+                <div>
+                    <textarea class="form-control" style="width: 50%;" [(ngModel)]="stockEditDc.reason"
+                        name="reason"></textarea>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="margin-left: 38px">
+            <div *ngIf="isNonPhysicalToNonPhysicalStrockTransfer">
+                <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="calculateVirtualStock();">
+                    Add Quantity
+                </button>
+            </div>
+            <div *ngIf="isPhysicalToAnyStockTransfer" style="margin-left: 5px">
+                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                    (click)="transferWithBatchCode('isPhysicalToAnyStockTransfer')">
+                    Add Quantity with Batchcode
+                </button>
+            </div>
+            <div *ngIf="isAnyToPhysicalStockTransfer" style="margin-left: 5px">
+                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                    (click)="transferWithBatchCode('isAnyToPhysicalStockTransfer')">
+                    Add Quantity with Batchcode
+                </button>
+            </div>
+            <code *ngIf="stockEditDc.invalidQuantity"> Quantity Entered is invalid </code>
+            <code *ngIf="stockEditDc.invalidReason"> Please enter Reason </code>
+        </div>
+        <!-- </ul> -->
+    </p-dialog>
+
+</div>
+
+<div *ngIf="showHistory">
+    <p-dialog [(visible)]="showHistory" [resizable]="true" [modal]="true" appendTo="body" positionTop="20"
+        [style]="{width: '75vw'}"
+        [contentStyle]="{'height': '500px', 'max-height': '500px', 'min-height': '500px', 'overflow-y': 'auto'}">
+        <p-header>
+            <p>Stock History</p>
+        </p-header>
+        <div class="row">
+            <div class="col-12">
+                <div>
+                    <app-stock-history-partial [filter]="stockHistoryPageFilter"></app-stock-history-partial>
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>

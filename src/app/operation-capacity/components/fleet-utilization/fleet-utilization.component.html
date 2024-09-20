@@ -1,0 +1,162 @@
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">Fleet Utilization Report</h4>
+    </div>
+    <div class="col-xl-12 col-lg-12">
+        <div class="card">
+            <div class="card-content">
+                <div class="card-body">
+                    <form class="form" #filterForm="ngForm">
+                        <div class="ui-fluid">
+                            <div class="ui-g">
+                                <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">City</label>
+                                        <!-- <select name="cityInput" class="form-control" required
+                                            [(ngModel)]="input.selectedCityId" (ngModelChange)="onCityChange()"
+                                            #cityInputModel="ngModel">
+                                            <option [value]="null">Select City</option>
+                                            <option *ngFor="let city of cityList" [value]="city.value">{{city.label}}
+                                            </option>
+                                        </select>
+                                        <code *ngIf="input.isFilterFormSubmitted && !cityInputModel.valid">
+                                            Required!!
+                                        </code> -->
+                                        <p-dropdown [options]="cityList" name="cityList" optionLabel="label" 
+                                        (onChange)="onCityChange()"  [(ngModel)]="input.selectedCityId" [filter]="true" placeholder="select city">
+                                    </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Warehouse</label>
+                                        <p-multiSelect name="warehouseInput" [options]="warehouseList" required
+                                            [(ngModel)]="input.selectedWarehouseList"
+                                            (onPanelHide)="onWarehouseChange()" #warehouseInputModel="ngModel">
+                                        </p-multiSelect>
+                                        <code *ngIf="input.isFilterFormSubmitted && !warehouseInputModel.valid">
+                                                Required!!
+                                        </code>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Date</label>
+                                        <select name="dateInput" class="form-control" required
+                                            [(ngModel)]="input.selectedDateOption"
+                                            (ngModelChange)="onChangeDateOption()">
+                                            <option *ngFor="let opt of dateOptionList" [value]="opt.value">
+                                                {{opt.label}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3" *ngIf="input.rangeDates && input.rangeDates.length>0">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Range</label>
+                                        <p-calendar name="dateCalenderInput" [(ngModel)]="input.rangeDates"
+                                            selectionMode="range" [readonlyInput]="true" (onClose)="setDate()">
+                                        </p-calendar>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <button type="button" class="btn-r btn btn-primary" (click)="onSearch(filterForm)"
+                                        label="Search">
+                                        <i class="fa fa-search"></i> Search
+                                    </button>
+
+                                    <button type="button" class="btn-r exp btn btn-primary" (click)="export(filterForm)"
+                                        label="Reset">
+                                        <i class="fa fa-file-excel-o"></i> Export
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="ui-g" *ngIf="vehicleList && vehicleList.length >0">
+                                <div class="ui-g-12">
+                                    <p-table [value]="vehicleList" dataKey="VehicleNo" rowExpandMode="single">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th class="th-1"></th>
+
+                                                <th>Hub</th>
+                                                <th>Vehicle Number</th>
+                                                <th>Vehicle Capacity</th>
+                                                <th>Total Load</th>
+                                                <th>% Utilized</th>
+                                                <th>KM Travelled
+                                                    <span><br>(Actual/Planned)</span>
+                                                </th>
+                                                <th>Trip Time
+                                                    <span><br>(Actual/Planned)</span>
+                                                </th>
+
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-vehicle let-rowIndex="rowIndex"
+                                            let-expanded="expanded">
+                                            <tr class="tr-hd">
+                                                <td>
+                                                    <a [pRowToggler]="vehicle">
+                                                        <i
+                                                            [ngClass]="expanded ? 'fa fa-minus-circle fa-lg' : 'fa fa-plus-circle fa-lg'"></i>
+                                                    </a>
+                                                </td>
+                                                <td>{{vehicle.Hub}}</td>
+                                                <td>{{vehicle.VehicleNo}} </td>
+                                                <td>{{vehicle.VehicleCapacity}} KG</td>
+                                                <td>{{vehicle.TotalLoad | number :'1.2-2'}}</td>
+                                                <td>{{(vehicle.TotalLoad/vehicle.VehicleCapacity)*100 | number
+                                                    :'1.2-2'}}%</td>
+                                                <td>{{vehicle.ActualEnteredDistanceInKM | number :'1.2-2'}} /
+                                                    {{vehicle.PlannedDistanceInKM | number :'1.2-2'}}</td>
+                                                <td>
+                                                    {{vehicle.ActualTripTimeInHrs | number :'1.2-2'}} /
+                                                    {{vehicle.PlannedTripTimeInHrs | number :'1.2-2'}}
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="rowexpansion" let-vehicle>
+                                            <tr class="th-sub">
+                                                <th></th>
+                                                <th>Trip Number</th>
+                                                <th>Date</th>
+                                                <th>Vehicle Capacity</th>
+                                                <th>Total Load</th>
+                                                <th>% Utilized</th>
+                                                <th>KM Travelled
+                                                    <span><br>(Actual/Planned)</span>
+                                                </th>
+                                                <th>Trip Time
+                                                    <span><br>(Actual/Planned)</span>
+                                                </th>
+                                            </tr>
+                                            <tr class="th-sub" *ngFor="let vh of vehicle.InnerList">
+                                                <td></td>
+                                                <td>{{vh.TripNumber}}</td>
+
+                                                <td>{{vh.TripDate | date : 'dd/MM/yyyy'}}</td>
+                                                <td>{{vh.VehicleCapacity}} KG</td>
+                                                <td>{{vh.TotalLoad | number :'1.2-2'}}</td>
+                                                <td>{{(vh.TotalLoad/vh.VehicleCapacity)*100 | number :'1.2-2'}}%</td>
+                                                <td>{{vh.ActualCalculatedDistanceInKM | number :'1.2-2'}} /
+                                                    {{vh.PlannedDistanceInKM | number :'1.2-2'}}</td>
+                                                <td>
+                                                    {{vh.ActualTripTimeInHrs | number :'1.2-2'}} /
+                                                    {{vh.PlannedTripTimeInHrs | number :'1.2-2'}}
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

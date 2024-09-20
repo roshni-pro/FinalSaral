@@ -1,0 +1,110 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="card">
+    <!-- <div class="card-header">
+        <div class="header">CRM List Page</div>
+    </div> -->
+    <div class="row mr_left">
+        <div class="col-md-12 text-right">
+            <button id="addcrm" name="addcrm" class="btn btn-primary" (click)="onAddConfig()">Add Configuration</button>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <!-- <p-table #dt [value]="configList" [paginator]="true" [rows]="20" [scrollable]="true"
+            [lazy]="true"  [totalRecords]="totalcount" (onLazyLoad)="load($event)" 
+            scrollHeight="130vh" text-align: center>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Name</th>
+                    <th>CreatedDate</th>
+                    <th>IsActive</th>
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-config>
+                <tr>
+                    <td>{{config.Name}}</td>
+                    <td>{{config.CreatedDate | date:'medium'}}</td>
+                    <td>
+                        <p-inputSwitch name="IsActive" [(ngModel)]="config.IsActive" (ngModelChange)="onActive(config)">
+                        </p-inputSwitch>
+                    </td>
+                    <td>
+                        <a (click)="onEditConfigRow(config)" href="javascript:void(0)" style="margin-right: 70px;">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table> -->
+        <p-table #dt [value]="configList" [paginator]="true" [rows]="20" [scrollable]="true"  scrollWidth = "100%"         
+            scrollHeight="130vh" text-align: center>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:100px">Name</th>
+                    <th style="width:100px" *ngFor="let col of tempList">{{col.CRMPlatformName}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-config let-i="rowIndex">
+                <tr>
+                    <td style="width:37px">{{config.CrmName}}</td>
+                    <td  *ngFor="let col of config.childObj" style="width:0px">
+                        <input type="checkbox" class="form-check-input" id="IsDigital{{i+1}}" name="IsDigital"
+                        name="IsDigital" [(ngModel)]="col.Active"  (ngModelChange)="onActiveConfig(col,config)"
+                        style="width: 20px; height: 20px;">
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <!-- <p-table #dt [columns]="cols" [value]="ladgertypeList" [paginator]="true" [rows]="20" dataKey="ID"
+        [scrollable]="true" scrollHeight="70vh" text-align: center>
+
+        <ng-template pTemplate="header">
+          <tr>
+
+            <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="text-align: center">
+              {{col.header}}
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+          <tr (click)="openDetails(rowData,$event)">
+            <td *ngFor="let col of columns" style="text-align: center">
+              {{rowData[col.field]}}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table> -->
+    </div>
+</div>
+
+
+
+
+<div *ngIf="isAddEditConfig">
+    <p-dialog [(visible)]="isAddEditConfig" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '50%',height: '50%'}">
+    <p-header>
+      {{title}}
+    </p-header>
+    <!-- <div class="row">
+        <div class="col-md-4">
+
+        </div>
+    </div> -->
+    </p-dialog>
+</div>
+
+<!-- <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog> -->
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  

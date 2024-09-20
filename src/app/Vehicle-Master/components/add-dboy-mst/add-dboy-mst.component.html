@@ -1,0 +1,275 @@
+<section>
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <div *ngIf="IshowAdd">
+                <h3 class="m-2"><b>Add Dboy master</b></h3>
+            </div>
+            <div *ngIf="IshowEdit">
+                <h3 class="m-2"><b>Edit Dboy master</b></h3>
+            </div>
+        </div>
+    </div>
+    <p-toast [style]="{marginTop: '50px'}"></p-toast>
+
+
+    <form class="form" name="form" #DboyForm="ngForm">
+        <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">City</label>
+                        <br>
+                        <select id="city" name="city" class="form-control" (change)="getWarehouse(dataAdd.CityId)" [(ngModel)]="dataAdd.CityId" required="1"
+                            #cityId="ngModel">
+                            <option value="">--select--</option>
+                            <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                                {{ city.CityName }}
+                            </option>
+                        </select>
+                        <div *ngIf="isInvalid &&  !cityId.valid && cityId.errors.required" style="color: red;">
+                            City is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="">Warehouse</label>
+                        <br>
+                        <select id="Warehouse" name="Warehouse" class="form-control" [(ngModel)]="dataAdd.WarehouseId" required="1"
+                            #WarehouseId="ngModel">
+                            <option value="">--select--</option>
+                            <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WareHouseId">
+                                {{ item.WareHouseName }}
+                            </option>
+                        </select>
+                        <div *ngIf="isInvalid &&  !WarehouseId.valid && WarehouseId.errors.required" style="color: red;">
+                            Warehouse is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label>Name*</label>
+                    <input type="text" id="txtname" name="Name" autocomplete="off" class="form-control"
+                        [(ngModel)]="dataAdd.Name" required="1" #Name="ngModel">
+                    <div *ngIf="isInvalid &&  !Name.valid && Name.errors.required" style="color: red;">
+                        Name is required.
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label>Address</label>
+                    <input type="text" id="txtAddress" name="Address" autocomplete="off" class="form-control"
+                        [(ngModel)]="dataAdd.Address" required="1" #Address="ngModel">
+                    <div *ngIf="isInvalid &&  !Address.valid && Address.errors.required" style="color: red;">
+                        Address is required.
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Mobile No*</label>
+                    <input type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" id="txtMobileNo" name="MobileNo" autocomplete="off" class="form-control"
+                        maxlength="10" minlength="10" [(ngModel)]="dataAdd.MobileNo" required="1" #MobileNo="ngModel">
+                       
+                        <div *ngIf="isInvalid && !MobileNo.valid && MobileNo.errors.required" style="color: red;">
+                            MobileNo is required.
+                        </div>
+                        <!-- <div *ngIf="MobileNo.errors.minlength" style="color: red;">
+                            Enter Valid MobileNo.
+                        </div> -->
+                </div>
+                <div class="col-md-3">
+                    <label>Aadhar No*</label>
+                    <input type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" [disabled]="IsDisabled" id="txtAadharNo" name="AadharNo" autocomplete="off" class="form-control"
+                        maxlength="12" minlength="12" [(ngModel)]="dataAdd.AadharNo" required="1" #AadharNo="ngModel">
+                        <div *ngIf="isInvalid && !AadharNo.valid && AadharNo.errors.required" style="color: red;">
+                            AadharNo is required.
+                        </div>
+                        <!-- <div *ngIf="AadharNo.errors.minlength" style="color: red;">
+                            Enter Valid AadharNo.
+                        </div> -->
+                </div>
+                <div class="col-md-3">
+                    <label>Agent/Transport*</label>
+                    <select class="form-control" name="AgentOrTransport" [(ngModel)]="dataAdd.AgentOrTransport"
+                        (change)="getSelectedOptionText(AgentOrTransport)" required #AgentOrTransport="ngModel">
+                        <option value="">--Select--</option>
+                        <option value="Agent">Agent</option>
+                        <option value="Transport">Transport</option>
+                    </select>
+                    <div *ngIf="isInvalid && !AgentOrTransport.valid && AgentOrTransport.errors.required" style="color: red;">
+                        Agent/Transport is required.
+                    </div>
+                </div>
+                <div *ngIf="IsdisableAgent" class="col-md-3">
+                    <label>Agent *</label>
+                    <select class="form-control" name="Agent" [(ngModel)]="dataAdd.AgentId">
+                        <option value="0" disabled>--select--</option>
+                        <option *ngFor="let agent of AgentList" [ngValue]="agent.PeopleID">
+                            {{ agent.DisplayName }}
+                        </option>
+                    </select>
+                </div>
+                
+               
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Agency Name*</label>
+                    <input type="text" id="AgencyName" name="AgencyName" autocomplete="off" class="form-control"
+                        [(ngModel)]="dataAdd.AgencyName">
+                </div>
+
+                <div class="col-md-3">
+                    <label>Type*</label>
+                    <select class="form-control" name="Type" [(ngModel)]="dataAdd.Type" (change)="typeChange(dataAdd.Type)" required="1" #Type="ngModel">
+                        <option value="">--Select--</option>
+                        <option value="Ad-Hoc">Ad-Hoc</option>
+                        <option value="3PL">3PL</option>
+                        <option value="One time">One time</option>
+                        <option value="Regular">Regular</option>
+                    </select>
+                    <div *ngIf="isInvalid && !Type.valid && Type.errors.required" style="color: red;">
+                        Type is required.
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="regis">Registration Number</label>
+                        <br>
+                        <select id="regis" name="regis" class="form-control" (change)="setRegistration()" [(ngModel)]="dataAdd.VehicleMasterId" required="1"
+                            #VehicleMasterId="ngModel">
+                            <option value="">--select--</option>
+                            <option *ngFor="let item of registrationList" [ngValue]="item.Id">
+                                {{ item.RegistrationNo }}
+                            </option>
+                        </select>
+                        <div *ngIf="isInvalid &&  !cityId.valid && cityId.errors.required" style="color: red;">
+                            City is required.
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-md-3">
+                    <label>Trip Type*</label>
+                    <select class="form-control" name="TripTypeEnum" [(ngModel)]="dataAdd.TripTypeEnum"  required="1" #tripTypeEnum="ngModel">
+                        <option value="">--Select--</option>
+                        <option value="0">City</option>
+                        <option value="1">SKP</option>
+                        <option value="2">KPP</option>  
+                        <option value="3">Damage_Expiry</option>
+                    </select>
+                    <div *ngIf="isInvalid && !tripTypeEnum.valid && tripTypeEnum.errors.required" style="color: red;">
+                         Trip type is required.
+                    </div>
+                </div> -->
+                <div *ngIf="DboyValidity" class="col-md-6">
+                    <div class="row">
+                <div class="col-md-6">
+                    <label>Dboy Valid From</label>
+                    <p-calendar id="ValidFrom" name="ValidFrom" [(ngModel)]="dataAdd.ValidFrom" [readonlyInput]="true"
+                        placeholder="dd/mm/yy" [showIcon]="true" (ngModelChange)="PreventPastDate()" ></p-calendar>
+                        <!-- <div *ngIf="isInvalid &&  !ValidFrom.valid && ValidFrom.errors.required"  style="color: red;">
+                            ValidFrom is required.
+                        </div> -->
+                </div>
+                <div class="col-md-6">
+                    <label>Valid Till</label>
+                    <p-calendar id="ValidTill" name="ValidTill" [(ngModel)]="dataAdd.ValidTill" [readonlyInput]="true"
+                        placeholder="dd/mm/yy" [showIcon]="true"  (ngModelChange)="PreventPastValidTillDate()" ></p-calendar>
+                        <!-- <div *ngIf="isInvalid && !ValidTill.valid && ValidTill.errors.required" style="color: red;">
+                            ValidTill is required.
+                        </div> -->
+                </div>
+            </div>
+                </div>
+            </div>
+            <div class="row">
+                 <div class="col-md-3">
+                    <label>Dboy Monthly Cost*</label>
+                    <input type="number" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" id="DboyCost" name="DboyCost" autocomplete="off" class="form-control"
+                       [(ngModel)]="dataAdd.DboyCost" required="1" #DboyCost="ngModel">
+                       
+                        <div *ngIf="isInvalid && !DboyCost.valid " style="color: red;">
+                            DboyCost is required.
+                        </div>                   
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check" style="margin-top: 30px;">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1" id="IsBlocked" isChecked
+                            name="IsBlocked" [(ngModel)]="dataAdd.IsBlocked" style="width: 20px; height: 20px;">
+                        <label class="form-check-label"
+                            for="exampleCheck1">IsBlocked</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <input type="checkbox" class="form-check-input" id="IsActive1" id="IsActive1" IsActive
+                            name="IsActive" [(ngModel)]="dataAdd.IsActive" style="width: 20px; height: 20px;">
+                        <label class="form-check-label" for="IsActive">IsActive</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Aadhar Copy*</label><br>
+                    <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                        (change)="upload($event.target.files)" />
+                    <button type="button" class="btn btn-raised btn-primary " (click)="uploadAadharCopy()">
+                        Upload
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <label>Aadhar Back Copy*</label>
+                    <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                      (change)="upload($event.target.files)" />
+                    <button type="button" class="btn btn-raised btn-primary " (click)="uploadAadharBackCopy()">
+                      Upload
+                    </button>
+                  </div>
+                <div class="col-md-4">
+                    <label>Photo*</label><br>
+                    <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                        (change)="upload($event.target.files)" />
+                    <button type="button" class="btn btn-raised btn-primary " (click)="uploadPhoto()">
+                        Upload
+                    </button>
+                </div>
+            </div>
+                <div class="row">
+                <div class="col-md-4">
+                    <label *ngIf="AadharImage">Aadhar Copy</label>
+                    <br>
+                    <div class="form-group" (click)="openImage(AadharImage)">
+                    <img *ngIf="AadharImage" src="{{baseURL}}{{AadharImage}}" height="100px" width="100px">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label *ngIf="AadharBackImage">Aadhar Back Copy</label>
+                    <br>
+                    <div class="form-group" (click)="openImage(AadharBackImage)">
+                    <img *ngIf="AadharBackImage" src="{{baseURL}}{{AadharBackImage}}" height="100px" width="100px">
+                </div>
+                </div>
+                <div class="col-md-4">
+                    <label *ngIf="PhotoImage">Photo</label>
+                    <br>
+                    <div class="form-group" (click)="openImage(PhotoImage)">
+                    <img *ngIf="PhotoImage" src="{{baseURL}}{{PhotoImage}}" height="100px" width="100px">
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+            <div class="row">
+                <div class="col-md-3">
+                    <button (click)="OnSubmit(dataAdd,DboyForm)"
+                        class="btn btn-raised btn-raised btn-success mt ml-1">Submit</button>
+                    <button id="btnCancle" (click)="Cancle()"
+                        class="btn btn-raised btn-raised btn-danger mt ml-1">Cancle</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+
+</section>

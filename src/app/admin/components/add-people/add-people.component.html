@@ -1,0 +1,558 @@
+<div class="ui-fluid">
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <h4 style="padding-top: 20px; padding-left: 20px"><b>Add People</b></h4>
+  </div>
+</div>
+<hr>
+<div class="mt-2">
+  <ngb-tabset #t="ngbTabset">
+    <ngb-tab id="tab1" title="Step1" >
+      <ng-template ngbTabContent>
+        <br /> <br />
+        <form class="form text-left" name="infoForm" #infoForm="ngForm" autocomplete="off">
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="name"> First Name<span style="color:red"> *</span></label>
+                <input type="text" disallow-spaces id="firstname" class="form-control" name="firstname"
+                  [(ngModel)]="people.PeopleFirstName" placeholder="First Name" required="1" maxlength="50"
+                  minlength="2" #firstName="ngModel" />
+                <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                  <code>First Name is required</code>
+                </div>
+                <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                  <code>Minlength 2</code>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="name"> Last Name<span style="color:red"> *</span></label>
+                <input type="text" id="lastname" class="form-control" name="lastname"
+                  [(ngModel)]="people.PeopleLastName" placeholder="Last Name" required="1" maxlength="50" minlength="2"
+                  #lastName="ngModel" />
+                <div *ngIf="isInvalid && !lastName.valid && lastName.errors.required">
+                  <code>Last Name is required</code>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class='row'>
+                  <div class="col-md-6">
+                    <label for="name">Email<span style="color:red"> *</span></label>
+                    <input type="text" id="email" class="form-control" name="email"
+                      (keypress)="omit_special_char($event)" [(ngModel)]="people.Email" placeholder="email" required="1"
+                      #email="ngModel" />
+                    <div *ngIf="isInvalid && !email.valid && email.errors.required">
+                      <code>Email Name is required</code>
+                    </div>
+                  </div><br /><br />
+
+                  <div class="col-md-6">
+                    <label for="name">&nbsp;</label>
+                    <input type="email" id="email" class="form-control" [(ngModel)]="people.Email1" [disabled]
+                      name="Pemail" placeholder="@shopkirana.com" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group" *ngIf="password != people.Password">
+                <label for="name">Password<span style="color:red"> *</span></label>
+                <input type="text" id="password" class="form-control" name="password" [(ngModel)]="people.Password"
+                  placeholder="password" required="1" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}"
+                  #password="ngModel" />
+                <div *ngIf="isInvalid && !password.valid && password.errors.pattern">
+                  <code>Password must contain capital & small alphabets, numbers and special characters</code>
+                </div>
+                <div *ngIf="isInvalid && !password.valid && password.errors.required">
+                  <code>Password is required</code>
+                </div>
+              </div>
+
+              <div class="form-group" *ngIf="password == people.Password">
+                <label for="name">Password<span style="color:red"> *</span></label>
+                <input type="text" id="password" class="form-control" name="password" [(ngModel)]="people.Password"
+                  placeholder="password" required="1" #password="ngModel" />
+                <!-- <div *ngIf="isInvalid && !password.valid && password.errors.pattern">
+                    <code>Password must contain capital & small alphabets, numbers and special characters</code></div>
+                <div *ngIf="isInvalid && !password.valid && password.errors.required">
+                  <code>Password is required</code>
+                </div> -->
+              </div>
+
+              <div class="form-group">
+                <label for="name">Mobile<span style="color:red"> *</span></label>
+                <input type="tel" id="mobile" class="form-control" name="mobile" (keypress)="keyPress($event)"
+                  maxlength="10" [(ngModel)]="people.Mobile" placeholder="mobile" required="1" minlength="10"
+                  #mobile="ngModel" />
+                <div *ngIf="isInvalid && !mobile.valid && mobile.errors.required">
+                  <code>Mobile Number is required</code>
+                </div>
+                <div *ngIf="isInvalid && !mobile.valid && mobile.errors.minlength">
+                  <code>Minlength 10</code>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="name">Status<span style="color:red"> *</span></label>
+                <select class="form-control" id="status" name="status" [(ngModel)]="people.Status" #status="ngModel" required="1">
+                  <option value="OnRoll">OnRoll</option>
+                  <option value="OffRoll">OffRoll</option>
+                </select>
+                <div *ngIf="isInvalid && !status.valid && status.errors.required"><code>please select status</code></div>
+              </div>
+              <div class="form-group">
+                <label for="name">Select State<span style="color:red"> *</span></label>
+                <select id="state" class="form-control" name="state" (change)="onChangeState(people.Stateid)"
+                  [(ngModel)]="people.Stateid" required="1" #state="ngModel">
+                  <option value="">--Select--</option>
+                  <option *ngFor="let state of stateList" [ngValue]="state.Stateid">{{ state.StateName }}</option>
+                </select>
+                <div *ngIf="isInvalid && !state.valid && state.errors.required"><code>please select state</code></div>
+              </div>
+
+              <div class="form-group">
+                <label for="name">Select City<span style="color:red"> *</span></label>
+                <select id="city" class="form-control" name="city" [(ngModel)]="people.Cityid"
+                  (change)="onChangeCity(people.Cityid)" required="1" #city="ngModel">
+                  <option value="">--Select--</option>
+                  <option *ngFor="let city of cityList" [ngValue]="city.Cityid"> {{ city.CityName }} </option>
+                </select>
+                <div *ngIf="isInvalid && !city.valid && city.errors.required">
+                  <code>Please select city</code>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="name">Select Primary Warehouse</label>
+                <select id="wareid" name="wareid" class="form-control" [(ngModel)]="people.WareHouseId" (change)="BeatmapWHChange()"
+                  [required]="people.Unit == 'hub1'" #wareid="ngModel">
+                  <option value="">--Select--</option>
+                  <option *ngFor="let warehouse of primaryWarehouseList"  [ngValue]="warehouse.WareHouseId">
+                    {{ warehouse.WareHouseName }} {{warehouse.CityName}}
+                  </option>
+                </select>
+                <div *ngIf="isInvalid && !wareid.valid && wareid.errors.required">
+                  <code>warehouse  is required</code>
+                </div>
+              </div>
+              <div class="form-group">
+                <ng-container *ngIf="people.Status!='OffRoll'">
+                  <label for="empcode" *ngIf="people.Status!='OffRoll'"> Employee Code<span style="color:red"> *</span></label>
+                  <input type="text" disallow-spaces id="empcode" class="form-control" name="empcode"
+                  [(ngModel)]="people.Empcode" placeholder="Employee Code"  required="1" maxlength="50"
+                  (keyup)="spaceValidator(people.Empcode,people)" minlength="2" #empcode="ngModel" />
+                  <div *ngIf="isInvalid && !empcode.valid && empcode.errors.required">
+                    <code>Employee Code is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !empcode.valid && empcode.errors.minlength">
+                    <code>Minlength 2</code>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="people.Status=='OffRoll'">
+                <label for="empcode" *ngIf=" people.Status=='OffRoll'"> Employee Code</label>
+                  <input type="text" disallow-spaces id="empcode" class="form-control" name="empcode"
+                  [(ngModel)]="people.Empcode" placeholder="Employee Code"  maxlength="50"
+                  (keyup)="spaceValidator(people.Empcode,people)" minlength="2" #empcode="ngModel" />
+                </ng-container>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="row">
+                <div class="col-md-4 col-sm-3">
+                  <div class="form-group">
+                    <label for="name">Date Of Birth<span style="color:red"> *</span></label>
+                    <p-calendar id="dob" name="dob" [(ngModel)]="people.DOB" [monthNavigator]="true"
+                      [yearNavigator]="true" yearRange="1900:2030" placeholder="Date Of Birth" required="1"
+                      #dob="ngModel"></p-calendar>
+                    <div *ngIf="isInvalid && !dob.valid && dob.errors.required"><code>Date of Birth  is required</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-3">
+                  <div class="form-group">
+                    <label for="dom">Date Of Join<span style="color:red"> *</span></label>
+                    <p-calendar id="doj" name="doj" [(ngModel)]="people.DataOfJoin" placeholder="Date Of Join"
+                      [monthNavigator]="true" [yearNavigator]="true" yearRange="1900:2030" required="1"
+                      #DataOfJoin="ngModel"></p-calendar>
+                    <div *ngIf="isInvalid && !DataOfJoin.valid && DataOfJoin.errors.required">
+                      <code>Date of join  is required</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 col-sm-3">
+                  <div class="form-group">
+                    <label for="dom">Date Of Marrige</label>
+                    <p-calendar id="dom" name="dom" [(ngModel)]="people.DataOfMarriage" placeholder="Date Of Marrige"
+                      [monthNavigator]="true" [yearNavigator]="true" yearRange="1900:2030"></p-calendar>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="name">Location<span style="color:red"> *</span></label>
+                <select class="form-control" id="location" name="location" [(ngModel)]="people.Unit" required="1"
+                  #location="ngModel">
+                  <option value="Central">Central</option>
+                  <option value="hub1">Hub</option>
+                </select>
+
+                <div *ngIf="isInvalid && !location.valid && location.errors.required">
+                  <code>Location  is required</code>
+                </div>
+                <!-- <input type="text" class="form-control" id="location" name="location" [(ngModel)]="people.location"
+                    placeholder="Location">
+                    -->
+              </div>
+
+              <div class="form-group">
+                <label for="name">Department<span style="color:red"> *</span></label>
+                <select id="dept" name="dept" class="form-control" [(ngModel)]="people.Department" required="1"
+                  #dept="ngModel">
+                  <option *ngFor="let dept of departmentList" [ngValue]="dept.DepName">
+                    {{ dept.DepName}}
+                  </option>
+                </select>
+                <div *ngIf="isInvalid && !dept.valid && dept.errors.required">
+                  <code>department  is required</code>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="name">Designation<span style="color:red"> *</span> </label>
+                <select id="desg" name="desg" class="form-control" [(ngModel)]="people.Desgination" required="1"
+                  #desg="ngModel">
+                  <option *ngFor="let designation of designationList" [ngValue]="designation.DesignationName">
+                    {{ designation.DesignationName }}
+                  </option>
+                </select>
+                <div *ngIf="isInvalid && !desg.valid && desg.errors.required">
+                  <code>designation  is required</code>
+                </div>
+              </div>
+              <!-- 
+              <div class="form-group">
+                <label for="names">Role<span style="color:red"> *</span></label>
+                <select id="rol"  name="rol" class="form-control" [(ngModel)]="people.RoleName" >
+                  <option value *ngFor="let role of RoleList" [ngValue]="role.Name">
+                  {{role.Name}}
+                </option>
+              </select>
+              </div> -->
+
+              <div class="form-group">
+                <label for="names">Role</label>
+                <p-multiSelect [style]="{minWidth:'55em'}" id="role=" name="role" [options]="RoleList"
+                  [(ngModel)]="selectedRole" #role="ngModel" [panelStyle]="{minWidth:'25em'}" optionLabel="RoleName">
+                </p-multiSelect>
+                <div *ngIf="!isInvalid"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="name">Deposite Amount</label>
+                <input type="text" class="form-control" id="DA" name="DA" [(ngModel)]="people.DepositAmount"
+                  placeholder="Deposite Amount">
+              </div>
+
+              <!-- <div class="form-group">
+                <label for="name">Select Warehouse<span style="color:red"> *</span></label>
+                <select id="wareid" name="wareid" class="form-control" [(ngModel)]="people.WarehouseId" required="1" #wareid="ngModel">
+                  <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                    {{ warehouse.WarehouseName }}
+                  </option>
+                </select>
+                <div *ngIf="isInvalid && !wareid.valid && wareid.errors.required">
+                  <code>warehouse  is required</code>
+                </div>
+              </div> -->
+              <!-- <div class="col-md-12"> -->
+              <div class="form-group">
+                <label for="name">Select Warehouse</label>
+                <!-- <p-multiSelect [options]="warehouseList" name=" warehouse" [(ngModel)]="people.selectedWarehouse" [panelStyle]="{minWidth:'12em'}" optionLabel="WarehouseName" ></p-multiSelect>                 -->
+                <p-multiSelect [style]="{minWidth:'55em'}" [options]="warehouseList" name="warehouse"
+                  [(ngModel)]="selectedWarehouse" [panelStyle]="{minWidth:'25em'}" optionLabel="name"
+                  (onChange)="selectedWarehouses()"></p-multiSelect>
+              </div>
+              <div class="form-group">
+                <label for="name">Reporting Person </label>
+                <select id="report" name="report" class="form-control" [(ngModel)]="people.ReportPersonId">
+                  <option value="">--select--</option>
+                  <option *ngFor="let report of reportList" [ngValue]="report.PeopleID">
+                    {{ report.DisplayName }}
+                  </option>
+                </select>
+                <!-- <div *ngIf="isInvalid && !report.valid && report.errors.required">
+                  <code>designation  is required</code>
+                </div> -->
+              </div>
+              <div class="form-group">
+                <label for="name">Active/Inactive</label>
+                <select class="form-control" id="status" name="Active" [(ngModel)]="people.Active" #Active="ngModel">
+                  <option value="">--select--</option>
+                  <option value="true">Active</option>
+                  <option value="false">Inactive</option>
+                </select>
+              </div>
+            </div>            
+            <div class="form-actions right col-sm-12 p-3">
+              <button type="submit" class="btn btn-raised btn-primary mr-1" [disabled]="id" (click)="onSave(infoForm)"
+                *ngIf="!peopleDetails">
+                <!-- <button type="submit" class="btn btn-raised btn-primary mr-1" (click)="onSave()" ng-disabled="editFormDisplay($event)"> -->
+                <!-- <button type="submit" class="btn btn-raised btn-primary mr-1"  [disabled]="!people.PeopleFirstName ||!people.PeopleLastName||!people.Email|| !people.Desgination ||!people.Mobile ||!people.Cityid ||!people.Stateid ||!people.DOB ||!people.DataOfJoin ||!people.WarehouseId"
+                  (click)="onSave()"> -->
+                Save
+              </button>
+              <button type="button" class="btn btn-raised btn-warning mr-1"
+                (click)="onNext(t, 'tab2', infoForm)">Next</button>
+            </div>
+          </div>
+        </form>
+      </ng-template>
+    </ngb-tab>
+
+    <!-- <ngb-tab id="tab2" title="Step2"
+      [disabled]="!people.PeopleFirstName ||!people.PeopleLastName||!people.Email|| !people.Desgination ||!people.Mobile ||!people.Cityid ||!people.Stateid ||!people.DOB ||!people.DataOfJoin">
+      <ng-template ngbTabContent>
+        <br /> <br /> 
+        <form class="form"  name="salaryForm" #salaryForm="ngForm">
+        <div class="row">
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="Salary">Salary </label>
+              <input type="number" id="Salary" class="form-control" name="Salary"
+               [(ngModel)]="people.Salary" placeholder="Salary" #Salary="ngModel" 
+                (blur)="Salary_Calculation(people.Salary)" required = "1">
+                <div *ngIf="isInvalid && !Salary.valid && Salary.errors.required">
+                  <code>Salary is required</code>
+                </div>
+            </div>
+          
+               
+
+
+
+
+            <div class="form-group">
+              <label for="Basic Salary">Basic Salary </label>
+              <input type="number" id="B_Salary" class="form-control "
+               [(ngModel)]="people.B_Salary" name="BasicSalary" #B_Salary="ngModel"
+                placeholder="0"  required = "1">
+                <div *ngIf="isInvalid && !B_Salary.valid && B_Salary.errors.required">
+                  <code>BasicSalary is required</code>
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+              <label for="HRA">HRA</label>
+              <input type="number" id="HRA" class="form-control" [(ngModel)]="people.Hra_Salary" name="HRA"
+                placeholder="0">
+            </div>
+
+
+
+            <div class="form-group">
+              <label for="Conveyance Allowance">Conveyance Allowance </label>
+              <input type="ConveyanceAllowance" id="ConveyanceAllowance" class="form-control" name="conAllowance"
+                [(ngModel)]="people.CA_Salary" placeholder="0" >
+            </div>
+
+
+
+            <div class="form-group ">
+              <label for="DearnessAllowance">Dearness Allowance</label>
+              <input type="DearnessAllowance" id="DearnessAllowance" class="form-control" name="email"
+                [(ngModel)]="people.DA_Salary" placeholder="0">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+
+            <div class="form-group">
+              <label for="LTA">LTA </label>
+              <input type="text" id="Lta_Salary" class="form-control" name="Lta_Salary" [(ngModel)]="people.Lta_Salary"
+                placeholder="0" >
+            </div>
+
+
+
+
+            <div class="form-group">
+              <label for="PF">PF </label>
+              <input type="text" id="PF_Salary" class="form-control" [(ngModel)]="people.PF_Salary" name="PF_Salary"
+                placeholder="0" >
+            </div>
+
+
+
+            <div class="form-group ">
+              <label for="ESI">ESI</label>
+              <input type="text" id="ESI_Salary" class="form-control" [(ngModel)]="people.ESI_Salary" name="ESI_Salary"
+                placeholder="0">
+            </div>
+
+
+
+            <div class="form-group">
+              <label for="Monthly Incentive">Monthly Incentive</label>
+              <input type="text" id="M_Incentive" class="form-control " name="M_Incentive"
+                [(ngModel)]="people.M_Incentive" placeholder="0" >
+            </div>
+
+
+
+            <div class="form-group ">
+              <label for="DearnessAllowance">Yearly Incentive</label>
+              <input type="text" id="Y_Incentive" class="form-control" name="Y_Incentive"
+                [(ngModel)]="people.Y_Incentive" placeholder="0">
+            </div>
+          </div>
+
+
+        </div>
+        <div class="form-actions right col-sm-12 p-3">
+          <button type="button" class="btn btn-raised  btn-info mr-1 " (click)="t.select('tab1')">
+            Previous
+          </button>
+          <button type="submit" class="btn btn-raised btn-primary mr-1"  [disabled]=" (!people.Salary || !people.B_Salary || id)" *ngIf="!peopleDetails"
+           
+            (click)="onSave()">
+            Save
+          </button>
+          <button type="button" class="btn btn-raised btn-warning mr-1"
+            
+            (click)="onNext(t, 'tab3', salaryForm)">
+            Next
+          </button>
+        </div>
+      </form>
+      </ng-template>
+    </ngb-tab> -->
+
+    <ngb-tab id="tab2" title="Step2"  [disabled]="!id || isInvalid" >
+      <!-- [disabled]="!id || isInvalid" -->
+      <ng-template ngbTabContent>
+        <br /> <br />
+        <form class="form" name="imageuploadform" #imageuploadform="ngForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="uploadAdvertisements">Upload Id_Proof:<span style="color:red"> *</span></label><br />
+                <input class="btn btn-raised btn-info" id="file" type="file" name="IdProof" accept="image/*"
+                  (change)="upload($event.target.files)" />
+                <br />
+                <button type="button" class="btn btn-raised btn-primary " (click)="uploadIdProof()">Upload</button>
+                <!-- <div class="form-group">
+                  <img alt="" [src]="imgURL" height="100" *ngIf="imgURL">
+                </div> -->
+                <div class="form-group">
+                  <img alt="" src="{{baseURL}}{{people.Id_Proof}}" class="img-square" *ngIf="people.Id_Proof">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="uploadAdvertisements">Pan Card:<span style="color:red"> *</span></label><br />
+                <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                  (change)="upload($event.target.files)" />
+                <br />
+                <button type="button" class="btn btn-raised btn-primary " (click)="uploadPanCardProof()">
+                  Upload
+                </button>
+                <div class="form-group">
+                  <img alt="" src="{{baseURL}}{{people.PanCard_Proof}}" class="img-square" *ngIf="people.PanCard_Proof">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="uploadAdvertisements">MarkSheet:</label><br />
+                <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                  (change)="upload($event.target.files)" />
+                <br />
+                <button type="button" class="btn btn-raised btn-primary" (click)="uploadMarksheet()">
+                  Upload
+                </button>
+                <div class="form-group">
+                  <img alt="" src="{{baseURL}}{{people.MarkSheet}}" class="img-square" *ngIf="people.MarkSheet">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="uploadAdvertisements">Pre_Salary:</label><br />
+                <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                  (change)="upload($event.target.files)" />
+                <br />
+                <button type="button" class="btn btn-raised btn-primary " (click)="uploaderPresalary()">Upload</button>
+                <div class="form-group">
+                  <img alt="" src="{{baseURL}}{{people.Pre_SalarySlip}}" class="img-square"
+                    *ngIf="people.Pre_SalarySlip">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="uploadAdvertisements">Address_Proof:</label><br />
+                <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                  (change)="upload($event.target.files)" />
+                <br />
+                <button type="button" class="btn btn-raised btn-primary " (click)="uploadAddressProof()">Upload</button>
+                <div class="form-group">
+                  <img alt="" src="{{baseURL}}{{people.Address_Proof}}" class="img-square "
+                    *ngIf="people.Address_Proof">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions right col-sm-12 p-3">
+            <div class="row">
+              <div class="col-md-6 text-left">
+                <div class="form-footer m-2">Fields with <span style="color:red"> *</span> sign are mandatory to fill
+                </div>
+              </div>
+              <div class="col-md-6">
+                <!-- <button type="button" class="btn btn-raised btn-warning mr-1" (click)="t.select('tab2')">
+                  Previous
+                </button> -->
+                <button type="button" class="btn btn-raised  btn-warning mr-1 "
+                  (click)="t.select('tab1')">Previous</button>
+                <span *ngIf="people.PanCard_Proof==null">
+                  <button type="submit" class="btn btn-raised btn-primary mr-1" *ngIf="peopleDetails"
+                    [disabled]="isAgent" (click)="onSave(imageuploadform,people)">
+                    Save
+                  </button>
+                </span>
+                <span *ngIf="people.PanCard_Proof !=null">
+                  <button type="submit" class="btn btn-raised btn-primary mr-1" *ngIf="peopleDetails"
+                    (click)="onSave(imageuploadform)">Save</button>
+                </span>
+                <button type="submit" class="btn btn-raised btn-primary mr-1" *ngIf="!peopleDetails"
+                  [disabled]="isAgent" (click)="close()">Save</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+</div>
+
+
+<p-confirmDialog #ww [style]="{width: '45vw'}"  appendTo="body"	 >
+  <ng-template pTemplate="header">
+      <h3>Header Content</h3>
+  </ng-template>
+  <ng-template pTemplate="footer">
+      <button type="button" pButton icon="pi pi-times" label="No" (click)="ww.reject()"></button>
+      <button type="button" pButton icon="pi pi-check" label="Yes" (click)="ww.accept()"></button>
+  </ng-template>
+</p-confirmDialog>

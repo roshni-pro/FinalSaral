@@ -1,0 +1,210 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Item Configuration - QA Approval for GR</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-3">
+                <label><b>Select Warehouse*</b></label>
+                <p-multiSelect [options]="WareHouseList" [filter]="true" [(ngModel)]="selectedWH" optionLabel="label"
+                    placeholder="select warehouse">
+                </p-multiSelect>
+            </div>
+            <div class="col-md-3">
+                <label><b>Select Status*</b></label>
+                <p-dropdown [options]="StatusList" [filter]="true" [(ngModel)]="selectedStatus" optionLabel="name"
+                    placeholder="select status">
+                </p-dropdown>
+            </div>
+            <div class="col-md-3">
+                <label><b>Keyword (Item No./ Name)</b></label>
+                <input type="text" id="key" class="form-control" name="key" [(ngModel)]="Keyword"
+                    placeholder="Enter Keyword" />
+            </div>
+            <div class="col-md-3">
+                <label class="col-md-12"> &nbsp;</label>
+                <button type="button" class="btn btn-raised btn-primary"
+                    (click)="sear();Search($event)">Search</button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-raised btn-success" (click)="Add()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <p-table [value]="searchList" [scrollable]="true" [lazy]="true" scrollHeight="70vh" text-align: center
+        [totalRecords]="TotalRecord" [(first)]="first" [paginator]="true" [rows]="10" [lazy]="true"
+        (onLazyLoad)="load($event)">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 10%;">S.No</th>
+                <th>WarehouseName </th>
+                <th>itemname</th>
+                <th>ItemNumber</th>
+                <th>IsReportUpload</th>
+                <th>Active/Inactive</th>
+                <th>Quality Manager</th>
+                <th>History</th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item let-index="rowIndex">
+            <tr>
+                <td style="width: 10%;">{{index+1}}</td>
+                <td>{{item.WarehouseName}}</td>
+                <td>{{item.itemname}}</td>
+                <td>{{item.ItemNumber}}</td>
+                <td><p-inputSwitch name="IsReportUpload" [(ngModel)]="item.IsReportUpload" (ngModelChange)="Edit(item)">
+                    </p-inputSwitch> </td>
+                <td><p-inputSwitch name="IsActive" [(ngModel)]="item.IsActive" (ngModelChange)="Edit(item)">
+                    </p-inputSwitch> 
+                </td>
+                <td class="d-flex" >
+                    <input style="  width: 122px;" type="text" id="key" class="form-control" name="key" [(ngModel)]="item.DisplayName" *ngIf="!item.isShow" disabled/>&nbsp;
+                    <button  style="width: 36%;height: 37px;margin-left: 7px;" pButton pRipple type="button" icon="pi pi-pencil" (click)="DisplayNameEdit(item)" *ngIf="!item.isShow"></button>
+                    
+                    <p-dropdown [options]="peopleDcs" [(ngModel)]="item.DisplayName" optionLabel="DisplayName" appendTo="body" *ngIf="item.isShow"
+                    placeholder="Select QA"></p-dropdown>&nbsp;
+                    <button  pButton pRipple type="button" icon="pi pi-check" *ngIf="item.isShow" (click)="EditQ(item)"></button>&nbsp;
+                    <button pButton pRipple type="button" icon="pi pi-times" *ngIf="item.isShow" (click)="notShow(item)"></button> 
+                </td>
+                <td><a class="view" (click)="openHistory(item,$event)">
+                        <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                    </a>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="10" style="text-align: center;">
+                    <br>
+                    <h3><b>No Data Found.</b></h3>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog header="Add Configuration " [(visible)]="addPopup" class="e90b"
+    [style]="{width: '70%;', height: '850px',overflow: 'hidden'}" (onHide)="Close()" [modal]="true" appendTo="body"
+    [blockScroll]="true" [draggable]="false" class="xyz">
+    <div class="row">
+        <div class="col-md-3 mt-2">
+            <label><b>Select WareHouse<span class="required">*</span></b></label>
+            <p-multiSelect [options]="WareHouseList" [filter]="true" [(ngModel)]="AdWareHouse" optionLabel="label"
+                placeholder="select warehouse">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-3 mt-2">
+            <label><b>Select Brand<span class="required">*</span></b></label>
+            <p-multiSelect [options]="brandList" [filter]="true" [(ngModel)]="AdBrand" optionLabel="BrandName"
+                placeholder="select Brand">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-3 mt-2">
+            <label><b>Item No./ Name</b></label>
+            <input type="text" required="1" placeholder="Enter Keyword" type="tel" name="Title" class="form-control"
+                [(ngModel)]="aKeyword" />
+        </div>
+        <div class="col-md-2 mt-2">
+            <br>
+            <button class="btn btn-primary mr-2 mt-1" (click)="Asearch()">Search</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col mt-2">
+            <label>Select Items for QA Approval For GR</label>
+            <p-multiSelect [options]="itemsList" [filter]="true" [(ngModel)]="selecteditem" optionLabel="Name"
+                placeholder="Select Items for QA Approval For GR">
+            </p-multiSelect>
+        </div>
+        <div class="col mt-2">
+            <br>
+            <button class="btn btn-primary mr-2 mt-1" (click)="AddItems()">Add</button>
+        </div>
+
+    </div>
+    <br>
+    <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+
+        <p-table [value]="additemList" [scrollable]="true" [lazy]="true" scrollHeight="40vh" text-align: center
+  			[paginator]="true" [rows]="5">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>S.No</th>
+                    <th>ItemNo</th>
+                    <th>ItemName</th>
+                    <th>Warehouse </th>
+                    <th>Report Upload<p-checkbox [(ngModel)]="checkedAll" (click)="allcheck(checkedAll)"  [binary]="true"></p-checkbox></th>
+                    <th>Quality Manager</th>
+                    <!-- <p-checkbox [(ngModel)]="CheakerAll" (click)="allManag(CheakerAll)"  [binary]="true"></p-checkbox> -->
+                    <th>Delete</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-item let-index="rowIndex">
+                <tr>
+                    <td>{{index+1}}</td>
+                    <td>{{item.ItemNo}}</td>
+                    <td>{{item.ItemName}}</td>
+                    <td>{{item.Warehouse}}</td>
+                    <td><p-checkbox [(ngModel)]="item.IsChecked" [binary]="true"></p-checkbox> </td>
+                    <td><p-dropdown [options]="peopleDcs" [filter]="true" [(ngModel)]="item.AdPeopleid" optionLabel="DisplayName" appendTo="body" 
+                        placeholder="Select QA Approval For GR" (onChange)="Changepeople(item)">
+                    </p-dropdown></td>
+                    <td> <button type="button" (click)="Remove(item,index)"
+                            class="btn btn-raised btn-primary float-right align-self-end v1"> 
+                            <i class="pi pi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <div class="row">
+            <div class="col text-right">
+                <button class="btn btn-primary mr-2 mt-1" (click)="SaveAdd()">Save</button>
+                <!-- <button class="btn btn-success mr-2 mt-1" (click)="Stcancel()">Close</button> -->
+            </div>
+        </div>
+        <br><br><br><br><br><br><br> <br><br><br><br><br><br><br>
+    </div>
+</p-dialog>
+
+
+<div *ngIf="historypopup">
+    <p-dialog [(visible)]="historypopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="50"
+        [style]="{width: '83%',height: '90%', left : '11px', overflow: 'auto'}">
+        <p-header>
+            <h4
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                <b>History </b>
+            </h4>
+        </p-header>
+        <app-history [entity]="entity" [id]="historyDetailid"></app-history>
+        <footer></footer>
+    </p-dialog>
+    <button class="btn btn-success mr-2 mt-1" (click)="historypopupClose()">Close</button>
+
+</div>
+
+
+<p-confirmDialog #cd [style]="{width: '45vw'}" appendTo="body">
+    <ng-template pTemplate="header">
+        <h3>Header Content</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog>
+
+<p-toast [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

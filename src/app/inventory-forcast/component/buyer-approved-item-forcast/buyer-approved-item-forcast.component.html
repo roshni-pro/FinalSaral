@@ -1,0 +1,259 @@
+<div *ngIf="sourceExecutiveRole || hqMasterRole || hqpurchaseExecutive || hqpurchaseAssociate">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">Purchase Approved item Forecast</h3>
+        </div>
+    </div>
+    <!-- [filter]="true" filterBy="CityName,Cityid" -->
+    <div class="container-fluid contPad">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="mt-0 justify-content-between bg-white p-3">
+                    <div class=" sel-opt d-flex justify-content-between">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <p-dropdown [options]="cityListData" placeholder="Select City" [filter]="true"
+                                        [(ngModel)]="selectedCity" appendTo="body" optionLabel="CityName"
+                                        (onChange)="getHubList(selectedCity)">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-md-3">
+                                    <p-dropdown [options]="hubList" placeholder="Select Hub" [(ngModel)]="selectedHub"
+                                        optionLabel="WarehouseName" (onChange)="supplierListData(selectedHub)">
+                                    </p-dropdown>
+                                </div>
+                                <!-- <div class="col-md-2">
+                                    <p-multiSelect [options]="categoryListData" defaultLabel="Select Category"
+                                        [(ngModel)]="selectedCatregory" [style]="{'width':'100%'}"
+                                        [panelStyle]="{width:'100%'}" optionLabel="CategoryName"
+                                        (onChange)="getSubCatList(selectedCatregory)">
+                                    </p-multiSelect>
+                                </div>
+                                <div class="col-md-2">
+                                    <p-multiSelect [options]="subCatList" defaultLabel="Select SubCategory"
+                                        [(ngModel)]="selectedSubCat" [style]="{'width':'100%'}"
+                                        [panelStyle]="{width:'100%'}" optionLabel="SubCategoryName"
+                                        (onChange)="getBrandsnew(selectedSubCat)">
+                                    </p-multiSelect>
+                                </div>
+                                <div class="col-md-2">
+                                    <p-multiSelect [options]="brandList" defaultLabel="Select Brand"
+                                        [(ngModel)]="selectedSubsubCatregory" [style]="{'width':'100%'}"
+                                        [panelStyle]="{width:'100%'}" optionLabel="BrandName">
+                                    </p-multiSelect>
+                                </div> -->
+                                <div class="col-md-3">
+                                    <p-dropdown [options]="fulfillmentList" placeholder="Select fulfillment"
+                                        optionLabel="fulfillmentName" [(ngModel)]="selectedfulfillmentType"
+                                        (onChange)="getFulFillmentType(selectedfulfillmentType)">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-md-3">
+                                    <p-dropdown [options]="Type" placeholder="Select Type"
+                                        optionLabel="poName" [(ngModel)]="selectedType">
+                                    </p-dropdown>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-3" *ngIf="fulfillboolean">
+                                    <p-dropdown [options]="PRType" placeholder="Select PR" optionLabel="label"
+                                        [(ngModel)]="selectedPrType">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-md-3" *ngIf="fulfillboolean">
+                                    <p-dropdown [options]="supplierList" placeholder="Select Supplier"
+                                        optionLabel="SupplierName" [(ngModel)]="selectedSupplierId" filter="true">
+                                    </p-dropdown>
+                                </div>
+                                <div class="col-md-6">
+                                    <button class="btn btn-primary" (click)="getSearchResult()">Search</button>
+                                    <button class="btn btn-primary ml-2" style="background-color: red !important; border-color: red !important;" 
+                                    (click)="clearRecord()">Clear</button>
+                                    <button class="btn btn-primary ml-2" style="background-color: green !important; border-color: green !important;" 
+                                    (click)="exportDownload()" *ngIf="exportbtn">Export</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="bg-white p-3 mr-2 ml-2 mt-3 rounded">
+                    <button class="btn btn-info ml-3" (click)="addmultipleRecord()" *ngIf="addbtnEnable" style="float: right; background-color: #1CBCD8; color: white;">Bulk
+                        Generate</button>
+                    <div class="table-responsive table-wrapper-scroll-x my-custom-scrollbar mt-3">
+                        <p-table [value]="buyerItemForcastDetails" [paginator]="true" [rows]="50" [lazy]="true"
+                            responsiveLayout="scroll" [totalRecords]="TotalRecord" (onLazyLoad)="load($event)"
+                            [scrollable]="true" [tableStyle]="{'min-width': '120rem'}">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 2%;"> </th>
+                                    <th> Brand Name </th>
+                                    <th> Product Name </th>
+                                    <th> Hub </th>
+                                    <th> Multi<br>MRP </th>
+                                    <th> Item<br>Number </th>
+                                    <th> Current Net Stock</th>
+                                    <th> Avg pp</th>
+                                    <th> Final Qty / Required Qty</th>
+                                    <th> Demand </th>
+                                    <th> Buying Price </th>
+                                    <th> Buyer Name </th>
+                                    <th> Fulfillment Type </th>
+                                    <th> PR Type </th>
+                                    <th> Supplier </th>
+                                    <th> Depo </th>
+                                    <th> Freight<br>Charge </th>
+                                    <th> No of Set / Purchase MOQ</th>
+                                    <th> Total Weight /  Per Qty Weight </th>
+                                    <th> Actions </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item let-i="rowIndex">
+
+                                <tr>
+                                    <!-- <ng-container *ngIf="item.fulfillmentId != null else second"> -->
+                                    <td style="width: 2%;">
+                                        <span>
+                                            <p-checkbox [(ngModel)]="item.checked" [inputId]="i + '_abc'"
+                                                [name]="i + '_anc'" binary="true"
+                                                (onChange)="onRowClick(checkElm.inputId,$event,item)" #checkElm>
+                                            </p-checkbox>
+                                        </span>
+                                    </td>
+                                    <td> {{item.SubsubcategoryName}} </td>
+                                    <td> {{item.ItemName}} </td>
+                                    <td> {{item.WarehouseName}}
+                                        <span *ngIf="item.InternalTransferWHId>0" style="color:Red">
+                                            Request : ({{item.InternalTransferWHName}})
+                                        </span>
+
+                                    </td>
+                                    <td> {{item.ItemMultiMrpId}} </td>
+                                    <td> {{item.ItemNumber}} </td>
+                                    <td> {{item.NetStock}} </td>
+                                    <td> {{item.AveragePurchasePrice}} </td>
+                                    <td> {{item.MinOrderQty*item.NoOfSet}} / {{item.RequiredQty}} </td>
+                                    <td> {{item.YesterdayDemand}} </td>
+                                    <td> {{item.BuyingPrice}} </td>
+                                    <td> {{item.BuyerName}} </td>
+                                    <td>
+                                        <ng-container *ngIf="item.FulfillThrow == 1 else secondCase">
+                                            Purchase Request
+                                        </ng-container>
+                                        <ng-template #secondCase>
+                                            <ng-container *ngIf="item.FulfillThrow == 2">
+                                                Internal Transfer
+                                            </ng-container>
+                                        </ng-template>
+                                    </td>
+                                    <td> {{item.PRPaymentType}} </td>
+                                    <td> {{item.SupplierName}} </td>
+                                    <td> {{item.DepoName}} </td>
+                                    <td> {{item.FreightCharge}} </td>
+                                    <td> {{item.NoOfSet}} / {{item.MinOrderQty}}</td>
+                                    <td> 
+                                        <ng-container *ngIf="item.totalWeight > 0">
+                                            {{item.totalWeight}} {{item.totalWeightType}} / {{item.Weight}} {{item.WeightType}}
+                                        </ng-container>
+                                    </td>
+                                    <td *ngIf="item.FulfillThrow != null">
+                                        <span (click)="createData(item)" data-toggle="tooltip" data-placement="top"
+                                            title="Create">
+                                            <i class="pi pi-plus-circle"
+                                                style="font-size: 3rem; cursor: pointer; color: blue;"></i>
+                                        </span>
+                                        <ng-container *ngIf="item.FulfillThrow == 1">
+                                            <span (click)="editMode(item)" data-toggle="tooltip" data-placement="top"
+                                        title="Edit" >
+                                            <i class="pi pi-pencil"
+                                                style="font-size: 3rem; cursor: pointer; color: rgb(24 108 75);"></i>
+                                        </span>
+                                        </ng-container>
+                                        <span (click)="rejectItem(item)" data-toggle="tooltip" data-placement="top"
+                                            title="Reject">
+                                            <i class="pi pi-times-circle"
+                                                style="font-size: 3rem; cursor: pointer; color: red;"></i>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="editModeView" header="Fulfillment" [modal]="true" appendTo="body"
+    [style]="{width: '70vw', left: '440px'}" [draggable]="true" positionTop="50">
+
+    <div class="">
+        <div class=" row mt-1 p-2">
+            <div class="col-12">
+                <h4><b>Edit Purchase Approved item Forcast</b></h4>
+            </div>
+        </div>
+        <div class=" row pl-2 pr-2 mt-1" style="height:200px !important">
+            <div class="col-12">
+                <hr>
+            </div>
+            <div class="col-md-4 mt-1">
+                <label> <b><span style="color: red;">*</span>Supplier :</b> </label><br>
+                <p-dropdown [options]="suppList" placeholder="Select Supplier" optionLabel="SupplierName"
+                (onChange)="getDepoList(selectedSupplier)" [filter]="true" [(ngModel)]="selectedSupplier">
+                </p-dropdown>
+            </div>
+            <div class="col-md-4 mt-1">
+                <label> <b><span style="color: red;">*</span>Depo :</b> </label><br>
+                <p-dropdown [options]="depoList" optionLabel="DepoName" placeholder="Select Depo" [(ngModel)]="selectedDepo">
+                </p-dropdown>
+            </div>
+            <div class="col-md-4 mt-1">
+                <label> <b><span style="color: red;">*</span>Freight Charge :</b> </label><br>
+                <input class="form-control"  type="text" placeholder="Enter Freight Charge" (keypress)="decimalFilter($event)" [(ngModel)]="freCharge">
+            </div>
+            <div class="col-md-4 mt-3">
+                <label> <b><span style="color: red;">*</span>Purcahse MOQ :</b></label><br>
+                <p-dropdown appendTo="body"  [options]="MOQList" optionLabel="Quantity" [(ngModel)]="selectedMOQ" 
+                placeholder="Select MOQ" >
+                </p-dropdown>
+            </div>
+            <div class="col-md-4 mt-3">
+                <label> <b><span style="color: red;">*</span>No. Of Sets :</b></label><br>
+                <input class="form-control"  type="text" placeholder="Enter No of sets" (keypress)="decimalFilterNos($event)" [(ngModel)]="nosVal">
+            </div>
+            <div class="col-md-4 mt-3" >
+                <div style="margin-top: 30px;" *ngIf="showcheckBoXSupplier">
+                    <p-checkbox  [(ngModel)]="isSuplier" [binary]="true" inputId="binary"></p-checkbox>&nbsp;&nbsp;
+                    <label for="binary">Direct Supplier</label>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 ml-2">
+                <hr>
+            </div>
+            <div class="col-12 pr-4">
+                <div class="row">
+                    <div class="col-12 text-right">
+                        <button type="button" class="btn btn-primary" style="background-color: green !important;
+                        border-color: green !important;" (click)="updateRecord()">Update</button>
+                        <button type="button" class="btn btn-primary ml-2" (click)="closeDialog()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<p-confirmDialog appendTo="body" header="Confirmation" [style]="{width: '40vw'}" [baseZIndex]="10000"></p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

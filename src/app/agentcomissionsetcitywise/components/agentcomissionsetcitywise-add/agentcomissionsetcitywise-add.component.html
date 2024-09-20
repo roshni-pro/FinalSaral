@@ -1,0 +1,92 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form-inline" name="form"  #agentcommissionForm="ngForm">
+                <div class="form-body" style="width: 100%;">
+                  <h4 class="form-section"><i class="ft-user"></i><b> Addagentcomissioncitywise</b></h4>
+                  <div class="row"  *ngIf="Comission">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="Cityid">Select City<span style="color:red">*</span></label>
+                        <select id="Cityid"  class="form-control" name="City"
+                         [(ngModel)]="Comission.Cityid" #Cityid="ngModel" required="1">
+                         <option value="">--Select--</option>
+                         <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                            {{ city.CityName }}
+                          </option>
+                        </select>
+                      
+                        <div *ngIf="isInvalid && !Cityid.valid && Cityid.errors.required">
+                          <br>
+                        
+                          <code>Please select city</code>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group m-2">
+                          <label for="ComissionType" ><b>Comission Type:</b><span style="color:red"> *</span></label>
+                          <select class="form-control" name="ComissionType" id="ComissionType" [(ngModel)]="Comission.CommissionType" 
+                        
+                          #CommissionType="ngModel" minlength="2" required="1" >
+                              <option value="">Select</option>
+                              <option value="Activation">Activation</option>
+                             
+                              
+                            </select>
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !CommissionType.valid && CommissionType.errors.required">                   
+                            <code>Commission Type is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !CommissionType.valid && CommissionType.errors.minlength">
+                            <code>minlength 2</code>
+                        </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group m-2">
+                      <label for="ComisssionAmount"><b>Comission Amount:</b><span  style="color:red"> *</span></label>
+                      <input type="text" id="ComisssionAmount" name="aname" [(ngModel)]="Comission.CommissionAmount"
+                       placeholder="Commission Amount" #CommissionAmount="ngModel" required="1" maxlength="50" minlength="1" /> 
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !CommissionAmount.valid && CommissionAmount.errors.required">                   
+                        <code>Commission Amount is required</code>
+                    </div>
+                    <div *ngIf="isInvalid && !CommissionAmount.valid && CommissionAmount.errors.minlength">
+                        <code>Comission amount can not be null or zero</code>
+                    </div>
+                </div>
+              </div>
+                   
+                   
+                    </div>
+                    <div class="form-actions  right col-sm-12 p-3">
+                      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="onCancel()">
+                        Cancel
+                      </button>
+                            <button type="button" class="btn btn-raised btn-primary" (click)="Addagentcomission(Comission,agentcommissionForm)" [disabled]="loadingOnSubmit">
+                              Save
+                            </button>
+                            <div *ngIf="loadingOnSubmit">
+                              <span style="color: rgb(110, 31, 163)"> Loading Please Wait </span>
+                            </div>
+                      </div>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>

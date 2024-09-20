@@ -1,0 +1,148 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Non Sellable Stocks Item</h3>
+    </div>
+</div>
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+            <div class="d-flex">
+                <div class="col">
+                    <label><b>Select Warehouses<span class="required">*</span></b></label>
+                    <p-multiSelect id="Category" name="Category" [options]="WareHouseList" [(ngModel)]="selectedWareHouse" (onChange)="getWarehouse()"  
+                    optionLabel="WarehouseName" placeholder="Select WareHouse"  > 
+                    </p-multiSelect>
+                </div>   
+                <div class="col">
+                    <label><b>Select Stock Type<span class="required">*</span></b></label><br>
+                    <p-dropdown  [options]="StockList" optionLabel="name" [(ngModel)]="stockType" [disabled]="enableStockList"></p-dropdown>
+                </div>    
+                <div class="col" style="margin-top:28px;">  
+                    <input type="text" placeholder="Search"  (keypress)="keyPress($event.target.value)"  name="Title" class="form-control" [(ngModel)]="searchedEntity" />
+                </div>         
+                <div class="col" style="margin-top:28px;">
+                    <button  class="btn btn-primary mr-2" (click)="GetNonSallabeStockList()">Search</button>
+                    <button class="cursor btn btn-primary" (click)="Export()" >Export</button>
+                </div>
+                <div class="col" class="text-right">
+                    <label><b>Export History Acc. to Warehouse<span class="required">*</span></b></label><br>
+                    <button class="cursor btn btn-primary" (click)="ExportHistory()" >Export History</button>
+                </div>           
+            </div>
+        </div>
+    </div>
+</div>
+<!-- [lazy]="true" (onLazyLoad)="load($event)" [totalRecords]="Totalcount" -->
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <p-table [value]="nonSalbStocksList" [scrollable]="true"   
+     [paginator]="true" [rows]="20" >
+        <ng-template pTemplate="header">
+            <tr >
+                <th style="width: 20%;">ItemIdMultiMrpId</th>
+                <th style="width: 20%;">Warehouse Name</th>
+                <th style="width: 20%;">Item Number</th>
+                <th style="width: 20%;">Item Name</th>
+                <th style="width: 20%;">ABC Classification</th>
+                <th style="width: 20%;">Unit Price</th>
+                <th style="width: 20%;">Reason To Transfer</th>
+                <th style="width: 20%;">Inventory</th>
+                <th style="width: 20%;">Created</th>
+                <th style="width: 20%;">History</th>
+            </tr>         
+        </ng-template>
+        <ng-template pTemplate="body" let-trade>
+            <tr>
+                <td>{{trade.ItemMultiMRPId}}</td>
+                <td>{{trade.WarehouseName}}</td>  
+                <td>{{trade.ItemNumber}}</td> 
+                <td>{{trade.ItemName}}</td>
+                <td>{{trade.ABCClassification}}</td>
+                <td>{{trade.UnitPrice}}</td>
+                <td>{{trade.Comment}}</td>
+                <td (click)="openInventoryDetail(trade)">{{trade.Inventory}}</td> 
+                <td>{{trade.CreatedDate | date:'medium'}}</td>
+                <td  >
+                    <a class="view" (click)="openHistory(trade,$event)">
+                        <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                    </a>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!-- [lazy]="true" [totalRecords]="TotalCustomerCount" (onLazyLoad)="load1($event)" [showCurrentPageReport]="true" -->
+<p-dialog header="Damage/Non Sellable Stock History"  
+[(visible)]="display" appendTo="body" positionTop="10vh"  [style]="{width: '100vw'}" modal="true">
+   <p-table [value]="DamageHistoryList" [paginator]="true" [rows]="10"   class="center">
+       <ng-template pTemplate="header" >
+           <tr >
+               <th scope="col" style="width: 40%;"><b>Item Name</b></th>
+               <th scope="col" style="width: 20%;" ><b>ABC Classification</b></th>
+               <th scope="col" style="width: 20%;" ><b>Damage Inventory</b></th>
+               <th scope="col" style="width: 20%;"><b>Inword Qty</b></th>
+               <th scope="col" style="width: 20%;"><b> Outword Qty</b></th>
+               <th scope="col" style="width: 20%;"><b> OdOrPoId</b></th>
+               <th scope="col" style="width: 20%;"><b> Reason to Transfer </b></th>
+               <th scope="col" style="width: 20%;"><b> WareHouse Name </b></th>
+               <th scope="col" style="width: 20%;"><b> Edit By </b></th>
+               <th scope="col" style="width: 20%;"><b> Date </b></th>
+           </tr>
+       </ng-template>
+       <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" >
+           <tr>
+               <td scope="col" style="width: 40%;">{{rowData.ItemName}}</td>
+               <td scope="col" style="width: 20%;">{{rowData.ABCClassification}}</td>
+               <td scope="col" style="width: 20%;">{{rowData.DamageInventory}}</td>
+               <td scope="col" style="width: 20%;">{{rowData.InwordQty}}</td>
+               <td scope="col" style="width: 20%;">{{rowData.OutwordQty}}</td>
+               <td scope="col" style="width: 20%;">{{rowData.OdOrPoId}}</td>
+               <td scope="col" style="width: 20%;">{{rowData.ReasonToTransfer}}</td>
+               <td scope="col" style="width: 20%;">{{rowData.WarehouseName}}</td>
+               <td scope="col" style="width: 20%;">{{rowData.UserName}}</td>
+               <td scope="col" style="width: 20%;">{{rowData.CreatedDate | date:'medium'}}</td>
+           </tr>
+       </ng-template>
+   </p-table>
+   <!-- <p-toast *ngIf="display" [style]="{width: '20vw'}" position="top-right"></p-toast> -->
+</p-dialog>
+<!-- [lazy]="true" [totalRecords]="TotalCustomerCount" (onLazyLoad)="load1($event)" [showCurrentPageReport]="true" -->
+<p-dialog header="Damage/Non Sellable Stock Item"  
+[(visible)]="Inventrydisplay" appendTo="body" positionTop="50vh"  [style]="{width: '50vw'}" modal="true">
+   <p-table [value]="InventryList" [paginator]="true" [rows]="10"   class="center">
+       <ng-template pTemplate="header" >
+           <tr >
+               <th scope="col" style="width: 20%;"><b> SNo.</b></th>
+               <th scope="col" style="width: 20%;" ><b>Batch Code</b></th>
+               <th scope="col" style="width: 20%;"><b> Qty </b></th>
+               <th scope="col" style="width: 20%;"><b> MFG Date</b></th>
+               <th scope="col" style="width: 20%;"><b> Expiry Date</b></th>
+           </tr>
+       </ng-template>
+       <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" >
+           <tr>
+               <td style="width:60px">{{rowIndex+1}}</td>
+               <td style="width:110px">{{rowData.BatchCode}}</td>
+               <td >{{rowData.Qty}}</td>
+               <td>{{rowData.MFGDate}}</td>
+               <td >{{rowData.ExpiryDate}}</td> 
+           </tr>
+       </ng-template>
+   </p-table>
+   <!-- <p-toast *ngIf="display" [style]="{width: '20vw'}" position="top-right"></p-toast> -->
+</p-dialog>
+
+<!-- <p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner> -->

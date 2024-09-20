@@ -1,0 +1,173 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<section class="chat">
+  <div #contentOverlay class="content-overlay"></div>
+  <div [perfectScrollbar] #chatSidebar class="chat-sidebar float-left d-none d-sm-none d-md-block d-lg-block">
+    <div class="chat-sidebar-content">
+      <div class="chat-fixed-search p-2">
+        <form>
+          <div class="position-relative has-icon-left">
+            <input class="form-control" id="timesheetinput1" name="employeename" type="text" [(ngModel)]="SearchKeyWord"
+            (ngModelChange)="dynamicSearch(SearchKeyWord)" placeholder="Enter Customer Name,SKCode or Mobile No.">
+            <div class="form-control-position">
+              <i class="ft-user"></i>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div id="users-list" class="list-group position-relative">
+        <div class="users-list-padding">
+          <p-virtualScroller [value]="customerContactsListA7" [itemSize]="150" scrollHeight="700px"  [rows]="25"
+            [lazy]="true" (onLazyLoad)="loadContactsLazy($event)" [totalRecords]="customerContactTotalCount">
+            <ng-template let-cxdata pTemplate="item">
+              <a  [ngStyle]="(cxdata.selectedChat)?{'background-color':'#86E4A4'}:{'background-color':'#F296A2'}"
+               class="list-group-item no-border" (click)="GetThisChat(cxdata.CustomerId,cxdata.CustomerSupportId,cxdata)">
+                <span class="media">
+                  <span class="avatar avatar-md avatar-busy">
+                    <img class="media-object d-flex mr-3 height-50 rounded-circle" src="assets/img/user.png" alt="Generic placeholder image">
+                    <i></i>
+                  </span>
+                  <div class="media-body  text-left">
+                    <h6 class="list-group-item-heading">{{cxdata.CustomerName}}
+                      <span class="font-small-3 float-right primary">{{cxdata.LastMessageDate | date}}</span>
+                    </h6>
+                    <p class="list-group-item-text text-muted">
+                      <i class="ft-inbox primary font-small-2"></i> {{cxdata.Mobile}}
+                      <i class="ft-message-square primary font-small-2"></i> {{cxdata.SkCode}}
+                      <span class="float-right
+                              primary">
+                        <span class="badge badge-pill badge-primary">{{cxdata.UnReadCount}}</span>
+                      </span>
+                    </p>
+                  </div>
+                </span>
+              </a
+              >
+
+            </ng-template>
+            <ng-template pTemplate="loadingItem">
+              Loading...
+            </ng-template>
+          </p-virtualScroller>
+          <!-- 
+          <div class="ui-g">
+            <div class="ui-g-2 scr">
+              <div *ngFor="let cxdata of customerContactsListA7">
+                <a class="list-group-item no-border" (click)="GetThisChat(cxdata.CustomerId,cxdata.CustomerSupportId)">
+                  <span class="media">
+                    <span class="avatar avatar-md avatar-busy">
+                      <img class="media-object d-flex mr-3 bg-primary height-50 rounded-circle"
+                        src="assets/img/trade_logo_small.png" alt="Generic placeholder image">
+                      <i></i>
+                    </span>
+                    <div class="media-body  text-left">
+                      <h6 class="list-group-item-heading">{{cxdata.CustomerName}}
+                        <span class="font-small-3 float-right primary">{{cxdata.LastMessageDate | date}}</span>
+                      </h6>
+                      <p class="list-group-item-text text-muted">
+                        <i class="ft-inbox primary font-small-2"></i> {{cxdata.Mobile}}
+                        <i class="ft-message-square primary font-small-2"></i> {{cxdata.SkCode}}
+                        <span class="float-right
+                              primary">
+                          <span class="badge badge-pill badge-primary">{{cxdata.UnReadCount}}</span>
+                        </span>
+                      </p>
+                    </div>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div> -->
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chat-name p-2 bg-white">
+    <div class="media">
+      <span
+        class="chat-app-sidebar-toggle ft-align-justify font-large-1 mr-2 d-none d-block d-sm-block d-md-none"></span>
+      <div class="media-body text-left">
+        <img src="assets/img/trade_logo_small.png" width="37" class="rounded-circle mr-1" alt="avatar" />
+        <i class="ft-more-vertical float-right mt-1"></i>
+      </div>
+    </div>
+  </div>
+  <div class="ui-g-10 scrs mainBox" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+    <div *ngFor="let message of ChatMessageBodyA7">
+      <div *ngIf="message.SenderCustomerId == getchatforA7.receiverId" class="d-flex w-100 m-2">
+        <div class="w-25">
+          <div class="supp-name">{{message.SenderName}}</div>
+          <div *ngIf="message.Message" class="p-2 w-100 bg-white shadow rounded messageChat">
+            {{message.Message}}
+
+          </div>
+          <!-- <a *ngIf="message.ImageURL" href={{message.ImageURL}} target="_blank">
+            <img *ngIf="message.ImageURL" src={{message.ImageURL}} width="300" height="300">
+          </a> -->
+          <div class="message-time text-align-right">{{message.SendTime | date:'medium'}}
+
+            <div *ngIf="!message.IsReaded">
+              <i class="ft-check primary font-small-1"></i>
+            </div>
+            <div *ngIf="message.IsReaded">
+              <i class="ft-check primary font-small-1"></i>
+              <i class="ft-check primary font-small-1"></i>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div *ngIf="message.SenderCustomerId == getchatforA7.senderId" class="d-flex w-100 justify-content-end m-2">
+        <div class="w-25 d-f">
+          <div class="supp-name">{{message.SenderName}}</div>
+          <div *ngIf="message.Message"
+            class="p-2 w-100 bg-primary shadow rounded text-align-right text-white messageChat">
+            {{message.Message}}
+          </div>
+          <!-- <a *ngIf="message.ImageURL" href={{message.ImageURL}} target="_blank">
+            <img *ngIf="message.ImageURL" src={{message.ImageURL}} width="300" height="300">
+          </a> -->
+          <div class="message-time text-align-right">{{message.SendTime | date:'medium'}}
+            <div *ngIf="!message.IsReaded">
+              <i class="ft-check primary font-small-1"></i>
+            </div>
+            <div *ngIf="message.IsReaded">
+              <i class="ft-check primary font-small-1"></i>
+              <i class="ft-check primary font-small-1"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="showchatbox" class="ui-g">
+  <div class="ui-g-12">
+    <section class="chat-app-form bg-blue-grey bg-lighten-5" id="chat-input">
+      <form class="chat-app-input row mt-2" name="form" (ngSubmit)="sendMessage(chat_message)">
+        <fieldset class="form-group position-relative has-icon-left col-lg-10 col-8 m-0 px-3">
+          <div class="form-control-position">
+          </div>
+          <input type="text" name="msg" class="form-control" id="iconLeft4" placeholder="Type your message"
+            [(ngModel)]="chat_message">
+        </fieldset>
+        <fieldset class="form-group position-relative has-icon-left col-lg-2 col-4 m-0">
+          <button type="button" class="btn btn-danger mx-1" (click)="refreshChat()">
+            <i class="fa fa-refresh"></i></button>
+          <button type="submit" class="btn btn-raised btn-primary px-4" [disabled]="!chat_message ">
+            <i class="fa fa-paper-plane-o d-block d-xl-inline-block d-lg-none p-0"></i>
+            <span class="d-none d-lg-inline-block ml-1">Send</span>
+          </button>
+        </fieldset>
+      </form>
+    </section>
+  </div>
+</div>
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

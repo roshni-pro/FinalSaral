@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-md-9 col-12 searchField">
+        <input id="searchId" type="text" [(ngModel)]="searchKeyVal" placeholder="Enter text here">
+
+        <button type="button" class="btn btn-raised btn-raised btn-primary mt-2" (click)="search()">
+            Search
+        </button>
+        <button type="button" class="btn btn-raised btn-raised btn-primary mt-2 ml-2" (click)="clearData()">
+            Clear
+        </button>
+    </div>
+    <div class="col-md-3 col-12">
+        <button class="btn-sm btn-primary skview float-right mb-3 mt-1" ng-init="Id=trade.OfferId;entity='Offer'"
+            (click)="exportData()">Export</button>
+    </div>
+</div>
+
+<div *ngIf="allCustomers?.length != 0">
+
+
+    <!-- <div class="dataview">
+        <button class="btn-sm btn-primary skview mb-3 mt-1" ng-init="Id=trade.OfferId;entity='Offer'"
+            (click)="exportData()">Export</button>
+    </div> -->
+
+
+    <p-table #dt [value]="allCustomers" (onLazyLoad)="load($event)" [lazy]="true" [paginator]="false">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Hub</th>
+                <th>Name</th>
+                <th>Skcod</th>
+                <th>Order ID</th>
+                <th>Order Amount(AfterDiscount)</th>
+                <th>Discount Type</th>
+                <th>Discount Amount</th>
+                <th>IsScratched</th>
+                <th>Date</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td>{{rowData.HubName}}</td>
+                <td>{{rowData.CustomerName}}</td>
+                <td>{{rowData.Skcode}}</td>
+                <td>{{rowData.OrderID}}</td>
+                <td>{{rowData.OrderAmount | number}}</td>
+                <td>{{rowData.BillDiscountType}}</td>
+                <td>{{rowData.Amount | number}}</td>
+                <td>{{rowData.IsScratchBDCode}}</td>
+                <td>{{rowData.CreatedDate| date:'medium'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<div *ngIf="allCustomers?.length == 0" class="recordnot_fount">
+    Record not found
+</div>

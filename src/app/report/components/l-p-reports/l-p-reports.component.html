@@ -1,0 +1,77 @@
+<div class="ui-fluid">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="m-2">L&P Reports</h3>
+    </div>
+  </div>
+  <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded ">
+    <div class="card-content">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="form-group mt-1">
+            <label for="city"><b>Select Reports:</b></label>
+            <p-dropdown [options]="ReportsName" placeholder="--Select a report--" optionLabel="Name"
+              [(ngModel)]="sptype" (ngModelChange)="onSearch(sptype.Id)"></p-dropdown>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group mt-1">
+            <label for="warehouse"><b>Warehouse:</b></label>
+            <p-multiSelect placeholder="--Select Warehouse--" optionLabel="WarehouseName" [options]="warehouseList"
+              (ngModelChange)="onSearchWareHouseId(warehouseList)" [(ngModel)]="selectedwarehouselist">
+            </p-multiSelect>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group mt-1">
+            <label for="Agent"><b>Select Month:</b></label>
+            <!-- <p-calendar [(ngModel)]="rangeDates" placeholder="MM/DD/YY" selectionMode="range" [minDate]="minDate"
+              [maxDate]="maxDate" [showIcon]="true" [readonlyInput]="true" inputId="range" showButtonBar="true">
+            </p-calendar> -->
+          
+            <p-calendar [(ngModel)]="dateValue" view="month" dateFormat="mm/yy" [readonlyInput]="true" inputId="monthpicker" [minDate]="minDate"
+            [maxDate]="maxDate"></p-calendar>
+          
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group mt-4">
+            <p-toast position="top-center"></p-toast>
+            <!-- <button *ngIf="warehouseList && ReportsName && rangeDates" class="btn btn-primary mr-2 " (click)="onSearchBtn()">Search</button> -->
+            <button  class="btn btn-primary mr-2 " (click)="onSearchBtn()">Search</button>
+            <button class="btn btn-primary mr-2 " (click)="pageRefreshBtn()">Reset</button>
+            <button class="btn btn-primary" (click)="Export()">Export</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div *ngIf="showExportdata!=undefined" class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded  " style="height: calc(100vh - 330px); overflow-y: auto; overflow-x: auto; margin-top: 10px;">
+  <div class="card-content">
+    <p-table [value]="showExportdata" [paginator]="true" [rows]="30" [showCurrentPageReport]="true" class="center wrap" >
+
+      <ng-template pTemplate="header" class="heading">
+        <tr>
+          <th *ngFor="let data of lpHeading">{{data}}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+        <tr>
+          <td *ngFor="let data of lpHeading">{{rowData[data]}}</td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

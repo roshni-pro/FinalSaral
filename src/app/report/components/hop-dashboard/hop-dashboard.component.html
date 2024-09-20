@@ -1,0 +1,216 @@
+<div class="">
+    <div class="col-md-12 d-flex justify-content-between bg-white p-3 mt-3">
+        <div>
+            <input id="toggle-on" class="toggle toggle-left" name="toggle" value="false" type="radio" checked>
+            <label for="toggle-on" class="btn">Month</label>
+
+            <!-- <input id="toggle-off" class="toggle toggle-right" name="toggle" value="true" type="radio"
+                (click)="getSwitchVal('2')">
+            <label for="toggle-off" class="btn">Quarter</label> -->
+            <!-- <p-calendar [(ngModel)]="monthsValue" placeholder="Select Month" class="ml-2" view="month" dateFormat="mm/yy" [showIcon]="true" [yearNavigator]="true" yearRange="2000:2030" *ngIf="monthTable"></p-calendar>     -->
+        </div>
+        <div>
+            <!-- <button style="color:#fff;background-color:#F9D923;padding:10px 25px;border:none;border-radius: 3px;cursor: pointer;margin-right:10px;" > Upload</button>
+                <button style="color:#fff;background-color:#5aaaff;padding:10px 25px;border:none;border-radius: 3px;cursor: pointer;"> Export</button> -->
+        </div>
+    </div>
+</div>
+<div *ngIf="monthTable">
+    <div class="col-md-12 ui-fluid shadow p-3 bg-white mt-3 rounded table table-bordered table-hover">
+        <h4>Summary</h4>
+        <p-table [value]="pureColumns" tableStyleClass="red-bottom-border">
+            <ng-template pTemplate="header">
+                <!-- <tr style="text-align:center;">
+                    <th rowspan="1" colspan="2">KPI / Month</th>
+                    <th rowspan="1" colspan="3" *ngFor="let col of summaryRecord">
+                        {{col.Month}}/{{col.Year}}
+                    </th>
+                </tr> -->
+                <tr style="text-align:center;">
+                    <th>Header</th>
+                    <th rowspan="1" colspan="2">KPI / Month</th>
+                    <th rowspan="1" colspan="3">{{curMonName}} - {{curYear}}</th>
+                    <th rowspan="1" colspan="3">{{firstLastMonth}} - {{firstYear}}</th>
+                    <th rowspan="1" colspan="3">{{secondLastMonth}} - {{secondYear}}</th>
+                </tr>
+                <tr style="text-align:center;">
+                    <th
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;">
+                    </th>
+                    <th colspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;">
+                        &nbsp; </th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Target</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Actual</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Achieved %</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Target</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Actual</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Achieved %</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Target</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Actual</th>
+                    <th rowspan="2"
+                        style="background-color:#fff !important;color:#000 !important;border:solid 1px #ddd !important;"
+                        class="txt-left">Achieved %</th>
+                </tr>
+            </ng-template>
+            <!-- percent:'2.1' -->
+            <!-- *ngFor="let item of summaryRecord.Summary" -->
+            <ng-template pTemplate="body" let-item>
+                <!-- <tr style="text-align:center;color: #0C0A00;" >
+                    <td>maje</td>
+                </tr> -->
+                <tr style="text-align:center;color: #0C0A00; cursor: pointer;" (click)="getRecord(item)">
+
+                    <td class="pad">{{item.headerName}}</td>
+                    <td colspan="2" style="text-align: left;padding-left: 10px;" class="pad">
+                        {{item.heading}} <p></p>
+                    </td>
+
+
+
+
+                    <td class="pad">{{item.TargetThree | number : '1.0-2'}}
+                        <br> <span></span>
+                    </td>
+                    <td class="pad">{{item.ActualThree | number : '1.0-2'}}
+                        <br> <span></span>
+                    </td>
+                    <td class="pad">
+                        <ng-container>
+                            {{item.AchievedThree}} &nbsp;
+                            <i class="fa fa-caret-up" aria-hidden="true"
+                                *ngIf="item.AchievedThree != 0 && item.DirectionThree == 'UP'"></i>
+                            <i class="fa fa-caret-down" aria-hidden="true"
+                                *ngIf="item.AchievedThree != 0 && item.DirectionThree == 'DOWN'"></i>
+                        </ng-container>
+                        <!-- <ng-template #three>
+                            <ng-container *ngIf="item.AchievedThree < 90.00 && item.AchievedThree!=''">
+                                {{item.AchievedThree}} &nbsp; <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </ng-container>
+                        </ng-template> -->
+                    </td>
+
+
+
+
+
+
+
+                    <td class="pad">{{item.TargetTwo | number : '1.0-2'}} <br>
+                        <span></span>
+                    </td>
+                    <td class="pad">{{item.ActualTwo | number : '1.0-2'}}
+                        <br> <span></span>
+                    </td>
+                    <td class="pad">
+                        <ng-container>
+                            {{item.AchievedTwo}} &nbsp;
+                            <i class="fa fa-caret-up" aria-hidden="true"
+                                *ngIf="item.AchievedTwo != 0 && item.DirectionTwo == 'UP'"></i>
+                            <i class="fa fa-caret-down" aria-hidden="true"
+                                *ngIf="item.AchievedTwo != 0 && item.DirectionTwo == 'DOWN'"></i>
+                        </ng-container>
+                        <!-- <ng-template #two>
+                            <ng-container *ngIf="item.AchievedTwo < 90.00 && item.AchievedTwo!=''">
+                                {{item.AchievedTwo}} &nbsp; <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </ng-container>
+                        </ng-template> -->
+                    </td>
+
+
+
+
+
+                    <td class="pad">{{item.TargetOne | number : '1.0-2'}} <br>
+                        <span></span>
+                    </td>
+                    <td class="pad">{{item.ActualOne | number : '1.0-2'}} <br>
+                        <span></span>
+                    </td>
+                    <td class="pad">
+                        <ng-container>
+                            {{item.AchievedOne}} &nbsp;
+                            <i class="fa fa-caret-up" aria-hidden="true"
+                                *ngIf="item.AchievedOne != 0 && item.DirectionOne == 'UP'"></i>
+                            <i class="fa fa-caret-down" aria-hidden="true"
+                                *ngIf="item.AchievedOne != 0 && item.DirectionOne == 'DOWN'"></i>
+                        </ng-container>
+                        <!-- <ng-template #one>
+                            <ng-container *ngIf="item.AchievedOne < 90.00 && item.AchievedOne!=''">
+                                {{item.AchievedOne}} &nbsp; <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </ng-container>
+                        </ng-template> -->
+                    </td>
+
+
+
+
+
+
+
+
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<!-- <div *ngIf="quarterTable">
+    <div class="col-md-12 ui-fluid shadow p-3 bg-white mt-3 rounded table table-hover">
+        <h4>Summary</h4><br><br>
+        <p-table [value]="summaryRecord">
+            <ng-template pTemplate="header">
+                <tr style="text-align:center;">
+                    <th rowspan="1" colspan="2">KPI / Month</th>
+                    <th rowspan="1" colspan="3">Q1</th>
+                    <th rowspan="1" colspan="3">Q2</th>
+                    <th rowspan="1" colspan="3">Q3</th>
+                </tr>
+                <tr style="text-align:center;">
+                    <th colspan="2"> &nbsp; </th>
+                    <th rowspan="2" class="txt-left">Actual</th>
+                    <th rowspan="2" class="txt-left">Target</th>
+                    <th rowspan="2" class="txt-left">Delta</th>
+                    <th rowspan="2" class="txt-left">Actual</th>
+                    <th rowspan="2" class="txt-left">Target</th>
+                    <th rowspan="2" class="txt-left">Delta</th>
+                    <th rowspan="2" class="txt-left">Actual</th>
+                    <th rowspan="2" class="txt-left">Target</th>
+                    <th rowspan="2" class="txt-left">Delta</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr style="text-align:center;" (click)="getRecord(item)">
+                    <td colspan="2" style="text-align: left;padding-left: 10px;" class="pad">{{item.PlanType}} <p></p>
+                    </td>
+                    <td class="pad"> <br> <span></span></td>
+                    <td class="pad"> <br> <span></span></td>
+                    <td class="pad"> <i class="fa fa-caret-down" aria-hidden="true"></i></td>
+                    <td class="pad"> <br> <span></span></td>
+                    <td class="pad"> <br> <span></span></td>
+                    <td class="pad"> <i class="fa fa-caret-down" aria-hidden="true"></i></td>
+                    <td class="pad">{{item.AchievedValue}} <br> <span></span></td>
+                    <td class="pad">{{item.PlannedValue}} <br> <span></span></td>
+                    <td class="pad">{{item.AchievedPercent}}<i class="fa fa-caret-down" aria-hidden="true"></i></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div> -->

@@ -1,0 +1,73 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+<br>
+<div class="header">
+    <h3><b>Trade Issue List</b></h3>
+</div>
+
+<!-- add button to this format -->
+<!-- <p-tree [value]="issuelist" layout="Vertical" selectionMode="checkbox" [(selection)]="selectedFile3">
+</p-tree> -->
+<!-- <p-organizationChart [value]="issuelist"></p-organizationChart> -->
+
+<p-tree [value]="issuelist" layout="horizontal" selectionMode="single" [(selection)]="selectedFile3"></p-tree>
+<div style="margin-top:8px"> 
+<div style="margin-top: 8px">
+    <button pButton type="button" label="Add Child" (click)="addChild(selectedFile3)" style="margin-right: .25em"></button>
+    <button pButton type="button" label="Delete" (click)="deleteNode(selectedFile3)"></button>
+</div>
+</div>
+<div class="myTree">
+
+    <!-- <h4>Root <button class="btn addBtn" (click)="addChild(data)">+</button></h4>
+     <div class="treeBlock" *ngFor="let data of issues">
+        <div class="treeBoxContent">
+            <div class="treeLine" *ngFor="let datas of child" >
+                <span *ngIf="data.Id==datas.parent_id" class="lineSpan"></span>
+            </div>       
+           <div class="nameData" (click)="getChild(data)">{{datas.Description}}</div>
+            <div class="btnBox">
+                <button class="btn addBtn" (click)="addChild(data)">+</button>
+                <button class="btn deleteBtn" (click)="deleteNode(data)">-</button>
+            </div>   
+        </div>    -->
+    <!-- <div class="treeBlocks">
+            <div class="treeBlockChild" *ngFor="let datas of data.children">
+                <div *ngIf="data.Id==datas.parent_id">
+                    <div class="treeBoxContentchild">{{datas.Description}}</div>
+                    <div class="btnBox">
+                        <button class="btn addBtn" (click)="addChild(data)">+</button>
+                        <button class="btn deleteBtn" (click)="deleteNode(data)">-</button>
+                    </div>   
+               </div>
+        </div>
+    </div> -->
+
+
+</div>
+<div *ngIf="isAddParent">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '70%', overflow: 'auto'}">
+        <p-header>
+            Add Child Info.
+        </p-header>
+        <div class="ui-fluid">
+            <form #storyForm="ngForm">
+                <div class="ui-g">
+                    <div class="ui-g-6">
+                        <div class="col-md-8">
+                            <label for="input">Enter Child Name:</label>
+                            <input id="des" type="text" name="Child" class="form-control"
+                                [(ngModel)]="postIssues.Description" placeholder="Enter Child Name" />
+                        </div>
+                    </div>
+                    <div class="ui-g-12">
+                        <div class="bdry"> </div>
+                        <button class="btn btn-raised btn-raised btn-primary pull-right"
+                            (click)="SaveChild(postIssues)">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </p-dialog>
+</div>

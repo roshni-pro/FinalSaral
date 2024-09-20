@@ -1,0 +1,126 @@
+<p-toast position="top-right"></p-toast>
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Change Online Order MOP</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-2 ">
+                    <label class="css"><span style="color:red">*</span>Order Id</label> <input class="form-control searchbox mt-1" placeholder="Enter Order Id" [(ngModel)]="orderid">
+                </div>
+                <div class="col-4 md-6 mt-4">
+                    <button type="button" class="btn btn-primary" (click)="getMOP()">
+                        View Payment Detail
+                    </button>
+                    <!-- <button type="button" class="btn btn-primary ml-2" (click)="clear()">
+                Clearv
+            </button>  -->
+                    <button type="button" class="btn btn btn-2 ml-2" (click)="clear()">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-2">
+                    <label class="css"><span style="color:red">*</span>Transaction Id</label>
+                    <input class="form-control searchbox" placeholder="Enter Transaction Id"
+                        [(ngModel)]="transactionId">
+                </div>
+                <div class="col-2">
+                    <label class="css"><span style="color:red">*</span>Customer Code</label>
+                    <input class="form-control searchbox" placeholder="Enter Customer Code" [(ngModel)]="customerCode">
+                </div>
+                <div class="col-2">
+                    <label class="css"><span style="color:red">*</span>From MOP</label>
+                    <p-dropdown [options]="FromMOP" placeholder="Select From MOP" [panelStyle]="{minWidth:'25em'}"
+                        optionLabel="label" [(ngModel)]="SelectedFromMop" (onChange)="Tomopselection($event)"> 
+                    </p-dropdown>
+                </div>
+
+                <div class="col-2">
+                    <label class="css"><span style="color:red">*</span>To MOP</label>
+                    <p-dropdown [options]="ToMOP" placeholder="Select To MOP" [panelStyle]="{minWidth:'25em'}"
+                        optionLabel="label" [(ngModel)]="SelectedToMop" (onChange)="frommopselection($event)"> </p-dropdown>
+                </div>
+
+                <div class="col-2 mt-4" *ngIf="transactionId && customerCode && showprocessfrom==true && showprocessTO==true ">
+                    <button type="button" class="btn btn-primary" (click)="Process()">
+                        <!-- SelectedFromMop.length!=0 && SelectedToMop.length!=0 -->
+                        Process
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded">
+
+    <!-- <p-table [value]="getMOPdata" [scrollable]="false" [paginator]="true" [rows]="5" [(first)]="first" > -->
+    <!-- <ng-template pTemplate="emptymessage">
+            <h5 class="emptymsg text-center">No Record</h5>
+          </ng-template> -->
+    <!-- <ng-template pTemplate="header">
+            <tr style="height:40px">
+                <th>Payment Date</th>
+                <th>Payment Type</th>
+                <th>Payment Ref#</th>
+                <th>Amount</th>
+                <th>Cheque Bounce Fine Amount</th>
+                <th>Payment Status</th>
+                <th>Sub Status <br>(CMS Status)</th>
+                <th>Comment</th>
+                
+            </tr>
+        </ng-template> -->
+    <!-- <ng-template pTemplate="emptymessage">
+            <h5 class="emptymsg">No Record</h5>
+          </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.CreatedDate}}</td>
+                <td>{{item.PaymentFrom}}</td>
+                <td>{{item.GatewayTransId}}</td>
+                <td>{{item.amount}}</td>
+                <td>{{item.Fine}}</td>
+                <td>{{item.status}}</td>
+                <td>{{item.BuyerName}}</td>
+                <td>{{item.statusDesc}}</td>
+            </tr>
+        </ng-template> -->
+    <!-- </p-table> -->
+    <p-table [value]="getMOPdata" [paginator]="true" [rows]="5" *ngIf="orderid">
+        <ng-template pTemplate="header">
+            <tr style="height:40px">
+                <th>Payment Date</th>
+                <th>Payment Type</th>
+                <th>Payment Ref#</th>
+                <th>Amount</th>
+                <th>Cheque Bounce Fine Amount</th>
+                <th>Payment Status</th>
+                <th>Sub Status <br>(CMS Status)</th>
+                <th>Comment</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <h5 class="emptymsg">No Record</h5>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+            <tr>
+                <td>{{row.CreatedDate | date:"dd/MM/yyyy" }}</td>
+                <td>{{row.PaymentFrom}}</td>
+                <td>{{row.GatewayTransId}}</td>
+                <td>{{row.amount}} /-</td>
+                <td>{{row.Fine}}</td>
+                <td>{{row.status}}</td>
+                <td>{{row.BuyerName}}</td>
+                <td>{{row.statusDesc}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+</div>

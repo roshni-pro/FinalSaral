@@ -1,0 +1,69 @@
+<p>
+  <p-button label="Request For Role" (click)="goToPage()"></p-button>
+  <br />
+  <br />
+  <br />
+  <p-table [value]="lstData" [paginator]="true" [rows]="100" dataKey="Id">
+    <ng-template pTemplate="header">
+      <tr>
+
+        <th>Sr</th>
+        <th>Name</th>
+        <th>Valid From</th>
+        <th>Valid Till</th>
+        <th>Status</th>
+        <th>UAC Status</th>
+        <th>Reject Reason (Head)</th>
+        <th>Reject Reason (UAC)</th>
+        <th>Details</th>
+
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dt let-i="rowIndex">
+      <tr>
+
+        <td>{{i + 1}}</td>
+        <td>{{dt.DisplayName}}</td>
+        <td>{{dt.validfrom  | date:'dd-MM-yyyy'}}</td>
+        <td>{{dt.validtill  | date:'dd-MM-yyyy'}}</td>
+        <td>{{dt.Statuses}}</td>
+        <td>{{dt.UACStatus}}</td>
+        <td>{{dt.RejectReason}}</td>
+        <td>{{dt.rejctReasonUAC}}</td>
+        <td><button type="button" (click)="show(dt.Id)">View Details</button></td>
+
+
+      </tr>
+    </ng-template>
+
+  </p-table>
+</p>
+<p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+  [style]="{width: '70%'}">
+  <p-table [value]="lstpage" [paginator]="true" [rows]="100" dataKey="Id">
+    <ng-template pTemplate="header">
+      <tr>
+      
+        <th>Sr</th>
+        <th>Role Name</th>
+        <th>Page Name</th>
+        <th>Valid From</th>
+        <th>Valid Till</th>
+       </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-dtt  let-i="rowIndex">
+      <tr>
+          
+        <td>{{i + 1}}</td>
+        <td>{{dtt.RoleName}}</td>
+        <td>{{dtt.PageName}}</td>
+        <td>{{dtt.validfrom  | date:'dd-MM-yyyy'}}</td>
+        <td>{{dtt.validtill  | date:'dd-MM-yyyy'}}</td>
+         
+     
+      
+             </tr>
+    </ng-template>
+  
+  </p-table>
+</p-dialog>

@@ -1,0 +1,164 @@
+<p-toast></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+<section id="story">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2">Murli Story</h3>
+    </div>
+
+    <div>
+      <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: auto;"
+        (click)="addNewStory()"> Add New Story
+      </button>
+    </div>
+  </div>
+  <br>
+  <div class="ui-g" *ngIf="viewModel && viewModel.StoryList">
+    <div class="ui-g-12">
+      <p-table [value]="viewModel.StoryList" [paginator]="true" [rows]="rows" [totalRecords]="viewModel.Count"
+        [lazy]="true" (onLazyLoad)="getStory($event)">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Valid From</th>
+            <th>Valid To</th>
+            <th>Is Published</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-story>
+          <tr>
+            <td>{{story.Id}}</td>
+            <td>{{story.Title}}</td>
+            <td>{{story.ValidFrom | date : 'mediumDate'}}</td>
+            <td>{{story.ValidTo | date : 'mediumDate'}}</td>
+            <td>
+              <p-inputSwitch name="isPublished" [(ngModel)]="story.IsPublished" (ngModelChange)="publishStory(story)">
+              </p-inputSwitch>
+            </td>
+            <td>
+              <button style="color: #ff5b1e" class="btn" (click)="edit(story)">Edit</button>
+              &nbsp;|&nbsp;
+              <button style="color: #ff5b1e" class="btn" (click)="delete(story)">Delete</button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</section>
+
+<div *ngIf="selectedStory">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+    <p-header>
+      Manage Murli Story
+    </p-header>
+    <div class="ui-fluid">
+      <form #storyForm="ngForm">
+        <div class="ui-g">
+          <div class="ui-g-6">
+            <div class="ui-g">
+              <div class="ui-g-4">
+                <div class="form-group">
+                  <label for="title">Title</label>
+                  <input class="form-control" id="title" name="title" [(ngModel)]="selectedStory.Title"
+                    placeholder="Title" type="text" required #titleInput="ngModel">
+                  <code *ngIf="isFormInvalid && titleInput.invalid">
+                      Title is required!
+                    </code>
+                </div>
+
+              </div>
+              <div class="ui-g-4">
+                <label for="validfrom">Valid From</label>
+                <p-calendar id="validfrom" name="validfrom" [(ngModel)]="selectedStory.ValidFrom"
+                  placeholder="From Date" [showIcon]="true" required #validfromInput="ngModel"></p-calendar>
+                <code *ngIf="isFormInvalid && validfromInput.invalid">
+                  From date is required!
+                </code>
+              </div>
+              <div class="ui-g-4">
+                <label for="validto">Valid To</label>
+                <p-calendar id="validto" name="validto" [(ngModel)]="selectedStory.ValidTo" placeholder="To Date"
+                  [showIcon]="true" required #validtoInput="ngModel"></p-calendar>
+                <code *ngIf="isFormInvalid && validtoInput.invalid">
+                    To date is required!
+                </code>
+              </div>
+            </div>
+            <!-- <div class="ui-g">
+              <div class="ui-g-4">
+                <div class="form-group">
+                  <label for="published">Published - {{selectedStory.IsPublished? 'YES': 'NO'}}</label><br>
+                  <p-inputSwitch name="isPublished" [(ngModel)]="selectedStory.IsPublished"></p-inputSwitch>
+                </div>
+              </div>
+              <div class="ui-g-4">
+                <label for="validfrom">Active - {{selectedStory.IsActive? 'YES': 'NO'}}</label><br>
+                <p-inputSwitch name="isActive" [(ngModel)]="selectedStory.IsActive"></p-inputSwitch>
+              </div>
+            </div> -->
+            <div class="ui-g">
+              <div class="ui-g-12">
+                <a href="javascript:void(0);" class="pull-right" (click)="addNewPage()"> Add new page</a>
+              </div>
+            </div>
+
+            <div *ngIf="isAddedNewPage && selectedStoryPage">
+              <div class="bdry"></div>
+              <div class="ui-g">
+                <div class="ui-g-12">
+                  <label>Upload Image</label><br>
+                  <p-fileUpload #fubauto mode="basic" name="demo[]" [url]="url" accept="image/*" maxFileSize="1000000"
+                    (onUpload)="onBasicUploadAuto($event)" (onError)="onError($event)" [auto]="true"
+                    chooseLabel="Browse">
+                  </p-fileUpload>
+                </div>
+                <div class="ui-g-12">
+
+                  <img *ngIf="relativePath" [src]="relativePath" class="wcr">
+                </div>
+                <div class="ui-g-12" *ngIf="selectedStoryPage && selectedStoryPage.ImagePath">
+                  <button class="btn btn-raised btn-primary float-right align-self-end" (click)="saveNewPage()">Add to
+                    list</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ui-g-6">
+            <div cdkDropList (cdkDropListDropped)="drop($event)" class="page-list"
+              *ngIf="selectedStory && selectedStory.MurliStoryPageList && selectedStory.MurliStoryPageList.length > 0">
+              <div class="ui-g ttd page-box" *ngFor="let story of selectedStory.MurliStoryPageList; let i of index;"
+                cdkDrag>
+                <div class="ui-g-4">
+                  <img [src]="story.PathToShowImage" width="75px" height="75px">
+                </div>
+                <div class="ui-g-4">
+                  <span class="brk">{{story.ImagePath}}</span>
+                </div>
+                <div class="ui-g-2">
+                  <div class="form-group">
+                    <label for="published">Publish</label><br>
+                    <p-inputSwitch name="isPublished{{story.Id}}" [(ngModel)]="story.IsPublished"></p-inputSwitch>
+                  </div>
+                </div>
+                <div class="ui-g-2">
+                  <button class="btn btn-a" (click)="deletePage(story, selectedStory)">Delete</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="ui-g-12">
+            <div class="bdry"> </div>
+            <button class="btn btn-raised btn-raised btn-primary pull-right"
+              (click)="SaveStory(storyForm, titleInput)">Save</button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </p-dialog>
+</div>

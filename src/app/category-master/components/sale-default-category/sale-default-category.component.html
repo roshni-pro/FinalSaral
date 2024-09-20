@@ -1,0 +1,120 @@
+<div class="card">
+        <div class="header">
+            <h3 >Sale Default Category</h3>
+        </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-9"></div>
+            <div class="col-md-3">
+                <button class="btn btn-primary pull-right" (click)="addNewStore()">Add New Item</button>
+            </div>
+            <p-table #dt [value]="DataList" [columns]="columnList" [paginator]="true" [lazy]="false" [rows]="10" [scrollable]="true"
+            [showCurrentPageReport]="true" text-align: center>
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                        <input type="text" pInputText size="50" placeholder="Global Filter"
+                            (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <!-- <th>Category</th>
+                        <th>Sub-Category</th>
+                        <th>Brand</th> -->
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-brand let-columns="columns">
+                    <tr>
+                        <!-- <td>{{item.CategoryName}}</td>
+                        <td>{{item.SubCategoryName}}</td>
+                        <td>{{item.SubsubcategoryName}}</td> -->
+                        <td *ngFor="let col of columns">
+                            {{brand[col.field]}}
+                        </td>
+                        <td><button (click)="RowDelete(brand)" class="btn btn-raised btn-danger">Remove</button></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isOpenPopup">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '65%',height: '80%',left: '323px'}">
+        <p-header>
+            Manage Category
+        </p-header>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-3">
+                        <label>Select Category</label><br>
+                      <select name="" value="" class="form-control" (change)="onSelectCategory($event)" [(ngModel)]="AddData.selectedCategory">
+                       <option value="0">--select--</option>
+                        <option *ngFor="let item of categoryList" [ngValue]="item.value">{{item.label}}</option>
+                      </select>
+                    </div>
+
+                    <div class="col-3">
+                        <label>Select Sub Category</label><br>
+                      <select name="" value="" class="form-control" (change)="onSelectSubCategory($event)"  [(ngModel)]="AddData.selectedSubCategory">
+                        <option value="0">--select--</option>
+                        <option *ngFor="let item of subcategoryList" [ngValue]="item.SubCategoryId">{{item.SubcategoryName}}</option>
+                      </select>
+                    </div>
+
+                    <div class="col-3">
+                        <label>Select Brand</label><br>
+                      <select name="" value="" class="form-control" (change)="onSelectBrand($event)" [(ngModel)]="AddData.selectedBrand">
+                        <option value="0">--select--</option>
+                        <option *ngFor="let item of brandList" [ngValue]="item.SubsubCategoryid">{{item.SubsubcategoryName}}</option>
+                      </select>
+                    </div>
+                    <div class="col-3 mt">
+                        <input type="button" value="Add Item" class="btn btn-primary" (click)="AddNewItem(AddData)">
+                    </div>
+                </div>
+                <div class="row">
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                            <th>SrNo</th>
+                            <th>Category</th>
+                            <th>Sub Category</th>
+                            <th>Brand</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let list of addItemList; index as i">
+                                <td>{{i+1}}</td>
+                                <td>{{list.Category}}</td>
+                                <td>{{list.SubCategory}}</td>
+                                <td>{{list.Brand}}</td>
+                                <td><button (click)="Remove(i)" class="btn btn-raised btn-danger">Remove</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="button" class="btn btn-raised btn-primary mt" (click)="SaveSaleDefaultCategory()">Submit</div>&nbsp;
+                        <div class="button" class="btn btn-raised btn-danger mt" (click)="cancel()">cancel</div>
+                        <!-- <button class="btn btn-primary pull-right" (click)="cancel()">cancel</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+  <p-confirmDialog appendTo="body" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>

@@ -1,0 +1,371 @@
+<!-- <p>return-replace-items works!</p> -->
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+
+<div class="ui-fluid" >
+    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+       
+        <p-footer>
+           <div *ngIf="details.Status == 'Received at Warehouse' && !isQCReject">   <!--*ngIf="details.Status == 'Received at Warehouse'" -->
+            <div class="row" style="margin-left: 10px; margin-top: 10px;">
+                <p-checkbox name="group1" value="IsStockReceivewithin24Hours" label="Is Stock Receive within 24 Hours" [(ngModel)]="IsStockReceivewithin24Hours">
+                </p-checkbox>
+            </div>
+            <div class="row" style="margin-left: 10px; margin-top: 10px;">
+                <p-checkbox name="group2" value="BatchNoAndPKD"  label=" Batch No. & PKD" [(ngModel)]="BatchNoAndPKD" >
+                </p-checkbox>
+            </div>
+            <div class="row" style="margin-left: 10px; margin-top: 10px;">
+                <p-checkbox name="group3"  value="CrossCheckWithInvoice" label="Cross Check With Invoice" [(ngModel)]="CrossCheckWithInvoice" >
+                </p-checkbox>
+            </div>
+            <div class="row" style="margin-left: 10px; margin-top: 10px;">
+                <p-checkbox name="group4"  value="StockConditionisSealable"  label="Stock Condition is Sealable" [(ngModel)]="StockConditionisSealable" >
+                </p-checkbox>
+            </div>
+        </div>
+        <div *ngIf="details.Status  == 'Customer Refused Rejected Order'">
+            <div class="row"style="margin-left: 5px; margin-top: 10px; margin-right: 5px">
+                <label>Enter Wallet Points</label>
+                <input type="number" class="form-control" [(ngModel)]="details.ManualWalletPoint" #Recived="ngModel">
+        
+                 <div *ngIf="details.ManualWalletPoint > sum ">
+                    <code> ManualWalletPoint Should Not greater than Order Amount</code>
+                  </div>
+            </div>
+        </div>
+            <br/>
+          <h6 class="text-left" *ngIf="!plannerRole">Comment Section:</h6>
+            <textarea *ngIf="!plannerRole" type="text"  class="form-control" [(ngModel)]="Comment" 
+            (keydown)="space($event)" (input)="inputValidator($event)"></textarea><br/>
+            <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+            <button *ngIf="details.Status != 'Customer Refused Rejected Order' && !plannerRole" type="button" class="btn btn-raised btn-danger mr-1" [disabled]="details.Status == 'Received at Warehouse' &&  !isQCReject? (!Comment || (IsStockReceivewithin24Hours==false || BatchNoAndPKD==false || CrossCheckWithInvoice==false || StockConditionisSealable==false)) : (!Comment)" (click)="cd.accept()">Yes</button>
+            <button *ngIf="details.Status == 'Customer Refused Rejected Order' && !plannerRole" type="button" class="btn btn-raised btn-danger mr-1" [disabled]="!Comment || details.ManualWalletPoint == 0 || !details.ManualWalletPoint || details.ManualWalletPoint > sum" (click)="cd.accept()">Yes</button>
+            <button *ngIf="plannerRole" type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+        </p-footer>
+      </p-confirmDialog>
+    
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="content-header">Return Replace Order Details</div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <!-- <div class="form-group col-md-2">
+        <label for="name">Select Delivery Boy</label>
+        <select id="ware" name="ware" class="form-control" [(ngModel)]="DBoyId"
+            placeholder="Select Region Name"  [disabled] = "details.Picker_PersonId > 0 && details.Status != 'Pending to Pick From Warehouse'">
+            <option *ngFor="let d of deliveryBoyList" [ngValue]="d.PeopleID">
+                {{ d.DisplayName }}
+            </option>
+        </select>
+    </div> -->
+    <!-- <div class="form-group col-md-2" *ngIf="plannerRole">
+        <label for="name">Select Customer</label>
+        <select id="cst" name="cst" class="form-control" [(ngModel)]="custId"
+            placeholder="Select Customer" (ngModelChange)="onSelectCustomer(custId)" >
+            <option *ngFor="let cust of custList" [ngValue]="cust.CustomerId">
+                {{ cust.Skcode }}
+            </option>
+        </select>
+    </div> -->
+
+   <!-- <div class=" col-md-2 float-right" *ngIf="details.Picker_PersonId == 0 || details.Status == 'Pending to Pick From Warehouse'">
+        <label>&nbsp;</label>
+        <div></div>
+        <button type="button" class="btn btn-raised btn-primary" (click)="ChangeDeliveryBoy()">ChangeDeliveryBoy</button>
+    </div>
+     -->
+
+    <div class=" col-md-12 float-right">
+        <label>&nbsp;</label>
+        <div></div>
+        <!-- <button type="button" class="btn btn-raised btn-primary float-right" *ngIf="plannerRole && itemList &&  itemList.length > 0" (click)="onClick()" >Generate Order</button>  -->
+        <!-- <button type="button" class="btn btn-raised btn-primary float-right" *ngIf="selectedList && selectedList.length > 0 && itemList.length > 0" (click)="onApproveReject(true)" >Approve</button> 
+        <button type="button" class="btn btn-raised btn-primary float-right" style="margin-right: .5em;" *ngIf="selectedList && selectedList.length > 0 && itemList.length > 0" (click)="onApproveReject(false)" >Reject</button>  -->
+        <button type="button" class="btn btn-raised btn-primary float-right" style="margin-right: .5em;" *ngIf="selectedList && selectedList.length > 0 && itemList.length > 0" (click)="onSubmit()" >Submit</button> 
+        <button class="btn btn-raised btn-primary float-right" style="margin-right: 1em;" (click)=onBack()>Back</button>
+        <!-- <button type="button" class="btn btn-raised btn-primary" (click)="OnWhAccept()">WH Accept</button> -->
+        <!-- <button *ngIf="warehouseInBoundLead"  class="btn btn-raised  float-right" style="background-color: rgb(96, 148, 18);" (click)="OnWhAccept()">WH Accept</button>
+        <button *ngIf="warehouseInBoundLead" class="btn btn-raised  float-right" style="background-color: red; margin-right: 10px;"  (click)="OnWhReject()">WH Reject</button> -->
+        <!-- <button *ngIf="buyerRole"  class="btn btn-raised  float-right" style="background-color: rgb(96, 148, 18);"  (click)="onQCAccept()">Buyer Accept</button>
+        <button *ngIf="buyerRole"  class="btn btn-raised float-right" style="background-color: red;margin-right: 10px;"  (click)="onQCReject()">Buyer Reject</button> -->
+        <!-- <button *ngIf="details.Status == 3"  class="btn btn-raised float-right" style="background-color: red;margin-right: 10px;"  (click)="onSettleRejectOrder()">Settle Reject Order</button>
+        <button *ngIf="details.Status == 3"  class="btn btn-raised float-right" style="background-color: red;margin-right: 10px;"  (click)="onWarehouseAcceptRejectOrder()">Good Recived</button> -->
+    </div>
+
+    <!-- <div class=" col-md-2 float-right" *ngIf="details.Status == 'Pick From Customer'">
+        <label>&nbsp;</label>
+        <div></div>
+        <button type="button" class="btn btn-raised btn-primary" (click)="OnWhReject()">WH Reject</button>
+    </div>
+
+    <div class=" col-md-2 float-right" *ngIf="details.Status == 'Received at Warehouse'">
+        <label>&nbsp;</label>
+        <div></div>
+        <button type="button" class="btn btn-raised btn-primary" (click)="onQCAccept()">QC Accept</button>
+    </div>
+
+    <div class=" col-md-2 float-right" *ngIf="details.Status == 'Received at Warehouse'">
+        <label>&nbsp;</label>
+        <div></div>
+        <button type="button" class="btn btn-raised btn-primary" (click)="onQCReject()">QC Reject</button>
+    </div> -->
+
+</div>
+
+<div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover">
+    <div class="table-head rounded d-flex p-2 px-4 text-primary justify-content-between ">
+        <!-- <h5 class="m-0"> Order {{details.OrderId}} Details</h5> -->
+        <!-- <button *ngIf="details.Status == 'Pick From Customer'"  class="btn btn-raised  float-right" style="background-color: rgb(96, 148, 18);" (click)="OnWhAccept()">WH Accept</button>
+        <button *ngIf="details.Status == 'Pick From Customer'"  class="btn btn-raised  float-right" style="background-color: red;"  (click)="OnWhReject()">WH Reject</button>
+        <button *ngIf="details.Status == 'Received at Warehouse'"  class="btn btn-raised  float-right" style="background-color: rgb(96, 148, 18);"  (click)="onQCAccept()">QC Accept</button>
+        <button *ngIf="details.Status == 'Received at Warehouse'"  class="btn btn-raised float-right" style="background-color: red;"  (click)="onQCReject()">QC Reject</button> -->
+        <!-- <div class="row text-right"> -->
+            <!-- <button *ngIf="warehouseInBoundLead"  class="btn btn-raised  float-right" style="background-color: rgb(96, 148, 18);margin-right: 10px;" (click)="OnWhAccept()">WH Accept</button>
+            <button *ngIf="warehouseInBoundLead" class="btn btn-raised  float-right" style="background-color: red; margin-right: 10px;"  (click)="OnWhReject()">WH Reject</button> -->
+            <!-- <button class="btn btn-raised btn-primary float-right"  (click)=onBack()>Back</button> -->
+        <!-- </div> -->
+        
+    </div>
+    <div class="position-relative">
+        <p-table #dt [globalFilterFields]="cols" [value]="itemList" [paginator]="true" [rows]="20"
+             [(selection)]="selectedList" selectionMode="single"
+             [scrollable]="true" scrollHeight="70vh" text-align: center>
+            <!-- <ng-template pTemplate="header">
+                <tr>
+                    <th class="wix">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                      </th>
+                    <th *ngFor="let col of cols" style="text-align: center">
+                        <div *ngIf="!plannerRole">
+                            {{col.header}}
+                        </div>
+                        <div *ngIf="plannerRole && col.header != 'Itempic'">
+                            {{col.header}}
+                        </div>
+                    </th>
+                    <th style="text-align: center" *ngIf="!plannerRole">Status</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-rowData let-columns="columns" >
+                <tr >
+                      <td >
+                          <p-tableCheckbox [value]="rowData" ></p-tableCheckbox>
+                      </td>
+                    <td *ngFor="let col of cols" style="text-align: center">
+                        <div *ngIf="col.field !='ReturnImage' && col.field!='RequestType'">
+                            {{rowData[col.field]}}
+                        </div>                      
+                        <div *ngIf="col.field=='RequestType'">
+                            {{rowData[col.field] == 0 ? 'Return' : 'Replace'}}
+                        </div>
+                        <div *ngIf="col.field =='ReturnImage' && !plannerRole">
+                            <img *ngIf="rowData[col.field] != null" src="{{baseURL}}{{rowData[col.field][0]}}" height="40px" (click)="onClickImage(rowData[col.field])">
+                        </div>
+                    </td>
+                    <td>
+                        <button *ngIf="warehouseInBoundLead"  class="btn btn-raised  float-right" style="background-color: rgb(96, 148, 18);margin-right: 10px;" (click)="OnWhAccept(rowData)">
+                            <i class="fa fa-check-circle"></i>
+                        </button>
+                        <button *ngIf="warehouseInBoundLead" class="btn btn-raised  float-right" style="background-color: red; margin-right: 10px;"  (click)="OnWhReject(rowData)">
+                            <i class="fa fa-times-circle"></i>
+                        </button>
+                        <button *ngIf="buyerRole && rowData.Status == 1"  class="btn btn-raised  float-right" style="background-color: rgb(96, 148, 18);margin-right: 10px;" (click)="OnWhAccept(rowData)">
+                            <i class="fa fa-check-circle"></i>
+                        </button>
+                        <button *ngIf="buyerRole && rowData.Status == 1" class="btn btn-raised  float-right" style="background-color: red; margin-right: 10px;"  (click)="OnWhReject(rowData)">
+                            <i class="fa fa-times-circle"></i>
+                        </button>
+                        <span  style="color:rgb(96, 148, 18)" *ngIf="warehouseInBoundLead && rowData.Status == 1">
+                            Warehouse Approved
+                        </span>
+                        <span style="color:red;" *ngIf="buyerRole && rowData.Status == 3">
+                            Buyer Approved
+                        </span>
+                    </td>
+                </tr>
+            </ng-template> -->
+            <ng-template pTemplate="header">
+                <tr>
+                  <!-- <th colspan="1"> &nbsp; </th> -->
+                  <th colspan="1" >
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                  </th>
+                  <th colspan="2">RequestId</th>
+                  <th colspan="2" >OrderId </th>
+                  <!-- <th colspan="3" >OrderDetailsId:</th> -->
+                  <th colspan="4" >ItemName</th>
+                  <th colspan="2" >BatchCode</th>
+                  <th colspan="2" >Qty</th>
+                  <th colspan="2" >price</th>
+                  <!-- <th colspan="2" >RequestType</th> -->
+                  <th colspan="2" >ItemId</th>
+                  <th colspan="2" *ngIf="!plannerRole">Itempic</th>
+                  <th colspan="2" >Status</th>
+                  <th colspan="4" *ngIf="!plannerRole">Approve</th>
+                  <th colspan="4" *ngIf="!plannerRole">Reject</th>
+                  <th colspan="2" >History</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                <tr>
+                  <!-- <td colspan="1">
+                    <i [pRowToggler]="rowData" [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" (click)="isResponse=false;"></i>
+                  </td> -->
+                  <td colspan="1">
+                    <!-- <i [pRowToggler]="rowData" [ngClass]="expanded ? '' : ''"> -->
+                      <p-tableCheckbox *ngIf="(warehouseInBoundLead && rowData.Status == 0) || (buyerRole && rowData.Status == 1) || (plannerRole && rowData.Status == 3)" [value]="rowData" (click)="getSimilarOrders(rowData,!check)"></p-tableCheckbox>
+                      <span *ngIf="!((warehouseInBoundLead && rowData.Status == 0) || (buyerRole && rowData.Status == 1) || (plannerRole && rowData.Status == 3))">-</span>
+                    <!-- </i> -->
+                    <!-- {{plannerRole}}-{{rowData.Status}} -->
+                  </td>
+                  <td colspan="2">{{rowData.KKRequestId}}</td>
+                  <td colspan="2" >{{rowData.OrderId}}</td>
+                  <!-- <td colspan="3" >{{rowData.OrderDetailsId}}</td> -->
+                  <td colspan="4" >{{rowData.ItemName}}</td>
+                  <td colspan="2" >{{rowData.BatchCode}}</td>
+                  <td colspan="2" >{{rowData.Qty}}</td>
+                  
+                  <td colspan="2" >{{rowData.price | number : '2.0-2'}}</td>
+                  <!-- <td colspan="2" >{{rowData.RequestType}}</td> -->
+                  <td colspan="2" >{{rowData.ItemId}}</td>
+                  <td colspan="2" *ngIf="!plannerRole">
+                    <img *ngIf="rowData.ReturnImage != null" src="{{baseURL}}{{rowData.ReturnImage[0]}}" height="40px" (click)="onClickImage(rowData.ReturnImage)">
+                  </td>
+                  <td colspan="2" >
+                    <span  style="color:rgb(96, 148, 18)" *ngIf="rowData.Status == 0">
+                        Pending
+                    </span>
+                    <span  style="color:rgb(96, 148, 18)" *ngIf="rowData.Status == 1">
+                        <span *ngIf="warehouseInBoundLead && !buyerRole">
+                            Pending From Buyer ({{rowData.BuyerNames}})
+                        </span>
+                        <span *ngIf="buyerRole && !warehouseInBoundLead">
+                            Pending By Buyer
+                        </span>
+                    </span>
+                    <span  style="color:red" *ngIf="warehouseInBoundLead && rowData.Status == 2">
+                        Warehouse Rejected
+                    </span>
+                    <span style="color:rgb(96, 148, 18);" *ngIf="rowData.Status == 3">
+                            Approved
+                    </span>
+                    <span style="color:red;" *ngIf="rowData.Status == 4">
+                        Rejected
+                    </span>
+                  </td>
+                  <td colspan="4" *ngIf="!plannerRole">
+                    <div *ngIf="warehouseInBoundLead && rowData.Status == 0">
+                        <p-checkbox [name]="rowData.inboundapprove" id="rowData.inboundapprove" [(ngModel)]="rowData.inboundapprove" binary="true" (click)="rowData.inboundreject=false;onSelectRow(rowData,'approve')"
+                        ></p-checkbox>
+                       <!-- (ngModelChange)="onClickCustomer(rowData)" -->
+                    </div>
+                    <div *ngIf="buyerRole && rowData.Status == 1">
+                        <p-checkbox [name]="rowData.buyerapprove" id="rowData.buyerapprove" [(ngModel)]="rowData.buyerapprove" binary="true" (click)="rowData.buyerreject=false;onSelectRow(rowData,'approve')"
+                        ></p-checkbox>
+                        <!-- (ngModelChange)="onClickCustomer(rowData)" -->
+                    </div>
+                    <!-- <button *ngIf="warehouseInBoundLead && rowData.Status == 0"  class="btn btn-raised  float-right" style="background-color: rgb(96, 148, 18);margin-right: 10px;" (click)="OnWhAccept(rowData)">
+                        <i class="fa fa-check-circle"></i>
+                    </button>
+                    <button *ngIf="warehouseInBoundLead && rowData.Status == 0" class="btn btn-raised  float-right" style="background-color: red; margin-right: 10px;"  (click)="OnWhReject(rowData)">
+                        <i class="fa fa-times-circle"></i>
+                    </button>
+                    <button *ngIf="buyerRole && rowData.Status == 1"  class="btn btn-raised  float-right" style="background-color: rgb(96, 148, 18);margin-right: 10px;" (click)="OnWhAccept(rowData)">
+                        <i class="fa fa-check-circle"></i>
+                    </button>
+                    <button *ngIf="buyerRole && rowData.Status == 1" class="btn btn-raised  float-right" style="background-color: red; margin-right: 10px;"  (click)="OnWhReject(rowData)">
+                        <i class="fa fa-times-circle"></i>
+                    </button>                     -->
+                </td>
+                <td colspan="4" *ngIf="!plannerRole">
+                    <div *ngIf="warehouseInBoundLead && rowData.Status == 0">
+                        <p-checkbox [name]="rowData.inboundreject" id="rowData.inboundreject" [(ngModel)]="rowData.inboundreject" binary="false" (click)="rowData.inboundapprove=false;onSelectRow(rowData,'reject')"
+                        ></p-checkbox>
+                    </div>
+                    <div *ngIf="buyerRole && rowData.Status == 1">
+                        <p-checkbox [name]="rowData.buyerreject" id="rowData.buyerreject" [(ngModel)]="rowData.buyerreject" binary="false" (click)="rowData.buyerapprove=false;onSelectRow(rowData,'reject')"
+                        ></p-checkbox>
+                    </div>
+                </td>
+                <td colspan="2" >
+                    <a style="color: rgb(46, 12, 240);" (click)="onClickHistory(rowData)"><b> History <i class="fa fa-history" ></i></b></a> 
+                  </td>
+                 
+                </tr>
+              </ng-template>
+        </p-table>
+    </div>
+
+
+</div>
+
+<div *ngIf="isImageShow">
+    <p-dialog header="Image" [(visible)]="isImageShow" [blockScroll]="true" appendTo="body"[modal]="true" [positionTop]="0" appendTo="body">
+        <div class="cnt">
+            <!-- {{imgList.length}} -->
+            <p-carousel [value]="imgList" numScroll="1" 
+            [numVisible]="1" [circular]="false" [autoplayInterval]="3000">
+                <!-- <p-header> <h3>Basic</h3> </p-header> -->
+                <ng-template let-col pTemplate="item"> 
+                    <img style="width: 100%;margin-right: 50px;" src="{{baseURL}}{{col}}" /> 
+                </ng-template>
+            </p-carousel>
+            <!-- <table>
+                <tr *ngFor="let room of imgList; let i = index">
+                    <td>{{i+1}}</td>
+                    <td>
+                        <img alt="" src="{{baseURL}}{{room}}" class="img-square" height="500px;" width="500px;" *ngIf="room">                    
+                    </td>
+                    <td>
+                       <a href="{{baseURL}}{{room}} " target="_blank" download>download</a>
+                    </td>
+                </tr>
+            </table>-->
+        </div>
+    </p-dialog>
+  </div>
+
+  
+<div *ngIf="isHistoryOpen">
+    <p-dialog header="History" [(visible)]="isHistoryOpen" [blockScroll]="true" appendTo="body"
+        [style]="{width: '75vw', height:'75vh'}" [modal]="true" [positionTop]="0" appendTo="body">
+        <!-- <div class="cnt">
+            <app-history [entity]="entity" [id]="selectedItemRowData.KKRRRequestId"></app-history>
+        </div> -->
+        <p-table [value]="selectedItemRowData" [paginator]="true" [rows]="20"        
+        [scrollable]="true" scrollHeight="70vh" text-align: center>
+       <ng-template pTemplate="header">
+           <tr>
+             <th colspan="2">RequestId</th>
+             <th colspan="2">ReturnDetailId</th>
+             <th colspan="2">OrderId </th>
+             <th colspan="2">OrderDetailsId</th>
+             <th colspan="2">Status</th>
+             <th colspan="4">Name</th>
+             <th colspan="4">Comment</th>
+             <th colspan="2">CreatedDate</th>
+           </tr>
+         </ng-template>
+         <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+           <tr>
+             <td colspan="2">{{rowData.KKRequestId}}</td>
+             <td colspan="2">{{rowData.KKReturnDetailId}}</td>
+             <td colspan="2">{{rowData.OrderId}}</td>
+             <td colspan="2">{{rowData.OrderDetailsId}}</td>
+             <td colspan="2">{{rowData.Status}}</td>
+             <td colspan="4">{{rowData.Name}}</td>
+             <td colspan="4">{{rowData.Comment}}</td>
+             <td colspan="2">{{rowData.CreatedDate | date : 'medium'}}</td>
+           </tr>
+         </ng-template>
+   </p-table>
+    </p-dialog>
+  </div>
+  
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

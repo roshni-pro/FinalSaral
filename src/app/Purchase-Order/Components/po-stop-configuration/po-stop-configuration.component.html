@@ -1,0 +1,193 @@
+
+<section id="Category" >
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header"><h3 class="m-2"><b>PO Stop Configuration</b></h3></div>
+      
+      <div>
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: auto; margin-left: 25px;" (click) = "addConfiguration()" >
+          <i class="fa fa-plus-circle"></i> Add Configuration
+        </button> 
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: auto;"  (click)="onPageRedirect()" >
+            <i class="fa fa-edit"></i> Change Seasonal Configuration
+          </button>
+      </div>
+    </div>
+  </section>
+  <div class="card">
+    <div class="card-header">
+        <div class="row mt-4 mb-4">
+            <div class="col-md-4">
+                <label for="name"><b style="font-weight: 600;">Warehouse: </b><span style="color:red;font-weight: 400;">
+                    *</span></label><br>
+                    <p-multiSelect [filter]="true"  appendTo="body" [(ngModel)]="WarehouseIds"  [options]="warehouseListData" optionLabel="WarehouseName"   placeholder="Select Warehouse"
+                    optionValue="WarehouseId"></p-multiSelect>
+            </div>
+            <div class="col-md-4">
+                <label for="name"><b style="font-weight: 600;">Sub category: </b><span style="color:red;font-weight: 400;">
+                    *</span></label><br>
+                    <p-multiSelect [filter]="true"  appendTo="body"   [options]="SubCategoryList" [(ngModel)]="SelectedSubCategoryId"  optionLabel="SubcategoryName" placeholder="Select Sub category"
+                    optionValue="SubCategoryId" ></p-multiSelect>
+            </div>
+            <div class="col-md-4">
+                <label for="name"></label><br>
+                <button class="btn btn-primary mr-2 mt-1" (click)="onSearch($event)">Search</button>
+            </div>
+          </div>
+          <p-table [value]="AddPOlist" [(first)]="first"  (onLazyLoad)="load($event)"  [totalRecords]="TotalRecords"
+          [paginator]="true" [rows]="10" [scrollable]="true"  scrollHeight="45vh" text-align: cente
+         [lazy]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Warehouse Name</th>
+                    <th>Sub Category</th>
+                    <th>SubSubCategory</th>
+                    <th>FromDate</th>
+                    <th>ToDate</th>
+                    <th>Stop PO</th>
+                    <th>Action</th>
+                    <th>History</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{item.WarehouseName}}</td>
+                    <td>{{item.SubcategoryName}}</td>
+                    <td>{{item.SubsubcategoryName}}</td>
+                    <td>{{item.FromDate| date: 'dd/MM/yyyy'}}</td>
+                    <td>{{item.ToDate | date: 'dd/MM/yyyy'}}</td>
+                    <td><p-inputSwitch  id="cty" name="cty" [(ngModel)]="item.StopPo" (onChange)="stoppos(item)">                
+                    </p-inputSwitch></td>
+                    <td> <button class="btn btn-primary mr-2 mt-1" (click)="edit(item)">Edit</button></td>
+                    <td> <button class="btn btn-primary mr-2 mt-1" (click)="History(item)">History</button></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td colspan="13" style="text-align: center;">
+                        <br>
+                        <h4><b>No Data Found.</b></h4>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<p-dialog header="Edit PO Stop Configuration" [(visible)]="EditPopup" [resizable]="false"  (onHide)="cancel()" [modal]="true" appendTo="body" positionTop="100"
+[style]="{width: '68vw',height: '42%',left: '310px'}">
+<div class="row">
+    <div class="col-md-4">
+        <label for="name"><b style="font-weight: 500; font-size: large;">Warehouse: </b><b style="font-weight: 600;">{{warehoueseName}} </b></label>
+    </div>
+    <div class="col-md-4">
+        <label for="name"><b style="font-weight: 500;font-size: large;">SubcategoryName: </b><b style="font-weight: 600;">{{subcate}} </b></label>
+    </div>
+    <div class="col-md-4">
+        <label for="name"><b style="font-weight:500;font-size: large;">SubsubcategoryName: </b><b style="font-weight: 600;">{{subsubcate}} </b></label>
+    </div>
+</div>
+<div class="row mt-5 mb-4">
+    <div class="col-md-5">
+        <label for="name"><b style="font-weight: 500;font-size: large;">FromDate: </b></label><br>
+            <p-calendar  name="startDateInput"   [readonlyInput]="true"   [style]="{'width':'111%'}"  [(ngModel)]="firstdate" [showIcon]="true"></p-calendar>
+    </div>
+    <div class="col-md-5">
+        <label for="name"><b style="font-weight: 500;font-size: large;">ToDate: </b></label><br>
+            <p-calendar name="endtDateInput"   [readonlyInput]="true"  [style]="{'width':'111%'}"  [(ngModel)]="endDate"  [showIcon]="true"></p-calendar>
+    </div>
+    <div class="col-md-2">
+        <label for="name"></label><br>
+        <button class="btn btn-primary mr-2 mt-2" (click)="SaveChanges()">Save</button>
+    </div>
+  </div>
+</p-dialog>
+  <p-dialog [(visible)]="ConfigurationPopup" [resizable]="false"  (onHide)="cancel()" [modal]="true" appendTo="body" positionTop="100"
+  [style]="{width: '66vw',height: '58%',left: '310px'}">
+  <p-toast [style]="{width: '20vw'}" position="top-right"></p-toast>
+  <h5 class="m-1 ml-2"><strong><i class="ft-user"></i><b>Add PO Stop Configuration Info</b></strong></h5>
+  <div class="row mt-5">
+    <div class="col-md-4">
+        <label for="name"><b style="font-weight: 600;">Warehouse: </b><span style="color:red;font-weight: 400;">
+            *</span></label><br>
+            <p-multiSelect [filter]="true"  appendTo="body"  [options]="warehouseListData" [(ngModel)]="WarehouseIdss" optionLabel="WarehouseName"   placeholder="Select Warehouse"
+            optionValue="WarehouseId"></p-multiSelect>
+    </div>
+    <div class="col-md-4">
+        <label for="name"><b style="font-weight: 600;">Sub category: </b><span style="color:red;font-weight: 400;">
+            *</span></label><br>   
+            <p-dropdown [filter]="true"  appendTo="body"  [options]="SubCategoryList" [(ngModel)]="SubCategoryIds"  optionLabel="SubcategoryName" placeholder="Select Sub category"
+                    optionValue="SubCategoryId" (onChange)="getSubCatList()" ></p-dropdown>
+    </div>
+    <div class="col-md-4">
+        <label for="name"><b style="font-weight: 600;">SubSubCategory: </b><span style="color:red;font-weight: 400;">
+            *</span></label><br>
+            <p-multiSelect id="Brand" name="Brand" [options]="SubSubCategory" [(ngModel)]="SubsubCategoryids" [panelStyle]="{minWidth:'25em'}"
+            optionLabel="SubsubcategoryName">
+        </p-multiSelect>
+    </div>
+  </div>
+  <div class="row mt-5 mb-4">
+    <div class="col-md-4">
+        <label for="name"><b style="font-weight: 600;">FromDate: </b></label><br>
+            <p-calendar  appendTo="body" [minDate]="cdate" [style]="{'width':'110%'}"  [(ngModel)]="formdate" [showIcon]="true"></p-calendar>
+    </div>
+    <div class="col-md-4">
+        <label for="name"><b style="font-weight: 600;">ToDate: </b></label><br>
+            <p-calendar  appendTo="body" [minDate]="cdate" [style]="{'width':'110%'}" [(ngModel)]="todate"  [showIcon]="true"></p-calendar>
+    </div>
+    <div class="col-md-4">
+        <label for="name"></label><br>
+        <button class="btn btn-primary mr-2 mt-2" (click)="addConfigurationSave()">Add</button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog [(visible)]="Historypopup" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '80%',height: '40%'}">
+
+    <p-table [value]="poListHistory" [scrollable]="true" scrollHeight="45vh">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Stop PO</th>
+                <th>CreatedDate</th>
+                <th>ModifiedDate</th>
+                <th>CreatedBy</th>
+                <th>ModifiedBy</th>
+                <th>FromDate</th>
+                <th>ToDate</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.StopPo}}</td>
+                <td>{{item.CreatedDate | date: 'dd-MM-yyyy'}}</td>
+                <td>{{item.ModifiedDate | date:'dd-MM-yyyy'}}</td>
+                <td>{{item.CreatedBy?item.CreatedBy:'-'}}</td>
+                <td>{{item.ModifiedBy?item.ModifiedBy:'-'}}</td>
+                <td>{{item.FromDate | date:'dd-MM-yyyy'}}</td>
+                <td>{{item.ToDate | date:'dd-MM-yyyy'}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="13" style="text-align: center;">
+                    <br>
+                    <h4><b>No Data Found.</b></h4>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+  
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>

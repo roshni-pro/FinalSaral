@@ -1,0 +1,1609 @@
+<div *ngIf="!orderListTrue">
+    <section style="position: relative;">
+        <div class="my-2 hdrr d-flex justify-content-between">
+            Plan Master
+        </div>
+
+        <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="">Select Warehouse</label>
+                        <p-dropdown [options]="warehouseList" name="warehouse" [(ngModel)]="warehouseId"
+                            (onHide)="getTripList(true)" filter="true">
+                            <ng-template let-item pTemplate="selectedItem">
+                                <span style="vertical-align:middle; margin-left: .5em">{{item.label}}</span>
+                            </ng-template>
+                            <ng-template let-car pTemplate="item">
+                                <div class="ui-helper-clearfix" style="position: relative;min-height: 25px;">
+                                    <div style="margin-top:4px;">{{car.label}}</div>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                        <!-- <div *ngIf="(warehouseId==null)">
+                            <code>Required</code>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="col-sm-3"></div>
+                <div class="col-sm-3"></div>
+                <div class="col-sm-3 pull-right">
+                    <button type="button" class="btn btn-primary vm" name="back" id="back" (click)="back()">
+                        Back
+                    </button>
+                    <button type="button" class="btn btn-primary vm" name="viewmap" id="viewmap"
+                        (click)="showViewMap = true;">
+                        View Map
+                    </button>
+                </div>
+
+
+                <div class="col-md-12" *ngIf="warehouseId">
+                    <div class="row">
+                        <div class="box bx1">
+                            <div class="num-bx">
+                                <div class="txt">Available Vehicles</div>
+                                <div class="num">{{vehicleSummary? vehicleSummary.AvailableVehicleCount: 0}}</div>
+                                <button class="btn bt" type="button"
+                                    (click)="isShowAvailableDetail = true;vehicleReqNo=0;"><b>Check</b></button>
+                            </div>
+                        </div>
+                        <div class="box bx">
+                            <div class="num-bx">
+                                <div class="txt">Extra Vehicle</div>
+                                <div class="num" style="font-size: .9rem;">
+                                    <span *ngIf="vehicleSummary && vehicleSummary.ExtraLoadInKG">
+                                        {{vehicleSummary.OrderCount}} Orders of
+                                        <i class="fa fa-inr" aria-hidden="true"></i> {{vehicleSummary.ExtraLoadAmount |
+                                        number: '1.2-2'}}
+                                        and {{(vehicleSummary.ExtraLoadInKG | number: '1.2-2')+ ' KG'}}
+                                    </span>
+                                    <span *ngIf="!(vehicleSummary && vehicleSummary.ExtraLoadInKG)">N/A</span>
+                                </div>
+                                <button class="btn bt" type="button"
+                                    (click)="isExtraLoadDetail = true"><b>Check</b></button>
+                            </div>
+                        </div>
+                        <div class="box bx">
+                            <div class="num-bx">
+                                <div class="txt">Vehicles Not Utilized</div>
+                                <div class="num">{{vehicleSummary? vehicleSummary.NotUtilizedVehicleCount: 0}}</div>
+                                <button class="btn bt" type="button"
+                                    (click)="isShowAvailableDetail = true;vehicleReqNo=1;"><b>Check</b></button>
+                            </div>
+                        </div>
+                        <div class="box1" (click)="isShowMap = true;">
+                            <div class="txt">Check Planning</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div class="tow"></div>
+                </div>
+            </div>
+            <div class="row">
+
+
+                <div class="col-md-3" *ngIf="tripList">
+                    <div class="form-group">
+                        <label for="">Select Trip</label>
+                        <p-dropdown [options]="tripList" name="trip" [(ngModel)]="tripMasterId" (onHide)="getTrip()"
+                            placeholder="Select a trip"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="col-md-3" *ngIf=" !selectedTrip ">
+
+                    <button class="btn btn-primary mrr-2" (click)="createCustomTrip()">Create A Custom Trip</button>
+                </div>
+                <!-- isSaveAsDraft && (selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired)) -->
+                <div class="col-md-3" *ngIf="selectedTrip">
+                    <label> Selected Date</label>
+                    <!-- <input  type="text" class="form-control"   
+                                name="TripDate"  [(ngModel)]="tripDate"
+                                #TripDate="ngModel"> -->
+                    <p-calendar appendTo="body" [disabled]="selectedTrip.IsFreezed" name="startDateInput"
+                        [(ngModel)]="tripDate" dateFormat="dd/mm/yy" [showIcon]="true" yearRange="2022:2030"
+                        [minDate]="dateMin" [maxDate]="dateMax" [monthNavigator]="true" [yearNavigator]="true"
+                        (onSelect)="OnSelectedChangeDate()" disabled></p-calendar>
+
+                </div>
+                <div class="col-md-3" *ngIf="tripMasterId">
+
+                    <button class="btn btn-primary mrr-2" (click)="checkRoute()">Check Route</button>
+                </div>
+            </div>
+
+            <form class="form" name="tripForm" *ngIf="selectedTrip" #tripForm="ngForm" (ngSubmit)="onSubmit(tripForm)"
+                #tripFormElement>
+
+                <div *ngIf="!showFinalize">
+                    <div class="row">
+                        <div class="col-md-3"
+                            *ngIf="selectedTrip && isSaveAsDraft && selectedTrip.OrderCount>0 &&(selectedTrip.IsFreezed ||selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) ">
+
+                            <div class="form-group">
+                                <label for="">Select Fleet Type</label>
+                                <p-dropdown [options]="fleetList" [(ngModel)]="selectedTrip.FleetType" name="fleetList"
+                                    [disabled]="selectedTrip.IsFreezed" (onChange)="getAgentMappingList()"
+                                    placeholder="Select Vehicle Type"></p-dropdown>
+                                <div *ngIf="(tripForm.submitted && !selectedTrip.FleetType )">
+                                    <!-- (!selectedTrip.IsFreezed && tripForm.submitted && !selectedTrip.ReportingTime)" -->
+                                    <code>Required</code>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft &&  selectedTrip.OrderCount>0 &&(selectedTrip.IsFreezed ||selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) ">
+                            <div class="form-group">
+                                <label for="">Vehicle Reg No. </label>
+                                <p-dropdown [disabled]="selectedTrip.IsFreezed" [options]="VehicleList" name="vehicle"
+                                    filter="true"
+                                    [required]="(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) && !selectedTrip.IsNotLastMileTrip"
+                                    [(ngModel)]="selectedTrip.VehicleId" placeholder="Select Vehicle"
+                                    #vehiclerName="ngModel" (ngModelChange)="onClickIsRemovefiled()">
+                                </p-dropdown>
+                                <div *ngIf="(tripForm.submitted && !vehiclerName.valid)">
+                                    <code>Required</code>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-3" *ngIf="selectedTrip.VehicleId">
+                            <div class="form-group">
+                                <label for="">IsReplacement VehicleNo. </label>
+                                <br>
+                                <!-- <div class="custom-control custom-checkbox custom-control-inline"> -->
+                                <input class="larger" id="inputIsReplacementVehicleNo"
+                                    name="inputIsReplacementVehicleNo" type="checkbox"
+                                    [(ngModel)]="selectedTrip.IsReplacementVehicleNo"
+                                    [disabled]="IsReplacementVehicleNo || selectedTrip.IsFreezed">
+                                <!-- <label for="customCheckboxInline1"></label> -->
+                                <!-- </div> -->
+                                <!-- <div *ngIf="(tripForm.submitted && !customCheckboxInline1.valid)">
+                            <code>Required</code>
+                        </div> -->
+
+                            </div>
+                        </div>
+                        <div class="col-md-3" *ngIf="selectedTrip.VehicleId && selectedTrip.IsReplacementVehicleNo">
+                            <div class="form-group">
+                                <label for="">Replacement VehicleNo. </label>
+                                <input [disabled]="IsReplacementVehicleNoValue"
+                                    [(ngModel)]="selectedTrip.ReplacementVehicleNo"
+                                    pattern="^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$" class="form-control"
+                                    name="replacementVehicleNoInput" required="1" #replacementVehicleNoInput="ngModel">
+                                <code *ngIf="replacementVehicleNoInput.errors?.pattern">
+                            Please Enter valid VehicleNo(MP09CD1137)</code>
+                                <div
+                                    *ngIf="(tripForm.submitted && !replacementVehicleNoInput.valid) && !IsReplacementVehicleNoValue">
+                                    <code>Required</code>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- <div class="col-md-2" *ngIf="selectedTrip &&  selectedTrip.OrderCount>0 && (selectedTrip.FleetType=='SK-Adhoc')  && selectedTrip.IsPickerGenerated ">
+                    <div class="form-group">
+                   <button class=" btn btn-primary mrr-2"  type="button" (click)="addNewAdhocVehicle()" [hidden]="selectedTrip.IsFreezed"  >  Add New Vehicle</button>                    
+                    </div>
+                </div> -->
+
+                    </div>
+
+                    <div class="row">
+
+                        <!-- <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="">Agent Name/Transport</label>
+                            <p-dropdown [readonly]="selectedTrip.IsFreezed || selectedTrip.IsPickerGenerated" [options]="agentList" required name="agent"
+                                [(ngModel)]="selectedTrip.AgentId" (onHide)="getAgentMappingListUI()"
+                                placeholder="Select Agent" #agentName="ngModel">
+                            </p-dropdown>
+                            <div *ngIf="(tripForm.submitted && !agentName.valid)">
+                                <code>Required</code>
+                            </div>
+                        </div>
+                    </div> -->
+
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">Delivery boy name</label>
+                                <!-- selectedTrip.IsFreezed || selectedTrip.IsPickerGenerated -->
+                                <p-dropdown [readonly]="selectedTrip.IsFreezed || selectedTrip.IsPickerGenerated" [options]="dboyList" name="dboy"
+                                    [(ngModel)]="selectedTrip.DboyId" [filter]="true" placeholder="Select Dboy"
+                                    #dboyName="ngModel">
+                                </p-dropdown>
+                                <div *ngIf="(tripForm.submitted && !dboyName.valid)">
+                                    <code>Required</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft && (selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired)) && selectedTrip.OrderCount>0">
+                            <div class="form-group">
+                                <label for="">Driver Name</label>
+                                <p-dropdown disabled [options]="driverList" name="driver"
+                                    [filter]="true"
+                                    
+                                    [(ngModel)]="selectedTrip.DriverId" placeholder="Select Driver"
+                                    #driverName="ngModel" disabled>
+                                </p-dropdown>
+                                <div *ngIf="(tripForm.submitted && !driverName.valid)">
+                                    <code>Required</code>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- <div class="col-md-3" *ngIf="isSaveAsDraft && ( selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired))">
+                        <div class="form-group">
+                            <label for="">Starting KM </label>
+                            <input [disabled]="selectedTrip.IsFreezed" type="number" class="form-control"
+                                name="readingInKMInput" [required]="(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired)" [(ngModel)]="selectedTrip.StartKm"
+                                #readingInKM="ngModel">
+    
+                            <div *ngIf="(tripForm.submitted && !readingInKM.valid)">
+                                <code>Required</code>
+                            </div>
+                        </div>
+                    </div> -->
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft && (selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired))&&  selectedTrip.OrderCount>0">
+                            <div class="form-group">
+                                <label for="">Report Time </label>
+                                <div class="inpt" *ngIf="selectedTrip.IsFreezed">{{selectedTrip.ReportingTime| date :
+                                    'medium'}}
+                                </div>
+
+                                <p-calendar name="reportTimeInput" *ngIf="!selectedTrip.IsFreezed"
+                                    [(ngModel)]="selectedTrip.ReportingTime"
+                                    [showTime]="true" #reportTimeNew="ngModel" disabled></p-calendar>
+                                <div
+                                    *ngIf="(!selectedTrip.IsFreezed && tripForm.submitted && !selectedTrip.ReportingTime)">
+                                    <code>Required</code>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft && ( selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired)) &&  selectedTrip.OrderCount>0 ">
+                            <div class="form-group">
+                                <label for="">Late Reporting</label>
+                                <p-calendar disabled [readonlyInput]="true"
+                                    name="lteReportingInput" dataType="string" [showIcon]="true"
+                                    [(ngModel)]="lateReportingTimeString" [timeOnly]="true">
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-3"
+                            *ngIf="selectedTrip && isSaveAsDraft && selectedTrip.OrderCount>0 &&(selectedTrip.IsFreezed ||selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) ">
+                            <label for="">Day wise Fixed Cost</label>
+                            <input class="form-control" id="inputVehicleFare" name="inputVehicleFare" type="number"
+                                [(ngModel)]="selectedTrip.VehicleFare" disabled>
+
+                        </div>
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft && ( selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired)) &&  selectedTrip.OrderCount>0">
+                            <div class="form-group">
+                                <label for="">Penalty Charges </label>
+                                <input disabled [(ngModel)]="selectedTrip.PenaltyCharge"
+                                    class="form-control" type="number" name="penaltyChargeInput">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3" *ngIf="selectedTrip.IsFreezed">
+                            <div class="form-group">
+                                <label for="">Vehicle Type</label>
+                                <div class="inpt">{{selectedTrip.VehicleType}}</div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="row btx">
+                        <div class="col-3">
+                            <div class="c25">
+                                <p class="p1">{{selectedTrip.VehicleCapacityInKg}}</p>
+                                <p class="p2">Vehicle Capacity (KGs)</p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="c25">
+                                <p class="p1">{{selectedTrip.TotalWeight |number: '1.2-2'}}</p>
+                                <p class="p2">Utilized Capacity(KGs)</p>
+                            </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="c25">
+                                <p class="p1"><i class="fa fa-inr" aria-hidden="true"></i>
+                                    {{selectedTrip.TotalAmount |number: '1.2-2'}}</p>
+                                <p class="p2">
+                                    Total Amount (INR)
+
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="c25">
+                                <p class="p1">{{selectedTrip.CustomerCount}}</p>
+                                <p class="p2">No. of Touch Points</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row btx">
+                        <div class="col-3">
+                            <div class="c25">
+                                <p class="p1">{{selectedTrip.TotalDistanceInMeter/1000 |number: '1.2-2'}}</p>
+                                <p class="p2">Total Distance(KM)</p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="c25">
+                                <p class="p1">{{getHr()}}Hr : {{selectedTrip.TotalTimeInMins%60}}Min</p>
+                                <p class="p2">Expected Time to Complete (Hr:Min)</p>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="c25">
+                                <p class="p1">{{selectedTrip.OrderCount}}</p>
+                                <p class="p2">
+                                    No. of Orders
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-3 ">
+                            <div class="c25 c26" (click)="onUpdate()">
+                                <p class="p3">Check/Update Orders</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row btx">
+                        <div class="col-3" *ngIf="selectedTrip.PickerIdList">
+                            <div class="c25">
+                                <p class="p1">{{selectedTrip.PickerIdList}}</p>
+                                <p class="p2">Picker Id</p>
+                            </div>
+                        </div>
+                        <div class="col-3"
+                            *ngIf="selectedTrip.DeliveryIssuanceIdList && selectedTrip.DeliveryIssuanceIdList.length>0">
+                            <div class="c25">
+                                <p class="p1">
+                                    <span *ngFor="let asgn of selectedTrip.DeliveryIssuanceIdList; let i=index;">{{
+                                        i>0?',': ''}}{{asgn}}</span>
+                                </p>
+                                <p class="p2">Assignments</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3">
+                            <span style="color: red;"
+                                *ngIf="selectedTrip.IsFreezed && !selectedTrip.IsVisibleToDboy">Picker
+                                not Generated</span>
+                        </div>
+                        <div class="col-9">
+                            <!-- <button
+                                *ngIf="!selectedTrip.IsFreezed && (selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) && selectedTrip.OrderCount>0 "
+                                (click)="freezeTrip(tripForm)"
+                                class="btn btn-raised btn-raised btn-success mt pull-right"
+                                [disabled]="AddNewPickerFinalized" type="button">
+                                Finalize Trip
+                            </button> -->
+                            <button
+                                *ngIf="!selectedTrip.IsFreezed && (selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) && selectedTrip.OrderCount>0 "
+                                (click)="opeFreezingTripPopup(tripForm)"
+                                class="btn btn-raised btn-raised btn-success mt pull-right"
+                                [disabled]="AddNewPickerFinalized" type="button">
+                                Finalize Trip
+                            </button>
+                            <button
+                                *ngIf="!selectedTrip.IsFreezed && !selectedTrip.IsPickerGenerated && selectedTrip.IsPickerRequired "
+                                (click)="onCreatePicker(tripForm)"
+                                class="btn btn-raised btn-raised btn-warning mt pull-right" type="button">
+                                Create Picker
+                            </button>
+
+                            <button *ngIf="AddNewPicker && !AddNewPickerFinalized"
+                                class="lft-1 btn btn-raised btn-raised btn-success mt pull-right" (click)="onUpdate()"
+                                type="button">
+                                Add New Picker
+
+                            </button>
+
+                            <button *ngIf="AddNewPickerFinalized " (click)="onCreatePicker(tripForm)"
+                                class="lft-1 btn btn-raised btn-raised btn-success mt pull-right" type="button">
+                                Finalize New Picker
+
+                            </button>
+
+
+
+                            <button *ngIf="!selectedTrip.IsFreezed && selectedTrip.OrderCount>0"
+                                class="lft-1 btn btn-raised btn-raised btn-success mt pull-right" type="submit">
+                                Save As Draft
+                            </button>
+
+
+                            <button *ngIf="selectedTrip.IsFreezed && selectedTrip.IsVisibleToDboy"
+                                class="lft-1 btn btn-raised btn-raised btn-success mt pull-right" type="button"
+                                (click)="downloadManifest()">
+                                Download Shipping Manifest
+                            </button>
+                            <button *ngIf="selectedTrip.IsFreezed && selectedTrip.IsVisibleToDboy"
+                                class="lft-1 btn btn-raised btn-raised btn-success mt pull-right" type="button"
+                                (click)="printProductList()">
+                                Print Product List
+                            </button>
+                            <form class="ovelFieldForm form" name="form" #deliveryboy="ngForm">
+                                <button *ngIf="selectedTrip.IsFreezed && selectedTrip.IsVisibleToDboy"
+                                    class="lft-1 btn btn-raised btn-raised btn-success mt pull-right" type="button"
+                                    (click)="printAllInvoice();">
+                                    Print All Invoice
+                                </button>
+                                <!-- <button *ngIf="selectedTrip.IsFreezed"
+                            class="lft-1 btn btn-raised btn-raised btn-success mt pull-right" type="button"
+                            (click)="printAllPendingAssignment();">
+                            Print All Assignment EwayBill
+                        </button> -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="showFinalize">
+                    <h1> ABCCC </h1>
+                </div>
+            </form>
+        </div>
+
+        <p-toast position="bottom-right" appendTo="body" key="main" appendTo="body"></p-toast>
+
+    </section>
+
+    <div *ngIf="isShowOrderDetail">
+
+        <p-dialog header="Order Details" [(visible)]="isShowOrderDetail" [blockScroll]="true" appendTo="body"
+            [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0"
+            appendTo="body">
+            <div class="cnt">
+                <div class="info-box">
+                    <div>Total Orders : {{(filterActiveOrder(orderList)).length}}</div>
+                    <div>
+                        <button (click)="displaySideBar=true" class="btn btn-primary">View Details</button>
+                        <br>
+                        <button (click)="getODDetailsList(null)" class="btn btn-primary">Product List</button>
+                    </div>
+                    <!-- <div>
+                    </div> -->
+
+                </div>
+                <div>
+                    <p-sidebar appendTo="body" [style]="{width:'90vw'}" [(visible)]="displaySideBar" position="left">
+                        <div class="cnt-1">
+                            <table class="table table-striped" id="tb">
+                                <tr>
+                                    <th></th>
+                                    <th>#</th>
+                                    <th>OrderId</th>
+                                    <th>Cust Type</th>
+                                    <th>Cluster Name</th>
+                                    <!-- <th>Customer Name </th> -->
+                                    <th>Shop Name </th>
+                                    <th class="addr">Address</th>
+                                    <th>Amount </th>
+                                    <th>Unload Time </th>
+                                    <th>Weight(in KG)</th>
+                                    <th>Order Date</th>
+                                    <th>Status</th>
+                                    <th>Picker Id</th>
+                                </tr>
+                                <tr [ngClass]="{'man': order.IsManuallyAdded, 'nt-man': !order.IsManuallyAdded}"
+                                    *ngFor="let order of filterActiveOrder(orderList); let i =index;">
+                                    <td>
+                                        <a (click)="uncheckSelectedOrder(order)">
+                                            <i *ngIf="order.IsActive" class="fa fa-check-square-o fa-lg"
+                                                aria-hidden="true"></i>
+                                            <i *ngIf="!order.IsActive" class="fa fa-square-o  fa-lg"
+                                                aria-hidden="true"></i>
+                                        </a>
+                                    </td>
+                                    <td>{{i+1}}</td>
+                                    <td>
+                                        {{order.OrderId}}
+
+                                        <!-- <strong><a href="javascript:void(0);" (click)="getODDetailsList(order)">{{order.OrderId}}</a></strong> -->
+                                        {{order.ReDispatchCount}}
+                                    </td>
+                                    <th>{{order.CustomerType}}
+                                        <br><span style="color: red;" *ngIf="order.PrioritizedDate != null">Priority
+                                            order</span>
+                                    </th>
+                                    <th>{{order.ClusterName}}</th>
+                                    <!-- <td>{{order.CustomerName}}</td> -->
+                                    <td>{{order.ShopName}}</td>
+                                    <td class="addr">{{order.ShippingAddress}}</td>
+                                    <td>{{order.Amount |number: '1.2-2'}}</td>
+                                    <td>{{order.TimeInMins}} Mins</td>
+                                    <td>{{order.WeightInKg |number: '1.2-2'}}</td>
+                                    <td>{{order.OrderDate| date}}</td>
+                                    <td>{{order.Status}}</td>
+                                    <td>{{order.OrderPickerMasterId}}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </p-sidebar>
+                </div>
+                <div>
+                    <p-sidebar appendTo="body" [style]="{width:'60vw'}" [(visible)]="ODDetailsListDialog"
+                        position="right" [baseZIndex]="10000">
+                        <div class="cnt-1">
+                            <table class="table table-striped" id="tb">
+                                <tr>
+                                    <th>Order Id</th>
+                                    <th>Item Name</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Amount</th>
+                                </tr>
+                                <tr *ngFor="let order of OrderListDetails; let i =index;">
+                                    <td>{{order.OrderIds}}</td>
+                                    <td>{{order.itemname}}</td>
+                                    <td>{{order.qty}}</td>
+                                    <td>{{order.UnitPrice}}</td>
+                                    <td>{{order.TotalAmt}}</td>
+                                </tr>
+                            </table>
+                            <br>
+                            <h4> <strong> Grand total : {{totalAmountOfOrder}}</strong> </h4>
+                        </div>
+                    </p-sidebar>
+                </div>
+
+                <div *ngIf="(!selectedTrip.IsFreezed && !selectedTrip.IsPickerGenerated) || AddNewPicker">
+                    <div class="row">
+                        <div class="col-3">
+                            <input name="searchParam" class="form-control" [(ngModel)]="orderPager.Keyword">
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-primary" (click)="searchAllOrder()">Search</button>
+                            &nbsp;&nbsp;
+                            <button class="btn btn-primary" (click)="resetAllOrder()">Reset</button>
+                        </div>
+                    </div>
+                    <p-table [value]="allOrderList" [lazy]="true" (onLazyLoad)="loadOrderLazy($event)"
+                        [paginator]="true" [rows]="orderPager.Take" [totalRecords]="rowCount" [loading]="loading">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th></th>
+                                <th>SkCode</th>
+                                <th>Cust Type</th>
+                                <th>OrderId </th>
+                                <th>OrderType</th>
+                                <th>Cluster Name </th>
+                                <!-- <th>Customer Name </th> -->
+                                <th>Shop Name </th>
+                                <th class="addr">Address</th>
+                                <th>Amount </th>
+                                <th>Unload Time </th>
+                                <th>Weight(in KG) </th>
+                                <th>Order Date</th>
+                                <th>ETA Date</th>
+                                <th>ExpectedRtdDate</th>
+                                <th>Status</th>
+                                <th>Reson</th>
+
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-order>
+                            <tr [ngClass]="{'man': order.IsManuallyAdded, 'nt-man': !order.IsManuallyAdded}">
+                                <td>
+                                    <!-- *ngIf="order.IsAddableDueToCustomerLocation"  -->
+                                    <a (click)="checkUncheck(order)">
+                                        <i *ngIf="order.IsActive" class="fa fa-check-square-o fa-lg"
+                                            aria-hidden="true"></i>
+                                        <i *ngIf="!order.IsActive" class="fa fa-square-o  fa-lg" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                                <td>{{order.Skcode}}
+                                    <div *ngIf="order.CRMTags != null">(Tag : {{order.CRMTags}})</div>
+                                </td>
+                                <td>{{order.CustomerType}} <br><span style="color: red;"
+                                        *ngIf="order.PrioritizedDate != null">Priority order</span> </td>
+                                <td>
+                                    <!-- <strong><a href="javascript:void(0);" (click)="navToOrderMaster(order)">{{order.OrderId}}</a></strong> -->
+                                    <!-- {{order.OrderId}} -->
+                                    <strong><a href="javascript:void(0);"
+                                            (click)="getODDetailsList(order.OrderId)">{{order.OrderId}}</a></strong>
+                                    {{order.ReDispatchCount}}
+                                </td>
+                                <!-- <td>{{order.CustomerName}}</td> -->
+                                <td>{{order.OrderType}}</td>
+                                <td>{{order.ClusterName}}</td>
+                                <td>{{order.ShopName}}</td>
+                                <td class="addr">{{order.ShippingAddress}}</td>
+                                <td>{{order.Amount |number: '1.2-2'}}</td>
+                                <td>{{order.TimeInMins}} Mins</td>
+                                <td>{{order.WeightInKg |number: '1.2-2'}}</td>
+                                <td>{{order.OrderDate | date}}</td>
+                                <td>{{order.ETADate | date}}</td>
+                                <td>{{order.ExpectedRtdDate | date}}</td>
+                                <td>{{order.Status}}</td>
+                                <td>{{order.IsAddableDueToCustomerLocation? '': 'Location issue'}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+
+                <!-- 
+                <div *ngIf="AddNewPicker">
+                    <div class="row">
+                        <div class="col-3">
+                            <input name="searchParam" class="form-control" [(ngModel)]="orderPager.Keyword">
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-primary" (click)="searchAllOrder()">Search</button>
+                            &nbsp;&nbsp;
+                            <button class="btn btn-primary" (click)="resetAllOrder()">Reset</button>
+                        </div>
+                    </div>
+                    <p-table [value]="allOrderList" [lazy]="true" (onLazyLoad)="loadOrderLazy($event)" [paginator]="true"
+                        [rows]="orderPager.Take" [totalRecords]="rowCount" [loading]="loading">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th></th>
+                                <th>SkCode</th>
+                                <th>OrderId </th>
+                                <th>Cluster Name </th>
+                                <th>Shop Name </th>
+                                <th class="addr">Address</th>
+                                <th>Amount </th>
+                                <th>Unload Time </th>
+                                <th>Weight(in KG) </th>
+                                <th>Order Date</th>
+                                <th>Status</th>
+                                <th>Reson</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-order>
+                            <tr [ngClass]="{'man': order.IsManuallyAdded, 'nt-man': !order.IsManuallyAdded}">
+                                <td>
+                                    <a (click)="checkUncheckAddNewPicker(order)">
+                                        <i *ngIf="order.IsActive" class="fa fa-check-square-o fa-lg" aria-hidden="true"></i>
+                                        <i *ngIf="!order.IsActive" class="fa fa-square-o  fa-lg" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                                <td>{{order.Skcode}}</td>
+                                <td>
+                                    <strong><a href="javascript:void(0);" (click)="getODDetailsList(order.OrderId)">{{order.OrderId}}</a></strong>
+                                    {{order.ReDispatchCount}}</td>
+                                <td>{{order.ClusterName}}</td>
+                                <td>{{order.ShopName}}</td>
+                                <td class="addr">{{order.ShippingAddress}}</td>
+                                <td>{{order.Amount |number: '1.2-2'}}</td>
+                                <td>{{order.TimeInMins}} Mins</td>
+                                <td>{{order.WeightInKg |number: '1.2-2'}}</td>
+                                <td>{{order.OrderDate | date}}</td>
+                                <td>{{order.Status}}</td>
+                                <td>{{order.IsAddableDueToCustomerLocation? '': 'Location issue'}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div> -->
+
+
+
+                <div style="text-align: center;" *ngIf="selectedTrip.IsFreezed">
+                    <span>Trip is already freezed no further order changes can be possible!</span>
+                </div>
+                <div style="text-align: center;"
+                    *ngIf="!((!selectedTrip.IsFreezed && !selectedTrip.IsPickerGenerated) || AddNewPicker)">
+                    <span>Picker is already created no further order changes can be possible!</span>
+                </div>
+            </div>
+
+            <p-footer>
+                <button *ngIf="(!selectedTrip.IsFreezed && !selectedTrip.IsPickerGenerated) || AddNewPicker"
+                    (click)="updateOrder()" class="btn btn-primary">
+                    Update Orders
+                </button>
+
+                <button *ngIf="!selectedTrip.IsFreezed" (click)="discardOrderChanges()"
+                    class="btn btn-warning">Discard</button>
+                <button *ngIf="selectedTrip.IsFreezed" (click)="isShowOrderDetail = false"
+                    class="btn btn-warning">Close</button>
+            </p-footer>
+            <p-toast key="order-dialog" appendTo="body"></p-toast>
+        </p-dialog>
+
+    </div>
+
+    <div *ngIf="isShowMap">
+        <p-dialog header="Check Planning" [(visible)]="isShowMap" [blockScroll]="true" appendTo="body"
+            [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0"
+            appendTo="body">
+            <div class="cnt">
+                <app-planner-map [warehouseId]="warehouseId"></app-planner-map>
+            </div>
+        </p-dialog>
+    </div>
+
+    <div *ngIf="showViewMap">
+        <p-dialog header="View Map" [(visible)]="showViewMap" [blockScroll]="true" appendTo="body"
+            [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0"
+            appendTo="body">
+            <div class="cnt">
+                <app-cluster-map [warehouseId]="warehouseId"></app-cluster-map>
+            </div>
+        </p-dialog>
+    </div>
+
+    <div *ngIf="isShowAvailableDetail">
+        <p-dialog header="Vehicle Detail" [(visible)]="isShowAvailableDetail" [blockScroll]="true" appendTo="body"
+            [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0"
+            appendTo="body">
+            <div class="cnt">
+                <app-vehicle-detail [warehouseId]="warehouseId" [vehicleReqNo]="vehicleReqNo"></app-vehicle-detail>
+            </div>
+        </p-dialog>
+    </div>
+
+    <div *ngIf="isExtraLoadDetail">
+        <p-dialog header="Extra Load" [(visible)]="isExtraLoadDetail" [blockScroll]="true" appendTo="body"
+            [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0"
+            appendTo="body">
+            <div class="cnt">
+                <app-vehicle-extraload-detail [warehouseId]="warehouseId"></app-vehicle-extraload-detail>
+            </div>
+        </p-dialog>
+    </div>
+
+
+
+    <div *ngIf="isShowCreateCustomTripDialog">
+        <p-dialog header="Create a custom trip" [(visible)]="isShowCreateCustomTripDialog" [blockScroll]="true"
+            appendTo="body" [style]="{width: '40vw'}" [modal]="true" [positionTop]="20">
+            <form class="form" name="customTripForm" #customTripForm="ngForm"
+                (ngSubmit)="saveCustomTrip(customTripForm)" #customTripFormElement>
+                <div class="row ss">
+
+                    <div class="col-md-12">
+                        <h6><b>Select Customer Type For Trip Generation</b></h6>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="radio">
+                                        <p-radioButton name="City" value="City" [(ngModel)]="tripType" inputId="City"
+                                            label="City Orders" (click)="OpenTrip(tripType)"></p-radioButton>
+                                        <!-- <label for="City" class="sp_label"><b> City Orders</b></label> -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="radio" (click)="OpenTrip(tripType)">
+                                        <p-radioButton name="City" value="SKP Owner" [(ngModel)]="tripType"
+                                            inputId="SKP" label="SKP Orders"></p-radioButton>
+                                        <!-- <label for="SKP" class="sp_label"> <b> SKP Orders</b></label> -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="radio" (click)="OpenTrip(tripType)">
+                                        <p-radioButton name="City" value="KPP" [(ngModel)]="tripType" inputId="KPP"
+                                            label="KPP Orders"></p-radioButton>
+                                        <!-- <label for="KPP" class="sp_label"> <b> KPP Orders</b></label> -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="radio" (click)="OpenTrip(tripType)">
+                                        <p-radioButton name="City" value="Damage" [(ngModel)]="tripType"
+                                            inputId="Damage" label=" Damage Orders"></p-radioButton>
+                                        <!-- <label for="Damage" class="sp_label"> <b> Damage Expiry Orders</b></label> -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="radio" (click)="OpenTrip(tripType)">
+                                        <p-radioButton name="City" value="NonSellable" [(ngModel)]="tripType"
+                                            inputId="NonSellable" label="Non sellable Orders"></p-radioButton>
+                                        <!-- <label for="Damage" class="sp_label"> <b> Damage Expiry Orders</b></label> -->
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6"></div>
+                                <h6 *ngIf="isInValid && selectedTripType == null">
+                                    <code>Customer Type For Trip Generation Is Required.</code>
+                                </h6>
+                                <div class="col-md-6" *ngIf="selectedTripType != null && isOpen">
+                                    <div class="form-group">
+                                        <label for="">{{tripTypeText}}</label>
+                                        <!-- <input type="text" name="skcodeSearch" id="skcodeSearch" class="form-control" [(ngModel)]="Skcode" placeholder="Enter Skcode"> -->
+                                        <select id="custIdSearch" name="custIdSearch" class="form-control"
+                                            [(ngModel)]="CustomerId">
+                                            <option [ngValue]="null" disabled>--Select {{tripTypeText}}--</option>
+                                            <option *ngFor="let sk of skcodeList" [ngValue]="sk.CustomerId">
+                                                {{ sk.Skcode }}
+                                            </option>
+                                        </select>
+                                        <div *ngIf="isInValid && (!CustomerId || CustomerId.length == 0)">
+                                            <code>Skcode is Required.</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" *ngIf="selectedTripType != null">
+                                    <div class="form-group">
+                                        <label for="">Select Trip Date</label>
+                                        <p-calendar name="tripDate" appendTo="body" [showIcon]="true"
+                                            [(ngModel)]="customTrip.TripDate" [minDate]="minDate" [maxDate]="maxDate"
+                                            [readonlyInput]="true" inputId="range" required #tripDate="ngModel">
+                                        </p-calendar>
+                                        <!-- (ngModelChange)="OnChangeDate()" -->
+                                        <div *ngIf="(customTripForm.submitted && !tripDate.valid)">
+                                            <code>Trip Date Required</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="col-md-6" *ngIf="selectedTripType != null && customTrip.TripDate != null">
+                                        <div class="form-group">
+                                            <label for="">Vehicle Reg No.</label>
+                                            <p-dropdown appendTo="body" [options]="VehicleList" name="vehicle" required
+                                                [(ngModel)]="customTrip.VehicleMasterId" placeholder="Select Vehicle"
+                                                #vehiclerName1="ngModel"></p-dropdown>
+                                            <div *ngIf="(customTripForm.submitted && !vehiclerName1.valid)">
+                                                <code>Required</code>
+                                            </div>
+                    
+                                        </div>
+                                    </div>                            -->
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- <div class="col-md-6">
+                        <div class="form-group">
+                            <div>
+                                <h5><b>Select Customer Type For Trip Generation</b></h5>                        
+                                    <div class="radio">
+                                        <p-radioButton name="City" value="City" [(ngModel)]="city" (click)="OpenTrip(city)"   inputId="City"></p-radioButton>
+                                        <label for="City" style="padding: 8px;"><b> City Orders</b></label>
+                                    </div>
+                                    <div class="radio">
+                                        <p-radioButton name="City" value="SKP Owner" [(ngModel)]="SKP"  (click)="OpenTrip(SKP)" inputId="SKP"></p-radioButton>
+                                        <label for="SKP" style="padding: 8px;"> <b> SKP Orders</b></label>
+                                    </div>
+                                    <div class="radio">
+                                        <p-radioButton name="City" value="KPP" [(ngModel)]="KPP" (click)="OpenTrip(KPP)"   inputId="KPP"></p-radioButton>
+                                        <label for="KPP" style="padding: 8px;"> <b> KPP Orders</b></label>
+                                    </div>
+                                    <div class="radio">
+                                        <p-radioButton name="City" value="Damage" [(ngModel)]="Damage"  (click)="OpenTrip(Damage)"  inputId="Damage"></p-radioButton>
+                                        <label for="Damage" style="padding: 8px;"> <b> Damage Expiry Orders</b></label>
+                                    </div>
+                    
+                                  </div>
+                        </div>
+                    </div> -->
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary pull-right txt-cl">Add Trip</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </p-dialog>
+
+    </div>
+    <p-dialog [(visible)]="openPopup" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+        [style]="{width: '83%',height: '90%', overflow: 'auto', top: '30px'}">
+        <p-header>
+            <div>
+                <h2
+                    style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                    PRODUCTS ASSIGNMENT VIEW DETAILS</h2>
+            </div>
+        </p-header>
+
+        <div class="position-relative" style="padding:0px 15px;">
+
+            <form class="ovelFieldForm form" name="form" #deliveryboy="ngForm">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-raised btn-raised btn-primary"
+                            style="margin:7px 0px 0px 7px; float: right;" printSectionId="print-section"
+                            *ngIf="openPopup" ngxPrint>Print</button>
+                        <button class="btn btn-raised btn-raised btn-primary"
+                            style="margin:7px 0px 0px 7px; float: right;" (click)="assignmentDetail()"
+                            *ngIf="openPopup">Assignment Detail</button>
+                    </div>
+                </div>
+            </form>
+            <form class="ovelFieldForm form form-inline" name="form" #orderForm="ngForm"
+                style="position: relative;z-index: 9;">
+                <div id="print-section" style="padding:10px 15px; position: relative;z-index: 9;">
+                    <div class="waterMark"
+                        style="width: 50%;position: absolute;top: 41%;left: 45%;transform: skew(23deg, -36deg);height: 390px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+                        <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+                    </div>
+                    <div style="position: absolute; right: 15px; margin-top: 40px;">
+                        <span style="float:right" *ngIf="AssignmentBarcodeImage != null">
+                            <img src="data:image/png;base64,{{AssignmentBarcodeImage}}" style="width:60%;float: right;">
+                        </span><br /><br />
+                    </div>
+                    <div class="row" style="border-bottom: 1px solid #eee;">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div style="display: inline-block;width: 20%;vertical-align: top; font-weight: 600;">
+                                    <b>WarehouseName </b><br>
+                                    <b>Assignment Id </b><br>
+                                    <b>DboyName </b><br>
+                                    <b>Total Price of Items</b> <br>
+
+                                    <b>CreatedDate</b>
+                                </div>
+                                <div style="display: inline-block;width:10%;vertical-align: top; font-weight: 600;">
+                                    <b>:</b><br>
+                                    <b>:</b><br>
+                                    <b>: </b><br>
+                                    <b>:</b><br>
+
+                                    <b>:</b><br>
+                                </div>
+                                <div style="display: inline-block;width: 25%;vertical-align: top;">
+                                    {{WarehouseName}} <br />
+                                    {{DeliveryIssuanceId}} <br />
+                                    {{DboyName}} <br />
+                                    {{TotalAssignmentAmount}} <br />
+
+                                    {{CreatedDate| date :"medium"}} <br />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 style="text-align: center; margin-top:40px ;" *ngIf="list"><b><u>New Order Products List
+                            </u></b><strong><u>(Assignment No:- {{NewDeliveryIssuanceId}})</u></strong></h2>
+                    <div *ngIf="list">
+                        <!-- <h2 style="text-align: center;">Generated Picker List </h2> -->
+                        <p-table #dt [value]="ItemWiseList" width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <!-- <p-table #dt [value]="datalist" [scrollable]="true" scrollHeight="37vh" text-align: center  width="100%" border="0" cellspacing="0" cellpadding="0" > -->
+                            <ng-template pTemplate="header" style="width:100%;">
+                                <tr>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                        S.No</th>
+                                    <th
+                                        style="padding:5px 28px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important">
+                                        Product Name </th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        QTY</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Batch Code</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Boxes and Piece</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Orders and QTYs</th>
+                                </tr>
+
+
+
+                            </ng-template>
+                            <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                                <tr
+                                    [ngStyle]="(ir.UnitPrice <= 0 )?{'background-color': 'lightgreen'}:{'background-color':'white'}">
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                        {{i +1}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+
+                                        {{ir.SellingUnitName}}
+                                        <span *ngIf="ir.UnitPrice <= 0">(Free Item)</span>
+                                        <span *ngIf="ir.IsFreeItem" style="color:red">
+                                            (FreeItem)
+                                        </span>
+                                    </td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.qty}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.BatchCode ? ir.BatchCode : 'N/A'}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.Boxes}} : Boxes
+                                        <span *ngIf="ir.piece > 0">& {{ir.piece}} : piece </span>
+                                    </td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.orderIds}}</td>
+
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <h2 style="text-align: center;margin-top:40px ;" *ngIf="Relist"><b><u>Redispatched Order Products
+                                List </u></b><strong><u>(Assignment No:-
+                                {{RedispatchedDeliveryIssuanceId}})</u></strong></h2>
+                    <div *ngIf="Relist">
+                        <!-- <h2 style="text-align: center;">Generated Picker List </h2> -->
+                        <p-table #dt [value]="ReDispatchItemlist" width="100%" border="0" cellspacing="0"
+                            cellpadding="0">
+                            <!-- <p-table #dt [value]="datalist" [scrollable]="true" scrollHeight="37vh" text-align: center  width="100%" border="0" cellspacing="0" cellpadding="0" > -->
+                            <ng-template pTemplate="header" style="width:100%;">
+                                <tr>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                        S.No</th>
+                                    <th
+                                        style="padding:5px 28px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important">
+                                        Product Name </th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        QTY</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Boxes and Piece</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Orders and QTYs</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                                <tr
+                                    [ngStyle]="(ir.UnitPrice <= 0 )?{'background-color': 'lightgreen'}:{'background-color':'white'}">
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                        {{i + 1}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+
+                                        {{ir.SellingUnitName}} <span *ngIf="ir.UnitPrice <= 0">(Free Item)</span>
+                                    </td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.qty}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.Boxes}} : Boxes
+                                        <span *ngIf="ir.piece > 0">& {{ir.piece}} : piece </span>
+                                    </td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.orderIds}}</td>
+
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    <!-- by simran -->
+                    <h2 style="text-align: center;margin-top:40px ;" *ngIf="IsClearance"><b><u>Clearance Order Products
+                                List </u></b><strong><u>(Assignment No:-
+                                {{RedispatchedDeliveryIssuanceId}})</u></strong></h2>
+                    <div *ngIf="IsClearance">
+                        <!-- <h2 style="text-align: center;">Generated Picker List </h2> -->
+                        <p-table #dt [value]="ClearanceOrderList" width="100%" border="0" cellspacing="0"
+                            cellpadding="0">
+                            <!-- <p-table #dt [value]="datalist" [scrollable]="true" scrollHeight="37vh" text-align: center  width="100%" border="0" cellspacing="0" cellpadding="0" > -->
+                            <ng-template pTemplate="header" style="width:100%;">
+                                <tr>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                        S.No</th>
+                                    <th
+                                        style="padding:5px 28px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important">
+                                        Product Name </th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        QTY</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Boxes and Piece</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Orders and QTYs</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Type</th>
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                                <tr
+                                    [ngStyle]="(ir.UnitPrice <= 0 )?{'background-color': 'lightgreen'}:{'background-color':'white'}">
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                        {{i + 1}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+
+                                        {{ir.SellingUnitName}} <span *ngIf="ir.UnitPrice <= 0">(Free Item)</span>
+                                    </td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.qty}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.Boxes}} : Boxes
+                                        <span *ngIf="ir.piece > 0">& {{ir.piece}} : piece </span>
+                                    </td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.orderIds}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.Type}}</td>
+
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+
+                    <h6 class="noshowpage">*This is a computer-generated document. No signature is required.</h6>
+                </div>
+            </form>
+        </div>
+        <p-footer></p-footer>
+    </p-dialog>
+
+    <p-dialog [(visible)]="isShowAssignmentDetail" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+        [style]="{width: '83%',height: '90%', overflow: 'auto', top: '30px'}">
+        <p-header>
+            <div>
+                <h2
+                    style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                    ASSIGNMENT ORDER DETAILS</h2>
+            </div>
+        </p-header>
+
+        <div class="position-relative" style="padding:0px 15px;">
+
+            <form class="ovelFieldForm form" name="form" #deliveryboy="ngForm">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-raised btn-raised btn-primary"
+                            style="margin:7px 0px 0px 7px; float: right;" printSectionId="print-orderAssignment-section"
+                            *ngIf="openPopup" ngxPrint>Print Current Page</button>
+                    </div>
+                </div>
+            </form>
+            <form class="ovelFieldForm form form-inline" name="form" #orderForm="ngForm"
+                style="position: relative;z-index: 9;">
+                <div id="print-orderAssignment-section" style="padding:10px 15px; position: relative;z-index: 9;">
+                    <div class="waterMark"
+                        style="width: 50%;position: absolute;top: 41%;left: 45%;transform: skew(23deg, -36deg);height: 390px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+                        <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+                    </div>
+                    <h2 style="text-align: center;" *ngIf="isShowAssignmentDetail"><b><u>Assignment Detail </u></b></h2>
+                    <div class="borderTable" *ngIf="isShowAssignmentDetail">
+                        <p-table [value]="orderAssignmentDetail" width="100%" border="0" cellspacing="0"
+                            cellpadding="0">
+                            <ng-template pTemplate="header" style="width:100%;">
+                                <tr>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                        S.No</th>
+                                    <th
+                                        style="padding:5px 28px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important">
+                                        AssignmentId </th>
+                                    <th
+                                        style="padding:5px 18px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        DeliveryBoy</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Total Assignment Amount</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-irData let-i="rowIndex">
+                                <tr>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                        *</td>
+                                    <td
+                                        style="padding:5px 40px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                        {{irData.DeliveryIssuanceId}}
+                                    </td>
+                                    <td
+                                        style="padding:5px 21px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{irData.DboyName}}</td>
+                                    <td
+                                        style="padding:5px 10px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{irData.TotalAssignmentAmount}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                        <hr>
+                        <p-table #dt [value]="orderAssignmentList" width="100%" border="0" cellspacing="0"
+                            cellpadding="0">
+                            <ng-template pTemplate="header" style="width:100%;">
+                                <tr>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                        S.No</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Order Id</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Shop Name</th>
+                                    <th
+                                        style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                        Gross Amount</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                                <tr>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                        {{i + 1}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.orderid}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.ShopName}}</td>
+                                    <td
+                                        style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                        {{ir.amount}}</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                    <h6 class="noshowpage">*This is a computer-generated document. No signature is required.</h6>
+                </div>
+            </form>
+        </div>
+    </p-dialog>
+
+
+
+    <div *ngIf="isBlockedOrderList">
+
+        <p-dialog header="Blocked Order List" [(visible)]="isBlockedOrderList" [blockScroll]="true" appendTo="body"
+            [style]="{width: '100vw', height:'auto'}" [modal]="true" [positionTop]="0">
+            <br>
+
+            <p-toast position="bottom-right" appendTo="body" key="main" appendTo="body"></p-toast>
+            <br>
+            <div class="cnt">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="row">
+                        <label><b>Transport GST</b></label>
+                        <div class="col-3">
+                            <input type="text" class="form-control" appendTo="body" placeholder="Enter Transport GST."
+                                [(ngModel)]="transportGST ">
+                            <!-- <span> <button type="button" class="btn btn-primary" (click)="VarifiedCustomerGSTNO(transportGST)" >verify</button></span>       -->
+                        </div>
+                        <label> <b>Transport Name</b></label>
+                        <div class="col-3">
+                            <input type="text" class="form-control" appendTo="body" placeholder="Enter Transport Name."
+                                [(ngModel)]="transportEway">
+                        </div>
+                    </div>
+                    <br>
+
+                    <p-table [value]="blockedOrderList">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>S No.</th>
+                                <th>Order Id</th>
+                                <th>Assginment Id</th>
+                                <th>Eway Bill Reason</th>
+                                <th>IRN Reson</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                            <tr>
+                                <td>{{i+1}}</td>
+                                <td>{{rowData.OrderId}}</td>
+                                <td>{{rowData.DeliveryIssuanceId}}</td>
+                                <td>{{rowData.EwayBillReason}}</td>
+                                <td>{{rowData.IRNReson}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <br>
+
+
+
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary pull-right txt-cl"
+                                (click)="generateEwayBYIRN()">Generate E-way Bill</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </p-dialog>
+    </div>
+
+    <div *ngIf="isCheckRouteToShow">
+        <p-dialog header="Check Route" [(visible)]="isCheckRouteToShow" [blockScroll]="true" appendTo="body"
+            [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0"
+            appendTo="body">
+            <div class="cnt">
+                <div class="sk">
+                    <agm-map [latitude]="source.Lat" [longitude]="source.Lng" [zoom]="zoom" [disableDefaultUI]="false"
+                        [zoomControl]="true" [style.height.px]="myInnerHeight">
+                        <agm-direction [optimizeWaypoints]="false" [origin]="origin" [destination]="origin"
+                            [waypoints]="expectedWaypoints" [renderOptions]="renderOptions">
+                        </agm-direction>
+
+                        <agm-marker *ngFor="let wp of expectedWaypoints; let i = index;" label="{{i+1}}"
+                            [latitude]="wp.location.lat" [longitude]="wp.location.lng" [iconUrl]="waypointMarker">
+                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                <div>
+                                    {{wp.realObj.Skcode}}
+                                </div>
+                            </agm-info-window>
+                        </agm-marker>
+
+                        <agm-marker label="W" [latitude]="origin.lat" [longitude]="origin.lng"
+                            [iconUrl]="waypointMarker">
+                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                <div>
+                                    Warehouse
+                                </div>
+                            </agm-info-window>
+                        </agm-marker>
+                        <agm-marker *ngIf="showMarker" [latitude]="currentLocation.Lat"
+                            [longitude]="currentLocation.Lng" [iconUrl]="icon">
+                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                <div>
+                                    {{currentLocation.TripPlannerConfirmedDetailId}}
+                                </div>
+                            </agm-info-window>
+                        </agm-marker>
+
+                    </agm-map>
+                </div>
+            </div>
+        </p-dialog>
+    </div>
+
+    <p-dialog header="Add New Vehicle" [(visible)]="addhocVehicle" [blockScroll]="true" appendTo="body"
+        [style]="{width: '50vw', height:'110vh'}" [modal]="true" appendTo="body">
+
+        <div class="row">
+            <div class="col-3">
+                <h5>Choose Fleet</h5>
+            </div>
+
+            <div class="col-5">
+                <p-dropdown [options]="addhocVehicleDDList" appendTo="body" [(ngModel)]="transport"
+                    placeholder="Select List"></p-dropdown>
+            </div>
+        </div>
+        <br>
+
+        <div class="row">
+            <div class="col-3">
+                <h5>VehicleNo</h5>
+            </div>
+            <div class="col-5">
+                <input type="text" class="form-control" appendTo="body" placeholder="Enter Vehicle Number"
+                    [(ngModel)]="vehicleNo">
+                <code> Vehicle Number Format(AB 12 CD 3456)</code>
+
+            </div>
+        </div>
+        <br>
+
+        <br>
+        <div class="row">
+            <div class="col-7">
+                <button type="button" name="AddhocSave" class="btn btn-primary yl"
+                    (click)="insertAdhocVehicle()">Save</button>
+            </div>
+        </div>
+    </p-dialog>
+
+</div>
+
+
+<div *ngIf="">
+
+</div>
+
+
+
+
+<app-all-invoice-print-list *ngIf="orderListTrue" [AllOrderList]="AllOrderList" [warehouse]="warehouse"
+    (close)="closeAllPrintList()"></app-all-invoice-print-list>
+<p-confirmDialog appendTo="body" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+
+<div *ngIf="IsFinalizing">
+    
+    <p-dialog header="Check Planning" [(visible)]="IsFinalizing" [blockScroll]="true" appendTo="body"
+        [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0" appendTo="body">
+        <div class="cnt">
+            <p-toast position="top-right" appendTo="body" key="main" appendTo="body"></p-toast>
+
+            <form class="form" name="tripPopupForm" *ngIf="selectedTrip" #tripPopupForm="ngForm" #tripFormElement
+                (ngSubmit)="onSubmitFinalizeForm(tripPopupForm)">
+                <!--  -->
+                <div class="ui-fluid">
+                    <div class="row">
+                        <div class="col-md-3" *ngIf="selectedTrip">
+                            <label> Selected Date</label>
+                            <!-- <input  type="text" class="form-control"   
+                                    name="TripDate"  [(ngModel)]="tripDate"
+                                    #TripDate="ngModel"> -->
+                            <p-calendar appendTo="body" [disabled]="selectedTrip.IsFreezed" name="startDateInput"
+                                [(ngModel)]="tripDate" dateFormat="dd/mm/yy" [showIcon]="true" yearRange="2022:2030"
+                                [minDate]="dateMin" [maxDate]="dateMax" [monthNavigator]="true" [yearNavigator]="true"
+                                (onSelect)="OnSelectedChangeDate()" required></p-calendar>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3"
+                            *ngIf="selectedTrip && isSaveAsDraft && selectedTrip.OrderCount>0 &&(selectedTrip.IsFreezed ||selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) ">
+
+                            <div class="form-group">
+                                <label for="">Select Fleet Type</label>
+                                <p-dropdown [options]="fleetList" [(ngModel)]="selectedTrip.FleetType" name="fleetList"
+                                    [disabled]="selectedTrip.IsFreezed" (onChange)="getAgentMappingList()"
+                                    placeholder="Select Vehicle Type" required #fleetListInput="ngModel"></p-dropdown>
+
+                                <div *ngIf="(tripPopupForm.submitted && !fleetListInput.valid )">
+                                    <!-- (!selectedTrip.IsFreezed && tripForm.submitted && !selectedTrip.ReportingTime)" -->
+                                    <code>Required</code>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft &&  selectedTrip.OrderCount>0 &&(selectedTrip.IsFreezed ||selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) ">
+                            <div class="form-group">
+                                <label for="">Vehicle Reg No. </label>
+                                <p-dropdown [disabled]="selectedTrip.IsFreezed" [options]="VehicleList"
+                                    name="VehicleInput" filter="true"
+                                    [required]="(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) && !selectedTrip.IsNotLastMileTrip"
+                                    [(ngModel)]="selectedTrip.VehicleId" placeholder="Select Vehicle"
+                                    #vehiclerName="ngModel" (ngModelChange)="onClickIsRemovefiled()" required
+                                    #VehicleInput="ngModel">
+                                </p-dropdown>
+                                <div *ngIf="(tripPopupForm.submitted && !VehicleInput.valid)">
+                                    <code>Required</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3" *ngIf="selectedTrip.VehicleId">
+                            <div class="form-group">
+                                <label for="">IsReplacement VehicleNo. </label>
+                                <br>
+                                <!-- <div class="custom-control custom-checkbox custom-control-inline"> -->
+                                <input class="larger" id="inputIsReplacementVehicleNo"
+                                    name="inputIsReplacementVehicleNo" type="checkbox"
+                                    [(ngModel)]="selectedTrip.IsReplacementVehicleNo"
+                                    [disabled]="IsReplacementVehicleNo || selectedTrip.IsFreezed">
+                            </div>
+                        </div>
+                        <div class="col-md-3" *ngIf="selectedTrip.VehicleId && selectedTrip.IsReplacementVehicleNo">
+                            <div class="form-group">
+                                <label for="">Replacement VehicleNo. </label>
+                                <input [disabled]="IsReplacementVehicleNoValue"
+                                    [(ngModel)]="selectedTrip.ReplacementVehicleNo"
+                                    pattern="^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$" class="form-control"
+                                    name="replacementVehicleNoInput" required="1" #replacementVehicleNoInput="ngModel">
+                                <code *ngIf="replacementVehicleNoInput.errors?.pattern">
+                    Please Enter valid VehicleNo(MP09CD1137)</code>
+                                <div
+                                    *ngIf="(tripPopupForm.submitted && !replacementVehicleNoInput.valid) && !IsReplacementVehicleNoValue">
+                                    <code>Required</code>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-3"
+                            *ngIf="selectedTrip && isSaveAsDraft && selectedTrip.OrderCount>0 &&(selectedTrip.IsFreezed ||selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) ">
+                            <label for="">Day wise Fixed Cost</label>
+                            <input class="form-control" id="inputVehicleFare" name="inputVehicleFare" type="number"
+                                [(ngModel)]="selectedTrip.VehicleFare" required #fixedCostInput="ngModel">
+                            <div *ngIf="(tripPopupForm.submitted && !fixedCostInput.valid)">
+                                <code>Required</code>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">Delivery boy name</label>
+                                <!-- selectedTrip.IsFreezed || selectedTrip.IsPickerGenerated -->
+                                <p-dropdown [readonly]="selectedTrip.IsFreezed" [options]="dboyList" name="dboy"
+                                    required [(ngModel)]="selectedTrip.DboyId" [filter]="true" placeholder="Select Dboy"
+                                    #dboyName="ngModel">
+                                </p-dropdown>
+                                <div *ngIf="(tripPopupForm.submitted && !dboyName.valid)">
+                                    <code>Required</code>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft && (selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired)) && selectedTrip.OrderCount>0">
+                            <div class="form-group">
+                                <label for="">Driver Name</label>
+                                <p-dropdown [disabled]="selectedTrip.IsFreezed" [options]="driverList" name="driver"
+                                    [filter]="true"
+                                    [required]="(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) && !selectedTrip.IsNotLastMileTrip"
+                                    [(ngModel)]="selectedTrip.DriverId" placeholder="Select Driver"
+                                    #driverName="ngModel">
+                                </p-dropdown>
+                                <div *ngIf="(tripPopupForm.submitted && !driverName.valid)">
+                                    <code>Required</code>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft && (selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired))&&  selectedTrip.OrderCount>0">
+                            <div class="form-group">
+                                <label for="">Report Time </label>
+                                <div class="inpt" *ngIf="selectedTrip.IsFreezed">{{selectedTrip.ReportingTime| date :
+                                    'medium'}}
+                                </div>
+
+                                <p-calendar name="reportTimeInput" *ngIf="!selectedTrip.IsFreezed"
+                                    [(ngModel)]="selectedTrip.ReportingTime"
+                                    required="(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired) && !selectedTrip.IsNotLastMileTrip"
+                                    [showTime]="true" #reportTimeNew="ngModel"></p-calendar>
+                                <div
+                                    *ngIf="(!selectedTrip.IsFreezed && tripPopupForm.submitted && !selectedTrip.ReportingTime)">
+                                    <code>Required</code>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft && ( selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired)) &&  selectedTrip.OrderCount>0 ">
+                            <div class="form-group">
+                                <label for="">Late Reporting</label>
+                                <p-calendar [disabled]="selectedTrip.IsFreezed" [readonlyInput]="true"
+                                    name="lteReportingInput" dataType="string" [showIcon]="true"
+                                    [(ngModel)]="lateReportingTimeString" [timeOnly]="true">
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-3"
+                            *ngIf="isSaveAsDraft && ( selectedTrip.IsFreezed ||(selectedTrip.IsPickerGenerated || !selectedTrip.IsPickerRequired)) &&  selectedTrip.OrderCount>0">
+                            <div class="form-group">
+                                <label for="">Penalty Charges </label>
+                                <input [disabled]="selectedTrip.IsFreezed" [(ngModel)]="selectedTrip.PenaltyCharge"
+                                    class="form-control" type="number" name="penaltyChargeInput">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <br>
+                            <button style="margin-top: 7px;" class="btn btn-raised btn-success mt pull-left"
+                                type="submit">Finalize</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </p-dialog>
+
+</div>

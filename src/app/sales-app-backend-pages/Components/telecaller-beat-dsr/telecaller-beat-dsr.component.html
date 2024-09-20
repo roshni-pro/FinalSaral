@@ -1,0 +1,99 @@
+<br>
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Beat DSR</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-3">
+                <label><b>Select City*</b></label>
+                <p-multiSelect  id="id" name="Name" 
+                [options]="AllCity" placeholder="Select a Warehouse"  [(ngModel)]="SelectedCity" optionLabel="label" optionValue="value" >
+                </p-multiSelect>
+            </div>
+            <div class="col-md-2 mr-4">
+                <label><b>Select Start Range</b></label><br>
+                <p-calendar name="startDateInput"  appendTo="body"  [style]="{'width': '214px'}" [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  
+                    [readonlyInput]="false" [showIcon]="true" showButtonBar="true" (click)="EDateClear()"
+                    [showIcon]="true" [(ngModel)]="SelectedFromDate"  showButtonBar="true" >
+                </p-calendar>
+            </div>
+            <div class="col-md-2">
+                <label><b>Select End Range</b></label><br>
+                <p-calendar name="endDateInput" name="ToDate" [style]="{'width': '214px'}" [showIcon]="true"  appendTo="body"  [yearNavigator]="true"  
+                    [monthNavigator]="true" yearRange="2022:2099"  [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+                    [showIcon]="true" [minDate]="SelectedFromDate" [(ngModel)]="SelectedToDate" >
+                </p-calendar>
+            </div>
+            <div class="col-md-3 d-flex ml-4">                       
+                <button  class="btn btn-primary ccc" (click)="ForSearchHit()" (click)="Search($event)" >Search</button>   
+                <button  class="btn btn-primary ccc" (click)="refresh($event)">Refresh</button>  
+                <button  class="btn btn-success ccc" (click)="Export()" >Export</button>  
+                <button  class="btn btn-success ccc" (click)="ExportAll()" >ExportAll</button>  
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <p-table [value]="beatDSRData" [totalRecords]="totalcount" [paginator]="true" [rows]="20" [scrollable]="true" [lazy]="true" [(first)]="first"
+    (onLazyLoad)="load($event)"  scrollHeight="65vh" currentPageReportTemplate="Showing {first} to {last} of {totalcount} entries">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>S.No</th>
+                <th>SalesPersonId</th>
+                <th>SalesPerson</th>
+                <th>CityName</th>
+                <!-- <th>Cluster</th>
+                <th>Warehouse</th> -->
+                <th>Channel</th>
+                <th>VisitPlaned</th>
+                <th>TotalCall</th>
+                <th>PC</th>
+                <th>BeatOrder</th>
+                <th>BeatSales</th>
+                <th>ExtraVisit</th>
+                <th>ExtraCall</th>
+                <th>ExtraOrder</th>
+                <th>ExtraSales</th>
+                <th>TotalSales</th>
+                <th>FirstCheck In</th>
+                <th>LastCheck Out</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-index="rowIndex">
+            <tr>
+                <td>{{index+1}}</td>
+                <td>{{rowData.SalesPersonId}}</td>
+                <td>{{rowData.SalesPerson }}</td>
+                <td>{{rowData.CityName }}</td>
+                <!-- <td>{{rowData.ClusterName }}</td>
+                <td>{{rowData.WarehouseName }}</td> -->
+                <td>{{rowData.ChannelName}}</td>
+                <td>{{rowData.VisitPlanned}}</td>
+                <td>{{rowData.TotalCall }}</td>
+                <td>{{rowData.ProductiveCall }}</td>
+                <td>{{rowData.BeatOrder}}</td>
+                <td>{{rowData.BeatSales}}</td>
+                <td>{{rowData.ExtraVisit }}</td>
+                <td>{{rowData.ExtraCall }}</td>
+                <td>{{rowData.ExtraOrder }}</td>
+                <td>{{rowData.ExtraSales}}</td>
+                <td>{{rowData.TotalSales}}</td>
+                <td>{{rowData.CheckIn==null?'--':rowData.CheckIn | date : 'hh:mm:ss a' }}</td>
+                <td>{{rowData.CheckOut==null?'--':rowData.CheckOut | date : 'hh:mm:ss a'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>

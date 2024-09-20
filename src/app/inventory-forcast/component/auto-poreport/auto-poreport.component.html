@@ -1,0 +1,94 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h4 style="color: orangered;"><b>!! AutoPo Report</b></h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <!-- [style]="{minWidth:'55em'}"  [panelStyle]="{minWidth:'25em'}" -->
+                    <label>Warehouse<span style="color: red;">*</span></label>
+                    <p-multiSelect [options]="warehouseList" optionLabel="WarehouseName" [(ngModel)]="warid"></p-multiSelect>    
+                </div>
+                <div class="col-md-3">
+                    <label>Start Date<span style="color: red;">*</span></label><br>
+                    <p-calendar [(ngModel)]="sdate"></p-calendar> 
+                </div>
+                <div class="col-md-3">
+                   
+                    <label>End Date<span style="color: red;">*</span></label><br>
+                    <p-calendar [(ngModel)]="edate"></p-calendar> 
+                </div>
+                <div class="col-md-3 mt-3">
+                    <input type="button" value="Search" (click)="search(warid)"  class="btn btn-raised btn-primary mt">&nbsp;
+                    <input type="button" value="Refresh" (click)="Remove()" class="btn btn-raised btn-primary mt">&nbsp;
+                    <input type="button" value="Export"  (click)="ExportData(warid)" class="btn btn-raised btn-success mt">&nbsp;
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <!-- <h4 style="color: orangered;"><b>!! AutoPo Report</b></h4> [value]="ladgerList"-->
+            <p-table [scrollable]="false" [value]="getAutoPoList"[scrollable]="true" [rows]="10" [paginator]="true">
+                <ng-template pTemplate="header">
+                    <tr >
+                        <th style="width: 8%;">POID</th>
+                        <th style="width: 12%;">Warehouse Name</th>
+                        <th style="width: 10%;">Itemname</th>
+                        <th style="width: 13%;">ItemMultiMRPId</th>
+                        <th style="width: 17%;">System Suggested Qty</th>
+                        <th style="width: 17%;">Growth Forecast Qty</th>
+                        <th style="width: 10%;">BuyerEdit</th>
+                        <th style="width: 7%;">Buyer</th>
+                        <th style="width: 10%;">FinalPOQty</th>
+                        <th style="width: 10%;">Fullfilltype</th>
+                        <th style="width: 10%;">PRDate</th>
+                        <th style="width: 7%;">GRQty</th>
+                        <th style="width: 10%;">GRDate</th>
+                        <th style="width: 12%;">ApprovedBy</th>
+                    </tr>         
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td  style="width: 8%;">{{item.POID}}</td>
+                        <td style="width: 12%;">{{item.WarehouseName}}</td>
+                        <td style="width: 10%;">{{item.ItemName}}</td> 
+                        <td style="width: 13%;">{{item.ItemMultiMRPId}}</td>
+                        <td style="width: 17%;">{{item.SystemSuggestedQty}}</td>
+                        <td style="width: 17%;">{{item.GrowthForecastQty}}</td>
+                        <td style="width: 10%;">{{item.BuyerEdit}}</td>
+                        <td style="width: 7%;">{{item.buyer}}</td>
+                        <td style="width: 10%;">{{item.FinalPOQty}}</td>
+                        <td style="width: 10%;">{{item.fullfilltype}}</td>
+                        <td style="width: 10%;">{{item.PRDate|date}}</td>
+                        <td style="width: 7%;">{{item.GRQty}}</td>
+                        <td style="width: 10%;">{{item.fullfillDate|date}}</td>
+                        <td style="width: 12%;">{{item.ApprovedBy}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                      <td colspan="15" style="text-align: center;">
+                        <br>
+                        <h3><b>No Data Found.</b></h3>
+                      </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        
+
+
+
+        </div>
+        
+    </div>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

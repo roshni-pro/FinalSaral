@@ -1,0 +1,96 @@
+<p-toast [style]="{marginTop: '120px'}"></p-toast>
+<div class="row text-left">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="my-2 d-flex justify-content-between align-items-center">
+                <div class="header">
+                    <h3 class="m-2">Customer Fayda list Page</h3>
+                </div>
+                <button type="button" style="float: right;" class="btn btn-raised btn-primary mr-1"
+                    (click)="exportMemberShiplist()">
+                    Export
+                </button>
+            </div>
+            <div class="card-content" style="margin-top: -33px;">
+                <div class="px-3">
+                    <form class="form" name="customerMembershipform" #customerMembershipform="ngForm">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <div class="form-group">
+                                        <label for="projectinput3"><b>Warehouse</b></label>
+                                        <select id="des" name="WarehouseId" [(ngModel)]="data.WarehouseId"
+                                            class="form-control" #WarehouseId="ngModel" required="1">
+                                            <option value="">--Select Warehouse--</option>
+                                            <option *ngFor="let wh of warehouseList;" [value]="wh.WarehouseId">
+                                                {{wh.WarehouseName}}-{{wh.CityName}}</option>
+                                        </select>
+                                        <!-- <div *ngIf="!WarehouseId.valid && WarehouseId.errors.required">
+                                            <code>Warehouse Name is required</code>
+                                        </div> -->
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="name">Status</label>
+                                        <select class="form-control" id="status" name="status"
+                                            [(ngModel)]="data.Active">
+                                            <option value="">--Both--</option>
+                                            <option value=1>Active</option>
+                                            <option value=2>Inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3" style="padding-top: 30px">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                            (click)="search(data)">Search</button>
+                                        <button type="button" class="btn btn-raised btn-raised btn-primary "
+                                            style="margin-left:15px" (click)="ngOnInit()">
+                                            Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="my-2 d-flex justify-content-between" style="overflow: auto;">
+            <p-table #dt [value]="custMemberShiplist" [lazy]="true" [paginator]="true" [totalRecords]="totalRecords"
+                (onLazyLoad)="load($event)" [rows]="10" [scrollable]="true" scrollHeight="65vh">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="text-align: center">Skcode</th>
+                        <th style="text-align: center">Shop Name</th>
+                        <th style="text-align: center">Mobile</th>
+                        <th style="text-align: center">MemberShip Name</th>
+                        <th style="text-align: center">Start Date</th>
+                        <th style="text-align: center">End Date</th>
+                        <th style="text-align: center">IsActive/Inactive</th>
+                        <!-- <th style="text-align: center">Actions</th> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                    <tr>
+                        <td style="text-align: center">{{rowData.Skcode}}</td>
+                        <td style="text-align: center">{{rowData.ShopName}}</td>
+                        <td style="text-align: center">{{rowData.Mobile}}</td>
+                        <td style="text-align: center">{{rowData.MemberShipName}}</td>
+                        <td style="text-align: center">{{rowData.StartDate | date: 'dd/MM/yyyy hh:mm:ss'}}</td>
+                        <td style="text-align: center">{{rowData.EndDate | date:  'dd/MM/yyyy hh:mm:ss'}}</td>
+                        <td style="text-align: center">{{rowData.IsActive}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+    </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

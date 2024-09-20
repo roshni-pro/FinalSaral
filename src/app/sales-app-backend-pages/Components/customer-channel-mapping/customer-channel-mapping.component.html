@@ -1,0 +1,149 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Customer Channel Mapping</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="row mb-1">
+            <div class="col-md-3 sd">
+                <input type="text" class="form-control" [(ngModel)]="SelectedSkcode" placeholder="Enter SkCode" />
+            </div>
+            <div class="col-md-4 sd">
+                <button class="btn btn-primary de" (click)="Search()">Search</button>
+                <button class="btn btn-primary de" (click)="AddChannel()">Add Channel</button>
+                <button class="btn btn-success de ww" (click)="export()">Export</button>
+                <button class="btn btn-danger" (click)="upload()">Upload</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<p-table [style]="{ 'width': '90%','padding-left': '10%' }" text-align:center [scrollable]="true" scrollHeight="70vh"
+    scrollDirection="horizontal" scrollDirection="vertical" [value]="ViewList">
+    <ng-template pTemplate="header" let-items>
+        <tr>
+            <th>S.No</th>
+            <th>Skcode</th>
+            <th>Store</th>
+            <th>Cluster</th>
+            <th>Channel</th>
+            <th style="width:8rem">action</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-ri="rowIndex">
+        <tr>
+            <td>{{ri+1}}</td>
+            <td>{{rowData.SKCode}}</td>
+            <td>{{rowData.Store}}</td>
+            <td style="text-align:center;">{{rowData.ClusterName}}</td>
+            <td style="text-align:center">
+                <span *ngIf="!rowData.isEditing">
+                    {{rowData.ChannelType}}
+                </span>
+                <div *ngIf="rowData.isEditing">
+                    <p-dropdown [options]="ChannelTypeList" [(ngModel)]="ChannelID" optionLabel="ChannelType"
+                        name="{{ri}}_nm" id="ctyy" name="ctyy" appendTo="body"
+                        placeholder="Select Channel"></p-dropdown>
+                </div>
+            </td>
+            <td style="text-align:end">
+                <button *ngIf="!rowData.isEditing" id="ctyId" name="CityName" pButton type="button" icon="pi pi-pencil" [disabled]="isShow"
+                    (click)="rowExecutiveList(rowData)" class="p-button-rounded p-button-text"></button>
+
+                <button *ngIf="rowData.isEditing" pButton pRipple type="button" icon="pi pi-check" [disabled]="!isShow"
+                    (click)="onRowEditSave(rowData,false)"
+                    class="p-button-rounded p-button-text p-button-success "></button>
+                <button *ngIf="rowData.isEditing" pButton pRipple type="button" icon="pi pi-times"  [disabled]="!isShow"
+                    (click)="onRowEditSave(rowData,null)"
+                    class="p-button-rounded p-button-text p-button-danger"></button>
+                <button *ngIf="rowData.isEditing" pButton pRipple type="button"
+                    icon="pi pi-trash" (click)="onRowEditSave(rowData,true)"    [disabled]="!isShow"
+                    class="p-button-rounded p-button-text p-button-danger "></button>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+        <tr>
+            <td colspan="5" style="text-align: center;">
+                <br>
+                <h4><b>No Data Found.</b></h4>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog header="Add Channel" [(visible)]="IsAddChannel" [resizable]="false" positionTop="200" (onHide)="cancel()"
+    [modal]="true" appendTo="body" [draggable]="false" [blockScroll]="true" [style]="{ width: '25%',height:'auto'}">
+    <br>
+    <div class="container">
+     <div class="row">
+        <div class="col-8 ml-5">
+            <input type="text" class="form-control" [(ngModel)]="Skcode" placeholder="Enter SkCode"  />
+        </div>
+     </div>
+     <div class="row mt-2">
+        <div class="col-6">
+            <p-multiSelect [options]="AddStoreList" [(ngModel)]="Store" optionLabel="Name" placeholder="Select Store" ></p-multiSelect>
+        </div>
+        <div class="col-4">
+            <p-dropdown [options]="ChannelTypeList" [(ngModel)]="CustomerChannel" optionLabel="ChannelType"
+            id="ctyy" name="ctyy" appendTo="body"
+            placeholder="Select Channel"></p-dropdown>
+        </div>
+     </div>
+     <div class="row mt-2">
+        <div class="col-10 text-center">
+            <button class=" btn mt-2" type="submit" (click)="SaveChannel()"
+            style=" background-color: #119150;color: white;">Save</button>
+        </div>
+    </div>
+    </div>
+    <br><br>
+</p-dialog>
+
+
+<p-dialog header="Customer Channel Mapping upload" [(visible)]="popupUpload" [resizable]="false" positionTop="200"
+    [modal]="true" appendTo="body" [draggable]="false" [blockScroll]="true" [style]="{ width: '30%',height:'auto'}">
+    <br>
+    <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx" (uploadHandler)="onUpload($event)"
+        #uploadCustom>
+        <code>*</code>
+    </p-fileUpload>
+    <button class=" btn mt-2" type="submit" (click)="DownLoadSampleFile()"
+        style=" background-color: #119150;color: white;float: right;">Download Sample</button>
+    <br><br>
+</p-dialog>
+
+<p-dialog header="Customer Channel Mapping Export" [(visible)]="popupExport" [resizable]="false" positionTop="200"
+    [modal]="true" appendTo="body" [draggable]="false" [blockScroll]="true" [style]="{ width: '40%'}">
+
+    <div class="card">
+        <div class="row mb-1">
+            <div class="col-md-4 ">
+                <label>Select Store:</label>
+                <p-dropdown [options]="storeList" [(ngModel)]="Pstoreid" optionLabel="Name" [style]="{width:'100%'}"
+                    [filter]="true" placeholder="Select Store"></p-dropdown>
+            </div>
+            <div class="col-md-1"></div>
+            <div class="col-md-4 ">
+                <label>Select Channel:</label>
+                <p-multiSelect [options]="ChannelTypeList" [(ngModel)]="PchannelId" optionLabel="ChannelType"
+                    [style]="{width:'100%'}" placeholder="Select Channel"></p-multiSelect>
+            </div>
+            <div class="col-md-3 ee"><br>
+                <button class="btn btn-primary" (click)="Exports()">Export</button>
+            </div>
+        </div>
+    </div>
+    <!-- <p-toast ngIf="!op" [style]="{width: '20vw'}" position="top-right"></p-toast> -->
+</p-dialog>
+
+<p-toast [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

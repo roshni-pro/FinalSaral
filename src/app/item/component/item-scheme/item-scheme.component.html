@@ -1,0 +1,409 @@
+<p-toast appendTo="body"></p-toast>
+<div class="row m-0">
+    <div class="col-12">
+        <div id="kick-start" class="kick-start card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="card-title">Item Scheme</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <div>
+                                    <!-- <label for="SelectCity"><b>Select City: </b><b style="color: red;">*</b></label><br>
+                                    <select id="city" name="city" class="form-control" [(ngModel)]="Cityid">
+                                        <option [value]="null" disabled>--Select City--</option>
+                                        <option *ngFor="let city of cities" [ngValue]="city.Cityid">{{city.CityName}}
+                                        </option>
+                                    </select> -->
+
+                                    <label><b><span class="required">*</span>Select City<span class="required"></span></b></label>
+                                    <p-multiSelect  [options]="cities"  [filter]="true"
+                                        [(ngModel)]="Cityid" optionLabel="CityName" placeholder="select warehouse" >
+                                </p-multiSelect>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <div>
+                                    <label for="ItemMultiMrpId">Keyword: </label><br>
+                                    <input class="form-control" type="text" name="itemnamesearch"
+                                        placeholder="Keyword" [(ngModel)]="Key">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Search Schemes:</label>
+                                <div>
+                                    <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="GetOPReportDetails();" label="Search Schemes"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group" style="margin-left: 20px;">
+                                <label> Reset:</label>
+                                <div>
+                                    <button type="button" pButton (click)="Cityid.length = 0; Key = ''; opreportdata = [];TotalRecords = null;"
+                                        label="Reset"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label> Export To Excel:</label>
+
+                            <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                (click)="exportToExcel();" label="Export To Excel"></button>
+                        </div>
+                        <div class="col-md-2">
+                            <label> Add</label><br>
+
+                            <button type="button" pButton (click)="onClickAdd()"
+                            label="Add"></button>
+                        </div>
+                    </div>
+                    <hr style="margin-top: -13px;">
+                    <div style="    margin-top: -14px;">  <!--*ngIf="Cityid.length>0" -->
+                        <p-accordion [multiple]="true">
+                            <p-accordionTab header="Upload File" [selected]="false">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label> Download Sample File:</label>
+                                        <br>
+                                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                            (click)="DownLoadSampleFile();" label="Download Sample File"></button>
+                                    </div>
+
+
+                                    <!-- <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="projectinput7">Subcategory</label>
+                                            <br>
+
+                                            <select id="sub" name="sub" class="form-control" [(ngModel)]="SubCategoryId" (change)="checkDC()">
+                                                <option value="0" disabled>--select--</option>
+                                                <option *ngFor="let sub of subCategory" [ngValue]="sub.SubCategoryId">
+                                                    {{ sub.SubcategoryName }}
+                                                </option>
+                                            </select>
+                                            <div *ngIf="isInvalid && !SubCategoryId.valid && SubCategoryId.errors.required">
+                                                <code>Brand is required</code>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <!-- <div class="form-group col-md-3">
+                                        <div class="form-group">
+                                            <label for="projectinput3">Start Date</label>
+                                            <br>
+                                            <p-calendar id="ssb" name="ssb" [minDate]="minimumDate"
+                                                [(ngModel)]="FromDate" [showTime]="true" hourFormat="12" (change)="checkDC()"></p-calendar>
+                                            <div *ngIf="isInvalid && !FromDate.valid && FromDate.errors.required">
+                                                <code>FromDate is required</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-3">
+                                        <div class="form-group">
+                                            <label  for="projectinput4">End Date</label>
+                                            <br>
+                                            <p-calendar id="esb" name="esb" [minDate]="minimumDate" [(ngModel)]="ToDate"
+                                                [showTime]="true" hourFormat="12" (change)="checkDC()"></p-calendar>
+                                            <div *ngIf="isInvalid && !ToDate.valid && ToDate.errors.required">
+                                                <code>ToDate is required</code>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <div class="col-md-5">
+                                        <label> Upload File:</label>
+                                        <br>
+                                        <!-- <div class="col-md-12"> -->
+                                            <input class="form-control" type="file" #file />
+
+                                        <br>
+                                        <div class="col-md-12">
+                                            <button class="btn btn-primary" accept=".xlsx"
+                                                (click)="uploadFile(file);" >Upload</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </p-accordionTab>
+                        </p-accordion>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-table #table [paginator]="whetherornot" [rows]="10" [value]="opreportdata" [lazy]="true" [columns]="columns"
+    [totalRecords]="TotalRecords" (onLazyLoad)="GetOPReportDetailsPager($event)" [scrollable]="false"
+    scrollHeight="70vh" text-align: center>
+    <ng-container>
+        <ng-template pTemplate="header" let-columns>
+            <tr *ngIf="whetherornot">
+                <th style="text-align: center">
+                    Sno.
+                </th>
+                <ng-container *ngFor="let col of columns">
+
+                    <th style="text-align: center">
+                        <div >
+                            {{col.header}}
+                        </div>
+                    </th>
+                </ng-container>
+                <th style="width: 82px;">Edit</th>
+                <th style="width: 120px;">History</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
+            <tr *ngIf="whetherornot" style="text-align: center">
+                <td>
+                    {{i+1}}
+                </td>
+                <ng-container *ngFor="let col of columns">
+
+                    <td style="text-align: center" style="width: 100px;">
+                        <ng-container>
+                            {{rowData[col.field]}}
+                        </ng-container>
+                    </td>
+                </ng-container>
+                <td>
+                    <button type="submit" class="btn btn-primary" (click)="onEditItem(col,rowData)">Edit</button>
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-primary" (click)="onClickHistory(rowData)">History</button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <div class="col-md-12">
+            <!-- <tr> <h5 *ngIf="whetherornot"><strong>No data found.</strong></h5></tr> -->
+          </div>
+         </ng-template>
+    </ng-container>
+</p-table>
+<div *ngIf="opreportdata.length == 0 && whetherornot">
+    <h5 style="text-align: center;"><strong>No data found.</strong></h5>
+</div>
+<br />
+<div *ngIf="isCrudItem">
+    <p-dialog header="Add Item" [(visible)]="isCrudItem" [blockScroll]="true" appendTo="body"
+        [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0" [positionLeft]="0" appendTo="body">
+        <div class="cnt">
+            <form class="form" name="addItemForm" #addItemForm="ngForm" (ngSubmit)="saveItem(addItemForm)">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+
+                            <div>
+                                <label for="SelectCity"><b>Select City: </b><b style="color: red;">*</b></label><br>
+                                <select id="city" name="city" class="form-control" [(ngModel)]="SelectedCityid" required #city="ngModel" [disabled]="isEdit">
+                                    <option [value]="null" disabled>--Select City--</option>
+                                    <option *ngFor="let city of cities" [ngValue]="city.Cityid">{{city.CityName}}
+                                    </option>
+                                </select>
+                                <div *ngIf="(addItemForm.submitted && !city.valid)">
+                                    <code>City is Required</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <div *ngIf="!isEdit">
+                                <label for="itemname">Search (ItemBaseName/ItemMultiMRPId): </label><br>
+                                <p-autoComplete [(ngModel)]="selectedData" [suggestions]="itemList"
+                                    (ngModelChange)="onsearch(Cityid)"
+                                    (completeMethod)="getItemList($event,SelectedCityid)" field="itemNameWithmultiMrpId" [size]="30"
+                                    placeholder="enter at least 3 chars" [minLength]="1"
+                                    (onSelect)="onmodelChange(selectedData,$event,SelectedCityid)" name="itemname" required #itemname="ngModel">
+                                </p-autoComplete>
+                                <div *ngIf="(addItemForm.submitted && !itemname.valid)">
+                                    <code>KeyWord is Required</code>
+                                </div>
+                            </div>
+                            <div *ngIf="isEdit">
+                                <label >Item Name</label><br>
+                                <input type="text" name="itemName"  class="form-control" [(ngModel)]="selectedItem.itemBaseName" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <div>
+                                <label for="ItemMultiMrpId">Keyword: </label><br>
+                                <input class="form-control" type="number" name="ItemMultiMRPId"
+                                    placeholder="keyword" [(ngModel)]="selectedItem.ItemMultiMRPId" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <div>
+                                <label for="mrp">Mrp: </label><br>
+                                <input class="form-control" type="number" name="mrp"
+                                    placeholder="MRP" [(ngModel)]="selectedItem.MRP" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <div>
+                                <label for="PTR">PTR: </label><br>
+                                <input class="form-control" type="text" name="pTR" #ptr (keypress)="decimalFilter($event)"
+                                (keyup)="CheckPtr(ptr.value)"
+                                    placeholder="PTR" [(ngModel)]="selectedItem.PTR" required #pTR="ngModel">
+                            </div>
+                            <div *ngIf="(addItemForm.submitted && !pTR.valid)">
+                                <code>PTR is Required</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <div>
+                                <label for="BaseScheme">Base Scheme: </label><br>
+                                <input class="form-control" type="text" name="baseScheme" #bsc (keypress)="decimalFilter($event)"
+                                (keyup)="CheckBscheme(bsc.value)"
+                                    placeholder="Base Scheme" [(ngModel)]="selectedItem.BaseScheme">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3"></div>
+                    <div class="col-12">
+                        <button type="reset" class="btn btn-primary pull-right" (click)="onCancelItem()">Cancel</button>
+                        <button type="submit" class="btn btn-info pull-right ovr" style="margin-right: .5em;">Save</button>
+                    </div>
+                    <div class="col-12">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </p-dialog>
+</div>
+<!-- Dialog For Upload Start -->
+<div class="row">
+    <div class="col-md-12">
+        <p-dialog [modal]="true" appendTo="body" positionTop="50vh"
+        [style]="{'margin-left': '100px','width':'75%','height':'400px'}" [(visible)]="display">
+           <h3 class="text-center" style="font-weight: 600;"> Select Claim Type To Upload</h3>
+           <div class="row">
+            <div class="col-md-1 ml-3">
+                <!-- <p-checkbox  [(ngModel)]="selectedComapnyCode" [style]="{'margin-top': '22px'}" name="groupname" value="val1"></p-checkbox> -->
+                <p-checkbox [(ngModel)]="selectedComapnyCode" binary="true" inputId="binary"></p-checkbox>
+            </div>
+            <div class="col-md-5">
+                <label class="coll">Update Company Code</label>
+            </div>
+            <div class="col-md-1 ml-3">
+                <p-checkbox [(ngModel)]="selectedComapnyStockCode" binary="true" inputId="binary"></p-checkbox>
+                <!-- <p-checkbox [(ngModel)]="selectedComapnyStockCode"  [style]="{'margin-top': '22px'}"  name="groupnamee" value="val2"></p-checkbox> -->
+            </div>
+            <div class="cl-md-5">
+                <label class="coll">Update Company Stock Code</label>
+            </div>
+           </div>
+           <div class="row mt-4">
+            <div class="col-md-1">
+                <p-checkbox [disabled]="true" [style]="{'margin-left':'25px'}" name="groupname" value="val1"></p-checkbox>
+            </div>
+            <div class="col-md-3">
+                <label class="siee">Primary Claim</label>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="siee">From : </label>
+                    <p-calendar [disabled]="true" appendTo="body" name="startDateInput" [showIcon]="true" name="fromDate">
+                    </p-calendar>
+                  </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="siee">To : </label>
+                    <p-calendar [disabled]="true" name="startDateInput" appendTo="body" [showIcon]="true" name="toDate">
+                    </p-calendar>
+                  </div>
+            </div>
+
+           </div>
+           <div class="row">
+            <div class="col-md-1">
+                <p-checkbox [disabled]="true" [style]="{'margin-left':'25px'}" name="groupname" value="val1"></p-checkbox>
+            </div>
+            <div class="col-md-3">
+                <label class="siee">Secondary Claim</label>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="siee">From : </label>
+                    <p-calendar [disabled]="true" name="startDateInput" appendTo="body" [showIcon]="true" name="fromDate">
+                    </p-calendar>
+                  </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="siee">To : </label>
+                    <p-calendar  [disabled]="true" name="startDateInput" appendTo="body"  [showIcon]="true" name="toDate">
+                    </p-calendar>
+                  </div>
+            </div>
+
+           </div>
+           <div class="row">
+            <div class="col-md-1">
+                <p-checkbox [disabled]="true" [style]="{'margin-left':'25px'}" name="groupname" value="val1"></p-checkbox>
+            </div>
+            <div class="col-md-3">
+                <label class="siee">Additional Claim</label>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="siee">From : </label>
+                    <p-calendar  [disabled]="true" name="startDateInput" appendTo="body" [showIcon]="true" name="fromDate">
+                    </p-calendar>
+                  </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="siee">To : </label>
+                    <p-calendar [disabled]="true" name="startDateInput" appendTo="body"  [showIcon]="true" name="toDate">
+                    </p-calendar>
+                  </div>
+            </div>
+           </div>
+           <div class="row">
+            <div class="col-12">
+                <button type="reset" class="btn btn-primary mt-3" (click)="Oncancel()">Cancel</button>
+                <button type="submit" (click)="onSubmitFileData(Cityid)" class="btn btn ovr mt-2 ml-2">Submit</button>
+            </div>
+           </div>
+        </p-dialog>
+    </div>
+</div>
+<!-- Dialog For Upload End -->
+<div *ngIf="isHistoryOpen">
+    <p-dialog header="History" [(visible)]="isHistoryOpen" [blockScroll]="true" appendTo="body"
+        [style]="{width: '75vw', height:'75vh'}" [modal]="true" [positionTop]="0" appendTo="body">
+        <div class="cnt">
+            <app-history [entity]="entity" [id]="selectedItem.Id"></app-history>
+        </div>
+    </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+    <p-confirmDialog appendTo="body" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>

@@ -1,0 +1,463 @@
+
+<div *ngIf="regionInboundLead || hqMasterRole ">
+<h3 class=" heading mt-4 abb" >Inbound DashBoard Summary</h3>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-3 mt-2">
+                    <label><b>Select Section</b></label>
+                    <p-dropdown [options]="sectionList"  optionLabel="name" placeholder="Select Type" [(ngModel)]="selectedSection" placeholder="Select Section">
+                    </p-dropdown>
+                </div> 
+                <div class="col-sm-3 mt-2">
+                    <label><b>Select Warehouse</b></label>
+                    <p-dropdown [filter]="true" optionLabel="WarehouseName"  [options]="warehouseList" [(ngModel)]="selectedwarehouse" placeholder="Select Warehouse">
+                    </p-dropdown>
+                    <!-- <p-multiSelect [options]="warehouseList" placeholder="Select Warehouse" [(ngModel)]="selectedwarehouse" optionLabel="WarehouseName"></p-multiSelect> -->
+                </div>
+                <div class="col-sm-3 mt-2">
+                    <label><b>Select Store</b></label>
+                    <p-multiSelect  [options]="storeList" optionLabel="Name"  placeholder="Select Store"  [(ngModel)]="selectedStore"></p-multiSelect>
+                </div> 
+                <div class="col-sm-3 mt-2">
+                    <button class="btn btn-primary mt-4" (click)="searchInboundData()">Search</button>
+                    <button class="btn btn-primary mt-4 ml-3" (click)="reset()">Reset</button>
+                </div>
+            </div>    
+        </div>
+    </div>
+</div>
+<!-- DashBoard Start -->
+<div *ngIf="showDashBoard && (regionInboundLead || hqMasterRole)"  class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <h4 class=" heading abb" >Statistics</h4> 
+    <div class="row">
+        <!-- <div class="col-3"> -->
+        <div class="col">
+         <label class="head ml-3" style="color:blue">Today's Stock In</label><br>
+         <label class="head1 ml-5">{{TdStockIn |number:'1.2-3'}}</label>
+        </div>
+        <div class="col">
+            <label class="head" style="color:blue">MTD Stock In</label><br>
+            <label class="head1 ml-3" >{{MTDStockIn |number:'1.2-3'}}</label>
+        </div>
+    <!-- </div> -->
+    <div class="col">
+        <label class="head ml-3" style="color:green">Today's Stock Out</label><br>
+        <label class="head1 ml-5">{{TdStockOut |number:'1.2-3'}}</label>
+    </div>
+    <div class="col">
+        <label class="head" style="color:green" >MTD Stock Out</label><br>
+        <label class="head1 ml-3" >{{MTDStockOut |number:'1.2-3'}}</label>
+    </div>
+    <div class="col">
+        <label class="head ml-3" style="color:rgb(251, 174, 6)" >Today's Damage</label><br>
+        <label class="head1 ml-5">{{TdDamage |number:'1.2-3'}}</label>
+    </div>
+    <div class="col">
+        <label class="head" style="color:rgb(251, 174, 6)">MTD Damage</label><br>
+        <label class="head1 ml-3">{{MTDDamage |number:'1.2-3'}}</label>
+    </div>
+<div class="col">
+    <label class="head ml-3"  style="color:rgb(255, 27, 65)">Today's Expiry</label><br>
+    <label class="head1 ml-5">{{TdExpiry |number:'1.2-3'}}</label>
+</div>       
+<div class="col">
+    <label class="head" style="color:rgb(255, 27, 65)">MTD Expiry</label><br>  
+    <label class="head1 ml-3" >{{MTDExpiry |number:'1.2-3'}}</label>
+</div>
+    </div>
+    </div>
+<div *ngIf="showDashBoard"  class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+        <!-- <div class="col-12 text-right">
+            <button class="btn btn-primary" (click)="showDialog()">Export</button>
+        </div> -->
+          <p-table [value]="inboundDashBoardData">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:6rem"></th>
+                    <th>KPI</th>
+                    <th>YTD</th>
+                    <th>MTD</th>
+                    <th>Today</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td style="width:6rem"></td>
+                    <td>{{row.KPIdesc}}</td>
+                    <td>{{row.YTD |number:'1.3-4'}}</td>
+                    <td>{{row.MTD |number:'1.3-4'}}</td>
+                    <td>{{row.Td |number:'1.3-4'}}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="5" >
+                  <br>
+                  <h3 style="text-align: center;">No Data Found.</h3>
+                </td>
+              </tr>
+          </ng-template>
+          </p-table>
+       </div>
+       <!-- [style]="{width: '65vw',height: '55vh'}" [baseZIndex]="10000" style="height: 50vh;z-index: 1;" -->
+       <!-- style="margin-top:5%;margin-bottom: 14%;" -->
+    <!-- <p-dialog [style]="{width: '55vw',height: '38vh'}" header="Export" appendTo="body" [modal]="true" [(visible)]="display">
+        <div class="row" style="height:38vh;">
+          <div class="col-md-3 ml-2">
+            <label>Select Warehouse</label>
+            <p-multiSelect [options]="warehouseList" [(ngModel)]="selectedwarehousePop" optionLabel="WarehouseName"></p-multiSelect>
+          </div>
+          <div class="col-md-1"></div>
+          <div class="col-md-4">
+            <label>Select DateRange</label><br>
+            <p-calendar [showIcon]="true" [(ngModel)]="selectedDateDashBoard" appendTo="body" selectionMode="range" inputId="range"></p-calendar>
+          </div>
+          <div class="col-md-2">
+            <label></label><br>
+            <button class="btn btn ml-5 mt-1" style="background-color: green;color: white;" (click)="ExportDashboardPopUp()">Export</button>
+          </div>
+        </div>
+      </p-dialog> -->
+      <!-- DashBoard End -->
+      <!-- Inventory Start -->
+      <div *ngIf="showInventory && (regionInboundLead || hqMasterRole)" class="container-fluid ui-fluid  p-3 mb-3  rounded table table-hover">
+        <div class="row">
+            <div class="col-md-6 ">
+                <h2  style="color: #ff5b1e; font-weight:100;margin-right: 10% ">Inventory</h2>
+               </div>
+               <!-- <div class="col-md-6 text-right">
+                <button class="btn btn-primary" (click)="showInventoryPop()">Export</button>
+               </div> -->
+          </div>
+          <div class="row">
+          </div>
+          <div class="row d-flex justify-content-between ">
+            <div class="col-md-12" style="margin-right:5px;">
+                <p-card>
+                    <div>
+                        <p-table [value]="netInventory" [paginator]="true" [rows]="10">
+                          <!-- <ng-template pTemplate="caption" >
+                            <div class="col-12">
+                              
+                            </div>
+                           </ng-template> -->
+                          <ng-template pTemplate="header">
+                            <tr>
+                                <th>SubCategory Name</th>
+                               <th>Current Inventory Count of Item</th>
+                                <th>Current Inventory Amount</th>
+                                <th>% of Stock</th>
+                                <th>Net Inventory Count of Item</th>
+                                <th>Net Inventory Amount</th>
+                                <th>% of Stock</th>
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-rowData>
+                            <tr>
+                                <td>{{rowData.SubCategoryName}}</td>
+                                <td>{{rowData.CurrentInvCountOfItem}}</td>
+                                <td>{{rowData.CurrentInvAmount |number:'1.3-4'}}</td>
+                                <td>{{rowData.PerOfCurrentStock  |number:'1.3-4'}}</td>
+                                <td>{{rowData.NetInvCountOfItem }}</td>
+                                <td>{{rowData.NetAmount  |number:'1.3-4'}}</td>
+                                <td>{{rowData.NetAmountDDPer |number:'1.3-4'}}</td>
+                            </tr>
+                          </ng-template>
+                          <ng-template pTemplate="footer">
+                            <tr *ngIf="totalCurrentCount>0 ||totalCurrentAmount>0 ||totalCurrentpercent>0 ||totalNetCount>0 ||totalNetAmount>0 || totalNetPercOfStock>0">
+                                <td>Total</td>
+                                <td>{{totalCurrentCount}}</td>
+                                <td>{{totalCurrentAmount |number:'1.3-4'}}</td>
+                                <td>{{totalCurrentpercent |number:'1.3-4'}}</td>
+                                <td>{{totalNetCount}}</td>
+                                <td>{{totalNetAmount |number:'1.3-4'}}</td>
+                                <td>{{totalNetPercOfStock |number:'1.3-4'}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                          <tr>
+                            <td colspan="5" >
+                              <br>
+                              <h3 style="text-align: center;">No Data Found.</h3>
+                            </td>
+                          </tr>
+                      </ng-template>
+                        </p-table>
+                    </div>
+                  </p-card>
+        </div>
+          </div>
+      </div>
+        <!-- Inventory-End -->
+      <!-- Stock Aging Start -->
+      <div *ngIf="showStockAging && (regionInboundLead || hqMasterRole)" class="container p-3 ui-fluid shadow  bg-white rounded table table-hover">
+        <div class="row">
+            <div class="col-md-12 ">
+                <h2  style="color: #ff5b1e; font-weight:100;margin-right: 10% ">Shelf Life</h2>
+               </div>
+               <!-- <div class="col-md-6 text-right">
+                <button class="btn btn-primary" (click)="showStockAgingPop()">Export</button>
+               </div> -->
+          </div>
+          <p-table [value]="stockAgingList" [paginator]="true" [rows]="10">
+          <ng-template pTemplate="header" >
+            <tr>
+                <th style="width:6rem"></th>
+                <th>Shell-Life%</th>
+                <th>Count Of Item</th>
+                <th>Amount</th>
+                <th>% of Stock</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+                <td style="width:6rem"></td>
+                <td>{{item.shelflife}}</td>
+                <td>{{item.CountOfItem}}</td>
+                <td>{{item.Amount |number:'1.3-4'}}</td>
+                <td>{{item.PerOfStock |number:'1.3-4'}}%</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <tr *ngIf="totalCountshelf>0 && totalAmountshelf>0 && totalPercentShelf>0">
+              <td style="width:6rem"></td>
+                <td>Total</td>
+                <td>{{totalCountshelf}}</td>
+                <td>{{totalAmountshelf |number:'1.3-4'}}</td>
+                <td>{{totalPercentShelf |number:'1.3-4'}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" >
+              <br>
+              <h3 style="text-align: center;">No Data Found.</h3>
+            </td>
+          </tr>
+      </ng-template>
+        </p-table>
+      </div>
+      <!-- Stock Aging End -->
+      <!-- Damage Start-->
+      <div *ngIf="showDamage && (regionInboundLead || hqMasterRole)" class="container p-3 ui-fluid shadow  bg-white rounded table table-hover">
+        <div class="row">
+            <div class="col-md-12 ">
+                <h2  style="color: #ff5b1e; font-weight:100;margin-right: 10% ">Damage</h2>
+               </div>
+               <!-- <div class="col-md-6 text-right">
+                <button class="btn btn-primary" (click)="showStockAgingPop()">Export</button>
+               </div> -->
+          </div>
+          <p-table [value]="damageData" [paginator]="true" [rows]="10" [(first)]="first">
+          <ng-template pTemplate="header" >
+            <tr>
+                <th style="width:6rem"></th>
+                <th>Brand</th>
+                <th>Count Of Item</th>
+                <th>Amount</th>
+                <th>% of Stock</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+                <td style="width:6rem"></td>
+                <td>{{item.brand}}</td>
+                <td>{{item.countofitems}}</td>
+                <td>{{item.Amount |number:'1.3-4' }}</td>
+                <td>{{item.perofDamage|number:'1.2-3'}}%</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <tr *ngIf="totalcountOfDamage >0 || totalAmountDamage>0 || totalperDamage>0">
+                <td style="width:6rem"></td>
+                <td>Total</td>
+                <td>{{totalcountOfDamage}}</td>
+                <td>{{totalAmountDamage |number:'1.3-4'}}</td>
+                <td>{{totalperDamage |number:'1.3-4'}}%</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" >
+              <br>
+              <h3 style="text-align: center;">No Data Found.</h3>
+            </td>
+          </tr>
+      </ng-template>
+        </p-table>
+      </div>
+      <!-- Damage End-->
+      <!-- NonSellable Start -->
+      <div *ngIf="showNonSellable && (regionInboundLead || hqMasterRole)" class="container p-3 ui-fluid shadow  bg-white rounded table table-hover">
+        <div class="row">
+            <div class="col-md-12">
+                <h2  style="color: #ff5b1e; font-weight:100;margin-right: 10% ">Non-Sellable</h2>
+               </div>
+               <!-- <div class="col-md-6 text-right">
+                <button class="btn btn-primary" (click)="showStockAgingPop()">Export</button>
+               </div> -->
+          </div>
+          <p-table [value]="nonSellableData"
+           responsiveLayout="scroll" [paginator]="true" [rows]="10">
+          <ng-template pTemplate="header" >
+            <tr>
+                <th style="width:6rem"></th>
+                <th>Brand</th>
+                <th>Count Of Item</th>
+                <th>Amount</th>
+                <th>% of Stock</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+                <td style="width:6rem"></td>
+                <td>{{item.BrandName}}</td>
+                <td>{{item.CountOfItems}}</td>
+                <td>{{item.Amount |number:'1.3-4'}}</td>
+                <td>{{item.perofNonSellable |number:'1.2-3'}}%</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <tr *ngIf="totalSelllableCount!=0 || totalSelllableAmount!=0 || totalSelllablepercent!=0 ">
+                <td style="width:6rem"></td>
+                <td>Total</td>
+                <td>{{totalSelllableCount}}</td>
+                <td>{{totalSelllableAmount |number:'1.3-4'}}</td>
+                <td>{{totalSelllablepercent |number:'1.3-4'}}%</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" >
+              <br>
+              <h3 style="text-align: center;">No Data Found.</h3>
+            </td>
+          </tr>
+      </ng-template>
+        </p-table>
+      </div>
+<!-- NonSellable End -->
+<!-- Clearnce Start -->
+<div *ngIf="showClearance && (regionInboundLead || hqMasterRole)" class="container p-3 ui-fluid shadow  bg-white rounded table table-hover">
+  <div class="row">
+      <div class="col-md-12">
+          <h2  style="color: #ff5b1e; font-weight:100;margin-right: 10% ">Clearence</h2>
+         </div>
+         <!-- <div class="col-md-6 text-right">
+          <button class="btn btn-primary" (click)="showStockAgingPop()">Export</button>
+         </div> -->
+    </div>
+    <p-table [value]="clearnceData" [paginator]="true" [rows]="10"
+     responsiveLayout="scroll"  >
+    <ng-template pTemplate="header" >
+      <tr>
+          <th style="width:6rem"></th>
+          <th>Brand</th>
+          <th>Count Of Item</th>
+          <th>Amount</th>
+          <th>% of Stock</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+          <td style="width:6rem"></td>
+          <td>{{item.BrandName}}</td>
+          <td>{{item.CountOfItem}}</td>
+          <td>{{item.Amount |number:'1.3-4'}}</td>
+          <td>{{item.perofClearance |number:'1.3-4'}}%</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <tr *ngIf="totalClearCount>0 || totalClearAmount>0 || totalClearPercent>0">
+          <td style="width:6rem"></td>
+          <td>Total</td>
+          <td>{{totalClearCount}}</td>
+          <td>{{totalClearAmount |number:'1.3-4'}}</td>
+          <td>{{totalClearPercent |number:'1.3-4'}}%</td>
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5" >
+        <br>
+        <h3 style="text-align: center;">No Data Found.</h3>
+      </td>
+    </tr>
+</ng-template>
+  </p-table>
+</div>
+<!-- Clearnce End -->
+     <!-- Inventory Export Start -->
+      <!-- <p-dialog header="Export" [style]="{width: '55vw',height: '38vh'}"   appendTo="body" [modal]="true" [(visible)]="displayInventoryExport">
+        <div class="row" style="height:38vh;">
+          <div class="col-md-3 ml-2">
+            <label>Select Warehouse</label>
+            <p-dropdown [options]="warehouseList" optionLabel="WarehouseName" placeholder="Select Type" placeholder="Select Warehouse">
+            </p-dropdown>
+          </div>
+          <div class="col-md-1"></div>
+          <div class="col-md-4">
+            <label>Select DateRange</label><br>
+            <p-calendar [showIcon]="true" appendTo="body" selectionMode="range" inputId="range"></p-calendar>
+          </div>
+          <div class="col-md-2">
+            <label></label><br>
+            <button class="btn btn ml-5 mt-1" style="background-color: green;color: white;">Export</button>
+          </div>
+        </div>
+      </p-dialog>
+    <!-- Inventory Export end -->
+      <!-- StockAging Export Start -->
+      <!-- <p-dialog header="Export" [style]="{width: '55vw',height: '38vh'}" appendTo="body" [modal]="true" [(visible)]="displayStockAgingExport">
+        <div class="row" style="height:38vh;">
+          <div class="col-md-3 ml-2">
+            <label>Select Warehouse</label>
+            <p-dropdown [options]="warehouseList" optionLabel="WarehouseName" placeholder="Select Type" placeholder="Select Warehouse">
+            </p-dropdown> -->
+            <!-- <select placeholder="Select Warehouse" >
+                <option  *ngFor="let item in warehouseList ">{{item.Name}}</option>
+              </select> -->
+          <!-- </div>
+          <div class="col-md-1"></div>
+          <div class="col-md-4">
+            <label>Select DateRange</label><br>
+            <p-calendar [showIcon]="true" appendTo="body" selectionMode="range" inputId="range"></p-calendar>
+          </div>
+          <div class="col-md-2">
+            <label></label><br>
+            <button class="btn btn ml-5 mt-1" style="background-color: green;color: white;">Export</button>
+          </div>
+        </div>
+      </p-dialog> -->
+      <!-- StockAging Export End -->
+      <!-- Damage Export Start -->
+      <!-- <p-dialog header="Export" [style]="{width: '55vw',height: '38vh'}" appendTo="body" [modal]="true" [(visible)]="displayDamageExport">
+        <div class="row" style="height:38vh;">
+          <div class="col-md-3 ml-2">
+            <label>Select Warehouse</label>
+            <p-dropdown [options]="warehouseList" optionLabel="WarehouseName" placeholder="Select Type" placeholder="Select Warehouse">
+            </p-dropdown>
+            <!-- <select placeholder="Select Warehouse" >
+                <option  *ngFor="let item in warehouseList ">{{item.Name}}</option>
+              </select> -->
+          <!-- </div>
+          <div class="col-md-1"></div>
+          <div class="col-md-4">
+            <label>Select DateRange</label><br>
+            <p-calendar [showIcon]="true" appendTo="body" selectionMode="range" inputId="range"></p-calendar>
+          </div>
+          <div class="col-md-2">
+            <label></label><br>
+            <button class="btn btn ml-5 mt-1" style="background-color: green;color: white;">Export</button>
+          </div>
+        </div>
+      </p-dialog>  -->
+      <!-- Damage Export End -->
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+  </p-progressSpinner>
+</div>

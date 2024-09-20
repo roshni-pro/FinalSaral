@@ -1,0 +1,177 @@
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+
+<div *ngIf="!isShowCustomerDetail">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2"><b>Customer Tracking</b></h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2 form-group">
+                        <label>City</label>
+                        <select id="city" name="city" class="form-control" [(ngModel)]="Cityid"
+                            (change)=CityChange(Cityid)>
+                            <option value="0">--select--</option>
+                            <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                                {{ city.CityName }}
+                            </option>
+                            <option value="-1">Others</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label>Cluster</label>
+                        <select id="cluster" name="cluster" class="form-control" [(ngModel)]="data.ClusterId">
+                            <option value="0">--select--</option>
+                            <option *ngFor="let w of clusterList" [ngValue]="w.ClusterId">
+                                {{ w.ClusterName }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label>Active</label>
+                        <select class="form-control" name="Active" [(ngModel)]="data.IsActive">
+                            <option value="-1">All</option>
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label>Customer Type</label>
+                        <select class="form-control" name="CustomerType" [(ngModel)]="data.CustomerType">
+                            <option value="All">All</option>
+                            <option value="Retailer">Retailer</option>
+                            <option value="Super Stockist">Super Stockist</option>
+                            <option value="Distributor">Distributor</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Status</label>
+                        <select class="form-control" name="Status" [(ngModel)]="SelectedStatus">
+                            <option value=0>All</option>
+                            <option value=1>Request</option>
+                            <option value=2>Physical Verified</option>
+                            <option value=3>Rejected</option>
+                            <option value=4>Shop Found</option>
+                            <option value=5>Shop Not Found</option>
+                            <option value=6>Pending</option>
+                            <option value=7>No Document</option>
+                            <option value=8>Virtual Verified</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label>Search by</label>
+                        <input type="text" id="txtname" [(ngModel)]="data.Keyward" name="name" class="form-control"
+                            placeholder="SkCode,Number">
+                    </div>
+                    <!-- <div class="col-md-3">
+                        <label>IsDocument</label>
+                        <select class="form-control" name="IsDocument" [(ngModel)]="IsDocument">
+                            <option value=0>All</option>
+                            <option value=1>Yes</option>
+                            <option value=2>No</option>
+                        </select>
+                    </div> -->
+                    <!-- <div class="form-group col-md-3" style="top: 2em;">
+                        <label>Total Active :</label>
+                        <label>{{TotalActive}}</label>
+                    </div> -->
+                </div>
+                <div class="row countfont">
+                    <div class="form-group col-md-3">
+                        <label>Total Active :</label>
+                        <label>{{TotalActive}}</label>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Total Pending :</label>
+                        <label>{{TotalPending}}</label>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label>Total Request :</label>
+                        <label>{{TotalRequest}}</label>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label>Total Reject :</label>
+                        <label>{{TotalReject}}</label>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label>Total Verified :</label>
+                        <label>{{TotalVerified}}</label>                       
+                    </div>
+                    <div class="col-md-6 form-group"></div>
+
+                    <div class="col-md-6 form-group">
+                        <span class="item-align-right float-right">
+                            <button type="button" (click)="Search()"
+                                class="btn btn-raised btn-raised btn-success marginbtn">Search</button> &nbsp;
+                            <button type="button" (click)="Refresh()"
+                                class="btn btn-raised btn-raised btn-danger marginbtn">Refresh</button> &nbsp;
+                            <button type="button" (click)="Export()"
+                                class="btn btn-raised btn-raised btn-warning marginbtn">Export</button>
+                        </span>
+                    </div>
+                 
+                </div>
+                <p-table #dt [value]="customerlist" [totalRecords]="TotalCount" (onLazyLoad)="load($event)"
+                    [lazy]="true" [paginator]="true" [rows]="rows" [(first)]="first">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Skcode</th>
+                            <th>ShopName</th>
+                            <th>Customer Name</th>
+                            <th>Customer Type</th>
+                            <!-- <th>Shop Status</th> -->
+                            <!-- <th>Status</th> -->
+                            <th>Mobile</th>
+                            <th>Shipping Address</th>
+                            <th>Previous Address</th>
+                            <!-- <th>Actual Distance</th> -->
+                            <th>Created By</th>
+                            <th>check</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr [pSelectableRow]="rowData">
+                            <td>{{item.Skcode}}</td>
+                            <td>{{item.ShopName}}</td>
+                            <td>{{item.Name}}</td>
+                            <td>{{item.CustomerType}}</td>
+                            <!-- <td>{{item.ShopStatus}}</td> -->
+                            <!-- <td>{{item.CustomerStatus}}</td> -->
+                            <td>{{item.Mobile}}</td>
+                            <td>{{item.ShippingAddress}}</td>
+                            <td>{{item.UpdatedAddress}}</td>
+                            <!-- <td>{{item.Aerialdistance*1000 | number:'1.3-3'}}m</td> -->
+                            <td>{{item.CreatedBy}}</td>
+                            <!-- <button type="button" (click)="Check(item.CustomerId,item)"
+                                class="btn btn-raised btn-raised btn-success mt">Check</button> -->
+                                <button type="button" (click)="Check(item.CustomerId,item)" class="btn btn-raised btn-raised btn-success mt">Check</button>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+
+            </div>
+            <div class="card-footer"></div>
+        </div>
+    </div>
+
+
+
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+</div>
+<!-- <div *ngIf="isShowCustomerDetail">
+    <app-customerdetail [CustomerId]="Id" (close)="closeDetail()" [custTracking]="true" [detail]="detail" [SelectedStatus]="SelectedStatus"></app-customerdetail>
+</div> -->
+
+<div *ngIf="isShowCustomerDetail">
+    <app-customertrackingdetail [CustomerId]="Id" (close)="closeDetail()" [custTracking]="true"  [detail]="detail" [SelectedStatus]="SelectedStatus"></app-customertrackingdetail>
+</div>

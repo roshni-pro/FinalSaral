@@ -1,0 +1,167 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+
+<div>
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="m-2">Murli Images Master</h3>
+    </div>
+
+    <div>
+      <button pButton type="button" label="Add New Murli Images" (click)="Add()"
+        class="ui-button-raised m-2 shadow"></button>
+    </div>
+  </div>
+  <div calss="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="Wh" class="col-md-6"> Select Warehouse to get data</label>
+        <select id="wh" name="wh" class="form-control col-md-6" [(ngModel)]="Whsearch" placeholder="Select Warehouse"
+          required="1" maxlength="50" minlength="2">
+          <option value="">--Select--</option>
+          <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+            {{wh.CityName}} - {{wh.WarehouseName}}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-raised btn-primary" (click)="onSave(Whsearch)">
+        <i></i> go
+      </button>
+    </div>
+
+  </div>
+  <div class="ui-fluid shadow p-12 mb-5 bg-white rounded table table-hover">
+
+    <p-table [value]="getdatalist" [paginator]="true" [rows]="10" text-align: center>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="text-align: center">
+            SNo.
+          </th>
+          <th style="text-align: center">
+            Created Date.
+          </th>
+          <th style="text-align: center">
+            Warehouse Name.
+          </th>
+          <th style="text-align: center">
+            Title.
+          </th>
+          <th style="text-align: center">
+            Images.
+          </th>
+          <th style="text-align: center">
+            Active.
+          </th>
+          <th style="text-align: center">
+            Delete.
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-pageData let-rowIndex="rowIndex">
+        <tr>
+          <td style="text-align: center">{{rowIndex -- 1}}</td>
+          <td style="text-align: center">{{pageData.CreateDate | date}}</td>
+          <td style="text-align: center">{{pageData.WarehouseName}}</td>
+          <td style="text-align: center">{{pageData.Title}}</td>
+          <td><button style="text-align: center; color: #009DA0" class="btn" (click)="Images(pageData)">Show
+              Images</button>
+          </td>
+          <td>
+            <p-inputSwitch name="isPublished" [(ngModel)]="pageData.Isactive" (ngModelChange)="publishStory(pageData)">
+            </p-inputSwitch>
+          </td>
+          <td>
+            <button style="color: #009DA0" class="btn" (click)="delete(pageData)">Delete</button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+
+<div *ngIf="isActivePopUp">
+  <p-dialog [(visible)]="isActivePopUp" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '40%',height: '40%', overflow: 'auto'}">
+    <div class="modal-header">
+    </div>
+    <div class="modal-body d-flex flex-column align-items-center">
+      <h2>Are You Sure?</h2>
+      <p class="m-2" style="text-align: center"><strong>Note:</strong> This will <strong><span
+            *ngIf="Activevalue">Deactivate</span><span *ngIf="!Activevalue">Activate</span></strong> the
+        murli images in the database.</p>
+    </div>
+    <div class="modal-footer d-flex p-0 justify-content-center">
+      <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+        (click)="Activated(Activevalue)"><span *ngIf="Activevalue">Deactivate</span><span
+          *ngIf="!Activevalue">Activate</span></button>
+    </div>
+  </p-dialog>
+</div>
+
+
+<div *ngIf="isDeletePoPuP">
+  <p-dialog [(visible)]="isDeletePoPuP" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '40%',height: '40%', overflow: 'auto'}">
+    <div class="modal-header">
+    </div>
+    <div class="modal-body d-flex flex-column align-items-center">
+      <h2>Are You Sure?</h2>
+      <p class="m-2" style="text-align: center"><strong>Note:</strong> This will permanently delete the Murli images
+        from the records.</p>
+    </div>
+    <div class="modal-footer d-flex p-0 justify-content-center">
+      <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+        (click)="Deleted(true)">Delete</button>
+    </div>
+  </p-dialog>
+</div>
+
+
+
+
+
+<div *ngIf="isOpenPopup">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '80%',height: '50%', overflow: 'auto'}">
+    <p-header>
+      Murli Images of Title - ( {{title}})
+    </p-header>
+
+
+    <div class="row">
+      <div class="col-4">
+        <h2>walk image</h2>
+
+
+        <div *ngIf="walkimage" class="ui-g-12">
+          <img title="Walk Image" [src]="walkimage" class="wcr">
+        </div>
+
+      </div>
+      <div class="col-4">
+        <h2>Speak Image</h2>
+
+        <div *ngIf="speakimage" class="ui-g-12">
+          <img title="Walk image" [src]="speakimage" class="wcr">
+        </div>
+
+      </div>
+      <div class="col-4">
+        <h2>Buy Image</h2>
+        <div *ngIf="buyimage" class="ui-g-12">
+          <img title="Buy image" [src]="buyimage" class="wcr">
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration="2s"></p-progressSpinner>

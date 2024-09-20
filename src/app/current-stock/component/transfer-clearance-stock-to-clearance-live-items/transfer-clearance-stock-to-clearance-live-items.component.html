@@ -1,0 +1,184 @@
+<h3 class="m-2">
+    <i class="fa fa-boxes"></i><b> Clearance Live Item Edit</b>
+</h3>
+<div class="row bg-white rounded mt-3 p-2">
+    <div class="col-md-2">
+        <label>Select Warehouse :</label>
+        <p-dropdown [options]="warehouseList" [filter]="true" [resetFilterOnHide]="true" optionLabel="WarehouseName"
+            placeholder="Select Warehouse" [(ngModel)]="selectedFilter.selWarehouse" (ngModelChange)="onSearch()">
+        </p-dropdown>
+    </div>
+
+    <div class="col-md-2">
+        <label>Select ShelfLife Type:</label>
+        <select type="text" id="shelfLife" [(ngModel)]="selectedFilter.shelfLifeType" class="form-control"
+            name="shelfLife">
+            <option [value]="null">--select--</option>
+            <option [value]="1">Clearance</option>
+        </select>
+    </div>
+
+    <div class="col-md-8">
+        <label> Item :</label>
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" id="ab" placeholder="&#xF002; Enter text here" class="form-control"
+                    style="font-family:Arial, FontAwesome" name="ab" [(ngModel)]="selectedFilter.searchKey">
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-success _success mr-2" (click)="onSearch()"> Search </button>
+                <button class="btn btn-primary mr-2" (click)="onRefresh()"> Clear </button>
+                <button class="btn btn-info _info" (click)="onExport()"> Export </button>
+                <button class="btn btn-info _info ml-2" (click)="AllExport()"> AllExport </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="overflow-y: auto;overflow-x:auto;">
+    <!-- style="overflow-y: auto" -->
+    <div class="card-body">
+        <div class="row mt-3">  
+            <p-table [value]="clearanceStockItemList" [paginator]="true" [rows]="10" [scrollable]="true"
+            [lazy]="true" (onLazyLoad)="load($event)" [totalRecords]="totalRecords"
+               [style]="{width: '120%'}" >
+                <!-- [(selection)]="selectedList"   [totalRecords]="totalRecords" -->
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>MultiMRPId</th>
+                        <th>Batch Code</th>
+                        <th>ItemName</th>
+                        <th>Unit Price</th>
+                        <th>Remaining Qty</th>
+                        <th>Live Qty</th>
+                        <th>Move to Live Qty</th>
+                        <th>Disc Value/Percent</th>
+                        <th>Discount</th>
+                        <!-- <th>Create Offer</th> -->
+                        <th>Apply on</th>
+                        <th>Cl-Price</th>
+                        <th>Promo Cost</th>
+                        <th>MFG Date</th>
+                        <th>Expiry Date</th>
+                        <th>Shelf Life Days Left</th>
+                        <th>Shelf Life Left</th>
+                        <!-- <th> <p-tableHeaderCheckbox  (click)="checks()"></p-tableHeaderCheckbox>Select All</th> -->
+                        <th>
+                            <!-- <p-checkbox name="fieldName" [(ngModel)]="isAllSelected" [binary]="true"  (click)="checks($event)">
+                            </p-checkbox>Select All -->
+                            Update
+                        </th> 
+                        <!-- <th>Select All</th> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                    <tr>
+                        <td>{{rowData.ItemMultiMRPId}}</td>
+                        <td>{{rowData.BatchCode}}</td>
+                        <td>{{rowData.itemname}}</td>
+                        <td>{{rowData.UnitPrice}}</td>
+                        <td>{{rowData.AvailableQty}}</td>
+                        <td [ngStyle]="(rowData.alreadyMoved > 0)?{'background-color': '#B2C248'}:{'background-color':'#E2A76F'}">{{rowData.alreadyMoved}}</td>
+                        <td>
+                            <input class="form-control" type="number" title="Numbers only" id="qty"
+                                name="qty{{i}}" style="color: black;" [(ngModel)]="rowData.TotalQty"
+                                (keypress)="keyPress($event)" min="0" (ngModelChange)="onAddQty(rowData,'Total')" />
+                            <!-- <label for="" style="color:red;font-size:4px;">{{rowData.TotalQty}}</label> -->
+                        </td>
+                        <td>
+                            <select type="text" id="shelfLife" [(ngModel)]="rowData.DiscountType" class="form-control"
+                                name="shelfLife" (change)="enableIsOffer(rowData)">
+                                <option value="null">--select--</option>
+                                <option value="Value">Value</option>
+                                <option value="Percentage">Percent</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input class="form-control" type="number" title="Numbers only" id="qty"
+                                name="qty{{i}}" style="color: black;" [(ngModel)]="rowData.Discount" [disabled]="rowData.DiscountType!='Percentage' && rowData.DiscountType!='Value'"
+                                (keypress)="keyPress($event)" min="0" (ngModelChange)="onAddQty(rowData,'Dis')" />
+                        </td>
+                        <!-- <td >
+                            <p-checkbox [binary]="true" [(ngModel)]="rowData.IsOfferGenerated" [disabled]="rowData.isOfferActive==false"
+                                (click)="copyData=rowData;"></p-checkbox>
+                        </td> -->
+                        <td>{{rowData.GroupName}}</td>
+                        <td>
+                            {{rowData.ClPrice|number: '1.2-3'}}
+                        </td>
+                        <td>{{rowData.PromoCost|number: '1.2-3'}}</td>
+                        <td>{{rowData.MFGDate | date : 'mediumDate'}}</td>
+                        <td>{{rowData.ExpiryDate | date : 'mediumDate'}}</td>
+                        <td>{{rowData.RemainShelfLifedays}}</td>
+                        <td>{{rowData.ShelfLifeLeft}}</td>
+                        <!-- style="padding-left:4%;" -->
+                        <!-- <td><p-tableCheckbox [value]="rowData.IsActive" name="isactive{{i}}" id="isactive{{i}}" [(ngModel)]="rowData.IsActive" (click)="onUpdate(rowData);"></p-tableCheckbox></td> -->
+                        <!-- onUpdate(rowData); -->
+                        <!-- <td> -->
+                            <!-- <p-tableCheckbox [value]="rowData" name="fieldName" ngDefaultControl
+                                [(ngModel)]="rowData.checked" [disabled]="rowData.isActive==false"
+                                (click)="check(rowData)" disabled></p-tableCheckbox> -->
+                        <!-- </td> -->
+                        <td>
+                            <p-checkbox  name="fieldName" [binary]="true" 
+                            [(ngModel)]="rowData.checked" [disabled]="rowData.isActive==false"
+                            (click)="check(rowData)">
+                            </p-checkbox>
+                        </td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col" style="margin-left:91%;">
+        <button class="btn" [disabled]="!clearanceStockItemList || !selectedList || selectedList.length==0"
+            style="background-color:orangered;color:white" (click)="display=true;" disabled>Update</button>
+    </div>
+</div>
+<p-dialog [(visible)]="display" positionTop="100" [modal]="true" appendTo="body"
+    [style]="{width: '50%',height:'40%', top: '100px'}">
+    <div class="card">
+        <div class="card-body">
+            <p-toast [style]="{marginTop: '80px'}" *ngIf="display"></p-toast>
+            <label for="">Select Eligible Customers For These Clearance Items</label>
+            <div class="field-radiobutton">
+                <p-radioButton name="Customer" value="Warehouse" [(ngModel)]="ApplyType" inputId="ApplyType1">
+                </p-radioButton>
+                &nbsp;<label for="ApplyType1">Warehouse</label>
+            </div>
+            <div class="field-radiobutton">
+                <p-radioButton name="Customer" value="Customers" [(ngModel)]="ApplyType" inputId="ApplyType2">
+                </p-radioButton>
+                &nbsp;<label for="ApplyType2">Group of Customers</label>
+            </div>
+            <div *ngIf="this.ApplyType=='Customers'" class="col">
+                <label for="">Select Group</label>
+                <p-dropdown [options]="GroupList" [filter]="true" [resetFilterOnHide]="true"
+                    [(ngModel)]="selectedGroupCode" optionLabel="GroupName" placeholder="Select Group.."></p-dropdown>
+            </div>
+            <div class="col" style="padding-bottom:4%;padding-top:2%;">
+                <button class="btn btn-primary" style="margin-left:40%;" (click)="Submit()">Submit</button>
+                <button class="btn btn-success ml-1" style="background-color:#09925f;"
+                    (click)="display=false;IsOffer=false;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<p-toast [style]="{marginTop: '80px'}" *ngIf="!display"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

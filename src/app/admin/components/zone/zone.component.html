@@ -1,0 +1,104 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+  <section id="Zone" >
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header">
+        <h3 class="m-2"><b>Zone</b></h3>
+      </div>
+      
+      <div>
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end ad-zo zon-top" (click)="addZone()">
+          <i class="fa fa-plus-circle"></i> Add Zone
+        </button>
+      </div>
+    </div>
+
+    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+      <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+      </p-footer>
+    </p-confirmDialog>
+
+    <!-- <div class="container h-100">
+      <div class="d-flex justify-content-left ">
+        <div class="searchbar">
+          <input class="search_input" type="text" name="" placeholder="Search..."  >
+          <a href="#" class="search_icon"><i class="fas fa-search"></i></a>
+        </div>
+      </div>
+    </div> -->
+    <!-- 
+    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+      <p-footer>
+
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+      </p-footer>
+    </p-confirmDialog> -->
+
+    <div class="ui-fluid shadow p-3 m-2 mmtop bg-white rounded table table-hover">
+      <div class="position-relative">
+        <div class="position-absolute zone-details" *ngIf="isDetails">
+          <app-zone-details [details]="selectedRowDetails" [activeFields]="activeFields" (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)" class="d-flex justify-content-end"></app-zone-details>
+        </div>
+        
+        <div class="position-relative tt-ww" >
+          <p-table #dt [columns]="cols" [value]="zoneList" [paginator]="true" [rows]="20" dataKey="ZoneId" text-align: center>
+            <!-- <ng-template pTemplate="caption">
+            <div class="container h-100">
+              <div class="d-flex justify-content-right ">
+                <div class="searchbar">
+                  <input class="search_input" type="text" pInputText size="50" placeholder=""
+                    (input)="dt.filterGlobal($event.target.value, 'contains')">
+                  <a href="#" class="search_icon"><i class="fa fa-search"></i></a>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+          -->
+       
+            <ng-template pTemplate="caption">
+              <div style="text-align: right">
+                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="header" >
+              <tr>
+                <!-- <th>Edit</th> -->
+                <th *ngFor="let col of cols"  style="text-align: initial">
+                  {{col.header}}
+                </th>
+                <!-- <th>Action</th> -->
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+              <tr (click)="openDetails(rowData,$event)">
+                <!-- <td>
+                  <a href="#" [pRowToggler]="rowData">
+                    <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                  </a>
+                </td> -->
+        
+                <td *ngFor="let col of columns" style="text-align: initial">
+                  {{rowData[col.field]}}
+                </td>
+                <!-- <td style="text-align:center">
+                  <i style="cursor: pointer;" class="ft-trash-2 danger font-medium-1 mr-2" (click)="onDelete(rowData)"></i>
+                </td> -->
+              </tr>
+            </ng-template>
+            <!-- <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+              <tr>
+                <td colspan="6">
+                  <app-zone-list [ZoneId]="rowData.ZoneId" ></app-zone-list>
+                </td>
+              </tr>
+            </ng-template> -->
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </section>

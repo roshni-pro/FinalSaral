@@ -1,0 +1,262 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form " name="form" #groupEditForm="ngForm">
+                <!-- <div class="form-body"> -->
+                <h4 class="form-section"><i class="ft-user"></i> Add Combo</h4>
+                <div class="row col-md-12" *ngIf="group">
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="Warehouse"> SelectHub:</label>
+                      <!-- <div class="col-md-6"> -->
+                      <select id="Warehouse" name="WarehouseName" class="form-control" [(ngModel)]="group.WarehouseId"
+                        #WarehouseId="ngModel" required="1">
+                        <option *ngFor="let WareHouse of warehouses" [ngValue]="WareHouse.WarehouseId">
+                          {{WareHouse.WarehouseName}}
+                        </option>
+                      </select>
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !WarehouseId.valid && WarehouseId.errors.required">
+                        <code>Warehouse Name is required</code>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- </div> -->
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="aname">Combo Name</label>
+                      <!-- <div class="col-md-6"> -->
+                      <input type="text" id="aname" class="form-control" name="aname" placeholder="Enter Combo Name "
+                        [(ngModel)]="group.Comboname" maxlength="100" required="1" #Comboname="ngModel" />
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !Comboname.valid && Comboname.errors.required">
+                        <code>Combo Name is required</code>
+                      </div>
+                      <div *ngIf="isInvalid && !Comboname.valid && Comboname.errors.minlength">
+                        <code>Minlength 2</code>
+                      </div>
+                      <div *ngIf="isInvalid && !Comboname.valid && Comboname.errors.maxlength">
+                        <code>Maxlength 2</code>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="aname">Sell Qty:</label>
+                      <input type="number" id="aname" class="form-control" name="aname" placeholder="Enter Sell Qty"
+                        [(ngModel)]="group.SellQty" required="1" #SellQty="ngModel" />
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !SellQty.valid && SellQty.errors.required">
+                        <code>Sell Qty is required</code>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="uploadAdvertisements">Upload Image:</label>
+                      <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                        (change)="upload($event.target.files)" />
+                      <button type="button" class="btn btn-raised btn-primary" (click)="UploadImage()">
+                        Upload
+                      </button>
+                      <div class="form-group">
+                        <img *ngIf="imgURL" src="{{imgURL}}" style="height: 75px;width: 75px;" class="wcr">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- </div>
+                </div>
+                   -->
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom: 50px;">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="content-header"> 
+            <h4 class="form-section"><b>Add LIST </b></h4>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label for="name"> Item Name<span style="color:red"> *</span></label>
+                <span class="ui-fluid">
+                  <p-autoComplete [(ngModel)]="group.selecteditem" [suggestions]="itemList"
+                    (ngModelChange)="onsearch(group.WarehouseId)"
+                    (completeMethod)="getItemList($event,group.WarehouseId)" field="itemnameWithMOQ" [size]="30"
+                    placeholder="enter at least 3 chars" [minLength]="1" name="itembarcode"
+                    (onSelect)="onmodelChange(group.selecteditem)" name="itemname" #itemname="ngModel">
+                  </p-autoComplete>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="position-relative">
+            <div class="position-absolute tat-details">
+            </div>
+
+            <div class="position-relative ">
+
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>
+                      Item Image
+                    </th>
+                    <th>
+                      Item Name
+                    </th>
+                    <th>
+                      Unit Price
+                    </th>
+                    <th>
+                      Mrp
+                    </th>
+                    <th>
+                      Min Order Qty
+                    </th>
+                    <th>
+                      Quantity
+                    </th>
+                    <th>
+                      Discount Percentage
+                    </th>
+
+                    <th>
+                      After Discount Price
+                    </th>
+                    <th>
+                     Total Price
+                    </th>
+                    <th>
+                      Remove
+                    </th>
+                    <!-- <th >
+                  Image
+                 </th>  -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let selecteditem of selecteditem">
+                    <td>
+                      <img src="{{selecteditem.ItemImage}}" style="width:30%;" />
+
+                    </td>
+                    <td>
+                      {{selecteditem.itemname}}
+                    </td>
+                    <td>
+                      {{selecteditem.UnitPrice}}
+                    </td>
+                    <td>
+                      {{selecteditem.MRP}}
+                    </td>
+                    <td>
+                      {{selecteditem.MinOrderQty}}
+                    </td>
+                    <!-- <td>
+                      <input type="number" id="ip2" name="cashAmountss" class="form-group ip2" class="form-control"
+                      [(ngModel)]="selecteditem.Qty" (ngModelChange)="TotalQty(selecteditem)" />                     
+                    </td>	 -->
+                    <div class="input-group  incDicBtn">
+                      <button type="button" class="btn s1" data-type="minus" data-field="quant[1]"
+                        (click)="decrement(selecteditem)">
+                        <i class="fa fa-minus" aria-hidden="true"></i>
+                      </button>
+                      <input class="form-control incDicInput" type="number" pattern="[0-9]" title="Numbers only"
+                        id="bidqty" name="bidqty" style="color: black;" [(ngModel)]="selecteditem.Qty"
+                        (ngModelChange)="TotalQty(selecteditem)" disabled />
+                      <button type="button" class="btn s1" data-type="plus" data-field="quant[1]"
+                        (click)="increment(selecteditem)">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                      </button>
+                    </div>
+
+                    <td>
+                      <!-- <input type="number" id="ip2" name="cashAmountss" class="form-group ip2" class="form-control"
+                          [(ngModel)]="selecteditem.Percentage" (ngModelChange)="TotalParcentage(selecteditem)" /> -->
+                      <input type="number" id="ip2" name="cashAmountss" class="form-group ip2" class="form-control"
+                        [(ngModel)]="selecteditem.Parcentage" (ngModelChange)="onItemAmount(selecteditem)" required="1" #Parcentage="ngModel" />
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !Parcentage.valid && Parcentage.errors.required">
+                          <code>Atleast One Number is required either 0 or  more then 1</code>
+                        </div>                   
+
+                    </td>
+                    <td>
+                      {{selecteditem.AfterPercentage? (selecteditem.AfterPercentage | number: '1.2-2') : ''}}
+                      <!-- <input type="text" id="TDA" name="TDA" [(ngModel)]="selecteditem.AfterPercentage" class="form-control" (ngModelChange)="onItemAmount(selecteditem)"
+                        disabled> -->
+                    </td>
+                    <td>
+                      {{selecteditem.TotalPriceItem? (selecteditem.TotalPriceItem | number: '1.2-2') : ''}}
+                      <!-- <input type="text" id="TDA" name="TDA" [(ngModel)]="selecteditem.TotalPriceItem" class="form-control" (ngModelChange)="onTotalPrice(selecteditem)"
+                        disabled> -->
+                    </td>
+
+                    <td >
+                      <button (click)="removeSelected(selecteditem)" class="btn btn-raised btn-warning mr-1"> <i class="fa fa-trash" aria-hidden="true"></i>  
+                      <!-- <button type="button" (click)="removeSelected(selecteditem)" class="btn btn-raised btn-warning mr-1"> -->                      
+                      </button>
+                    </td>
+                    <!-- <td >
+                        {{selecteditem.LogoUrl}}
+                       </td> -->
+                  </tr>
+                </tbody>
+              </table>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="col-md-6">
+                    <label for="a">Total Price(Before Discount):</label>
+
+                    {{TotalResult|number:'1.0-2'}}
+                  </div>
+                  <div class="col-md-6">
+                    <label for="a">Total Price(After Discount):</label>
+
+                    {{Result|number:'1.0-2'}}
+                  </div>
+               
+                </div>
+              </div>
+              <div class="form-actions right col-sm-12 p-3">
+                <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                  Cancel
+                </button>
+                <button type="button" class="btn btn-raised btn-primary"
+                  (click)="save(group,selecteditem,groupEditForm)">
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

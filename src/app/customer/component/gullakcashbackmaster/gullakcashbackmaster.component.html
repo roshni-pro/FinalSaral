@@ -1,0 +1,192 @@
+
+<div class="card">
+    <div class="card-header"><h4><dt>Gullak Cash Back List</dt></h4></div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-2">
+                <label for="ware"><b>Warehouse</b></label>
+                <select name="" value="" class="form-control col md-3" [(ngModel)]="WarehouseId">
+                    <option [ngValue]="0">--Select--</option>
+                    <option *ngFor="let item of WarehouseList" [ngValue]="item.WarehouseId">{{item.WarehouseName}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label><b>Customer Type</b></label>
+                <select class="form-control" id="Cust" name="CustomerType" [(ngModel)]="CustomerTypeId">
+                    <option value="0">--Select--</option>
+                    <option value="1">KPP</option>
+                    <option value="2">Retailer</option>
+                    <option value="3">Both</option>
+                </select>
+            </div>
+            <div class="form-group srch">
+                <button type="button" class="btn btn-raised btn-raised btn-success mt"
+                        (click)="search(WarehouseId,CustomerTypeId)">Search</button>
+                <button id="btnAdd" (click)="AddItem()" class="btn btn-raised btn-raised btn-danger mt ml-2">Add Item</button>
+            </div>
+        
+            <div class="col md-9"></div>
+        </div>
+        
+        <div class="row">
+                    <p-table [value]="GullakCashBackList" [paginator]="true" [rows]="20" [lazy]="false" [scrollable]="true" scrollHeight="130vh"
+                        text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Warehouse</th>
+                                <th>start date</th>
+                                <th>End Date</th>
+                                <th>Amount From</th>
+                                <th>Amount To</th>
+                                <th>Max CashBack Amt</th>
+                                <th>Cash Back (%)</th>
+                                <th>Customer</th>
+                                <th style="width: 7%;"> Action </th>
+                                <th style="width: 7%;"> Action </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData>
+                            <tr>
+                                <td>{{rowData.WarehouseName}}</td>
+                                <td>{{rowData.StartDate | date:'dd-MM-yyyy'}}</td>
+                                <td>{{rowData.EndDate | date:'dd-MM-yyyy'}}</td>
+                                <td>{{rowData.AmountFrom}}</td>
+                                <td>{{rowData.AmountTo}}</td>
+                                <td>{{rowData.MaximumCashBackAmount}}</td>
+                                <td>{{rowData.CashBackPercent}}</td>
+                                <td style="width: 7%;">{{rowData.Customer}}</td>
+                                <td style="width: 8%;">
+                                    <button id="btnActive" *ngIf="rowData.IsActive==false"
+                                        (click)="StatusChange(rowData.Id,rowData.IsActive)"
+                                        class="btn btn-primary">Active</button>
+                                    <button id="btnInActive" *ngIf="rowData.IsActive==true"
+                                        (click)="StatusChange(rowData.Id,rowData.IsActive)"
+                                        class="btn btn-primary">InActive</button>
+                                </td>
+                                <td style="width: 7%;">
+                                    <button id="btnEdit" (click)="EditGullak(rowData)"
+                                    class="btn btn-primary">Edit</button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+        </div>
+        
+    </div>
+    <div class="card-footer"></div>
+  </div>
+
+
+<div *ngIf="isOpenPopup">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '70%',height: '65%',left: '323px'}">
+        <p-header>
+            Gullak Cash Back
+        </p-header>
+        <form class="form" #myForm="ngForm" (ngSubmit)="OnSubmit(dataAdd)">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Warehouse*</label>
+                    <select class="form-control" name="WarehouseId" [(ngModel)]="dataAdd.WarehouseId" required #WarehouseId="ngModel">
+                        <!-- <option [ngValue]="0">--Select--</option> -->
+                        <option *ngFor="let item of WarehouseList" [ngValue]="item.WarehouseId">{{item.WarehouseName}}
+                        </option>
+                    </select>
+                    <div *ngIf="WarehouseId.invalid && (WarehouseId.dirty || WarehouseId.touched)">
+                    <div *ngIf="WarehouseId.errors.required" style="color: red;">
+                        Warehouse is required.
+                      </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label>Is Active</label>
+                    <input type="checkbox" name="IsActive" isChecked [(ngModel)]="dataAdd.IsActive"/>
+                </div>
+                <div class="col-md-3">
+                    <label>Start Date*</label>
+                    <p-calendar id="StartDt" name="StartDate" [(ngModel)]="dataAdd.StartDate" dateFormat="dd-mm-yy"
+                  placeholder="Start Date" [showIcon]="true" required #StartDate="ngModel"></p-calendar>
+
+                    <div *ngIf="StartDate.invalid && (StartDate.dirty || StartDate.touched)">
+                        <div *ngIf="StartDate.errors.required" style="color: red;">
+                            Start Date is required.
+                          </div>
+                        </div>
+                </div>
+                <div class="col-md-3">
+                    <label>End Date*</label>
+
+                    <p-calendar id="EndDt" name="EndDate" [(ngModel)]="dataAdd.EndDate" dateFormat="dd-mm-yy"
+                    placeholder="End Date" [showIcon]="true" required #EndDate="ngModel"></p-calendar>
+
+                    <div *ngIf="EndDate.invalid && (EndDate.dirty || EndDate.touched)">
+                        <div *ngIf="EndDate.errors.required" style="color: red;">
+                            End Date is required.
+                          </div>
+                        </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Amount From*</label>
+                   <input type="text" id="txtamtfrom" name="AmountFrom" [(ngModel)]="dataAdd.AmountFrom" placeholder="Enter Amount" autocomplete="off" class="form-control" #AmountFrom="ngModel" required>
+                   <div *ngIf="AmountFrom.invalid && (AmountFrom.dirty || AmountFrom.touched)">
+                    <div *ngIf="AmountFrom.errors.required" style="color: red;">
+                        Amount is required.
+                      </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label>Amount To*</label>
+                   <input type="text" id="txtamtto" name="AmountTo" [(ngModel)]="dataAdd.AmountTo" placeholder="Enter Amount" autocomplete="off" class="form-control" #AmountTo="ngModel" required>
+                   <div *ngIf="AmountTo.invalid && (AmountTo.dirty || AmountTo.touched)">
+                    <div *ngIf="AmountTo.errors.required" style="color: red;">
+                        Amount is required.
+                      </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label>Max Cash Back Amt*</label>
+                    <input type="text" id="txtmaxamt" name="MaximumCashBackAmount" [(ngModel)]="dataAdd.MaximumCashBackAmount"  placeholder="Enter Amount" autocomplete="off" class="form-control" #MaximumCashBackAmount="ngModel" required>
+                    <div *ngIf="MaximumCashBackAmount.invalid && (MaximumCashBackAmount.dirty || MaximumCashBackAmount.touched)">
+                        <div *ngIf="MaximumCashBackAmount.errors.required" style="color: red;">
+                            Amount is required.
+                          </div>
+                        </div>
+                </div>
+                <div class="col-md-3">
+                    <label>Cash Back Percent*</label>
+                    <input type="text" id="txtper" name="CashBackPercent" [(ngModel)]="dataAdd.CashBackPercent" placeholder="Enter Number" autocomplete="off" class="form-control" #CashBackPercent="ngModel" required>
+                    <div *ngIf="CashBackPercent.invalid && (CashBackPercent.dirty || CashBackPercent.touched)">
+                        <div *ngIf="CashBackPercent.errors.required" style="color: red;">
+                            Cash Back Percent is required.
+                          </div>
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Customer Type*</label>
+                    <select class="form-control" id="Cust" name="CustomerType" [(ngModel)]="dataAdd.CustomerType" #CustomerType="ngModel" required>
+                        <!-- <option value="0">--Select--</option> -->
+                        <option value="1">KPP</option>
+                        <option value="2">Retailer</option>
+                        <option value="3">Both</option>
+                    </select>
+                    <div *ngIf="CustomerType.invalid && (CustomerType.dirty || CustomerType.touched)">
+                        <div *ngIf="CustomerType.errors.required" style="color: red;">
+                            Customer Type is required.
+                          </div>
+                        </div>
+                </div>
+                <div class="col-md-3">
+                    <input type="submit" [disabled]="!myForm.valid" class="btn btn-raised btn-raised btn-success mt" value="Submit">
+                    <button id="btnAdd" (click)="cancle()"
+                    class="btn btn-raised btn-raised btn-danger mt ml-1">Cancle</button>
+                </div>
+            </div>
+        </form>
+    </p-dialog>
+</div>

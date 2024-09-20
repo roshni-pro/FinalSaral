@@ -1,0 +1,296 @@
+<p-toast [style]="{marginTop: '80px'}" *ngIf="!displayUploadDialog"></p-toast>
+<div class="row m-0">
+    <div class="col-12">
+        <div id="kick-start" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3 class="card-title">Store Executive Base Beat Mapping </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row form-group">
+
+                                <div class="col-md-5">
+                                    <form #form1="ngForm">
+                                        <!-- ; getClusterList($event.target.value) -->
+                                        <!-- <select id="desg" name="desg" #ctrl class="form-control" [(ngModel)]="whouseId"
+                                            (ngModelChange)="getActiveSaleExecutives()">
+                                            <option [selected]="true" default [value]="null">--select warehouse--
+                                            </option>
+                                            <ng-container *ngFor="let warehouse of warehouseList">
+                                                <option [value]="warehouse.WarehouseId">
+                                                    {{warehouse.WarehouseName}}
+                                                </option>
+                                            </ng-container>
+                                        </select> -->
+                                        <p-dropdown id="desg" name="desg" [options]="warehouseList" optionLabel="WarehouseName" placeholder="Select Warehouse"  
+                                        (onChange)="getActiveSaleExecutives()"  [filter]="true" [(ngModel)]="whId" > 
+                                        </p-dropdown>
+
+                                    </form>
+
+                                </div>
+                                <div class="col-md-3" *ngIf="executiveMaster && executiveMaster.length">
+                                    <input type="text" class="form-control" placeholder="Search Executives"
+                                        (keyup)="globalsearch($event.target.value)" [(ngModel)]="globalsearchval">
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<ng-container>
+
+
+
+    <p-table *ngIf="ExecutivesList && ExecutivesList.length" #Table [globalFilterFields]="['ExecutiveName','Mobile','Role','EmployeeCode']" [resizableColumns]="true" value="ExecutivesList"
+        [autoLayout]="true" class="center" [paginator]="true" [rows]="10" [value]="ExecutivesList"
+         [scrollable]="true" text-align: center>
+         <!-- [totalRecords]="totalRecords" -->
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">
+              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+              <input type="text" size="50" placeholder="Global Filter" (input)="Table.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            </div>
+          </ng-template> 
+        <ng-template pTemplate="header">
+            <tr>
+
+                <th style="text-align: center">
+                    S.no
+                </th>
+                <!-- <th style="text-align: center">ID</th> -->
+
+
+                <th style="text-align: center">Name</th>
+                <th style="text-align: center">Email</th>
+                <th style="text-align: center">Employee Code</th>
+                <th style="text-align: center; width: 100px;">Mobile No</th>
+                <th style="text-align: center;">Role</th>
+                <!-- <th style="text-align: center;">Clusters</th> -->
+
+                <!-- <th style="text-align: center">city</th> -->
+                <th style="text-align: center">WareHouse</th>
+
+                <th style="text-align: center">Upload Customers</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+            <tr>
+
+                <td style="text-align: center">
+                    {{i+1}}
+                </td>
+                <!-- <td style="text-align: center">{{rowData.PeopleID}} </td> -->
+
+                <td style="text-align: center">{{rowData.ExecutiveName}}</td>
+                <td style="text-align: center">{{rowData.Email}}</td>
+                <td style="text-align: center ">{{rowData.EmployeeCode}}</td>
+                <td style="text-align: center ; width: 100px;">{{rowData.Mobile}}</td>
+
+                <td style="text-align: center">{{rowData.Role}}</td>
+
+                <!-- <td style="text-align: center">{{rowData.ClusterNames}}</td> -->
+
+
+                <!-- <td style="text-align: center">{{rowData.city}}</td> -->
+                <td style="text-align: center">{{rowData.WarehouseName}}</td>
+
+
+                <td style="text-align: center">
+                    <button type="button" class="btn  btn-raised btn-primary"
+                        (click)="setCurrentExecutive(rowData) ">Assign</button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+
+</ng-container>
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-dialog [style]="{width: '80vw'}"  [positionTop]="50" [header]="' Upload Customers'" [(visible)]="displayUploadDialog"
+    appendTo="body" [closable]="true" [modal]="true" (onHide)="cancel()">
+    <p-toast [style]="{marginTop: '80px'}" *ngIf="displayUploadDialog"></p-toast>
+    <div class="card-content">
+        <h4 class="card-title" id="basic-layout-colored-form-control" style="padding-bottom: 20px;">
+            <div class="row">
+                <div style="margin-left: 50px;">
+                    Upload Customers for {{currentExecutive.ExecutiveName}}
+                </div>
+            </div>
+        </h4>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <label> Executive Mapped Stores</label>
+                <!-- <select id="storeId" name="storeId" class="form-control" [(ngModel)]="StoreId"
+                (ngModelChange)="onSelect(StoreId)">
+                <option value="select_store">--Select Store--</option>
+                <option *ngFor="let store of storeList" [ngValue]="store.Id">{{store.Name}}
+                </option>
+              </select> -->
+              <p-dropdown [options]="storeList" [(ngModel)]="StoreId" optionLabel="Name" placeholder="Select Store" (change)="onSelect(StoreId)"
+              [style]="{minWidth:'18em'}"id="storeId" name="storeId"  ></p-dropdown>
+        </div>
+        <div class="col-sm-3">
+            <label> Executive Mapped Clusters</label>
+
+            <p-multiSelect [options]="clusterList" [(ngModel)]="selectedclusterList" optionLabel="ClusterNames"
+                [style]="{minWidth:'18em'}" (onChange)="onChangingOfCluster()"></p-multiSelect>
+        </div>
+        <div class="col-sm-3">
+            <label> Channel List </label>   
+            <p-dropdown [options]="ChannelTypeList" [(ngModel)]="ChannelId" optionLabel="ChannelName" placeholder="Select Channel"
+                [style]="{minWidth:'18em'}"></p-dropdown>
+        </div>
+        
+        <div class="col-sm-1">
+            <button style="cursor: pointer; margin-top: 29px;" type="button" class="btn btn-raised btn-raised btn-success"
+                (click)="getSelectedCustomer(currentExecutive);getAllExecutive(currentExecutive)">
+                Search
+            </button>
+        </div>
+        <div class="d-flex">
+        <div class="col-sm" >
+            <button style="cursor: pointer;font-size: inherit;margin-top: 30px;" type="button" class="btn btn-raised btn-raised btn-success"
+                (click)="ResetBeat(currentExecutive)" [disabled]="!IsResetBeat">
+                Reset Beat
+            </button>
+        </div>
+        </div>
+        <div class="d-flex">
+        <div class="col-sm">
+            <!-- <span *ngIf="IsshowdownloadFile"><button style="cursor: pointer; margin-top: 29px; color: #09d6c5;" type="button"
+                    class="btn btn-raised btn-raised btn-primary" (click)="downloadFile()">
+                    Download Default Beat
+                </button></span> -->
+                <span *ngIf="IsshowdownloadFile"><button type="button"
+                    class="btn btn-ss" (click)="downloadFile()" [disabled]="defalultBeatIsEnable">
+                    Download Default Beat
+                </button></span>
+        </div></div>
+        <div class="d-flex">
+        <div class="col-sm">
+            <span *ngIf="IsshowdownloadFile"><button  type="button"
+                    class="btn btn-ss" (click)="downloadlatestBeat()">
+                    Download latest Beat
+                </button></span>
+        </div></div>
+        <div class="d-flex">
+            <div class="col-sm">
+                <span *ngIf="AllOldExecutiveList.length>0 && IsshowdownloadFile && selectedclusterList.length>0"><button type="button"
+                    class="btn btn-ss" (click)="DownloadFileForOldExecutive()">
+                    Download latest by {{str}}
+                </button></span>
+            </div>
+            </div>
+        <br>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">            
+            <span *ngIf="IsshowdownloadFile">
+                <label>System Upload Beat</label>
+                <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                    (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+                    <code>*</code>
+                </p-fileUpload>
+            </span>
+            <br>
+        </div>
+        <div class="col-sm-3">           
+            <span *ngIf="IsshowdownloadFile">
+                <label>Upload Edited Beat</label>
+                <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                    (uploadHandler)="onUploadEditedBeat($event, uploadCustom)" #uploadCustom>
+                    <code>*</code>
+                </p-fileUpload>
+            </span>
+            <br>
+        </div>
+        <div class="col-sm-2">
+            <span *ngIf="IsPostBeat"><button style="cursor: pointer;" type="button"
+                    class="btn btn-raised btn-raised btn-success" (click)="PostBeat()">
+                    Post
+            </button></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <p-table [value]="ExeMappedCustomerList" [paginator]="true" [rows]="20" #dt [globalFilterFields]="['Skcode']" [style]="{overflow:'auto', height:'400px'}">
+                <ng-template pTemplate="caption">
+                    <div style="text-align: right">
+                      <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                      <input type="text" [(ngModel)]="SkcodePopUPFilter" size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                    </div>
+                  </ng-template> 
+                <ng-template pTemplate="header">
+                    <tr>
+
+                        <th>SkCode</th>
+                        <!-- <th>BeatNumber</th> -->
+                        <th>Day</th>
+                        <th>SkipDays</th>
+                        <th>SkipWeeks</th>
+                        <th>EvenOrOddWeek</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-cust>
+                    <tr>
+
+                        <td>{{cust.Skcode}}</td>
+                        <!-- <td>{{cust.BeatNumber}}</td> -->
+                        <td>{{cust.Day}}</td>
+                        <td>{{cust.SkipDays}}</td>
+                        <td>{{cust.SkipWeeks}}</td>
+                        <td>{{cust.EvenOrOddWeek}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div style="margin-left: 100px; float: right;">
+        <button type="button" (click)="close(); " pButton icon="pi pi-info-circle" label="Close"></button>
+    </div>
+</p-dialog>
+
+<p-dialog [style]="{width: '90vw'}" [positionTop]="1" [header]="'Warning (outOfbeatSkcode)'"
+    [(visible)]="displayoutOfbeatSkcode" appendTo="body" [closable]="true">
+
+    <div *ngIf="outOfbeatSkcode">
+        <span style="color: red;">Warning: </span> Following Skcode will not update: {{outOfbeatSkcode}} . Please remove
+        then reupload with mapped skcode
+    </div>
+    <div style="margin-left: 100px; float: right;">
+        <button type="button" (click)="closeoutOfbeatSkcode(); " pButton icon="pi pi-info-circle"
+            label="Close"></button>
+    </div>
+</p-dialog>
+
+<p-confirmDialog #cd [style]="{width: '45vw'}"  appendTo="body"	 >
+    <ng-template pTemplate="header">
+        <h3>Header Content</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog>

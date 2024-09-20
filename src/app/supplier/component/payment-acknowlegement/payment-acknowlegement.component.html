@@ -1,0 +1,85 @@
+ 
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>Supplier Payment Acknowledgement</b></h3>
+    </div> 
+</div>
+<div class="container-fluid">`
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label>Search by</label>
+                    <input type="text" id="txtname" name="name" class="form-control"
+                        placeholder="Supplier Code" [(ngModel)]="Filters.SupplierCode">
+                </div>
+                <div class="col-md-2">
+                    <label>From Date</label>
+                    <!-- <input type="text" id="txtname" name="Fromdate" class="form-control"
+                    placeholder="" [(ngModel)]="Filter.Fromdate"> -->
+                    <p-calendar name="startDateInput" [(ngModel)]="Filters.Fromdate" dateFormat="mm/dd/yy"
+                    [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true"
+                    [yearRange]="yearRangeForCalender" ></p-calendar>
+                </div>
+                <div class="col-md-2">
+                    <label>To Date</label><br>
+                    <!-- <input type="text" id="txtname" name="Todate" class="form-control"
+                        placeholder="" [(ngModel)]="Filter.Todate"> -->
+                        <p-calendar name="endDateInput" [(ngModel)]="Filters.Todate" dateFormat="mm/dd/yy"
+                        [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true"
+                        [yearRange]="yearRangeForCalender" ></p-calendar>
+                  </div>
+                 
+                <div class="form-group">
+                    <button type="button" (click)="Search()"
+                        class="btn btn-raised btn-raised btn-success mt">Search</button>
+                        <button type="button" (click)="Refresh()"
+                        class="btn btn-raised btn-raised btn-primary mt ml-2">Refresh</button>
+                    <button id="btnExport" (click)="Export()"
+                        class="btn btn-raised btn-raised btn-info mt ml-2">Export</button>
+                    <button id="btnExport" (click)="Confirm()"
+                        class="btn btn-raised btn-raised btn-primary mt ml-2">Confirm</button>
+                    <button *ngIf="issentmail" id="btnExport" (click)="MailSent()"
+                        class="btn btn-raised btn-raised btn-success mt ml-2">Sent Mail</button>
+                </div>
+                <p-table #dt [value]="PaymentAcknowledgementList" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" [lazy]="true"
+                    [paginator]="true" [rows]="20" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                           
+                            <th>Payment Date</th>
+                            <th>Supplier Name</th>
+                            <th>Supplier Code</th>
+                            <th>UTR Number</th>
+                            <th>Bank & Tax Name</th>
+                            <th>Settlement Against Invoice</th>
+                            <th>Voucher Type</th>
+                            <th>Amount</th>
+                            <th>Invoice Date</th>
+                            <th>Warehouse Name</th>
+                                                        
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr style="width: 100px;">                            
+                            <td>{{item.PaymentDate | date:'dd/MM/yyyy'}}</td>
+                            <td>{{item.SupplierName}}</td>
+                            <td>{{item.SUPPLIERCODES}}</td>
+                            <td>{{item.RefNo}}</td>
+                            <td>{{item.BankName}}</td>
+                            <td>{{item.InvoiceNo}}</td>
+                            <td>{{item.VoucherType}}</td>
+                            <td>{{item.Amount}}</td>
+                            <td>{{(item.InvoiceDate | date:'dd/MM/yyyy')}}</td>
+                            <td>{{item.WarehouseName}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+        <div class="card-footer"></div>
+    </div>
+</div>
+ 

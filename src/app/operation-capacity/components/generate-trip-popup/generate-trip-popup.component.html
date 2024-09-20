@@ -1,0 +1,71 @@
+<div>
+    <h6 ><b>Select Customer Type For Trip Generation</b></h6>      
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6" >
+                <div class="radio" (click)="OpenTrip(tripType.city)">
+                    <p-radioButton name="City" value="City" [(ngModel)]="tripType.city" inputId="City" label="City Orders"></p-radioButton>
+                    <!-- <label for="City" class="sp_label"><b> City Orders</b></label> -->
+                </div>
+            </div>
+            <div class="col-md-6" >
+                <div class="radio" (click)="OpenTrip(tripType.SKP)">
+                    <p-radioButton name="City" value="SKP Owner" [(ngModel)]="tripType.SKP"  inputId="SKP" label="SKP Orders"></p-radioButton>
+                    <!-- <label for="SKP" class="sp_label"> <b> SKP Orders</b></label> -->
+                </div>  
+            </div>
+            <div class="col-md-6" >
+                <div class="radio" (click)="OpenTrip(tripType.KPP)">
+                    <p-radioButton name="City" value="KPP" [(ngModel)]="tripType.KPP"   inputId="KPP" label="KPP Orders"></p-radioButton>
+                    <!-- <label for="KPP" class="sp_label"> <b> KPP Orders</b></label> -->
+                </div>
+            </div>
+           
+            <div class="col-md-6" >
+                <div class="radio" (click)="OpenTrip(tripType.Damage)">
+                    <p-radioButton name="City" value="Damage" [(ngModel)]="tripType.Damage"   inputId="Damage" label="Damage Orders"></p-radioButton>
+                    <!-- <label for="Damage" class="sp_label"> <b> Damage Expiry Orders</b></label> -->
+                </div>
+            </div>
+            <div class="col-md-6" >
+                <div class="radio" (click)="OpenTrip(tripType.NonSellable)">
+                    <p-radioButton name="City" value="NonSellable" [(ngModel)]="tripType.NonSellable"   inputId="NonSellable" label="Non sellable Orders"></p-radioButton>
+                    <!-- <label for="Damage" class="sp_label"> <b> Damage Expiry Orders</b></label> -->
+                </div>
+            </div>
+            <div class="col-md-6" style="text-align: center;" *ngIf="selectedTripType != null && isOpen">
+                <!-- <input type="text" name="skcodeSearch" id="skcodeSearch" class="form-control" [(ngModel)]="Skcode" placeholder="Enter Skcode"> -->
+                <select id="custIdSearch" name="custIdSearch" class="form-control" [(ngModel)]="CustomerId">
+                    <option [ngValue]="null" disabled>--Select {{tripTypeText}}--</option>
+                    <option *ngFor="let sk of skcodeList" [ngValue]="sk.CustomerId">
+                        {{ sk.Skcode }}
+                    </option>
+                </select>
+                <div *ngIf="isInValid && (!CustomerId || CustomerId.length == 0)">
+                    <code>Skcode is Required.</code>
+                  </div>
+            </div>
+        </div>
+    </div>    
+    <h6 *ngIf="isInValid && selectedTripType == null"><code>Customer Type For Trip Generation Is Required.</code></h6>           
+        <div class="col-md-12" >
+            <div class="row" style="text-align: center;margin-top: 1.5em;">
+                <div class="col-md-6">
+                    <button (click)="createTripNew()" type="button" name="tripliveBtn"
+                    class="btn btn-primary gr">OK</button> 
+                </div>
+                <div class="col-md-6">
+                    <button type="button" name="tripBtn" class="btn btn-primary yl"
+                    (click)="cancel()" >Cancel</button>
+                </div>
+            </div>
+                      
+        </div>
+
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

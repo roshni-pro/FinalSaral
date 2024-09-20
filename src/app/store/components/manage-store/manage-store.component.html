@@ -1,0 +1,232 @@
+<div class="ui-fluid">
+    <p-dialog #dialonMy [(visible)]="isShowPopup" [positionTop]="1" [closable]="false" [style]="{width: '80%'}"
+        appendTo="body">
+        <p-header>
+            Manage Store
+        </p-header>
+        <div class="row">
+        <div class="col-8">
+            <label></label>
+            <!-- <button class="btn btn-primary" id="whSaleslead" name="whSaleslead" (click)="openSalesLead()">Warehouse Sales Lead</button> -->
+        </div>
+        <div class="col-4" style="top: 5.5em;">
+            <label></label>
+            <button class="btn btn-primary" id="whSaleslead" name="whSaleslead" (click)="openSalesLead()">Warehouse Sales Mapping</button>
+        </div>
+        </div>
+        <form #frm="ngForm" (ngSubmit)="save(frm)" *ngIf="store">
+            <div class="row">
+                <div class="col-3">
+                    <label>Store Name</label>
+                    <div class="ui-inputgroup">
+                        <input type="text" name="name" [(ngModel)]="store.Name" required maxlength="50"
+                            class="form-control" placeholder="Enter store name" #name="ngModel">
+                    </div>
+                    <div *ngIf="isFormInvalid && name.invalid"><code>Name Required</code></div>
+                </div>
+                <div class="col-3">
+                    <label>Store Owner</label>
+                    <p-autoComplete *ngIf="!store.OwnerId" name="owner" [(ngModel)]="selectedOwner" (ngModelChange)="onSelectPeople()" [suggestions]="peopleList"
+                        (completeMethod)="getPeopleList($event)" field="name" [size]="30" placeholder="Enter name"
+                        [minLength]="2">
+                        <ng-template let-owner pTemplate="item">
+                            <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+                               
+                                <div style="font-size:18px;float:right;margin:10px 10px 0 0">{{owner.DisplayName + ' - ' + owner.UserName + ' - ' + owner.Email}}</div>
+                            </div>
+                        </ng-template>
+                    </p-autoComplete>
+                    <div class="ui-inputgroup" *ngIf="store.OwnerId && selectedOwner">
+                        <input name="selectedOwner"  type="text" disabled pInputText placeholder="Vote" [(ngModel)]="selectedOwner.DisplayName">   
+                        <button pButton (click)="onDeselectOwner()" type="button" icon="pi pi-times" class="ui-button-danger"></button>      
+                    </div>
+                    <div *ngIf="!isOwnerSelected"><code>Please select Owner</code></div>
+                    
+                </div>
+                <div class="col-2">
+                    <p-checkbox [(ngModel)]="store.IsUniversal" name="sasa" [binary]="true"
+                    ></p-checkbox>
+                    IsUniversal
+                </div>
+            </div>
+
+        </form>
+       
+        <br><br>
+
+        <div class="row">
+            <div class="col-4" *ngIf="categoryList">
+                <label>Select Category</label><br>
+                <p-dropdown appendTo="body" [options]="categoryList" [(ngModel)]="selectedCategory" filter="true"
+                    (ngModelChange)="onSelectCategory()">
+                    <ng-template let-item pTemplate="selectedItem">
+                        <span>{{item.label}}</span>
+                    </ng-template>
+
+                    <ng-template let-cat pTemplate="item">
+                        <div class="ui-helper-clearfix">
+
+                            <div>{{cat.label}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="col-4" *ngIf="subcategoryList">
+                <label>Select Sub Category</label><br>
+                <!-- <p-dropdown appendTo="body" [options]="subcategoryList" [(ngModel)]="selectedSubCategory" filter="true"
+                    (ngModelChange)="onSelectSubCategory()"> -->
+                <p-multiSelect appendTo="body" [options]="subcategoryList" [(ngModel)]="selectedSubCategoryList"
+                    (ngModelChange)="onSelectSubCategory()">
+
+                    <ng-template let-item pTemplate="selectedItem">
+                        <span>{{item.label}}</span>
+                    </ng-template>
+                    <ng-template let-subcat pTemplate="item">
+
+                        <div style="font-size:14px;float:right;margin-top:4px">{{subcat.label}}</div>
+                    </ng-template>
+
+                </p-multiSelect>
+            </div>
+            <div class="col-4" *ngIf="brandList">
+                <label>Select Brand</label><br>
+                <p-multiSelect appendTo="body" [options]="brandList" [showToggleAll]="false"
+                    [(ngModel)]="selectedBrandList" (onPanelHide)="onSelectBrand()">
+                    <ng-template let-item pTemplate="selectedItem">
+                        <span>{{item.label}}</span>
+                    </ng-template>
+                    <ng-template let-subcat pTemplate="item">
+                        <div style="font-size:14px;float:right;margin-top:4px">{{subcat.label}}</div>
+                    </ng-template>
+                </p-multiSelect>
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-12" *ngIf="brandListToAdd">
+                <table class="table table-bordered">
+                    <tr>
+                        <th></th>
+                        <th>#</th>
+                        <th>Category</th>
+                        <th>Sub-Category</th>
+                        <th>Brand</th>
+                    </tr>
+                    <tr *ngFor="let brand of brandListToAdd; let i=index;" [ngClass]="{'sel': brand.IsSelected}">
+                        <td class="ch">
+                            <p-checkbox [(ngModel)]="brand.IsSelected" binary="true"></p-checkbox>
+                        </td>
+                        <td (click)="onSelectDeselect(brand)">{{i+1}}.</td>
+                        <td (click)="onSelectDeselect(brand)">{{brand.CategoryName}}</td>
+                        <td (click)="onSelectDeselect(brand)">{{brand.SubCategoryName}}</td>
+                        <td (click)="onSelectDeselect(brand)">{{brand.SubsubcategoryName}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <p-footer>
+            <button class="btn btn-primary" [disabled]="!(brandListToAdd && brandListToAdd.length>0)"
+                (click)="save()">Save</button>
+            <button class="btn btn-secondary" (click)="onClose()">Close</button>
+        </p-footer>
+    </p-dialog>
+
+</div>
+
+
+<p-confirmDialog appendTo="body" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<div *ngIf="isOpenSalesLead">
+    <p-dialog [header]="'Sales Lead'" [(visible)]="isOpenSalesLead" [positionTop]="1" [closable]="false" appendTo="body" [style]="{width: '80%'}">
+        <div class="row">
+            <div class="col-4">
+                <label>Warehouse</label>
+                <select id="warehouse" name="warehouse" class="form-control" [(ngModel)]="WarehouseId"
+                    placeholder="Select Warehouse" (change)="onChangeWh(WarehouseId)">
+                    <div class="col-md-6"></div>
+                    <option value="null">--Select Warehouse--</option>
+                    <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+                      {{ wh.WarehouseName }}
+                    </option>
+                  </select>
+            </div>
+            <div class="col-4" *ngIf="WarehouseId">
+                <label>Warehouse Sales Lead</label>
+                <select id="whSales" name="whSales" class="form-control" [(ngModel)]="SalesLeadId"
+                placeholder="Select Warehouse">
+                <div class="col-md-6"></div>
+                <option value="null">--Select Warehouse--</option>
+                <option *ngFor="let whSalesleadlst of warehouseSalesLeadList" [ngValue]="whSalesleadlst.PeopleID">
+                  {{ whSalesleadlst.DisplayName }}
+                </option>
+              </select>
+            </div>
+            <div class="col-4" style="top: 2em;" *ngIf="WarehouseId">
+                <button class="btn btn-primary" (click)="addList(WarehouseId,SalesLeadId)">Add</button>
+            </div>
+        </div>
+        <div class="col-12">
+            <hr>
+            <p-table #dt [value]="whSelectedList" [paginator]="true" [rows]="10" [scrollable]="true"
+            scrollHeight="130vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Warehouse</th>
+                        <th>Warehouse Sales Lead</th>
+                        <!-- <th>Store Name</th> -->
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-ir let-index="rowIndex">
+                    <tr>
+                        <td>{{index+1}}</td>
+                        <td>{{ir.WarehouseName}}
+                            <!-- <div *ngIf="!ir.isEdit">{{ir.WarehouseName}}</div>
+                            <div *ngIf="ir.isEdit">
+                                <select id="warehouse" name="warehouse" class="form-control" [(ngModel)]="ir.WarehouseId"
+                                placeholder="Select Warehouse" (change)="onChangeWh(ir.WarehouseId)">
+                                <div class="col-md-6"></div>
+                                <option value="">--Select Warehouse--</option>
+                                <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+                                  {{ wh.WarehouseName }}
+                                </option>
+                              </select>
+                            </div> -->
+                        </td>
+                        <td>
+                            <div *ngIf="!ir.isEdit">{{ir.SalesLeadName}}</div>
+                            <div *ngIf="ir.isEdit">
+                                <select id="whSales" name="whSales" class="form-control" [(ngModel)]="ir.SalesLeadId" (change)="editSalesLead(ir)"
+                                placeholder="Select Warehouse">
+                                <div class="col-md-6"></div>
+                                <option value="">--Select Warehouse--</option>
+                                <option *ngFor="let whSalesleadlst of warehouseSalesLeadList" [ngValue]="whSalesleadlst.PeopleID">
+                                  {{ whSalesleadlst.DisplayName }}
+                                </option>
+                              </select>
+                            </div>
+                            </td>
+                        <!-- <td>{{ir.StoreName}}</td> -->
+                        <td>
+                            <span >
+                                <a href="javascript:void(0);"  pTooltip="Edit" tooltipPosition="top" (click)="openEdit(ir)">
+                                    <i class="fa fa-pencil" style="font-size:28px;border-bottom: 1px solid skyblue;"></i>                    
+                                </a> &nbsp;
+                                <a href="javascript:void(0);"  pTooltip="Remove" tooltipPosition="top" (click)="deleteSalesLead(ir)">
+                                    <i class="fa fa-trash" style="font-size:28px;border-bottom: 1px solid skyblue;"></i>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-footer>
+            <!-- <button class="btn btn-primary" [disabled]="!(brandListToAdd && brandListToAdd.length>0)"
+                (click)="save()">Save</button> -->
+            <button class="btn btn-secondary" (click)="isOpenSalesLead = false">Close</button>
+        </p-footer>
+    </p-dialog>
+</div>

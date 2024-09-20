@@ -1,0 +1,193 @@
+<div class="container-fluid">
+    <div class="col-12">
+        <div class="mt-4 d-flex justify-content-between align-items-center">
+            <div class="header">
+                <h3 class="">Spill Over Order Dashboard</h3>
+            </div>
+        </div>
+    </div>
+    <div class="header d-flex justify-content-between bg-white p-3 mt-3">
+        <div class="col-md-12">
+        <form class="form" name="form" #spillOverForm="ngForm">
+            <div class="row">
+                <!-- <div class="col-md-10"> -->
+                <!-- <div class="head-left"> -->
+                    <div class="col-md-2">
+                    <label></label>
+                        <p-multiSelect [options]="cityList" name="label" [(ngModel)]="selectedCityList" (onPanelHide)="onSelectCity(selectedCityList)"
+                        (ngModelChange)="onSelectCity(selectedCityList)"  optionLabel="CityName" defaultLabel="Select a City" #label="ngModel" required="1">
+                        </p-multiSelect>
+                        <div *ngIf="isInvalid && !label.valid && label.errors.required">                    
+                        <code>City is required</code> 
+                    </div> 
+                </div>
+                <div class="col-md-2">
+                    <label></label>
+                        <p-multiSelect [options]="warehouseList" name="hublabel" [(ngModel)]="selectedWarehouseList" defaultLabel="Warehouse"
+                        optionLabel="WarehouseName" #hublabel="ngModel" required="1" >
+                    </p-multiSelect>
+                    <div *ngIf="isInvalid && !hublabel.valid && hublabel.errors.required">                   
+                        <code>Warehouse is required</code> 
+                    </div>            <!--(onPanelHide)="onSelectHub(selectedWarehouseList)"-->
+                    </div>
+                    <div class="col-md-3">
+                    <label>
+                        <!-- <input type="datetime" name="selectedDatelabel" [(ngModel)]="spillData.SelectedDate" #selectedDatelabel="ngModel" required="1">
+                        <div *ngIf="isInvalid && !selectedDatelabel.valid && selectedDatelabel.errors.required">                   
+                            <code>Date is required</code> 
+                        </div>  -->
+                    </label>
+                    <p-calendar [(ngModel)]="SelectedDate" selectionMode="range" [showIcon]="true" [readonlyInput]="true" placeholder="Select Date" name="selectedDatelabel" #selectedDatelabel="ngModel" required="1"></p-calendar>
+                    <!-- <p-calendar [(ngModel)]="SelectedDate" [showIcon]="true" inputId="time" placeholder="Select Date" name="selectedDatelabel" #selectedDatelabel="ngModel" required="1"></p-calendar> -->
+                    <div *ngIf="isInvalid && !selectedDatelabel.valid && selectedDatelabel.errors.required">                   
+                        <code>Date is required</code> 
+                    </div> 
+                    </div>
+                <!-- </div> -->
+            <!-- </div> -->
+            <div class="col-md-5">
+                <div class="head-right">
+                    <button (click)="onSelectHub(selectedWarehouseList,spillOverForm)"> Search Report</button>
+                    <button (click)="onReset()"> Reset</button>
+                    <button (click)="onExport(spillOverForm)"> Export</button>
+                 </div>
+            </div>
+            </div>
+            <div class="row">
+                <div class="col-7"></div>
+                <div class="col-5">
+                <div class="head-righttt mt-2 ml-4" >
+                 <button (click)="exportRedOrder(spillOverForm,selectedWarehouseList)" > Export Red Order Detail</button></div>
+            </div>
+            </div>
+        </form>
+    </div>
+    </div>
+    <div class="content bg-white p-3" *ngIf="spillOverOrderList">
+        <h5 style="font-weight: bold;">Spill Over Dashboard</h5>
+        <div class="table">
+            <p-table [value]="spillOverOrderList" [rows]="50" responsiveLayout="scroll" [paginator]="true" [scrollable]="true"  scrollHeight="450px" scrollDirection="both">
+                <ng-template pTemplate="header">                   
+                    <tr style="text-align: center;">
+                        <th pSortableColumn="CityName"> City <p-sortIcon field="CityName"></p-sortIcon></th>
+                        <th pSortableColumn="WarehouseName"> Warehouse <p-sortIcon field="WarehouseName"></p-sortIcon></th>
+                        <th> Date </th>
+                        <th> Avg. Count  </th>
+                        <th> Yesterday Red Count (T-1)</th>
+                        <th> Spill Over % </th>                                         
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                        <tr style="text-align: center;">
+                            <!-- <td *ngFor="let col of cols" style="text-align: center">
+                                {{item[col.field]}}
+                                <span *ngIf="col.field=='CreatedDate'">
+                                    {{item[col.field] | date : "dd/MM/yyyy h:mm a"}}
+                                </span>
+                              </td> -->
+                              <ng-container *ngFor="let col of cols;">
+                                <td *ngIf="col.field=='CityName'"> 
+                                    <ng-container>
+                                        {{item[col.field] }}
+                                    </ng-container>
+                                    <!-- {{item.CityName}}  -->
+                                </td>
+                                <td *ngIf="col.field=='WarehouseName'"> 
+                                    <!-- {{item.WarehouseName}} -->
+                                    <ng-container>
+                                        {{item[col.field] }}
+                                    </ng-container>
+                                </td>  
+                                <td *ngIf="col.field=='CreatedDate'">
+                                    <ng-container>
+                                        {{item[col.field] | date : "dd-MM-yyyy"}}<!--h:mm a-->
+                                        <!-- <ng-container
+                                            *ngIf="col.field == 'SpillOverinPercentage'">
+                                            %</ng-container> -->
+                                    </ng-container>
+                                    <!-- {{item.CreatedDate | date : medium}}  -->
+                                </td>  
+                                <td *ngIf="col.field=='avgOrder'">
+                                     <!-- {{item.avgOrder}} -->
+                                    <ng-container>
+                                        {{item[col.field] }}
+                                    </ng-container>    
+                                </td>  
+                                <td *ngIf="col.field=='RedCount'">
+                                    <ng-container>
+                                        {{item[col.field] }}
+                                    </ng-container>
+                                    <!-- {{item.RedCount}} -->
+                                 </td>      
+                                <td *ngIf="col.field=='SpillOverinPercentage'"> 
+                                    <ng-container>
+                                      <span *ngIf="item[col.field] > 10">
+                                        {{item[col.field] }}
+                                        <ng-container
+                                            *ngIf="col.field == 'SpillOverinPercentage'">
+                                            %</ng-container>
+                                      </span>
+                                      <span *ngIf="item[col.field] =='NaN' || item[col.field] =='undefined'" style="color:green;">
+                                        0
+                                      </span>
+                                      <span *ngIf="item[col.field] <= 10" style="color:green;">
+                                        {{item[col.field] }}
+                                        <ng-container
+                                            *ngIf="col.field == 'SpillOverinPercentage'">
+                                            %</ng-container>
+                                      </span>
+                                    </ng-container>
+                                    <!-- {{item.SpillOverinPercentage}} -->
+                                 </td>      
+                            </ng-container>           
+                         </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr style="text-align: center;">
+                        <td colspan="6"><h5 class="bl">-----------------------* No Data Found.-----------------------</h5></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div class="bg-white mt-3 p-3" *ngIf="spillOverOrderList">
+        <div class="">
+            <h5 style="font-weight: bold;"> Average Spill Over % As Per Order Count</h5><br>
+            <div class="progress" style="position:relative;height:25px;">
+                <!-- <div class="progress-bar" role="progressbar" *ngIf="redCount > 0 && greenCount > 0" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"                  style="font-weight: 400;" [style.width.%]="completionPercent">      
+                  <span *ngIf="redCount > 0">{{redCount | number:'1.0-1'}}% </span> 
+                 <span class="last-val" style="position:absolute;font-weight: 400;" [style.right.px]="greenCount" *ngIf="greenCount > 0">
+                         <span *ngIf="greenCount > 0">{{greenCount | number:'1.0-1'}}% </span> 
+                </span>
+                </div>
+
+                <div class="progress-bar" role="progressbar" *ngIf="redCount > 0 && greenCount == 0"  aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="font-weight: 400;" [style.width.%]="completionPercent">
+                    <span *ngIf="redCount > 0">{{redCount | number:'1.0-1'}}% </span>                   
+                  </div>
+
+                  <div class="progress-greenbar" role="progressbar" *ngIf="greenCount > 0 && redCount == 0"  aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="font-weight: 400;margin-left: 50%;" [style.width.%]="completionPercent">   
+                     <span *ngIf="greenCount > 0">{{greenCount | number:'1.0-1'}}% </span> 
+                  </div> -->
+
+                    <!-- <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="font-weight: 400;" [style.width.%]="redPercent">
+                   {{redPercent}}%
+                    <span style="position:absolute;right:25px;font-weight: 400;">{{greenPercent}}%</span>
+                    </div> -->
+                    
+                    <div class="progress-bar" *ngIf="redPercent > 10" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="font-weight: 400;" [style.width.%]="100">
+                    {{redPercent}}%
+                        </div>
+
+                    <div class="progress" *ngIf="redPercent <= 10" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="font-weight: 400;" [style.width.%]="100">
+                            <span style="position:absolute;right:50%;font-weight: 400;">{{redPercent}}%</span>
+                    </div>    
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,146 @@
+<p-toast [style]="{marginTop: '280px'}">
+</p-toast>
+<p-confirmDialog header="Confirmation" [baseZIndex]="201" appendTo="body" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>
+<div class="row m-0">
+    <div class="col-12">
+        <div id="kick-start" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3 class="card-title">Vehicle Report</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="projectinput3">Warehouse </label>
+                                <br>
+                                <!-- <select id="desg" name="desg" #ctrl class="form-control"
+                                    [(ngModel)]="selectedWarehouses" required>
+                                    <option [selected]="true" default [value]="null">--select warehouse--
+                                    </option>
+                                    <ng-container *ngFor="let warehouse of warehouseList">
+                                        <option [value]="warehouse.WarehouseId">
+                                            {{warehouse.WarehouseName}}
+                                        </option>
+                                    </ng-container>
+                                </select> -->
+                                <p-dropdown [options]="warehouseList" name="warehouse" optionLabel="label" 
+                                  [(ngModel)]="selectedWarehouses" [filter]="true" placeholder="select warehouse">
+                            </p-dropdown>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="projectinput3">Date</label>
+                                <br>
+                                <input type="datetime-local" id="Date" name="Date" class="form-control"
+                                    [ngModel]="searchModel.Date | date:'yyyy-MM-ddTHH:mm'"
+                                    (ngModelChange)="searchModel.Date = $event" />
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <div>
+                                <button type="button" class="btn btn-raised btn-raised btn-info" (click)="getReport()"
+                                    [disabled]="!selectedWarehouses">Search</button>
+
+                                &nbsp; &nbsp;
+                                <button type="button" class="btn btn-raised btn-raised btn-primary " (click)="clear()">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                                (click)="export()" [disabled]="!selectedWarehouses">
+                                Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="vehiclereportList && vehiclereportList.length > 0">
+                        <table>
+                            <tr>
+                                <th>Date</th>
+                                <th>Location</th>
+                            </tr>
+                            <tr>
+                                <td>{{vehiclereportList[0].CreatedDate | date : 'dd/MM/yyyy'}}</td>
+                                <td>{{vehiclereportList[0].Location}}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="row" *ngIf="vehiclereportList">
+                        <p-table [value]="vehiclereportList">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>TripNo</th>
+                                    <th>Veh.No</th>
+                                    <!-- <th>Driver</th>
+                                    <th>Veh.Type</th> -->
+                                    <th>InTime</th>
+                                    <th>OutTIme</th>
+                                    <th>Km</th>
+                                    <th>Gps Km</th>
+                                    <th>Order Count</th>
+                                    <th>Order Value</th>
+                                    <th>Deliverd Count</th>
+                                    <th>Deliverd Val</th>
+
+                                    <!-- <th>DeliverdPer</th> -->
+
+                                    <th>Red Count</th>
+                                    <th>Red Val</th>
+                                    <!-- <th>RedisPer</th> -->
+                                    <!-- <th>POC Count</th>
+                                    <th>POC Val</th> -->
+                                    <!-- <th>POCPer</th> -->
+                                    <th>DC Count</th>
+                                    <th>DC Val</th>
+                                    <!-- <th>DCPer</th> -->
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td>{{item.TripNo}}</td>
+                                    <td>{{item.VehicleNo}}</td>
+                                    <!-- <td>{{item.DriverName}}</td>
+                                    <td>{{item.VehicleType}}</td> -->
+                                    <td>{{item.ReportingTime | date:'mediumTime'}}</td>
+                                    <td>{{item.ClosingTime | date:'mediumTime'}}</td>
+                                    <td>{{item.TotalKm}}</td>
+                                    <td>{{item.TotalGpsKm}}</td>
+                                    <td>{{item.OrderCount}}</td>
+                                    <td>{{item.OrderValue}}</td>
+                                    <td>{{item.DeliverdCount}}</td>
+                                    <td>{{item.DeliverdValue}}</td>
+                                    <!-- <td>{{item.DeliverdPercent}}</td> -->
+                                    <td>{{item.RedispatchCount}}</td>
+                                    <td>{{item.RedispatchValue}}</td>
+
+                                    <!-- <td>{{item.RedispatchPercent}}</td> -->
+                                    <!-- <td>{{item.POCCount}}</td>
+                                    <td>{{item.POCValue}}</td> -->
+                                    <!-- <td>{{item.POCPercent}}</td> -->
+                                    <td>{{item.DCCount}}</td>
+                                    <td>{{item.DCValue}}</td>
+                                    <!-- <td>{{item.DCPercent}}</td> -->
+                                </tr>
+                            </ng-template>
+
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

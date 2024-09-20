@@ -1,0 +1,241 @@
+<div class="d-flex justify-content-between" style="margin-top: 50px;">
+    <div class="header">
+        <h3 class="m-2">Clearance-Non Sellable Configuration</h3>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-2">
+                <label for="">Select Category</label>
+                <p-dropdown [options]="CategoryList" [(ngModel)]="selectedCat" placeholder="Select Category" optionLabel="CategoryName" (onChange)="getSubcategory()"></p-dropdown>
+            </div>
+            <div class="col-2">
+              <label for="">Select Subcategory</label>
+              <p-dropdown [options]="SubCategoryList" [(ngModel)]="selectedSubCat" placeholder="Select Subcategory" optionLabel="SubcategoryName"  (onChange)="getBrand()"></p-dropdown>
+            </div>
+            <div class="col-2">
+                <label for="">Select Brand</label> 
+                <p-dropdown [options]="BrandList" [(ngModel)]="selectedBrand" placeholder="Select Brand" optionLabel="SubsubcategoryName" (onChange)="getItems()"></p-dropdown>
+            </div>
+            <div class="col-2">
+                <label for="">Select Items</label>
+                <p-multiSelect [options]="ItemList" [(ngModel)]="selectedItem" defaultLabel="Select Items" filterPlaceHolder="Item name/no." optionLabel="name" class="multiselect-custom">
+                    <ng-template let-value >
+                        <div *ngFor="let option of selectedItem" >
+                            {{option.name}}
+                        </div>
+                        <div *ngIf="!selectedItem || selectedItem.length === 0" class="country-placeholder">
+                            Select Items
+                        </div>
+                    </ng-template>
+                    <ng-template let-It >
+                        <div class="It-item" >
+                            <div>{{It.itemBaseName}}{{It.Number}}</div>
+                        </div>
+                    </ng-template>
+                </p-multiSelect>
+              
+            </div>
+            <div class="col-1.5 mt-3 p-1">
+                <button class="btn btn-primary" (click)="Search()">Search</button>&nbsp;&nbsp;
+                <button class="btn btn-primary"  (click)="refresh()">Clear </button>&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="col-1.5">
+                <label for="" style="margin-top:40px;">Bulk Update: </label> &nbsp;
+            </div>
+            <div class="col-1 mt-4">
+                <p-inputSwitch   [(ngModel)]="check" (click)="get()" [style]="{'margin-top':'8px'}"></p-inputSwitch>
+
+            </div>
+        </div> 
+        <p-table #dt  [value]="searchedData"  [rows]="10" [paginator]="true" [globalFilterFields]="['ItemNumber','Itemname']"
+        [rowHover]="true" dataKey="id">
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col" style="margin-left:74%;">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"  style="margin-right:8px;margin-top:2px;"></i>
+                            <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search ItemNumber/Name" style="border-radius:10px;"/>
+                        </span>
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template  pTemplate="header">
+                <tr>
+                    <th>BrandName</th>
+                    <th>CategoryName</th>
+                    <th *ngIf="selectedItem && selectedItem.length>0">ItemNumber</th>
+                    <th *ngIf="selectedItem && selectedItem.length>0">Itemname</th>
+                    <th>ClearanceShelfLife</th>
+                    <!-- <th>ClearanceShelfLifeTo</th> -->
+                    <th>NonSellShelfLife</th>
+                    <!-- <th>NonSellShelfLifeTo</th> -->
+                    <th style="text-align:center;">Action</th>
+                    <th >History</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-list>
+                <tr>
+                    <td>{{list.BrandName}}</td>
+                    <td>{{list.CategoryName}}</td>
+                    <td  *ngIf="selectedItem && selectedItem.length>0">{{list.ItemNumber}}</td>
+                    <td *ngIf="selectedItem && selectedItem.length>0">{{list.Itemname}}</td>
+                    <td>{{list.ClearanceShelfLifeFrom}}% - {{list.ClearanceShelfLifeTo}}%</td>
+                    <!-- <td></td> -->
+                    <td>{{list.NonSellShelfLifeFrom}}% - {{list.NonSellShelfLifeTo}}%</td>
+                    <!-- <td></td> -->
+
+
+                    <td><button class="btn btn-success" style="background-color:#09925f;width:100%;" (click)="OpenDialog(list)">Edit</button></td>
+                    <td><i class="fa fa-history" aria-hidden="true" (click)="getHistory(list)" style="font-size:30px;"></i></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+<p-dialog [(visible)]="isBulk"  positionTop="50" [modal]="true" appendTo="body"
+[style]="{width: '50%', top: '30px'}" [closable]="false">
+    <div class="header">
+        <h3 class="m-2" style="align-content:flex-start;">Edit</h3>
+    </div>
+    <div class="card">
+      
+            <div *ngIf="!brandname">
+                <div *ngFor="let li of List " >
+                 {{li}}
+                </div> 
+            </div>
+            <label for="">
+                {{brandname}}
+            </label>
+    </div>
+   
+        <div class="card">
+            <div class="card-body">
+                
+                <div class="row mt-2">
+                    <div class="col"></div>
+                    <div class="col">
+                        <label style="padding-left:21px;font-weight:600;">Shelf Life From</label><br><br>
+                    </div>
+                    <div class="col">
+                        <label style="padding-left:21px;font-weight:600;">Shelf Life To</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="">Clearance</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="enter cl %" pInputText  [(ngModel)]="ClearanceShelfLifeFrom">
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="enter cl %" pInputText [(ngModel)]="ClearanceShelfLifeTo">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label for="">Non sellable</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="enter ns %" pInputText [(ngModel)]="NonSellShelfLifeFrom">
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="enter ns %" pInputText  [(ngModel)]="NonSellShelfLifeTo">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-1" style="margin-left:73%;">
+                <button class="btn btn-success" style="background-color:#09925f;" (click)="Submit()">Submit</button>
+            </div>
+            <div class="col-1 ml-3">
+                <button class="btn btn-primary" (click)="isBulk=false;check=false">Cancel</button>
+            </div>
+        </div>
+  <p-toast *ngIf="isBulk"></p-toast>
+</p-dialog>
+<p-dialog [(visible)]="IsEdit"  positionTop="50" [modal]="true" appendTo="body"
+[style]="{width: '50%', top: '30px'}">
+    <div class="header">
+        <h3 class="m-2" style="align-content:flex-start;">Edit</h3>
+    </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <!-- {{editdata.Itemname}} -->
+                    <div *ngIf="editdata && editdata.Itemname!=null">
+                        <label for="" style="font-weight:bolder;" >{{editdata.Itemname}}</label>
+                    </div>    
+                    <div *ngIf="editdata && editdata.Itemname==null">
+                        <label for="" style="font-weight:bolder;" >{{editdata.BrandName}}</label>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col"></div>
+                    <div class="col">
+                        <label style="padding-left:21px;font-weight:600;">Shelf Life From</label><br><br>
+                    </div>
+                    <div class="col">
+                        <label style="padding-left:21px;font-weight:600;">Shelf Life To</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="">Clearance</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="enter cl %" pInputText  [(ngModel)]="ClearanceShelfLifeFrom">
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="enter cl %" pInputText  [(ngModel)]="ClearanceShelfLifeTo">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <label for="">Non sellable</label>
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="enter ns %" pInputText  [(ngModel)]="NonSellShelfLifeFrom">
+                    </div>
+                    <div class="col">
+                        <input type="text" placeholder="enter ns %" pInputText  [(ngModel)]="NonSellShelfLifeTo">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-1" style="margin-left:73%;">
+                <button class="btn btn-success" style="background-color:#09925f;" (click)="onEdit()">Submit</button>
+            </div>
+            <div class="col-1 ml-3">
+                <button class="btn btn-primary" (click)="IsEdit=false;">Cancel</button>
+            </div>
+        </div>
+        <p-toast  *ngIf="IsEdit"></p-toast>
+</p-dialog>
+
+
+<p-dialog [(visible)]="IsHistory"  positionTop="50" [modal]="true" appendTo="body" [resizable]="true" [draggable]="false"
+[style]="{width: '70%', top: '30px'}" >
+    <div class="header">
+        <h3  style="align-content:flex-start;">History</h3>
+    </div>
+        <div class="card"  *ngIf="IsHistory">
+            <!-- <div class="card-body"> -->
+                <button class="btn btn-success" (click)="IsHistory=false;" style="margin-left:91%;background-color:#09925f;">Cancel</button>
+                <app-history [entity]="entity" [id]="Id" ></app-history>
+            <!-- </div> -->
+        </div>
+</p-dialog>
+
+
+<p-toast *ngIf="!isBulk && !IsEdit"></p-toast>
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

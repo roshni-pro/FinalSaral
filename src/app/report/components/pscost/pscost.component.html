@@ -1,0 +1,162 @@
+<div>
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">PS Cost Report</h3>
+        </div>
+    </div>
+    <div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+        <div class="row">
+            <div class="col-12">
+                <div class="row" >
+                    <div class="col-sm-2 mt-2">
+                        <!-- <p-dropdown [options]="warehouses" placeholder="Select WareHouse" 
+                            [(ngModel)]="SelectedWarehouse" [panelStyle]="{minWidth:'25em'}"
+                            optionLabel="WarehouseName" (onChange)="GetInputWarehouse()">
+                        </p-dropdown> -->
+                        <p-multiSelect [options]="warehouses" placeholder="Select WareHouse" 
+                        [(ngModel)]="SelectedWarehouse" [panelStyle]="{minWidth:'25em'}"
+                        optionLabel="WarehouseName" (onChange)="GetInputWarehouse()" ></p-multiSelect>
+
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <p-dropdown [options]="data" placeholder="Select Type" [(ngModel)]="SelectedStatus"
+                            [panelStyle]="{minWidth:'25em'}" optionLabel="name"  (onChange)="GetInputBox()"> </p-dropdown>
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <!-- <input type="text" class="form form-control" [(ngModel)]="selectedtransferorderId"/> -->
+                        <input class="form-control searchbox" placeholder="PO ID/Supplier Name"
+                            [(ngModel)]="supplyer" *ngIf="POID" [disabled]="statuswarehouse">
+                            <input class="form-control searchbox" placeholder="Transfer Id" (keypress)="numberOnly($event)"
+                            [(ngModel)]="selectedTransferOrderId" *ngIf="InternalTransfer" [disabled]="statuswarehouse">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" showIcon="true"
+                            [readonlyInput]="true" inputId="range"></p-calendar>
+                    </div>
+                  
+                    <div class="col-md-3 mt-2 text-right">
+                        <button type="button" class="btn btn btn-1" (click)="GetPsCostData()">
+                            Search
+                        </button> &nbsp;
+                        <!-- <button type="button" class="btn btn-primary" (click)="GetInternalTrasnferData()">
+                            Search
+                        </button> &nbsp; -->
+                        <button type="button" class="btn btn btn-2" (click)="clear()">
+                            Clear
+                        </button>&nbsp;
+                        <button type="button" class="btn btn btn-3" (click)="ExportData()">
+                            Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid ui-fluid shadow p-3 mb-6 bg-white rounded table table-hover text-center">
+        <p-table  [value]="pscostreportdata" [scrollable]="false" [paginator]="true" [rows]="10" [lazy]="true"
+        (onLazyLoad)="loadpoId($event)" [totalRecords]="TotalRecordd"  *ngIf="OnSearchPOID">
+            <ng-template pTemplate="emptymessage">
+                <h5 class="emptymsg text-center">No Record</h5>
+              </ng-template>
+            <ng-template pTemplate="header">
+                <tr style="height:40px">
+                    <th>Item No</th>
+                    <th>Multi Mrp Id</th>
+                    <th>Item Name</th>
+                    <th>PO Details</th>
+                    <th>Purchase<br>OrderId</th>
+                    <th>Warehouse</th>
+                    <th>Buyer</th>
+                    <th>Supplier</th>
+                    <th>Status</th>
+                    <th>Category</th>
+                    <th>Sub<br>Category</th>
+                    <th>SubSub Category Name</th>
+                    <th>PO Rate /PC</th>
+                    <th>Irtotal<br>Qty</th>
+                    <th>Ir<br>Weight<br>AvgPrice</th>
+                    <th>Ir<br>Amount</th>
+                    <th>Weight<br>Po<br>Freight<br>Charges</th>
+                    <th>Frieght<br>PerPC</th>
+                    <th>Landed<br>Price/PC</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <h5 class="emptymsg">No Record</h5>
+              </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{item.itemnumber}}</td>
+                    <td>{{item.ItemMultiMRPId}}</td>
+                    <td>{{item.Itemname}}</td>
+                    <td>{{item.InvoiceNumbers}}</td>
+                    <td>{{item.PurchaseOrderId}}</td>
+                    <td>{{item.WarehouseName}}</td>
+                    <td>{{item.BuyerName}}</td>
+                    <td>{{item.SupplierName}}</td>
+                    <td>{{item.Status}}</td>
+                    <td>{{item.CategoryName}}</td>
+                    <td>{{item.SubcategoryName}}</td>
+                    <td>{{item.SubsubcategoryName}}</td>
+                    <td>{{ item.PORate}}</td>
+                    <td>{{item.IRTotalQty}}</td>
+                    <td>{{item.IRWeightAvgPrice|number:'1.2-2'}}</td>
+                    <td>{{item.IrAmount|number:'1.2-2'}}</td>
+                    <td>{{item.WeightPOFreightCharges|number:'1.2-2'}}</td>
+                    <td>{{item.FrieghtPerPC|number:'1.2-2'}}</td>
+                    <td>{{item.Landed_Price|number:'1.2-2'}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-table [value]="InternalTransferData" [scrollable]="false"  *ngIf="OnSearchInternalTransfer"   [paginator]="true" [rows]="10"  [lazy]="true" (onLazyLoad)="load($event)" [totalRecords]="TotalRecord">
+            <ng-template pTemplate="header">
+                <tr style="height:40px">
+                    <th>Item<br>Number</th>
+                    <th>ItemMultiMRPId</th>
+                    <th>Item Name</th>
+                    <th>Internal<br>Transfer<br>Details</th>
+                    <th>From Warehouse</th>
+                    <th>To Warehouse</th>
+                    <th>Status</th>
+                    <th>Category Name</th>
+                    <th>Sub Category Name</th>
+                    <th>SubSub Category Name</th>
+                    <th>Item Rate Per Pc</th>
+                    <th>Total<br>Quantity</th>
+                    <th>Amount</th>
+                    <th>Weight<br>freight<br>Charges</th>
+                    <th>FrieghtPerPC</th>
+                    <th>Landed<br>Price/PC</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{item.ItemNumber}}</td>
+                    <td>{{item.ItemMultiMRPId}}</td>
+                    <td>{{item.ItemName}}</td>
+                    <td>{{item.TransferOrderId}}</td>
+                    <td>{{item.Fromwarehouse}}</td>
+                    <td>{{item.ToWarehouse}}</td>
+                    <td>{{item.Status}}</td>
+                    <td>{{item.CategoryName}}</td>
+                    <td>{{item.SubcategoryName}}</td>
+                    <td>{{item.SubsubcategoryName}}</td>
+                    <td>{{item.ItemRatePerPc|number:'1.2-2'}}</td>
+                    <td>{{item.TotalQuantity}}</td>
+                    <td>{{item.Amount|number:'1.2-2'}}</td>
+                    <td>{{item.WeightPoFreightCharge|number:'1.2-2'}}</td>
+                    <td>{{item.FreightPerPc|number:'1.2-2'}}</td>
+                    <td>{{item.LandedPricePerPc|number:'1.2-2'}}</td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <h5>No Record</h5>
+              </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

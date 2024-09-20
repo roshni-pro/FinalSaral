@@ -1,0 +1,33 @@
+
+<h2 class="m-2"><b>Item Details Of OrderId:{{OrderId}}</b></h2>
+<div class="ui-g-12" >
+    <button class="btn btn-raised btn-raised btn-primary a1" (click)="OnCancel()" >Cancel</button>
+    <p-table #dt [value]="getDataList" [paginator]="true" [rows]="20" [scrollable]="true" scrollHeight="130vh" text-align: center>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>CustomerName</th>   
+                <th>itemNumber</th>   
+                <th>itemname</th>   
+                <th>qty</th>   
+                <th>ItemMultiMRPId</th>                                                   
+                <th>OrderId</th>                 
+                <th>Status</th>                 
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-ir>
+            <tr >
+                <td>{{ir.CustomerName}}</td>    
+                <td>{{ir.itemNumber}}</td>         
+                <td>{{ir.itemname}}</td>        
+                <td>{{ir.qty}}</td>   
+                <td>{{ir.ItemMultiMRPId}}</td>    
+                <td>{{ir.OrderId}}</td> 
+                <td>{{ir.Status}}</td> 
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

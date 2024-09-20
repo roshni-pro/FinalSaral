@@ -1,0 +1,141 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="row text-left">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="my-2 d-flex justify-content-between align-items-center">
+                <div class="header">
+                    <h3 class="m-2">City Fayda Item Master</h3>
+                </div>
+                <button type="button" style="float: right;" class="btn btn-raised btn-primary mr-1"
+                    (click)="exportPrimeItemlist()">
+                    Export PrimeItem Report
+                </button>
+            </div>
+            <div class="card-content" style="margin-top: -33px;">
+                <div class="px-3">
+                    <form class="form" name="cityPrimeItemMaster" #cityPrimeItemMaster="ngForm">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <div class="form-group">
+                                        <label for="cityPrimeItemMasters">City<span style="color:red"> *</span></label>
+                                        <select id="city" name="city" class="form-control"
+                                            [(ngModel)]="cityPrimedata.CityId" #cityId="ngModel"
+                                            (ngModelChange)="GetSubCat()" required>
+                                            <option value="">--Select City--</option>
+                                            <option *ngFor="let city of CityList" [ngValue]="city.Cityid">
+                                                {{city.CityName}}
+                                            </option>
+                                        </select>
+                                        <div *ngIf="isInvalid && !cityId.valid && cityId.errors.required">
+                                            <code>City is required</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <div class="form-group">
+                                        <label for="input2">SubCategory<span style="color:red"> *</span></label>
+                                        <select id="SubCategory" name="SubCategory" class="form-control"
+                                            [(ngModel)]="cityPrimedata.SubCategoryId" placeholder="Select SubCategory"
+                                            (ngModelChange)="GetMrpList()" #SubCategoryId="ngModel">
+                                            <!-- <div class="col-md-6"></div> -->
+                                            <option value="">--Select SubCategory--</option>
+                                            <option *ngFor="let sb of SubCategoryList" [ngValue]="sb.SubCategoryId">
+                                                {{sb.SubcategoryName}}
+                                            </option>
+                                        </select>
+                                        <!-- <div *ngIf="isInvalid && !SubCategoryId.valid && SubCategoryId.errors.required">
+                                            <code>SubCatgory is required</code>
+                                        </div> -->
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <div class="form-group">
+                                        <label for="input2">Item MRP List</label>
+                                        <select id="ItemMRP" name="ItemMRP" class="form-control"
+                                            [(ngModel)]="cityPrimedata.ItemMultiMRPId" placeholder="Select Item MRP"
+                                            (ngModelChange)="GetPrimeItem()">
+                                            <!-- <div class="col-md-6"></div> -->
+                                            <option value="">--Select MRP--</option>
+                                            <option *ngFor="let mrplist of MrpItemlist"
+                                                [ngValue]="mrplist.ItemMultiMRPId">
+                                                {{mrplist.itemname}} => MRP({{mrplist.MRP}})
+
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="form-actions" style="margin-top: 2px;">
+                                <button type="button" style="float: right;" class="btn btn-raised btn-warning mr-1"
+                                    (click)="SearchRecord(agentPitchForm)">
+                                    Search
+                                </button>
+                            </div> -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="my-2 d-flex justify-content-between" style="overflow: auto;">
+            <p-table #dt [value]="primeItemlist" [lazy]="false" [paginator]="true" [rows]="10" [scrollable]="true"
+                scrollHeight="65vh">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="text-align: center">Itemname</th>
+                        <th style="text-align: center">Item MultiMRPId</th>
+                        <th style="text-align: center">MRP</th>
+                        <th style="text-align: center">Min Order Qty</th>
+                        <th style="text-align: center">Unit Price</th>
+                        <th style="text-align: center">Prime Percent</th>
+                        <th style="text-align: center">Prime Price</th>
+                        <th style="text-align: center">IsActive</th>
+                        <!-- <th style="text-align: center">Actions</th> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                    <tr>
+                        <td style="text-align: center">{{rowData.itemname}}</td>
+                        <td style="text-align: center">{{rowData.ItemMultiMRPId}}</td>
+                        <td style="text-align: center">{{rowData.MRP}}</td>
+                        <td style="text-align: center">{{rowData.MinOrderQty}}</td>
+                        <td style="text-align: center">
+                            {{rowData.UnitPrice}}
+                            <!-- <input type="text" id="order" name="order" class="form-control"
+                                [(ngModel)]="rowData.UnitPrice"> -->
+                        </td>
+                        <td style="text-align: center">
+                            <input type="number" id="order" name="order" class="form-control"
+                                [(ngModel)]="rowData.PrimePercent" (ngModelChange)="calculateValue(rowData)"
+                                style="margin-top: 25px;">
+                            <label for="values">{{rowData.calculatedValue |  number : '1.1-1' }}</label>
+                        </td>
+                        <td style="text-align: center">
+                            <input type="number" id="order" name="order" class="form-control"
+                                [(ngModel)]="rowData.PrimePrice" (ngModelChange)="onPriceChange(rowData)" minlength="1"
+                                maxlength="2">
+                        </td>
+                        <td style="text-align: center">
+                            <p-checkbox name="IsActive" value="rowData.IsActive" [(ngModel)]="rowData.IsActive"
+                                binary="true">
+                            </p-checkbox>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <div>
+            <button type="button" style="float: right;" class="btn btn-raised btn-success mr-1"
+                (click)="updateRecord(primeItemlist)" [disabled]="isDisabled">
+                Update
+            </button>
+        </div>
+
+
+        <p-blockUI [blocked]="blocked"></p-blockUI>
+        <p-progressSpinner *ngIf="blocked"
+            [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+            fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

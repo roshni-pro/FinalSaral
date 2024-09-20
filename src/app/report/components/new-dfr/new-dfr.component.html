@@ -1,0 +1,88 @@
+<div class="ui-fluid">
+    <div class="my-1 d-flex justify-content-between align-items-center">
+      <div class="header">
+        <h3 class="m-2">DFR</h3>
+      </div>
+    </div>
+    <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded" style="margin-top: -2%;">
+      <div class="card-content">
+        <div class="row">
+          <div class="col-md-3">
+              <label for="city"><b>Select warehouse:</b></label>
+              <p-multiSelect [options]="warehouseListData" name="warehouseInput" defaultLabel="Select Warehouse" [(ngModel)]="selectedwarehouse"
+              optionLabel="WarehouseName" (onChange)="getWarehouseList(selectedwarehouse)">
+            </p-multiSelect>
+          </div>
+          <div class="col-md-3">
+              <label for="Agent"><b>Buyer:</b></label>
+              <p-multiSelect [options]="buyerList" name="DisplayName" defaultLabel="Select Buyer" [(ngModel)]="selectedBuyers"
+               optionLabel="DisplayName" (onChange)="getbuyerList(selectedBuyers)">
+                </p-multiSelect>
+          </div>
+          <div class="col-md-3">
+              <label for="warehouse"><b>Brand:</b></label>
+              <p-multiSelect placeholder="--Select Warehouse--" optionLabel="SubsubcategoryName" [options]="brandList"
+                (onChange)="onSearchBrand(selectedBrands)" [(ngModel)]="selectedBrands">
+              </p-multiSelect>
+          </div>
+          <div class="col">
+            <label for="Agent"><b>Month:</b></label><br>
+            <p-calendar  [(ngModel)]="monthsValue" [showIcon]="true" placeholder="Select Month"  [yearNavigator]="true" yearRange="2000:2030"  (mousedown)="getMonthVal(monthsValue)"></p-calendar>
+          </div>
+        </div>
+        <div class="row text-right">
+            <span class="col "><br>
+              <button type="button" (click)="getSearchRecord()" class="btn btn-success" style="background-color: green; color: white;">Search</button> &nbsp;
+              <button type="button"  (click)="exportDownload()" class="btn btn-success" style="background-color: rgb(0, 149, 255); color: white;">Export</button>  &nbsp;
+            </span>
+        </div>
+      </div>
+    </div>
+</div>
+  <p-toast position="top-center"></p-toast>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+  </p-progressSpinner>
+  
+<div *ngIf="DFRTableData!=null && DFRTableData.length>0" class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded" style="height: calc(100vh - 330px); overflow-y: auto; overflow-x: auto; margin-top: 10px;">
+    <div class="card-content">
+        <p-table #dt [value]="DFRTableData" 
+         [lazy]="false"  [rows]="10" responsiveLayout="scroll" class="center wrap" [paginator]="true" [scrollable]="true"  scrollHeight="450px" scrollDirection="both">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th> Brand </th>
+                    <th> Buyer </th>
+                    <th> Warehouse </th>
+                    <th> Total Pending Order </th>
+                    <th> Total Red Order </th>
+                    <th> ETA Pending Order </th>
+                    <th> ETA Red Order</th>
+                    <th> Fulfilment </th>
+                    <th> MTD Fulfilment </th>                    
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{item.Brand}}</td>
+                        <td>{{item.BuyerName}}</td>
+                        <td>{{item.WarehouseName}}</td>
+                        <td>{{item.TotalPendingOrder}}</td>
+                        <td>{{item.TotalRedOrder}}</td>
+                        <td>{{item.TotalETAPendingOrder}}</td>
+                        <td>{{item.TotalETARedOrder}}</td>
+                        <td>{{item.Fulfillment}}</td>
+                        <td>{{item.MTDFulfillment}}</td>                        
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <h4>Data Not Found</h4>
+            </ng-template>
+        </p-table>
+    </div>
+  </div> 
+
+    
+    
+    

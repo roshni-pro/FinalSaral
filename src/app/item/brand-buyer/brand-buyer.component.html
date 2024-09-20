@@ -1,0 +1,114 @@
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="ui-fluid">
+  <div class="row text-left">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header pb-2"></div>
+        <div class="card-content">
+          <div class="px-3">
+            <form class="form " name="form">
+              <div class="form-body">
+                <h4 class="form-section"><i class="ft-user"></i>Brand Buyer</h4>
+                <div class="row col-md-12">
+                  <div class="col-md-3">
+                    <label for="ware" class="col-md-6">Category:</label>
+                    <p-multiSelect id="Category" name="Category" [options]="CategoryList"
+                      [(ngModel)]="selectedCatregory" [panelStyle]="{minWidth:'25em'}"
+                      (onClick)="getSubCatList(selectedCatregory)" optionLabel="CategoryName">
+                    </p-multiSelect>
+                  </div>
+                  <div class="col-md-2">
+                    <label for="ware" class="col-md-6" style="white-space: nowrap;">Sub Category:</label>
+                    <p-multiSelect id="SubCategoryName" name="SubCategoryName" [options]="subCatList"
+                    [(ngModel)]="selectedSubCat"  (onClick)="getBrandsnew(selectedSubCat)"
+    
+                    [panelStyle]="{minWidth:'25em'}" 
+                    optionLabel="SubCategoryName" >
+                    </p-multiSelect>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="ware" class="col-md-6" style="white-space: nowrap;">SubSubCategory/Brand:</label>
+                    <p-multiSelect id="Brand" name="Brand" [options]="brandList" [(ngModel)]="selectedSubsubCatregory"
+                      [panelStyle]="{minWidth:'25em'}" optionLabel="BrandName">
+                    </p-multiSelect>
+                  </div>
+                  <div class="col-md-2">
+                    <label for="ware" class="col-md-12"><b>Warehouse:</b></label>
+                    <p-multiSelect [options]="masterwarehouseList" name="warehouseInput" [(ngModel)]="selectedwarehouse"
+                      [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName">
+                    </p-multiSelect>
+                    <!-- <div *ngIf="isInvalid && (!warehouseListInput.value || warehouseListInput.value.length < 1)">
+                      <code>Warehouse is required!</code>
+                    </div> -->
+                  </div>
+                  <div class="right col-sm-3 p-3">
+                    <button type="button" class="btn btn-raised btn-primary btn-mr" (click)="Show()">
+                      Search
+                    </button>
+                  </div>
+                </div>
+                <div class="row col-md-12">
+                  <h4 class="form-section"><i class="ft-user"></i>Do you want to set buyer on all warehouses <input
+                      type="checkbox" name="setallwhouse" [(ngModel)]='IsSetAllWarehouse'> </h4>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui-fluid shadow p-3 mb-1 bg-white rounded  table-hover" style="min-height: 500px;" ng-hide="isDetail">
+    <div class="position-relative">
+      <div class="position-relative brand-details" *ngIf="isDetails"></div>
+      <p-table #dt [value]="BrandList" class="contains" [paginator]="false" [rows]="20" [scrollable]="true"
+        scrollHeight="70vh" text-align: center>
+        <ng-template pTemplate="header">
+          <!-- <div class="ui-table-caption ui-widget-header ng-star-inserted position-relative">
+              <div class="ng-tns-c4-1 ng-star-inserted text-right">
+                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+              </div>
+            </div> -->
+          <tr>
+            <th style="width: 180px;">categoryName</th>
+            <th style="width: 180px;">SubcategoryName</th>
+            <th style="width: 180px;">SubsubcategoryName</th>
+            <ng-container *ngFor="let wh of warehouseList;">
+              <th style="width: 180px;">{{wh.WarehouseName}}</th>
+            </ng-container>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr>
+            <td style="width: 180px;">
+              {{rowData.CategoryName}}
+            </td>
+            <td style="width: 180px;">
+              {{rowData.SubcategoryName}}
+            </td>
+            <td style="width: 180px;">
+              {{rowData.SubsubcategoryName}}
+            </td>
+            <ng-container *ngFor="let wh of warehouseList;">
+              <td style="width: 180px;">
+                <select class="form-control" id="buyer" Name="Buyername" [(ngModel)]="rowData[wh.WarehouseId]"
+                  (ngModelChange)="updateWarehouseBuyer(wh.WarehouseId, rowData[wh.WarehouseId], rowData.SubsubCategoryid)">
+                  <option [value]="">Select</option>
+                  <option *ngFor="let buyer of buyerList" [value]="buyer.PeopleID">{{buyer.DisplayName}}</option>
+                </select>
+              </td>
+            </ng-container>
+
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,220 @@
+<app-town-hall-navigation></app-town-hall-navigation>
+
+<div *ngIf="townHallCommentsSection">
+    <!-- Agent KPP scope starts-->
+    <section id="horizontal-examples">
+        <div class="row text-left">
+            <div class="col-12 mt-3 mb-1">
+                <div class="content-header">
+                    <span>
+                        <a href="javascript:void(0);" (click)="isEditable = !isEditable">Agent KPP</a>
+                        &nbsp;
+                        <a href="javascript:void(0);" *ngIf="isEditable" (click)="updateComment()"><i
+                                class="fa fa-floppy-o" aria-hidden="true"></i></a>
+                    </span>
+                </div>
+                <p class="content-sub-header">For a small places in place of hub kpp works.</p>
+            </div>
+        </div>
+
+        <div class="row text-left" matchHeight="card">
+
+            <div class="col-xl-12 col-lg-12">
+                <div class="card horizontal">
+                    <div class="card-content d-flex justify-content-between">
+                        <div class="card-img cc">
+                            <!-- <img class="card-img-top img-fluid" src="assets/img/photos/06.jpg" alt="Card image cap"> -->
+                            <div *ngIf="agentKPPChartData">
+                                <canvas height="500" baseChart class="chart" [datasets]="agentKPPChartData"
+                                    [labels]="agentKPPs" [options]="agentKPPChartOptions" [colors]="agentKPPChartColors"
+                                    [legend]="lineChartLegend" [chartType]="lineChartType"
+                                    (chartClick)="chartClicked($event)"></canvas>
+                            </div>
+                        </div>
+                        <div
+                            [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallKppComments.AgentKPP}">
+                            <div class="px-3">
+                                <table class="table ">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Month</th>
+                                            <th>Count</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let kpp of agentKPPDataList; let i=index;">
+                                            <td>{{i+1}}</td>
+                                            <td>{{kpp.MonthName}}</td>
+                                            <td>{{kpp.TotalActiveAgent}}</td>
+                                            <td>{{kpp.SumOfAllKPP}}</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-stacked align-self-center xmr bck rghtt"
+                            *ngIf="!isEditable && townHallCommentsSection.TownHallKppComments.AgentKPP">
+                            <div class="card horizontal">
+                                <div class="card-content d-flex justify-content-between">
+                                    <div class="vtnt"
+                                        [innerHTML]="townHallCommentsSection.TownHallKppComments.AgentKPP"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Agent KPP comment section -->
+            <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+                <p-editor [(ngModel)]="townHallCommentsSection.TownHallKppComments.AgentKPP" name="AgentKPPEditor"
+                    [style]="{'height':'320px'}"></p-editor>
+            </div>
+
+
+        </div>
+    </section>
+    <!-- Agent KPP scope ends-->
+
+
+    <!-- Active KPP scope starts-->
+    <section id="horizontal-examples">
+        <div class="row text-left">
+            <div class="col-12 mt-3 mb-1">
+                <div class="content-header">Active KPP</div>
+                <p class="content-sub-header">For a small places in place of hub kpp works.</p>
+            </div>
+        </div>
+
+        <div class="row text-left" matchHeight="card">
+            <div class="col-xl-12 col-lg-12">
+                <div class="card horizontal">
+                    <div class="card-content d-flex justify-content-between">
+                        <div class="card-img ac-kpp-clr">
+                            <div *ngIf="activeKPPChartData">
+                                <canvas height="500" baseChart class="chart" [datasets]="activeKPPChartData"
+                                    [labels]="activeKPPLabels" [options]="activeKPPChartOptions"
+                                    [colors]="activeKppChartColors" [legend]="lineChartLegend"
+                                    [chartType]="lineChartType" (chartClick)="chartClicked($event)"></canvas>
+                            </div>
+                        </div>
+                        <div
+                            [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallKppComments.ActiveKPP}">
+                            <div class="px-3">
+                                <table class="table ">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Month</th>
+                                            <th>Count</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let kpp of activekpp; let i=index;">
+                                            <td>{{i+1}}</td>
+                                            <td>{{kpp.MonthName}}</td>
+                                            <td>{{kpp.TotalActivekpp}}</td>
+                                            <td>{{kpp.SumOfAllKPP}}</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-stacked align-self-center xmr  bck rghtt"
+                            *ngIf="!isEditable && townHallCommentsSection.TownHallKppComments.ActiveKPP">
+                            <div class="card horizontal">
+                                <div class="card-content d-flex justify-content-between">
+                                    <div class="vtnt"
+                                        [innerHTML]="townHallCommentsSection.TownHallKppComments.ActiveKPP"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active KPP comment section -->
+            <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+                <p-editor [(ngModel)]="townHallCommentsSection.TownHallKppComments.ActiveKPP" name="ActiveKPPEditor"
+                    [style]="{'height':'320px'}"></p-editor>
+            </div>
+
+
+        </div>
+    </section>
+    <!-- Active KPP scope ends-->
+
+
+    <!-- Active cluster scope starts-->
+    <section id="horizontal-examples">
+        <div class="row text-left">
+            <div class="col-12 mt-3 mb-1">
+                <div class="content-header">Active clusters</div>
+                <p class="content-sub-header">For a small places in place of hub kpp works.</p>
+            </div>
+        </div>
+
+        <div class="row text-left" matchHeight="card" style="margin-bottom: 70px;">
+            <div class="col-xl-12 col-lg-12">
+                <div class="card horizontal">
+                    <div class="card-content d-flex justify-content-between">
+                        <div class="card-img ac-cltr-clr">
+                            <div *ngIf="activeClusterChartData">
+                                <canvas height="400" baseChart class="chart" [datasets]="activeClusterChartData"
+                                    [labels]="activeClusterChartLabels" [options]="activeClusterOptions"
+                                    [colors]="activeClusterChartColors" [legend]="lineChartLegend"
+                                    [chartType]="lineChartType"></canvas>
+                            </div>
+                        </div>
+                        <div [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallKppComments.ActiveCluster}">
+                            <div class="px-3">
+                                <table class="table">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Month</th>
+                                            <th>Count</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let cluster of agentcluster; let i=index;">
+                                            <td>{{i+1}}</td>
+                                            <td>{{cluster.MonthName}}</td>
+                                            <td>{{cluster.TotalActiveCluster}}</td>
+                                            <td>{{cluster.SumOfAllKPP}}</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-stacked align-self-center xmr  bck rghtt"
+                            *ngIf="!isEditable && townHallCommentsSection.TownHallKppComments.ActiveCluster">
+                            <div class="card horizontal">
+                                <div class="card-content d-flex justify-content-between">
+                                    <div class="vtnt"
+                                        [innerHTML]="townHallCommentsSection.TownHallKppComments.ActiveCluster"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Cluster comment section -->
+            <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+                <p-editor [(ngModel)]="townHallCommentsSection.TownHallKppComments.ActiveCluster"
+                    name="ActiveClusterEditor" [style]="{'height':'320px'}"></p-editor>
+            </div>
+
+
+        </div>
+    </section>
+    <!-- Active cluster scope ends-->
+
+</div>

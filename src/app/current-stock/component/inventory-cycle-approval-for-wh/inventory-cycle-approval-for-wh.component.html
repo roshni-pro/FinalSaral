@@ -1,0 +1,489 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" [baseZIndex]="201" appendTo="body" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>
+<div class="ui-fluid">
+  <div class="my-2 justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="mt-3">Inventory Cycle Approval For Warehouse List</h3>
+    </div>
+  </div>
+  <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded">
+    <div class="card-content">
+      <div class="col-12">
+        <div class="row">
+          <div class="col-md-2">
+            <select [(ngModel)]="Type" class="form-control" name="type">
+              <option *ngFor="let s of stList" [value]="s.value">
+                {{s.label}} </option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <select [(ngModel)]="warehouseId" class="form-control" name="warehouse"
+              (ngModelChange)="onChangeWarehouse(warehouseId)">
+              <option [value]="null">select </option>
+              <option *ngFor="let warehouse of warehouses" [value]="warehouse.WarehouseId">
+                {{warehouse.WarehouseName}} </option>
+            </select>
+          </div>
+          
+          <div class="col-md-2">
+            <select [(ngModel)]="status" class="form-control" name="status">
+              <!-- <option [value]="null">select </option> -->
+              <option *ngFor="let st of statusList" [value]="st.value">
+                {{st.label}} </option>
+            </select>
+          </div>
+          <div class="col-md-3 text-right">
+            <input id="searchKeyword" name="searchKeyword" [(ngModel)]="keyword" class="form-control">
+          </div>
+          <div class="col-md-3">
+            <p-calendar name="startDateInputExport" appendTo="body" [showIcon]="true" [(ngModel)]="rangeDates"
+              selectionMode="range" [readonlyInput]="true" inputId="range" name="startDate"
+              required [monthNavigator]="true" [yearNavigator]="true" [yearRange]="yearRangeForCalender">
+             </p-calendar>
+          </div>
+          <div class="col-md-4 text-right"></div>
+          <div class="col-md-8 text-right tp">
+            <button type="button" class="btn btn-search ml-1" style="margin-right: 0px !important;"
+            (click)="onSearch()">Search</button>
+            <button type="button" class="btn btn-primary ml-1" style="margin-right: 0px !important;"
+              (click)="ShowDialogForAdd()">Add</button>
+            <button type="button" class="btn btn-Export ml-1" (click)="showDialog()">BatchWiseExport</button>
+            <button type="button" class="btn btn-Export ml-1" (click)="showDialogItemWise()">ItemWiseExport</button>
+            <button type="button" class="btn btn-reset ml-1" style="background-color: red; color:white" (click)="clearData()">Clear</button>
+             <button type="button" class="btn btn-zeroDiff ml-1" (click)="onClickZeroDifferenceRecords()">Zero Difference Records</button>
+             <button type="button" class="btn btn-Export ml-1" (click)="onExportZeroDifference()">Zero Difference Export</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- <div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+        (click)="toggleSearch()">
+        <h5 class="m-0">Statistics</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+    <div id="search-content p-2" *ngIf="isSearch">
+        <div class="row p-2 px-5">
+            <div class="col-md-6 border-right border-right-1">
+                    <label for="totalLineItem" class="lbl">Total Line Items</label>
+                    <div class="vl">{{statisticsdata.TotalLineItems}}</div>
+            </div>
+            
+            <div class="col-md-6 border-right border-right-1">
+                  <label for="countedLineItem" class="lbl">Counted Line Items</label>
+                  <div class="vl">{{statisticsdata.CountedLineItem}}</div>
+          </div>
+
+          <div class="col-md-6 border-right border-right-1">
+                <label for="pendingLineItem" class="lbl">Pending Line Items</label>
+                <div class="vl">{{statisticsdata.PendingLineItem}}</div>
+        </div>
+
+        <div class="col-md-6 border-right border-right-1">
+              <label for="excessLineItem" class="lbl">Approved Excess Items</label>
+              <div class="vl">{{statisticsdata.ApprovedExcessItems | number : '1.2-2'}}</div>
+      </div>
+
+      <div class="col-md-6 border-right border-right-1">
+            <label for="shortLineItem" class="lbl">Approved Short Items</label>
+            <div class="vl">{{statisticsdata.ApprovedShortItems | number : '1.2-2'}}</div>
+    </div>
+    <div class="col-md-6 border-right border-right-1">
+          <label for="shortLineItem" class="lbl">Total Diff Value</label>
+          <div class="vl">{{statisticsdata.ApprovedItemsDifference | number : '1.2-2'}}</div>
+  </div>
+
+        </div>
+    </div>
+</div> -->
+
+
+<div class="widt">
+    <div class="card wwi container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded text-center">
+      <p-table #dt [value]="approvalList" selectionMode="single" [paginator]="true" [lazy]="true" [rows]="25"
+        [scrollable]="true" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" scrollHeight="130vh" text-align:
+        center dataKey="Id" [(selection)]="selectedList" [rowsPerPageOptions]="[10,25,50,100]" [(first)]="first">
+        <ng-template pTemplate="header">
+          <tr>
+            <th colspan="1"> &nbsp; </th>
+            <th colspan="1">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <!-- <th colspan="2" >Id </th> -->
+            <!-- <th colspan="2" >Type</th> -->
+            <th colspan="4" >Item </th>
+            <!-- <th colspan="2" >Warehouse</th> -->
+            <th colspan="2" >Inv-Count:</th>
+            <th colspan="2" >Cur-Inv</th>
+            <th colspan="2" >Past-Inv</th>
+            <th colspan="2" >RTD</th>
+            <th>RTP</th>
+            <!-- <th>DamagedQty</th>
+            <th>NonSellable<br>Qty</th> -->
+            <!-- <th>Comment</th> -->
+            <th colspan="2" >Diff</th>
+            <th colspan="2" >App</th>
+            <th colspan="2" >Total Amt</th>
+            <!-- <th>Updated Date</th>
+            <th>UpdatedBy</th> -->
+            <!-- <th>ABC Classification</th> -->
+            <th colspan="3">Remarks</th>
+            <th colspan="2">Comment</th>
+            <th colspan="4">Status Of Verifier</th>
+            <th colspan="5">History</th> 
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex" let-expanded="expanded">
+          <tr>
+            <td colspan="1">
+              <i [pRowToggler]="rowData" [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" (click)="isResponse=false;"></i>
+            </td>
+            <td colspan="1">
+              <i [pRowToggler]="rowData" [ngClass]="expanded ? '' : ''" *ngIf="rowData.IsWarehouseApproved == 0 && !isZeroDifference">
+                <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+              </i>
+            </td>
+            <!-- <td colspan="2" >{{rowData.Id}}</td> -->
+            <!-- <td colspan="2" >{{rowData.IsPV == false ? 'Inventory' : 'PV'}}</td> -->
+            <td colspan="4" >{{rowData.ItemName}}</td>
+            <!-- <td colspan="2" >{{rowData.WarehouseName}}</td> -->
+            <td colspan="2" >{{rowData.InventoryCount}}</td>
+            <td colspan="2" >{{rowData.CurrentInventory}}</td>
+            <td colspan="2" >{{rowData.PastInventory}}</td>
+            <td colspan="2" >{{rowData.RtdCount}}</td>
+            <td>{{rowData.RtpCount}}</td>
+            <!-- <td>{{rowData.Comment}}</td> -->
+            <td colspan="2" >{{rowData.diff}}</td>
+            <td colspan="2" >{{rowData.APP | number : '1.2-2'}}</td>
+            <td colspan="2" >{{(rowData.APP | number : '1.2-2') * rowData.diff | number : '1.2-2'}}</td>
+            <td colspan="3" >
+              <select [(ngModel)]="rowData.VerifierStatus" class="form-control" name="verifierLst" *ngIf="rowData.VerifierStatus != 5  && (rowData.IsWarehouseApproved == 0 || rowData.IsWarehouseApproved == 1 || rowData.IsWarehouseApproved == 2) && !isZeroDifference">
+                <option value="null">Remarks By Verifier </option>
+                <option *ngFor="let vl of verifierList" [value]="vl.value">
+                  {{vl.label}} </option>
+              </select>
+              <input id="otherComment" name="otherComment" class="form-control" [(ngModel)]="rowData.Comment" *ngIf="rowData.VerifierStatus == 5  && !rowData.IsDeleted && !isZeroDifference">
+              <span *ngIf="rowData.InventoryCount == rowData.PastInventory">-</span>
+            </td>
+            <!-- <td>{{rowData.UpdatedDate | date:'yyyy-MM-dd'}}</td>
+            <td>{{rowData.Updatedby}}</td>
+            <td>{{rowData.ABCClassification}}</td> -->
+            <!-- <td style="width:8%;">
+              <ng-container *ngIf="rowData.IsApproved == true else second">
+                <span style="color: green; font-weight: bold;">Submitted</span>
+              </ng-container>
+              <ng-template #second>
+                <ng-container *ngIf="rowData.IsApproved == false">
+                  <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == -1">Pending</span>
+                  <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == 0 && rowData.IsWarehouseApproved == 0">Warehouse Pending</span>                
+                </ng-container>
+                
+              </ng-template>
+            </td> -->
+            <td colspan="2">{{rowData.Comment}}</td>
+            <td colspan="4">
+              <div *ngIf="rowData.IsWarehouseApproved == 0 && !isZeroDifference">
+              <i [pRowToggler]="rowData" [ngClass]="expanded ? '' : ''">
+                <button type="button" class="btn btn-raised btn-success mr-1" (click)="onSelectApproved(rowData)"
+                [disabled]="isResponse">
+                <i class="fa fa-check-circle"></i>
+                </button>
+                <button type="button" class="btn btn-raised btn-danger mr-1" (click)="onSelectRejected(rowData)">
+                  <i class="fa fa-times-circle" ></i>
+                </button>
+              </i>
+            </div>
+            <ng-container *ngIf="rowData.IsWarehouseApproved == 1 && rowData.IsDeleted == false && rowData.IsApproved == true else second">
+              <!-- {{rowData.HQVerifierStatus}} -->
+              <span style="color: green; font-weight: bold;" *ngIf="rowData.PastInventory != rowData.InventoryCount && rowData.HQVerifierStatus > 0 ">Approved By L&P</span>
+              <span style="color: green; font-weight: bold;" *ngIf="rowData.PastInventory != rowData.InventoryCount && rowData.HQVerifierStatus == 0 ">Approved By Warehouse</span>
+              <span style="color: green; font-weight: bold;" *ngIf="rowData.PastInventory == rowData.InventoryCount && rowData.HQVerifierStatus == 0 && rowData.zeroDiff == 0">Approved By Warehouse</span>
+              <span style="color: green; font-weight: bold;" *ngIf="rowData.PastInventory == rowData.InventoryCount && rowData.HQVerifierStatus == 0 && rowData.zeroDiff == 1">Auto Approved</span>
+            </ng-container>
+            <ng-template #second>
+              <ng-container *ngIf="rowData.IsApproved == false">
+                <!-- <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == -1">Pending</span> -->
+                <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == 0 && rowData.IsDeleted == false">Warehouse Pending</span>                
+              <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == 1 && rowData.IsApproved == false && rowData.IsDeleted == true">Rejected</span>              
+              <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == 2">Warehouse Rejected</span>                
+              </ng-container>
+              <ng-container *ngIf="rowData.IsApproved == true">
+                <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == 0 && rowData.IsDeleted == false">Warehouse Pending</span>                
+              <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == 1 && rowData.IsApproved == false && rowData.IsDeleted == true">Rejected</span>              
+              <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == 2">Warehouse Rejected</span>                
+              </ng-container>
+              <ng-container *ngIf="rowData.IsApproved == true && rowData.IsDeleted == true">
+              <span style="color: red; font-weight: bold;" *ngIf="rowData.IsWarehouseApproved == 1 && rowData.IsApproved == true && rowData.IsDeleted == true">Rejected</span>              
+              </ng-container>
+              </ng-template>
+            </td>
+            <td colspan="5">
+              <button type="button" class="btn btn-raised btn-success mr-1" (click)="onClickInventCycleHistory(rowData)">
+                <i class="fa fa-history" ></i>  <!-- History -->
+              </button>
+              <button type="button" class="btn btn-raised btn-success mr-1" (click)="onClickInventoryItemWiseHistory(rowData)">
+                Inventory <i class="fa fa-history" ></i><!-- History -->
+               </button>
+         </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-rowData>
+          <tr>
+            <td colspan="33">
+              <div class="p-3 cc">
+                <p-table [value]="rowData.InventoryCycleItemBatchDcs" dataKey="BatchCode">
+                  <ng-template pTemplate="header">
+          <tr>
+            <th colspan="2" >BatchCode</th>
+            <th colspan="2" >MFGDate</th>
+            <th colspan="2" >ExpiryDate</th>
+            <th colspan="2" >InventoryCount</th>
+            <th colspan="2" >PastInventory</th>
+            <th colspan="2" >Difference</th>
+            <th colspan="2" >Settled/Unsettled</th>
+            <!-- <th>HQApproval</th> -->
+            <!-- <th>History</th> -->
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-order>
+          <tr>
+            <td colspan="2" >{{order.BatchCode}}</td>
+            <td colspan="2" >{{order.MFGDate | date:'yyyy-MM-dd'}}</td>
+            <td colspan="2" >{{order.ExpiryDate | date:'yyyy-MM-dd'}}</td>
+            <td colspan="2" >{{order.InventoryCount}}</td>
+            <td colspan="2" >{{order.PastInventory}}</td>
+            <td colspan="2" >{{order.DiffInventory}}</td>
+            <td colspan="2" >
+              <!-- {{order.IsStockUpdated == true ? 'Settled' : 'UnSettled'}} -->
+              <!-- -{{order.InventCycleBatchId}}-{{order.Id}} -->
+              <span class="approved_request"  *ngIf="order.IsStockUpdated == true">Settled</span>
+            <span class="approval_request" *ngIf="order.IsStockUpdated == false && rowData.IsWarehouseApproved != 2">UnSettled</span>
+            <span class="approval_request" *ngIf="order.IsStockUpdated == false && rowData.IsWarehouseApproved == 2">Rejected Settled</span>
+              <span *ngIf="order.InventCycleBatchId == order.Id && order.IsStockUpdated == true && rowData.IsApproved == false">{{order.Qty}} Qty Request For L&P Approval</span>
+              <span *ngIf="order.InventCycleBatchId == order.Id && order.IsStockUpdated == true && rowData.IsApproved == true && rowData.PastInventory != rowData.InventoryCount">{{order.Qty}} Approved By L&P</span>
+              <span *ngIf="order.InventCycleBatchId == order.Id && order.IsStockUpdated == true && rowData.IsApproved == true && rowData.PastInventory == rowData.InventoryCount">{{order.Qty}} Approved By Warehouse</span>
+            </td>
+            <!-- <td>{{order.Qty > 0 ? 'IR to Virtual' : 'IR to Current' }}</td> -->
+            <!-- <td>
+              <button type="button" class="btn btn-raised btn-danger mr-1" (click)="onClickHistory(order)">
+                History
+              </button>
+            </td> -->
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <h5>Data Not Found</h5>
+        </ng-template>
+      </p-table>
+    </div>
+    </td>
+    </tr>
+
+    </ng-template>
+    </p-table>
+    <!-- <div class="form-actions right col-sm-12 p-3">
+      <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+        Cancel
+      </button>
+      [disabled]="choosenCustomer.length==0 ||  choosenCustomer[0]==undefined"
+      <button type="button" class="btn btn-raised btn-success mr-1" (click)="onSelectApproved()"
+      [disabled]="isResponse">
+        Approved
+      </button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="onSelectRejected()">
+        Rejected
+      </button>
+    </div> -->
+  </div>
+</div>
+<!-- [style]="{width: '65vw',height: '55vh'}" [baseZIndex]="10000" style="height: 50vh;z-index: 1;"-->
+<p-dialog header="ExportApprovedReject" appendTo="body" [modal]="true" [(visible)]="display">
+  <div class="row" style="margin-top:5%;margin-bottom: 14%;">
+    <div class="col-md-3">
+      <label><span class="required">*</span>Select Warehouse</label>
+      <select [(ngModel)]="selectedwarehouseIdPOP" class="form-control" name="warehouse">
+        <option [value]="null">Select Warehouse </option>
+        <option *ngFor="let warehouse of warehouses" [value]="warehouse.WarehouseId">
+          {{warehouse.WarehouseName}} </option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label><span class="required">*</span>Select Status</label>
+      <select [(ngModel)]="selectedstatus" class="form-control" name="warehouse">
+        <option [value]="-1">All</option>
+        <option [value]="1">Export Approved</option>
+        <option [value]="2">Export Rejected</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label><span class="required">*</span>Select DateRange</label><br>
+      <p-calendar [(ngModel)]="rangeDatesPOP" appendTo="body" selectionMode="range" inputId="range"></p-calendar>
+    </div>
+    <!-- export button clickable --start -->
+    <div class="col-md-2 ml-2" *ngIf="exportBtn == true">
+      <button class="btn btn-Export" style="margin-top: 32% !important;" (click)="ExportApproved()">Export</button>
+    </div>
+    <!-- export button clickable --end -->
+    <!-- export button loader --start -->
+    <div class="col-md-2 ml-2" *ngIf="exportLoader == true">
+      <button class="btn" type="button" style="background-color: green;color: white;margin-top: 32% !important;width: 70px;">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span class="sr-only">Loading...</span>
+      </button>
+    </div>
+    <!-- export button loader --end -->
+  </div>
+</p-dialog>
+
+<!-- itemwisedisplay -->
+<p-dialog header="ExportItemWise" appendTo="body" [modal]="true" [(visible)]="itemwisedisplay">
+  <div class="row" style="margin-top:5%;margin-bottom: 14%;">
+    <div class="col-md-3">
+      <label><span class="required">*</span>Select Warehouse</label>
+      <select [(ngModel)]="selectedwarehouseIdPOP" class="form-control" name="warehouse">
+        <option [value]="null">Select Warehouse </option>
+        <option *ngFor="let warehouse of warehouses" [value]="warehouse.WarehouseId">
+          {{warehouse.WarehouseName}} </option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label><span class="required">*</span>Select Status</label>
+      <select [(ngModel)]="selectedstatus" class="form-control" name="warehouse">
+        <option [value]="3">All</option>
+        <option [value]="0">Warehouse Pending</option>
+        <option [value]="1">Warehouse Approved</option>
+        <option [value]="2">Warehouse Rejected</option>
+        <!-- <option [value]="4">L&P Pending</option>
+        <option [value]="5">L&P Approved</option>
+        <option [value]="6">L&P Rejected</option> -->
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label><span class="required">*</span>Select DateRange</label><br>
+      <p-calendar [(ngModel)]="rangeDatesPOP" appendTo="body" selectionMode="range" inputId="range"></p-calendar>
+    </div>
+    <!-- export button clickable --start -->
+    <div class="col-md-2 ml-2" *ngIf="exportBtn == true">
+      <button class="btn btn-Export" style="margin-top: 32% !important;" (click)="ExportItemWise()">Export</button>
+    </div>
+    <!-- <div class="col-md-3"></div> -->
+    <!-- export button clickable --end -->
+    <!-- export button loader --start -->
+    <div class="col-md-2 ml-2" *ngIf="exportLoader == true">
+      <button class="btn" type="button" style="background-color: green;color: white;margin-top: 32% !important;width: 70px;">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span class="sr-only">Loading...</span>
+      </button>
+    </div>
+    <!-- export button loader --end -->
+  </div>
+</p-dialog>
+
+<div class="container" style="overflow: hidden  !important;">
+  <p-dialog header="Add" appendTo="body" [modal]="true" [(visible)]="Displayadd" [style]="{width:'80vw',height:'40vh'}">
+    <div class="row" style="height:35vh;">
+      <div class="col-md-2">
+        <label>Select Warehouse</label>
+        <p-dropdown [options]="warehouses" placeholder="Select Warehouse" [(ngModel)]="warehouseIdAdd"
+        autoWidth="false" [style]="{'width':'100%'}" optionLabel="WarehouseName">
+        </p-dropdown>
+      </div>
+      <div class="col-md-3">
+        <label>Select Item</label><br>
+        <p-autoComplete [(ngModel)]="Selecteditem" [suggestions]="ItemList" (completeMethod)="GetItemList($event)"
+          field="itemname" [size]="30" placeholder="Search Items (min 3 letters)" [minLength]="1" name="BatchCode"
+          required="true" #ledgerName="ngModel">
+        </p-autoComplete>
+      </div>
+      <div class="col-md-1" style="margin-top: 30px">
+        <button class="btn btn-primary ml-2" (click)="AddItems()">Add</button>
+      </div>
+      <div class="col-md-4" style="margin-top: 30px">
+        <p-fileUpload name="myfile[]" customUpload="true" (uploadHandler)="Upload($event, uploadCustom)"
+          accept="xls,.xlsx" #uploadCustom>"
+        </p-fileUpload>
+      </div>
+      <div class="col-md-2 mt-4">
+        <button class="btn btn-download" (click)="DownLoadSample()">Download Sample</button>
+      </div>
+      <p-blockUI [blocked]="blockedPop"></p-blockUI>
+      <p-progressSpinner *ngIf="blockedPop"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s">
+      </p-progressSpinner>
+    </div>
+  </p-dialog>
+</div>
+<!-- //InventCycleBatchHistory// -->
+<p-dialog header="InventCycleBatchHistory" appendTo="body" [modal]="true" [(visible)]="isOpenHistoryPopup">
+  <p-table #dt [value]="inventCylceBatchHistoryList" [paginator]="false" [rows]="25"
+  [scrollable]="true" scrollHeight="130vh" text-align:center>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>BatchCode</th>
+      <th>Qty</th>
+      <th>UpdatedDate</th>
+      <th>UpdatedBy</th>
+      <th>Difference</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-order>
+    <tr>
+      <td>{{order.BatchCode}}</td>
+      <td>{{order.Qty}}</td>
+      <td>{{order.UpdatedDate | date:'yyyy-MM-dd'}}</td>
+      <td>{{order.UpdatedBy}}</td>
+      <td>{{order.DiffInventory}}</td>
+    </tr>
+  </ng-template>
+  </p-table>
+</p-dialog>
+
+<!-- //InventCycleHistory// -->
+<p-dialog header="InventCycleHistory" appendTo="body" [modal]="true" [(visible)]="isOpenInventCycleHistoryPopup">
+  <p-table #dt [value]="inventCylceHistoryList" [paginator]="false" [rows]="25"
+  [scrollable]="true" scrollHeight="130vh" text-align:center>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>CreatedBy</th>
+      <th>CreatedDate</th>
+      <th>VerifiedBy</th>
+      <th>VerifiedTimestamp</th>
+      <th>ApprovedBy</th>
+      <th>ApprovedTimestamp</th>
+      <th>Status</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-order>
+    <tr>
+      <td>{{order.CreatedBy}}</td>
+      <td>{{order.CreatedDate | date:'medium'}}</td>
+      <td>{{order.VerifiedBy}}</td>
+      <td>{{order.VerifiedTimestamp | date:'medium'}}</td>
+      <td>{{order.ApprovedBy}}</td>
+      <td>{{order.ApprovedTimestamp | date:'medium'}}</td>
+      <td>{{order.Status}}</td>
+    </tr>
+  </ng-template>
+  </p-table>
+</p-dialog>
+
+<div *ngIf="isHistoryOpen">
+  <p-dialog header="History" [(visible)]="isHistoryOpen" [blockScroll]="true" appendTo="body"
+      [style]="{width: '75vw', height:'75vh'}" [modal]="true" [positionTop]="0" appendTo="body">
+      <div class="cnt">
+          <app-history [entity]="entity" [id]="selectedItemRowData.Id"></app-history>
+      </div>
+  </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+</div>

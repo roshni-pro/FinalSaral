@@ -1,0 +1,57 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">!!!Warehouse-Quadrants</h3>
+    </div>
+</div>
+<div class="ui-fluid shadow p-2 m-2 bg-white rounded table table-hover">
+    <div class="row">
+
+        <div class="col-md-3">
+            <label for="">Select Warehouse</label>
+            <p-dropdown [options]="warehouseList" name="warehouseList" optionLabel="label" (onChange)="refresh()"
+                [(ngModel)]="warehouseId" [filter]="true" placeholder="select warehouse">
+            </p-dropdown>
+        </div>
+
+        <div class="col-md-3">
+            <label for="">Download SampleFile File</label>
+            <button class="btn btn-primary" (click)="DownLoadSampleFile()">Download SampleFile File</button>
+
+        </div>
+        <div class="col-md-3">
+            <label for="">Export</label>
+            <br>
+            <button class="btn btn-primary" (click)="Export()">Export</button>
+
+        </div>
+
+        <!-- <div class="col-md-3">
+            <label for="">Export</label>
+            <button class="btn btn-primary" (click)="Export()">Export File</button>
+        </div> -->
+    </div>
+
+
+    <div class="row" *ngIf="warehouseId">
+        <div class="col-md-3">
+            <label for="">Upload File</label>
+            <p-fileUpload    name="myfile[]" customUpload="true" (uploadHandler)="onUpload($event, uploadCustom)"
+                accept="xls,.xlsx" #uploadCustom></p-fileUpload>
+
+        </div>
+
+        <!-- <div class="col-md-3">
+            <label> Upload File:</label>
+            <br>
+                <input class="form-control" type="file" #file />
+               
+            <br>
+            <div class="col-md-12">
+                <button class="btn btn-primary" accept=".xlsx"
+                    (click)="uploadFile(file);">Upload</button>
+            </div>
+            
+        </div> -->
+
+    </div>
+</div>

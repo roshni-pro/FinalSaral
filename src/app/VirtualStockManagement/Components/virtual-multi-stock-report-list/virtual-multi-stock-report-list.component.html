@@ -1,0 +1,218 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="offer">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2">Virtual Stock List Page</h3>
+    </div>
+
+  </div>
+
+  <div class="card-content">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label> <b>Select Warehouse : </b></label>
+            <!-- <select id="wh" name="wh" class="form-control" [(ngModel)]="filter.WarehouseId"
+              (change)="onSelectWarehouse()">
+              <option value="0">Select Warehouse</option>
+              <option *ngFor="let ware of warehouseList" [ngValue]="ware.WarehouseId">
+                {{ ware.WarehouseName }}
+              </option>
+            </select>  -->
+         
+            <p-dropdown [options]="warehouseList" [filter]="true" (onChange)="onSelectWarehouse(wareid)"
+                  [(ngModel)]="wareid" optionLabel="WarehouseName" placeholder="select warehouse" >
+            </p-dropdown>
+          </div>
+        </div>
+        <!-- <div class="col-lg-2" *ngIf = "whWiseData == true">
+              <div class="form-group">
+                <div class="searchMrpField">
+                  <input type="text" placeholder="ItemMultiMrpId" (keyup)="searchFilter($event,data.warehouseID)">
+                  <i class="fa fa-search"></i>
+                </div>
+              </div>
+          </div> -->
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label><b>Search Filter Option</b> </label>
+            <select class="form-control" [(ngModel)]="data.search" (ngModelChange)="searchFilterOption(data.search)">
+              <option value="">Choose option</option>
+              <option value="ItemMultiMRPID" selected>ItemMultiMRPID</option>
+              <option value="ItemName">Item Name</option>
+              <!-- <option value="WarehouseName">Warehouse Name</option> -->
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2" style="margin-top: 20px;">
+          <div class="float-right searchField" *ngIf="ItemFilter == true">
+            <input type="text" placeholder="Item Name" (keyup)="searchVirtualItemfilter($event)">
+            <i class="fa fa-search"></i>
+          </div>
+          <!-- <div class="float-right searchField" *ngIf="WarehouseFilter == true">
+                <input type="text" placeholder="Warehouse Name" (keyup)="searchVirtualfilter($event)">
+                <i class="fa fa-search"></i>
+              </div>   -->
+          <div class="float-right searchField" *ngIf="mrpFilter == true">
+            <input type="text" placeholder="ItemMultiMrpId" (keyup)="searchVirtualMrpfilter($event)">
+            <i class="fa fa-search"></i>
+          </div>
+        </div>
+        <div class="col-sm-2" style="margin-top: 20px;">
+          <div class="form-group">
+            <button type="button" class="btn btn-raised btn-raised btn-info btn-primary float-right align-self-end"
+              style="margin-top: 13px; margin-right: 10px;" (click)="export()">
+              Export
+            </button>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="reset()"
+              style="margin-top: 33px;">
+              Reset Filter
+            </button>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="unsettledItemExport()"
+              style="margin-top: 33px;">
+              Unsettled Items Export
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row text-left">
+    <p-table #dt [value]="virtualList" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="70vh"
+      text-align: center>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ItemMultiMRPID</th>
+          <th>Warehouse Name</th>
+          <th>ItemName</th>
+          <th>QTY</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{row.ItemMultiMRPID}}</td>
+          <td>{{row.WarehouseName}}</td>
+          <td>{{row.ItemName}}</td>
+          <td>{{row.QTY}}
+            <a class="view" (click)="openDetails(row,$event)" href="javascript:void(0)">
+              <i class="fa fa-eye fa-2x" aria-hidden="true"></i>
+            </a>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</section>
+
+<div *ngIf="transactionView">
+  <p-dialog [(visible)]="transactionView" [resizable]="false" [modal]="true" appendTo="body" positionTop="50"
+    [style]="{width: '100%',height: '88%', left : '11px', overflow: 'center'}">
+    <p-header>
+      <!-- <h5></h5> -->
+      <h4
+        style="position: absolute; top: 15px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+        <b>View Transaction List </b>
+        <b>[ItemMultiMRPID : ({{selectedRowDetails.ItemMultiMRPID}})]</b>
+
+        <button type="button" class="btn btn-raised btn-raised btn-info btn-primary float-right align-self-end"
+          style="margin-top: -8px;" (click)="exportTransaction()">
+          Export
+        </button>
+      </h4>
+
+    </p-header>
+    <!-- <div class="col-md-4">
+            <div class="form-group">
+              <label for="name">Stock Type</label>
+              <select class="form-control" id="Type" name="Type" [(ngModel)]="Type"
+              (ngModelChange)="type(Type)"  >
+                <option value="">Select</option>
+                <option value="1">From Stocks</option>
+                <option value="2">To Stocks</option>
+              </select>                     
+            </div>
+          </div> -->
+    <div *ngIf="FromType == true">
+      <p-table #dt [value]="FromStock" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="70vh"
+        text-align: center>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th>ItemMultiMRPID</th>
+            <th>Warehouse Name</th>
+            <th>ItemName</th>
+            <th style="text-align: center;">QTY</th>
+            <th>Stock</th>
+            <th style="text-align: center;">Reason</th>
+            <th style="text-align: center;">Created By</th>
+            <th>Created Date</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <td>{{row.ItemMultiMRPID}}</td>
+            <td>{{row.WarehouseName}}</td>
+            <td>{{row.ItemName}}</td>
+            <td style="text-align: center;">{{row.QTY}}</td>
+            <td>{{row.StockType}}</td>
+            <td style="text-align: center;">{{row.Reason}}</td>
+            <td style="text-align: center;">{{row.PersonName}}</td>
+            <td>{{row.CreatedDate | date :'medium'}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div *ngIf="FromType == false">
+      <p-table #dt [value]="transactionList" [paginator]="true" [rows]="7" [scrollable]="true" text-align: center>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <!-- <th>ItemMultiMRPID</th> -->
+            <th>TransactionId</th>
+            <th>Warehouse Name</th>
+            <th>ItemName</th>
+            <th style="text-align: center;">QTY</th>
+            <th>Stock</th>
+            <th style="text-align: center;">Reason</th>
+            <th style="text-align: center;">Created By</th>
+            <th>Created Date</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-row>
+          <tr>
+            <!-- <td>{{row.ItemMultiMRPID}}</td> -->
+            <td>{{row.TransactionId}}</td>
+            <td>{{row.WarehouseName}}</td>
+            <td>{{row.ItemName}}</td>
+            <td style="text-align: center;">{{row.QTY}}</td>
+            <td>{{row.StockType}}</td>
+            <td style="text-align: center;">{{row.Reason}}</td>
+            <td style="text-align: center;">{{row.PersonName}}</td>
+            <td>{{row.CreatedDate | date :'medium'}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </p-dialog>
+</div>
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,75 @@
+<p-table [value]="itembarcodeList" [paginator]="true" [rows]="20" [scrollable]="true" width="100%">
+    <ng-template pTemplate="header">
+        <tr style="text-align: center">
+          <!-- <th>S.No</th> -->
+            <th>ItemNumber</th>
+            <th>Barcode</th>
+            <th>Action</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+        <tr style="text-align: center">  
+          <!-- <td>{{i+1}}</td> -->
+            <td>{{rowData.ItemNumber}}</td>
+            <td>{{rowData.Barcode}}</td>
+            <td><button class="btn btn-primary ml-2" (click)="onDelete(rowData)">Delete</button></td>
+        </tr>       
+    </ng-template>
+</p-table>
+<p-dialog header="Add BarCode" [(visible)]="isAdd" [modal]="true" [positionTop]="100"  appendTo="body" [blockScroll]="true" [closable]="false"
+  [style]="{width: '75vw'}">
+  <form class="form" name="infoForm" #batchCodeForm="ngForm" autocomplete="off">
+    <div class="row">
+            <div class="col-md-6">
+                <label><b>Item Number</b></label>
+               <div>
+                {{details.Number}}
+               </div>
+            </div>
+            <div class="col-md-6">                
+                <label><b>Barcode</b></label>
+                <input id="barCode" name="barCode" class="form-control" [(ngModel)]="barCodeData.Barcode" placeholder="Barcode"
+                required="1" minlength="8" maxlength="13"  #barCode="ngModel" /> 
+                <div *ngIf="isInvalid && !barCode.valid && barCode.errors.minlength">
+                    <code>Barcode is required Minlength 8</code>
+                  </div> 
+            </div>
+            <!-- <div class="col-md-4 txt">
+                <label><b>IsActive</b></label>
+                <div>
+                    <p-inputSwitch name="IsActive" [(ngModel)]="barCodeData.IsActive">
+                    </p-inputSwitch>
+                </div>
+            </div> -->
+    </div>
+    </form>
+    <div class="ui-fluid">
+        <div class="ui-g">
+          <div class="ui-g-12">
+            <p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+          </div>
+        </div>
+      </div>
+    <p-footer>
+        <div class="col-md-12 text-right">
+            <button type="button" class="btn btn-primary" name="save" *ngIf="isAdd" (click)="onSaveBarCode()">Save</button>
+            <button type="button" class="btn btn-primary" name="close" *ngIf="isAdd" (click)="onClose()">Close</button>
+        </div>
+    </p-footer>
+</p-dialog>
+<div class="col-md-12 text-right">
+    <button type="button" class="btn btn-primary" name="product_detail" *ngIf="!isAdd" (click)="onAddBarCode()">Add</button>&nbsp;&nbsp;&nbsp;
+    <button type="button" class="btn btn-primary" name="product_detail" *ngIf="!isAdd && itembarcodeList.length == 0" (click)="onGenerateBarCode()">Generate Barcode</button>
+</div>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

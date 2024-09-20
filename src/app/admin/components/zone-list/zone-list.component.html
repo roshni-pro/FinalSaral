@@ -1,0 +1,120 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+                <form class="form form-inline" name="form" #zoneEditForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> <b>Zone</b></h4>
+                  <div class="row  col-md-12" *ngIf="zone">
+                      <div class="col-md-6">
+                          <div class="form-group m-2">
+                        <label for="ZoneName" class="col-md-6"><b>Zone Name:</b><span  style="color:red"> *</span></label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="ZoneName" class="form-control col-md-6" name="name" [(ngModel)]="zone.ZoneName" (input)="inputValidator($event)"
+                          placeholder="Zone Name" required="1" maxlength="50" minlength="2" 
+                          #firstName="ngModel" />
+                          <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code>Zone Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                            <code>Minlength 2</code>
+                          </div>
+                      </div>
+                      <!-- </div> -->
+                    </div>
+                    <!-- <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="ZoneManager">ZoneManager Name:</label>
+                        <input type="text" id="ZoneManager" class="form-control" name="ZoneManager"placeholder="ZoneManager Name" [(ngModel)]="zone.ZoneManager">
+                      </div>
+                    </div> -->
+                                 
+                     <div class="col-md-6">
+                        <div class="form-group m-2">
+                        <label for="country"  class="col-md-6"><b>Country Name:</b><span  style="color:red"> *</span></label>
+                        <!-- <div class="col-md-6"> -->
+                        <!-- <select id="country" name="country" class="form-control" [(ngModel)]="zone.CountryId"
+                          placeholder="Select Country Manager Name" #firstName="ngModel" [ngClass]="{ 'is-invalid': f.submitted && CountryId.invalid }" required >                
+                          <div *ngIf="f.submitted && CountryId.invalid" class="invalid-feedback">                    
+                              <div *ngIf="CountryId.errors.required">Country Name is required</div>
+                          </div>
+                          <option *ngFor="let country of countryList" [ngValue]="country.CountryId">
+                            {{ country.CountryName }}
+                          </option>
+                        </select> -->
+                        <select id="country" name="country" class="form-control col-md-6" [(ngModel)]="zone.CountryId"  #countryName="ngModel"
+                        placeholder="Select Country Manager Name" required="1">
+                        <option *ngFor="let country of countryList" [ngValue]="country.CountryId">
+                          {{ country.CountryName }}
+                        </option>
+                      </select>
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !countryName.valid && countryName.errors.required">
+                        <code>country Name is required</code>
+                      </div>
+                     <!-- </div> -->
+                    </div>
+                     </div>
+                    <div class="col-md-6">
+                        <div class="form-group m-2">
+                        <label for="people" class="col-md-6"><b>Zone Manager:</b><span  style="color:red"> *</span></label>
+                        <!-- <div class="col-md-6"> -->
+                        <!-- <select id="people" name="people" class="form-control col-md-6" [(ngModel)]="zone.ZoneManagerId"
+                          placeholder="Select Zone Manager Name" #firstName="ngModel" [ngClass]="{ 'is-invalid': f.submitted && ZoneManagerId.invalid }" required >                
+                          <div *ngIf="f.submitted && ZoneManagerId.invalid" class="invalid-feedback">                    
+                              <div *ngIf="ZoneManagerId.errors.required">Zone Manager Name is required</div>
+                          </div>
+                          <option *ngFor="let people of peopleList" [ngValue]="people.PeopleID">
+                            {{ people.DisplayName }}
+                          </option>
+                        </select> -->
+
+                        <select id="people" name="people" class="form-control col-md-6" [(ngModel)]="zone.ZoneManagerId" #zoneManager="ngModel"
+                        placeholder="Select Zone Manager Name" required="1">
+                        <option *ngFor="let people of peopleList" [ngValue]="people.PeopleID">
+                          {{ people.DisplayName }}
+                        </option>
+                      </select>
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !zoneManager.valid && zoneManager.errors.required">
+                        <code>zoneManager is required</code>
+                      </div>
+                    </div>
+                      <!-- </div> -->
+                    </div>
+
+                  </div>
+                </div>            
+                    <div class="form-actions right col-sm-12 p-3">
+                      <!-- <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                        <i class="ft-x"></i> Cancel
+                      </button> -->
+                      <!-- <button type="button" class="btn btn-raised btn-primary" (click) = "onclick()">
+                        <i class="fa fa-check-square-o"></i> Save
+                      </button> -->
+                      <!-- <button type="submit" class="btn btn-raised btn-primary">
+                          <i class="fa fa-check-square-o"></i> Save
+                        </button> -->
+                        <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                         Cancel
+                          </button>
+                        <button type="button" class="btn btn-raised btn-primary" (click)="update(zoneEditForm)">
+                            Save
+                          </button>
+                    </div>            
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

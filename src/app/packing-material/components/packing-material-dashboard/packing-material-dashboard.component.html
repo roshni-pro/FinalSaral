@@ -1,0 +1,151 @@
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<section>
+    <!-- *ngIf="!isDetails" -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="content-header">Report</div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="region">Warehouse Name:</label>
+                <select id="warehouse" class="form-control" name="warehouse" [(ngModel)]="data.WarehouseId" required="1"
+                    #warehouse="ngModel">
+                    <option value="">--Select--</option>
+                    <option *ngFor="let s of warehouseList" [ngValue]="s.WarehouseId">
+                        {{ s.WarehouseName }}
+                    </option>
+                </select>
+                <!-- <p-multiSelect [options]="warehouseList" name="WarehouseName" [(ngModel)]="SelectedWarehouse"
+          [panelStyle]="{minWidth:'20em'}" optionLabel="WarehouseName" (onChange)="onSelectedWarehouseChange()"(onPanelHide)="onSelectWarehouseList()" >
+        </p-multiSelect> -->
+                <!-- <label for="published"><b>Warehouses:</b></label><br>
+        <select id="ware" class="form-control" name="ware" [(ngModel)]="data.Warehouseid" (change)="onWarehouseChange(data.Warehouseid)" required="1"
+        #Material="ngModel">
+        <option value="">--Select--</option>
+        <option *ngFor="let s of warehouseList" [ngValue]="s.WarehouseId">
+            {{ s.WarehouseName }}
+        </option> -->
+
+                <!-- </select> -->
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="name">Select Ship To Supplier<span style="color:red"> *</span></label>
+                <select id="supplier" class="form-control" name="supplier" [(ngModel)]="data.ShipToSupplierWarehouseId"
+                    required="1" #supplier="ngModel">
+                    <option value="">--Select--</option>
+                    <option *ngFor="let s of supplierList" [ngValue]="s.SupplierId">
+                        {{ s.Name }}
+                    </option>
+                </select>
+                <!-- <label for="published"><b>Clusters:</b></label><br>
+          <p-multiSelect [options]="clusterList" name="ClusterName" [(ngModel)]="SelectedCluster"
+            [panelStyle]="{minWidth:'20em'}" optionLabel="ClusterName" (onChange)="onSelectedClusterChange()">
+          </p-multiSelect>  -->
+                <!-- <select id="cluster" class="form-control" name="cluster" [(ngModel)]="data.Clusterid" required="1"
+          #Material="ngModel">
+          <option value="">--Select--</option>
+          <option *ngFor="let s of clusterList" [ngValue]="s.ClusterId">
+              {{ s.ClusterName }}
+          </option> 
+
+       </select>-->
+            </div>
+
+        </div>
+        <!-- <div class="col-sm-2">
+            <label for="validfrom">Start Date</label>
+            <p-calendar name="StartDate" placeholder="Start Date" [(ngModel)]="data.StartDate" [showIcon]="true"
+                name="StartDate" dateFormat="yy/mm/dd"></p-calendar>
+
+        </div>
+
+        <div class="col-sm-2">
+            <label for="validto">End Date</label>
+            <p-calendar name="EndDate" placeholder="End Date" [(ngModel)]="data.EndDate" [showIcon]="true"
+                name="EndDate" dateFormat="yy/mm/dd"></p-calendar>
+        </div> -->
+
+        <div class="col-md-2" style="margin-top:2%;">
+            <button type="button" class="btn btn-raised btn-primary" (click)="search(data)">Search </button>
+
+        </div>
+
+        <!-- <div class="col-md-2" style="margin-top:2%;">
+            <button type="button" class="btn btn-raised" style="background-color: black;" (click)="Export()">Export Data
+            </button>
+
+        </div> -->
+        <!-- <div class="col-md-2">
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <div></div>
+          <button type="button" style="text-align:left;" class="btn btn-raised btn-raised btn-primary" (click)="export()">
+            Export
+          </button>
+        </div>
+      </div>
+         &nbsp;
+  <br /><br />
+  <br /> <br/>-->
+  <!-- <br/>  -->
+        <div class="position-relative" *ngIf="isReport" style="height: 300px;">
+            <p-table  [value]="recordList"  [paginator]="true" [rows]="10" [lazy]="true"
+                    [totalRecords]="totalRecords" (onLazyLoad)="load($event)" 
+                    dataKey="InvoiceChallanNo" [scrollable]="true" scrollHeight="60vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let col of cols" style="text-align: center">
+                            {{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+
+
+                    <tr  (click)="open(rowData)">
+                        <td *ngFor="let col of cols" style="text-align: center">
+                            <div *ngIf="col.field =='CreatedDate'">
+                                {{rowData[col.field] | date: 'dd/MM/yyyy'}}
+                            </div>
+                            <div *ngIf="col.field !='CreatedDate'">
+                                {{rowData[col.field]}}
+                            </div>
+                           
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+
+        </div>
+        <br/>
+<div  *ngIf="isReportDetail" >
+    <h6 style="text-align: center;font-family: Arial, Helvetica, sans-serif; color: crimson;"><b>Invoice Details</b></h6>
+    <br/>    
+    <div class="position-relative"style="height: 300px;" >
+            <p-table  [value]="detailList" 
+                    dataKey="RawDetailId"  [scrollable]="true" scrollHeight="60vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let d of detailField" style="text-align: center">
+                            {{d.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr>
+                        <td *ngFor="let d of detailField" style="text-align: center">
+                            {{rowData[d.field]}}
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    </div>
+</section>

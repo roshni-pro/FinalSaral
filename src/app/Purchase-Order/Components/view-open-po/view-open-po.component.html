@@ -1,0 +1,67 @@
+
+<div class="d-flex justify-content-between" style="margin-top: 50px;">
+    <div class="header">
+        <h3 class="m-2">Open PO Data</h3>
+    </div>
+</div>
+
+
+<div class="row mt-3">
+    <div class="col-3">
+        
+        <p-dropdown  placeholder="Select a Warehouse" [filter]="true" [options]="warehouseList" optionLabel="WarehouseName" optionValue="WarehouseId" [(ngModel)]="selectedid" >       
+        </p-dropdown>
+    </div>
+    <div class="col-1">
+        <button class="btn btn-primary"  (click)="Search()">Search</button>
+    </div>
+    <div class="col-2">
+        <button  class="btn btn-success" style="background-color:#09925f;" (click)="export()">Export All Data</button>
+    </div>
+</div>
+
+<div class="row mt-4" >
+    <p-table #dt [value]="podata" [paginator]="true" [lazy]="true" [rows]="10" [scrollable]="true" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" 
+                    scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>S.No.</th>
+                            <th>WarehouseName</th>
+                            <th style="text-align: center;">PurchaseOrderId</th>
+                            <th style="text-align: center;">TotalAmount</th>
+                            <th style="text-align: center;">Status</th>
+                            <th style="text-align: center;">CreationDate</th>
+                            <th style="text-align: center;">SupplierName</th>
+                            <th style="text-align: center;">IRStatus</th>
+                            <th style="text-align: center;">IRID</th>
+                            <th style="text-align: center;">Remaining Amount</th>
+                            
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-index="rowIndex" let-ir>
+                        <tr>
+                            <td>{{index+1}}</td>
+                            <td>{{ir.WarehouseName}}</td>
+                            <td style="text-align: center;">{{ir.PurchaseOrderId}}</td>
+                            <td style="text-align: center;">{{ir.TotalAmount}}</td>
+                            <td style="text-align: center;">{{ir.Status}}</td>
+                            <td style="text-align: center;">{{ir.CreationDate |date:'mediumDate'}}</td>
+                            <td style="text-align: center;">{{ir.SupplierName}}</td>
+                            <td style="text-align: center;">{{ir.IRStatus}}</td>
+                            <td style="text-align: center;">{{ir.IRID}}</td>
+                            <td style="text-align: center;">{{ir.RemainingAmount}}</td>
+                            
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                <h5 class="emptymsg">No Record</h5>
+              </ng-template>
+                </p-table>
+</div>
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

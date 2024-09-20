@@ -1,0 +1,141 @@
+<div>
+    <h3 class="heading mt-4">ZSM approval page</h3>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h6 class="heading"></h6>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3">
+                    <p>  Select Warehouse* </p>
+                    <p-dropdown  
+                    placeholder=" Warehouse" [options]="warehouseList"  [filter]="true" 
+                    [(ngModel)]="selectedWarehouses" optionLabel="WarehouseName" 
+                    (onChange)="onSearchWareHouseId(selectedWarehouses)"></p-dropdown>
+                </div>
+                <div class="col-3">
+                  <p> Status </p>
+                  <p-dropdown  
+                  placeholder="Select" [options]="statusList"  [filter]="true" 
+                  [(ngModel)]="selectedstatus" optionLabel="name" 
+                  (onChange)="onSearchStatus(selectedstatus)"></p-dropdown>
+                </div>
+                <div class="col-1 mt-4 text-center">
+                    <button style="margin-top: 4px;" class="btn btn-primary" (click)="OnSearch(true,null)" >Search</button>
+                </div>
+                <div class="col-5 text-left"> 
+                  <span  class="hover-text">
+                    <img class="fa fa-mouse-pointer" width="48" height="48" src="https://img.icons8.com/nolan/64/export.png" (click)="Export()" alt="export"/>
+                    <span class="tooltip-text" id="right">Export</span>
+                    </span>
+      
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="ZsmList!=undefined && ZsmList.length>0">
+<div class="card">
+    <!-- <div class="card-header"> -->
+        <h6 class="heading"></h6>
+        <!-- <div class="card-body"> -->
+            <p-table #dt [value]="ZsmList" [rows]="10" (onLazyLoad)="load($event)" [totalRecords]="totalRecords" [lazy]="true" [(first)]="first"  [paginator]="true" [globalFilterFields]="['ItemNumber']"
+            scrollHeight="25vh"  responsiveLayout="scroll"> 
+            <ng-template pTemplate="caption">
+              <div style="text-align: right">
+                  <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                  <input type="text" pInputText size="50" placeholder="Search Item Number" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                      style="width:auto;border: solid 1px #ddd;">
+              </div>
+          </ng-template>
+             <ng-template pTemplate="header" pReorderableColumn >
+               <tr>
+                 <th>Item Number</th>
+                 <!-- <th>Quadrant</th> -->
+                 <th>MultiMRPID</th>
+                 <th>Item Name</th>
+                 <th>ASP</th>
+                 <th>6 Month Dispatch</th>
+                 <th>Median</th>
+                 <th>Forcast</th>
+                 <th style="width: 10%;">Your forcast</th>
+                 <!-- <th>Current dispatch</th> -->
+                 <th>Comment</th>
+                 <th>
+                  Action
+                </th>
+               </tr>
+             </ng-template>
+             <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns" let-index="rowIndex" >
+               <tr [pReorderableRow]="index">
+                 <td >{{rowData.ItemNumber}}</td>
+                 <!-- <td >{{rowData.Quadrant}}</td> -->
+                 <td >{{rowData.ItemMultiMRPid}}</td>
+                 <td >{{rowData.ItemName}}</td>
+                 <td >{{rowData.ASP}}</td>
+                 <td >{{rowData.SixMonthDispatch?rowData.SixMonthDispatch:0}}</td>
+                 <td >{{rowData.Median}}</td>
+                 <td >{{rowData.SystemForeCastValue}}</td>
+                 <td  style="width: 10%;">
+                  <span *ngIf="rowData.Status=='Approval Pending'">
+                    <input class="form-control"  
+                    type="text" title="Numbers only" min="0"  #forcast (keypress)="decimalFilter($event)"
+                    (keyup)="CheckPtr(forcast.value)"
+                    [(ngModel)]="rowData.CommitedForeCastValue"
+                    style="color: black; width: 100%;" required #forcast="ngModel">
+                  </span>
+                  <span >
+                    <span *ngIf="rowData.Status!='Approval Pending'">{{rowData.CommitedForeCastValue}}</span>
+                  </span>
+                 </td>
+                 <!-- <td >{{rowData.CurrentDispatchValue}}</td> -->
+                 <td >{{rowData.Comment}}</td>
+                 <td >
+                  <span class="point" *ngIf="rowData.Status=='Approval Pending'" style="color: blue;" (click)="onRejectApprove(rowData,'Approved')"> Approve/</span>
+                  <span class="point" *ngIf="rowData.Status=='Approval Pending'" style="color: blue;" (click)="onRejectApprove(rowData,'Rejected')">  Reject</span>
+                  <span *ngIf="rowData.Status!='Approval Pending'">{{rowData.Status}}</span>
+                </td>
+               </tr>
+             </ng-template>
+             <ng-template pTemplate="emptymessage" let-columns>
+               <tr>
+                 <td colspan="5" style="text-align: center;">
+                   <br>
+                   <h3><b>No Data Found.</b></h3>
+                 </td>
+               </tr>
+           </ng-template>
+           </p-table>
+        <!-- </div> -->
+    <!-- </div> -->
+</div>
+</div>
+<p-dialog header="Enter your comment for {{displayStatus}}" [(visible)]="Showupload" (onHide)="cancel()" appendTo="body" positionTop="40vh" [style]="{width: '35vw' }" modal="true">
+    <div class="row mt-4" style="text-align:center">
+        <div class="col-2"></div>
+      <div class="col-8" >   
+        <textarea style="width: 100%;" rows="3" cols="8" [(ngModel)]="comment" type="text"></textarea>
+      </div>
+      <div class="col-2"></div>
+    </div> 
+    <div class="row mt-4 mb-4" >
+      <div class="col text-center">
+        <button class="btn addbtn" (click)="SaveComment()" >Save</button>&nbsp; &nbsp;
+      </div>
+    </div>
+    <p-toast *ngIf="Showupload" [style]="{width: '20vw'}" position="top-right"></p-toast>
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<p-toast  *ngIf="!Showupload" [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+
+
+
+

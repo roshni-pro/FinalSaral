@@ -1,0 +1,620 @@
+<!-- <p>checherdetails works!</p> -->
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-dialog header="{{docName}} Document View" [(visible)]="display">
+    <table>
+        <tr *ngFor="let room of imagelist; let i = index">
+            <td>
+                <img alt="" src="{{room}}" class="img-square" height="150px;" *ngIf="room">
+                
+            </td>
+            <td>
+                  <a href="{{room}}" target="_blank" download>download</a>
+            </td>
+        </tr>
+    </table>
+</p-dialog>
+<section id="zone-details">
+    <div class="email-app-mail-content px-2 py-0 h-100 border-left border-left-2">
+        <div class="email-app-mail-content-detail h-100 overflow-hidden">
+            <div class="info-header">
+                <button type="button" #closebutton class="close" aria-label="Close" (click)="closeDetails(false)">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="float-right mx-4">
+                </div>
+
+                <ul class="nav border-bottom">
+                    <li class="nav-item" (click)="overviewDisplay($event)">
+                        <a [ngClass]="activeTabClass[0].isActive==true? 'nav-link active' : 'nav-link' " id="overview-btn">Supplier Approval</a>
+                    </li>
+                    <!-- <li class="nav-item" (click)="editFormDisplay($event)">
+                  <a class="nav-link">Edit</a>
+                </li> -->
+
+                </ul>
+            </div>
+            <div id="editForm" *ngIf="displayTabs[1].bool" class="info-div m-2">
+                <div>
+                    <app-masterchecker-edit [Id]="details" (isdetailsclose)="closeDetails($event)"
+                        (refreshParent)="RefreshParent()"></app-masterchecker-edit>
+                </div>
+            </div>
+
+            <div id="depo" *ngIf="displayTabs[2].bool" class="info-div m-2">
+            </div>
+
+            <!-- Depo Start -->
+            <div id="depo" *ngIf="displayTabs[2].bool" class="">
+
+            </div>
+            <!-- Depo End -->
+
+            <div id="overview" *ngIf="displayTabs[0].bool" class="info-div text-sm">
+                <!-- <div class="info-heading text-bold-600 m-3"><h4>Supplier Info</h4></div> -->
+                <!-- <div class="info-content">
+              <div class="row m-2 mx-4">
+                <div class="col-md-6 d-flex" *ngFor="let activeField of activeFields">
+                  <div class="info-label font-weight-bold m-2">{{activeField.label}}</div>
+                  <div class="info-value m-2">{{details[activeField.field]}}</div>
+                </div>
+              </div>
+          </div> -->
+
+                <div class="container">
+                    <!--supplier details starts-->
+                    <h5 style="color: orange;">Supplier General Details</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Supplier firm Name</label><br>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.SupplierName">
+
+                            <!-- <p>{{details.SupplierName}}</p> -->
+
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Type Of firm</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.TypeofFirm">
+
+                            <!-- <p>{{details.TypeofFirm}}</p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            <label>{{Proprietornamebytype}} NAME </label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.ProprietorName">
+
+                            <!-- <p>{{details.ProprietorName}}</p> -->
+                        </div>
+                        <div class="col-sm-3" *ngIf="details.TypeofFirm=='Proprietor'">
+                            <label>{{Proprietornamebytype}} Phone Number</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.proprietorphonenumber ">
+                        </div>
+                        
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div>
+                                <label>Supplier segment </label>
+                            </div>
+                            <input name="Supplier segment" disabled class="form-control"
+                                [(ngModel)]="details.SupplierSegment">
+                        </div>
+
+                        <div class="col-sm-3">
+                            <label>{{Proprietornamebytype}} Father/Husband  Name</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.FatherName">
+
+                            <!-- <p>{{details.FatherName}}</p> -->
+
+                        </div>
+                        <div class="col-sm-3">
+                            <div>
+                                <label>contact Person Name</label>
+                            </div>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.ContactPerson">
+
+                            <!-- <p>{{details.ContactPerson}}</p> -->
+                            <!-- <input name="contactPerson" disabled class="form-control" required [(ngModel)]="selectedSupplier.contactPerson"> -->
+
+                        </div>
+                        <div class="col-sm-3">
+                            <div>
+                                <label>Contact Person Mobile Number</label>
+                            </div>
+                            <input name="contactPersonContactNumber" disabled class="form-control"
+                                [(ngModel)]="details.ContactPersonMobileNo">
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Contact person Email Id</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.EmailId">
+
+                            <!-- <p>{{details.EmailId}}</p>   -->
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Selling Brands</label>
+                            <textarea type="text" class="form-control" [(ngModel)]="details.SubcategoryName"></textarea>
+
+                            <!-- <p >
+                                {{details.SubcategoryName}}
+                            </p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Supplier Type </label>
+                            <!-- <input type="text" disabled class="form-control" [(ngModel)]="details.SupplierType"> -->
+                            <select name="Supplier Type" class="form-control" [(ngModel)]="details.SupplierType"
+                                #SupplierTypeInput="ngModel" (change)="changePaymentterms(details.SupplierType)" required > 
+                                <option value="Advanced">Advanced</option>
+                                <option value="Credit">Credit</option>
+                            </select>
+                             
+                        </div>
+                        <div class="col-sm-3">
+                            <div>
+                                <label>Payment Terms</label>
+                            </div>
+                            <input type="text" class="form-control" [disabled]="disabled" [(ngModel)]="details.PaymentTerms">
+                            <!-- <p>{{details.PaymentTerms}}</p> -->
+                        </div>
+
+                        
+                        
+                        <!-- below is not show in case of proprietor -->
+                        
+                        <!-- below is not show in case of proprietor -->
+                        
+
+                       
+                        
+                        
+
+
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Credit Score </label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.CreditScore">
+
+                            <!-- <p>{{details.CreditScore}}</p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            <label style="word-break: break-all;">BusinessEstablishmentYear</label>
+                            <input type="text" disabled class="form-control"
+                                [(ngModel)]="details.BusinessEstablishmentYear">
+
+                            <!-- <p>{{details.BusinessEstablishmentYear}}</p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Contact</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.MobileNo">
+
+                            
+                        </div>
+                        <div class="col-sm-3">
+                            <label> FSSAI Number</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.FSSAINO">
+
+                            <!-- <p>{{details.FSSAINO}}</p> -->
+                        </div>
+                        
+                        
+
+                        
+                        
+
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>FSSAI Image</label>
+                            <br>
+                            <!-- <img src="{{baseURL}}{{details.FSSAIImage}}" height="100px;"> -->
+                            <!-- <a href="{{baseURL}}{{details.FSSAIImage}}" target="_blank" download>download</a> -->
+                            <button type="button" (click)="showDialog(details.FSSAIImage,'FSSAI')" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+
+                            <br>
+                            <input type="checkbox" *ngIf="details.Status=='Pending'" id="myCheck"
+                                [(ngModel)]="img.fassiImage" [checked]="isCheckedfassi"
+                                (click)="fassiChecked(img)"><span *ngIf="details.Status=='Pending'">Verify Image</span>
+                            <input type="checkbox" *ngIf="details.Status=='Approved'"
+                                [checked]="isCheckedfassi==true"><span *ngIf="details.Status=='Approved'">Image
+                                Verified</span>
+
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Pan card Number</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.PanNumber">
+
+                            
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Pan card Image</label> &nbsp;&nbsp;
+
+                            
+                            <button type="button" (click)="showDialog(details.PanNumberImage,'Pan Card')" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+                            <br>
+                            
+                            <input type="checkbox" id="myCheckpan" *ngIf="details.Status=='Pending'"
+                                [(ngModel)]="img.pannumberImage" [checked]="isChecked" (click)="myFunction(img)"> <span
+                                *ngIf="details.Status=='Pending'">Verify Image </span>
+                            <input type="checkbox" *ngIf="details.Status=='Approved'" [checked]="isChecked==true"><span
+                                *ngIf="details.Status=='Approved'">Image Verified</span>
+
+                        </div>
+                        <div class="col-sm-3">
+                            <label>PO Expiry Days</label> &nbsp;&nbsp;
+                            <input type="text" disabled class="form-control"
+                                [(ngModel)]="details.ExpiryDays">
+                        </div>
+
+                        <div class="col-sm-3">
+                            &nbsp;<label>Agreement/VRF Document</label>
+                            <br>
+                            <!-- <img src="{{baseURL}}{{details.AgreementImage}}" height="100px;"> -->
+                            <!-- <a href="{{baseURL}}{{details.GSTImage}}" target="_blank" download>download</a> -->
+                            <button type="button" (click)="showDialog(details.AgreementImage,'Agreement')" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+                            <br>
+                            <input type="checkbox" *ngIf="details.Status=='Pending'" id="myCheckagreemnt"
+                                [(ngModel)]="img.AgreementImage" [checked]="isCheckAgreementimg"
+                                (click)="AgreementimageCheck(img)"><span *ngIf="details.Status=='Pending'">Verify
+                                Image</span>
+                            <input type="checkbox" *ngIf="details.Status=='Approved'"
+                                [checked]="isCheckAgreementimg==true"><span *ngIf="details.Status=='Approved'">Image
+                                Verified</span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-3" *ngIf="details.TypeofFirm =='Proprietor' || details.TypeofFirm=='Partnership' || details.TypeofFirm=='LLP' ">
+                            <label>Address Proof </label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.AddressProofType">
+
+                            
+                        </div>
+                        <div class="col-sm-3" *ngIf="details.TypeofFirm =='Proprietor' || details.TypeofFirm=='Partnership' || details.TypeofFirm=='LLP' ">
+                            <label>Address Proof Image </label>
+
+                           
+                            <button type="button" (click)="showDialog(details.AddressProofImage,'Address Proof')" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+
+                            <br>
+                            <input type="checkbox" *ngIf="details.Status=='Pending'" id="myCheckadd"
+                                [(ngModel)]="img.addressImage" [checked]="isCheckedaddress"
+                                (click)="myaddressCheck(img)"><span *ngIf="details.Status=='Pending'">Verify
+                                Image</span>
+                            <input type="checkbox" *ngIf="details.Status=='Approved'"
+                                [checked]="isCheckedaddress==true"><span *ngIf="details.Status=='Approved'">Image
+                                Verified</span>
+
+                        </div>
+                        <div class="col-sm-3" *ngIf="details.TypeofFirm!='Proprietor'">
+                            <label>{{Proprietornamebytype}} PanCard Number </label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.ProprietorPanNumber">
+
+                            
+                        </div>
+                        <div class="col-sm-3" *ngIf="details.TypeofFirm!='Proprietor'">
+                            <label>{{Proprietornamebytype}} Pan card Image</label>
+                            <button type="button" (click)="showDialog(details.ProprietorPanImage,Proprietornamebytype)" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+                            <input type="checkbox" id="myCheckProprietorpan" *ngIf="details.Status=='Pending'"
+                                [(ngModel)]="details.inputProprietorPanNumber" [checked]="isCheckedProprietorPanNumber" (click)="ProprietorpanVerify(details.ProprietorPanNumber)"> <span
+                                *ngIf="details.Status=='Pending'">Verify {{Proprietornamebytype}} Pan Number </span>
+                                <input type="checkbox" *ngIf="details.Status=='Approved'" [checked]="isCheckedProprietorPanNumber==true"><span
+                                *ngIf="details.Status=='Approved'">{{Proprietornamebytype}} Pan Number Verified</span>
+                        </div>
+
+
+                    </div>
+
+                    <h5 style="color: orange;">Bank Details</h5>
+                    <hr>
+                    
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Loan Requirement</label>
+                            <br>
+                            <!-- <input type="text" disabled class="form-control" [(ngModel)]="details.IsLoanRequirement" > -->
+                            <!-- <input type="radio" disabled *ngIf="details.IsLoanRequirement=='Yes'" checked>Yes
+                            <input type="radio" disabled *ngIf="details.IsLoanRequirement=='false'" checked>No -->
+                            <p>{{details.IsLoanRequirement}}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Loan Amount</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.loanAmount">
+
+                            <!-- <p>{{details.loanAmount}}</p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Bank Name</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.BankName">
+
+                            <!-- <p>{{details.BankName}}</p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Bank Account Type</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.BankAccType">
+
+                            <!-- <p>{{details.BankAccType}}</p> -->
+                        </div>
+
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Bank Account Number</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.BankAccNo">
+
+                            <!-- <p>{{details.BankAccNo}}</p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            &nbsp;<label>BANK A/C Image</label>
+                            <br>
+                            <!-- <img src="{{baseURL}}{{details.ChequeImage}}" height="100px;"> -->
+                            <!-- <a href="{{baseURL}}{{details.ChequeImage}}" target="_blank" download>download</a> -->
+                            <button type="button" (click)="showDialog(details.ChequeImage,'Bank A/C')" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+                            <br>
+                            <input type="checkbox" *ngIf="details.Status=='Pending'" id="myCheckadd"
+                                [(ngModel)]="img.bankacImage" [checked]="isCheckBankacimg"
+                                (click)="bankimageCheck(img)"><span *ngIf="details.Status=='Pending'">Verify
+                                Image</span>
+                            <input type="checkbox" *ngIf="details.Status=='Approved'"
+                                [checked]="isCheckBankacimg==true"><span *ngIf="details.Status=='Approved'">Image
+                                Verified</span>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>IFSCCode</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.IFSCCode">
+
+                            <!-- <p>{{details.IFSCCode}}</p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Bank Address</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.BankAddress">
+
+                            <!-- <p>{{details.BankAddress}}</p> -->
+                        </div>
+                        
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Bank pin code</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.bankPinCode">
+                        </div>
+                    </div>
+
+                    <h5 style="color: orange;">Address Details</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div>
+                                <label>GST Number </label>
+                            </div>
+                            <input name="GSTNNumber" disabled class="form-control"
+                                [(ngModel)]="details.GSTINNO">
+                        </div>
+                        <div class="col-sm-3">
+                            &nbsp;<label>GST Image</label>
+                            <br>
+                            <!-- <img src="{{baseURL}}{{details.GSTImage}}" height="100px;"> -->
+                            <!-- <a href="{{baseURL}}{{details.GSTImage}}" target="_blank" download>download</a> -->
+                            <button type="button" (click)="showDialog(details.GSTImage,'GSTN')" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+                            <br>
+                            <input type="checkbox" *ngIf="details.Status=='Pending'" id="myCheckadd"
+                                [(ngModel)]="img.GSTNImage" [checked]="isCheckGSTnimg"
+                                (click)="gstnimageCheck(img)"><span *ngIf="details.Status=='Pending'">Verify
+                                Image</span>
+                            <input type="checkbox" *ngIf="details.Status=='Approved'"
+                                [checked]="isCheckGSTnimg==true"><span *ngIf="details.Status=='Approved'">Image
+                                Verified</span>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <label>HeadOffice Address</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.HeadOffice">
+
+                            
+                        </div> 
+                        <!-- <div class="col-sm-3">
+                            <label>Supplier Code</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.SUPPLIERCODES">
+
+                           
+                        </div> -->
+                        <div class="col-sm-3">
+                            <label> Full Business Address</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.FullBusinessAddress">
+
+                            
+                        </div>
+                        <div class="col-sm-3">
+                            <!-- <div>
+                                <label>Password</label>
+                                <input type="text" disabled class="form-control" [(ngModel)]="details.Password">
+
+                            </div> -->
+                            <!-- <p>{{details.Password}}</p> -->
+                            <!-- <input name="Password" disabled class="form-control" required [(ngModel)]="selectedSupplier.password"> -->
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+
+                        <div class="col-sm-3">
+                            <div>
+                                <label>City</label>
+                            </div>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.City">
+                            <!-- <p>{{details.City}}</p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Pin Code</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.PinCode">
+
+                            <!-- <p>{{details.PinCode}}</p> -->
+                        </div>
+                        <div class="col-sm-3">
+                            <div>
+                                <label>State</label>
+                            </div>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.StateName">
+
+                            <!-- <p>{{details.StateName}}</p> -->
+
+
+                        </div>
+
+                        <!-- <div class="col-sm-3">
+                            <div>
+                                <label>webUrl</label>
+                            </div>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.WebUrl"> -->
+
+                            <!-- <p>{{details.WebUrl}}</p> -->
+
+                            <!-- <input name="webUrl" disabled class="form-control" required [(ngModel)]="selectedSupplier.webUrl"> -->
+
+                        <!-- </div> -->
+                        <div class="col-sm-3">
+                            <div>
+                                <label>Bussiness Type</label>
+                            </div>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.bussinessType">
+
+                            <!-- <p>{{details.bussinessType}}</p> -->
+
+                            <!-- <input name="bussinessType" disabled class="form-control" required [(ngModel)]="selectedSupplier.bussinessType"> -->
+
+                        </div>
+                        
+                    </div>
+
+
+                    <br>
+                    <div class="row">
+
+
+                        <div class="col-sm-3">
+                            <div>
+                                <label>Started Business With ShopKirana</label>
+                            </div>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.StartedBusiness">
+
+                            
+                        </div>
+
+                        <div class="col-sm-3">
+
+                            <br>
+                            <input disabled type="checkbox" class="form-control" [ngModelOptions]="{standalone: true}"
+                                [(ngModel)]="details.IsIRNInvoiceRequired">
+                            Is IRN Invoice Required
+                        </div>
+
+                        <div class="col-sm-3">
+                            <br>
+                            <input disabled type="checkbox" class="form-control" [ngModelOptions]="{standalone: true}"
+                                [(ngModel)]="details.IsStopAdvancePr">
+                            Do you want to stop advance PR?
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Status</label>
+                            <br>
+                            <input type="text" disabled [(ngModel)]="sstatus" >
+                        </div>
+                        
+                    </div>
+                    <br>
+                    <div class="row">                       
+                        <div class="col-sm-3">
+                            <div>
+                                <label> Comment </label>
+                            </div>
+                            <textarea name="Comment" [(ngModel)]="action.comments"></textarea>
+                        </div>
+                        <div class="col-sm-3">
+                            <label> MSME Status </label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.MSMEType" />
+                        </div>
+                        <div class="col-sm-3">
+                            <label> MSME Image </label>
+                            <button type="button" (click)="showDialog(details.MSMEImage,'MSME')" pButton
+                            icon="pi pi-info-circle" label="Show Document"></button>
+                            <br>
+                            <input type="checkbox" *ngIf="details.Status=='Pending'" id="myCheck"
+                                [(ngModel)]="img.msmeImage" [checked]="isCheckmsmeimg"
+                                (click)="MsmeImageCheck(img)"><span *ngIf="details.Status=='Pending'">Verify Image</span>
+                            <input type="checkbox" *ngIf="details.Status=='Approved'"
+                                [checked]="isCheckmsmeimg==true"><span *ngIf="details.Status=='Approved'">Image
+                                Verified</span>
+                        </div>
+                        <div class="col-sm-3" *ngIf="isposhow">
+                            <div class="form-group">
+                                <label>Purchase OrderId </label><br>
+                                <input name="PurchaseOrderId" class="form-control" required [(ngModel)]="PurchaseOrderId"
+                                    disabled />
+                            </div>
+                        </div>
+                        <div class="col-sm-3" *ngIf="isposhow">
+                            <div class="form-group">
+                                <label>Gr-Date </label>
+                                <input name="GrDate" class="form-control" required [(ngModel)]="GrDate " disabled />
+                            </div>
+                        </div>
+                        <div class="col-sm-3" >
+                            <label>Buyer Name</label>
+                            <input type="text" disabled class="form-control" [(ngModel)]="details.BuyerName"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        
+                        
+                        
+                        <!-- <div class="col-sm-3">
+                            <label>Status</label>
+                            <input type="text"  disabled class="form-control" [(ngModel)]="sstatus1" >
+                            < [(ngModel)]="sstatus1" -->
+                        <!-- </div>  -->
+                    </div>
+                    
+
+                    <br>
+                    <br>
+                    <div *ngIf="roleListarry==true">
+                        <button *ngIf="details.Status=='Pending'" class="btn btn-primary" type="button" color="warn"
+                            (click)="approveAction()">Approve</button>&nbsp;
+                        <button *ngIf="details.Status=='Pending'" class="btn btn-primary" type="button" color="warn"
+                            (click)="RejectAction()">Reject</button>
+
+
+                    </div>
+
+                    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+                        <p-footer>
+
+                            <button type="button" class="btn btn-raised btn-primary mr-1"
+                                (click)="cd.reject()">No</button>
+                            <button type="button" class="btn btn-raised btn-danger mr-1"
+                                (click)="cd.accept()">Yes</button>
+                        </p-footer>
+                    </p-confirmDialog>
+
+
+                    <!--supplier details end-->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

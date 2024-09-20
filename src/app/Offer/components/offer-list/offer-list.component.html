@@ -1,0 +1,500 @@
+<div class="my-2 mb-0 mt-4 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>All Offer</b></h3>
+    </div>
+    <div>        
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end ml-2"
+            style="margin-top: 10px;" (click)="addNewOffer()"> <i class="fa fa-plus-circle"></i> Add New Offer
+        </button>
+        <button type="button" class="btn btn-raised btn-primary float-right" style="margin-top: 10px;"
+            (click)="addOfferWithUploader()"> <i class="fa fa-plus-circle"></i> Add New Offer With Uploader
+        </button>         
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end ml-2" style="margin-top: 10px;  margin-right: 12px;"
+        (click)="viewAllOfer()"> <i class="fa fa-plus-circle"></i> All Offer Uploader
+    </button> 
+    </div>
+</div>
+<div class="mt-0">
+    <div class="ui-fluid p-3 shadow m-2 bg-white rounded table table-hover">
+        <!-- =======Top Filter Search Section Start here======== -->
+        <div class="mb-4">
+            <div class="col-md-12">
+                <form class="form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="projectinput3">Select Warehouse</label>
+                                <select placeholder="Select Warehouse" id="city" name="city" class="form-control"
+                                    [(ngModel)]="WarehouseId">
+                                    <option value="" disabled>Select Warehouse</option>
+                                    <option *ngFor="let city of WarehouseList" [ngValue]="city.WarehouseId">
+                                        {{city.WarehouseName}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="statusdata">Status</label>
+                                <select placeholder="Select Status" id="statusdata" name="statusdata"
+                                    class="form-control" [(ngModel)]="status">
+                                    <option value="" disabled>Select Status</option>
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+                        </div> -->
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="startdateValNew"><b>Start Date: </b></label><br>
+                                <p-calendar [showIcon]="true" id="startdateValNew"
+                                    (ngModelChange)="startDateUpdate($event)" [(ngModel)]="startDateSearch"
+                                    name="startdateValNew" [readonlyInput]="true" #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="endDate"><b>End Date: </b></label><br>
+                                <p-calendar [showIcon]="true" id="endDate" (ngModelChange)="endDateVal($event)"
+                                    [(ngModel)]="end" name="EndDate" [readonlyInput]="true" #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+
+                        <!-- <div class="col-md-2">
+                            <label>Status</label>
+                            <select class="form-control" name="Status" [(ngModel)]="SelectedStatus">
+                                <option value=0>All</option>
+                                <option value=1>Request</option>
+                                <option value=2>Verified</option>
+                                <option value=3>Rejected</option>
+                                <option value=4>Shop Found</option>
+                                <option value=5>Shop Not Found</option>
+                                <option value=6>Pending</option>
+                                <option value=7>No Document</option>
+                            </select>
+                        </div> -->
+
+                        <div class="col-md-2">
+                            <label for="projectinput3">Status:</label>
+
+                            <p-dropdown [options]="ShowType" [(ngModel)]="showtypeArr" name="showtypeArr"
+                                optionLabel="name" (onChange)="ShowtypeFunc()"></p-dropdown>
+                        </div>
+
+                        <div class="col-md-1" style="margin-top: 25px;">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="Search('byWarehouse')">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="margin-top: 25px;">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="clearBtn()">
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-12 searchField">
+                            <label for="searchId">Global Search</label>
+                            <input id="searchId" type="text" placeholder="Enter text here" name="keyWord"
+                                [(ngModel)]="keySearch" (keyup)="Offerfilter($event)">
+                            <i class="fa fa-search"></i>
+                        </div>
+                        <div class="col-md-2 col-12">
+                            <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                style="margin-top: 29px;" (click)="Search('byKeyword')">
+                                Search
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-12">
+                            <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                style="margin-top: 29px;" (click)="clearGlobalSearch()">
+                                Clear
+                            </button>
+                        </div>
+
+                        <div class="col-md-3 col-12">
+                            <button class="btn outline-btn mr-2" (click)="exportFileData()">Export</button>
+                            <button class="btn outline-btn" (click)="freebiesuploader()">Freebies Uploader</button>
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-8">
+                                        <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                        (click)="onSearch(WarehouseId)">
+                                        Search
+                                    </button>
+                                      </div> -->
+                </form>
+            </div>
+        </div>
+        <!-- =======Top Filter Search Section End here======== -->
+        <p-tabView (onChange)="onTabChange($event)">
+            <!-- =========Offer Task Section Start here=========== [(first)]="first" -->
+            <p-tabPanel header="Offer Task" [selected]="true">
+                <p-table #dt [value]="offerlist" [totalRecords]="totalRecordsOffer" (onLazyLoad)="load($event)" [lazy]="true"
+                    [paginator]="true" [rows]="rows" [(first)]="first" [scrollable]="true" scrollHeight="600px"
+                    scrollDirection="both" [rowsPerPageOptions]="[ 10, 15, 20]">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 100px;">OfferCode</th>
+                            <th style="width: 100px;">Offer Name</th>
+                            <th style="width: 100px;">Warehouse Name</th>
+                            <th style="width: 100px;">Offer On</th>
+                            <th style="width: 100px;">Offer Category</th>
+
+
+                            <th style="width: 100px;">Free Offer Type</th>
+                            <th style="width: 100px;">Item Name</th>
+                            <!-- <th>ABC Classification</th> -->
+                            <th style="width: 100px;">Min Order Quantity</th>
+                            <th style="width: 100px;">Free Item Limit</th>
+
+
+
+                            <th style="width: 100px;">Freebies Available Quantity</th>
+                            <th style="width: 100px;">Free Item Name</th>
+                            <th style="width: 100px;">No Offer Quantity</th>
+                            <th style="width: 100px;">Start DateTime</th>
+                            <th style="width: 100px;">End DateTime</th>
+
+
+                            <th style="width: 100px;">Free Wallet Point</th>
+                            <th style="width: 100px;">Discount Percent</th>
+                            <th style="width: 100px;">Offer AppType</th>
+                            <!-- <th>Edit</th> -->
+                            <th style="width: 100px;">Active</th>
+                            <!-- <th>View History</th> -->
+                            <th style="width: 100px;">View History</th>
+                            <th style="width: 100px;">Details</th>
+                            <th style="width: 100px;">User Type</th>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                        <tr>
+                            <td style="width: 100px;">{{rowData.OfferCode}}</td>
+                            <td style="width: 100px;">{{rowData.OfferName}}</td>
+                            <td style="width: 100px;">{{rowData.WarehouseName}}</td>
+                            <td style="width: 100px;">{{rowData.OfferOn}}</td>
+                            <td style="width: 100px;">{{rowData.OfferCategory}}</td>
+
+
+                            <td style="width: 100px;">{{rowData.FreeOfferType}}</td>
+                            <td style="width: 100px;">{{rowData.itemname}}</td>
+                            <!-- <td>{{rowData.FreeItemName}}</td> -->
+                            <td style="width: 100px;">{{rowData.MinOrderQuantity}}</td>
+                            <td style="width: 100px;">{{rowData.FreeItemLimit}}</td>
+
+                            <td style="width: 100px;">{{rowData.QtyAvaiable}}</td>
+                            <td style="width: 100px;">{{rowData.FreeItemName}}</td>
+                            <td style="width: 100px;">{{rowData.NoOffreeQuantity}}</td>
+                            <td style="width: 100px;">{{rowData.start | date:'medium'}}</td>
+                            <td style="width: 100px;">{{rowData.end| date:'medium'}}</td>
+
+
+                            <td style="width: 100px;">{{rowData.FreeWalletPoint}}</td>
+                            <td style="width: 100px;">{{rowData.DiscountPercentage}}</td>
+                            <td style="width: 100px;">{{rowData.OfferAppType}}</td>
+
+                            <!-- <td>
+                                <button class="btn-sm btn-primary skedit" (click)="Openedit(rowData)">Edit</button>
+                            </td> -->
+                            <td style="width: 100px;">
+                                <button *ngIf="rowData.IsActive == false" class="btn-sm btn-primary skactive"
+                                    (click)="statusUpdatePop(rowData)">Activate</button>
+                                <button *ngIf="rowData.IsActive != false" class="btn-sm btn-danger"
+                                    (click)="statusUpdatePop(rowData)">Deactivate</button>
+                            </td>
+                            <td style="width: 100px;"><button class="btn-sm btn-primary skview"
+                                    ng-init="Id=trade.OfferId;entity='Offer'"
+                                    (click)="viewAllData(rowData)">History</button></td>
+                            <td style="width: 100px;"><button class="btn-sm btn-primary skview"
+                                    ng-init="Id=trade.OfferId;entity='Offer'"
+                                    (click)="viewMoreTableFields(rowData, 'Offer')">Details</button></td>
+                            <td style="width: 100px;">{{rowData.ApplyType}}</td>
+                        </tr>
+                    </ng-template>
+                    <!-- <ng-template pTemplate="footer">
+                        <tr>
+                            <td>
+                                <label for="Rowss">No. Of Rows :</label>
+
+                                <select name="Rowss" id="Rowss" [(ngModel)]="rows" (change)="load($event)">
+                                    <option value=10>10</option>
+                                    <option value=15>15</option>
+                                    <option value=20>20</option>
+                                </select>
+
+                            </td>
+                        </tr>
+                    </ng-template> -->
+
+
+
+
+                </p-table>
+
+
+
+            </p-tabPanel>
+            <!-- =========Offer Task Section End here=========== -->
+
+            <!-- =========Bill Discount Section Start here=========== -->
+
+            <p-tabPanel header="Bill Discount">
+                <p-table #dt [value]="billDiscountList" [totalRecords]="totalRecordsBillDiscount" (onLazyLoad)="load($event)"
+                    [lazy]="true" [paginator]="true" [rows]="rows" [(first)]="first" [scrollable]="true"
+                    scrollHeight="600px" scrollDirection="both" [rowsPerPageOptions]="[ 10, 15, 20]">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 100px;">OfferCode</th>
+                            <th style="width: 100px;">Offer Name</th>
+                            <th style="width: 100px;">Company / Store </th>
+                            <th style="width: 100px;">Warehouse Name</th>
+
+                            <th style="width: 100px;">Offer On</th>
+                            <th style="width: 100px;">Offer Category</th>
+                            <th style="width: 100px;">Bill Discount On</th>
+                            <th style="width: 100px;">Percentage %</th>
+                            <th style="width: 100px;">Wallet Point</th>
+                            <th style="width: 100px;">Bill Amount Min Limit</th>
+                            <th style="width: 100px;">Bill Amount Max Limit</th>
+                            <th style="width: 100px;">Max Disc ount</th>
+                            <th style="width: 100px;">Start Date Time</th>
+                            <th style="width: 100px;">End Date Time</th>
+                            <th style="width: 100px;">Multi Time Use</th>
+                            <th style="width: 100px;">Use Other Offer</th>
+                            <th style="width: 100px;">Active / Inactive (Status)</th>
+                            <th style="width: 100px;">Bill Discount Type</th>
+                            <th style="width: 100px;">Offer AppType</th>
+                            <th style="width: 100px;">Apply On Offer</th>
+                            <th style="width: 100px;">View History</th>
+                            <th style="width: 100px;">Offer</th>
+                            <th style="width: 100px;">Details</th>
+                            <th style="width: 100px;">User Type</th>
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-columns="columns">
+                        <tr>
+                            <!-- <td>{{rowData.OfferCode}}</td> -->
+                            <!-- <td>{{rowData.OfferName}}</td> -->
+                            <!-- <td>{{rowData.StoreName}}</td> -->
+                            <!-- <td>{{rowData.WarehouseName}}</td> -->
+                            <!-- <td>{{rowData.OfferOn}}</td> -->
+                            <!-- <td>{{rowData.OfferCategory}}</td> -->
+                            <!-- <td>{{rowData.DiscountPercentage}}</td> -->
+                            <!-- <td>{{rowData.BillDiscountWallet}}</td> -->
+
+                            <td style="width: 100px;">{{rowData.OfferCode}}</td>
+                            <td style="width: 100px;">{{rowData.OfferName}}</td>
+                            <td style="width: 100px;">{{rowData.StoreName}}</td>
+                            <td style="width: 100px;">{{rowData.WarehouseName}}</td>
+
+                            <td style="width: 100px;">{{rowData.OfferOn}}</td>
+                            <td style="width: 100px;">{{rowData.OfferCategory}}</td>
+                            <td style="width: 100px;">{{rowData.BillDiscountOfferOn}}</td>
+                            <td style="width: 100px;">{{rowData.DiscountPercentage}}</td>
+
+                            <td style="width: 100px;">{{rowData.BillDiscountWallet}}</td>
+                            <td style="width: 100px;">{{rowData.BillAmount}}</td>
+                            <td style="width: 100px;">{{rowData.MaxBillAmount}}</td>
+                            <td style="width: 100px;">{{rowData.MaxDiscount}}</td>
+
+                            <td style="width: 100px;">{{rowData.start | date:'medium'}}</td>
+                            <td style="width: 100px;">{{rowData.end| date:'medium'}}</td>
+                            <td style="width: 100px;">{{rowData.IsMultiTimeUse}}</td>
+                            <td style="width: 100px;">{{rowData.IsUseOtherOffer}}</td>
+
+                            <!-- <td>{{trade.IsActive}}</td> -->
+                            <td style="width: 100px;">
+                                <button *ngIf="rowData.IsActive == false" class="btn-sm btn-primary skactive"
+                                    (click)="statusUpdatePop(rowData)">Activate</button>
+                                <button *ngIf="rowData.IsActive" class="btn-sm btn-danger"
+                                    (click)="statusUpdatePop(rowData)">Deactivate</button>
+                            </td>
+                            <td style="width: 100px;">{{rowData.BillDiscountType}}</td>
+                            <td style="width: 100px;">{{rowData.OfferAppType}}</td>
+                            <td style="width: 100px;">{{rowData.ApplyOn}}</td>
+
+                            <!-- <td>{{rowData.IsActive ? 'Active' : 'Deactive'}}</td> -->
+                            <!-- <td>
+                                <button class="btn-sm btn-primary skedit">Edit</button>
+                            </td> -->
+                            <td style="width: 100px;"><button class="btn-sm btn-primary skview"
+                                    ng-init="Id=trade.OfferId;entity='Offer'"
+                                    (click)="viewAllData(rowData)">History</button></td>
+                            <td style="width: 100px;"><button class="btn-sm btn-primary skview"
+                                    ng-init="Id=trade.OfferId;entity='Offer'"
+                                    (click)="viewOfferData(rowData)">Offer</button></td>
+                            <td style="width: 100px;"><button class="btn-sm btn-primary skview"
+                                    ng-init="Id=trade.OfferId;entity='Offer'"
+                                    (click)="viewMoreTableFields(rowData, 'BillDiscount')">Details</button></td>
+                            <td style="width: 100px;">{{rowData.ApplyType}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-tabPanel>
+            <!-- =========Bill Discount Section End here=========== -->
+        </p-tabView>
+    </div>
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</div>
+<div *ngIf="statusUpdatePopup">
+    <p-dialog [(visible)]="statusUpdatePopup" [resizable]="true" [modal]="true" [draggable]="false" appendTo="body"
+        positionTop="40%" [style]="{width: '30%',height: '30%'}">
+        <p-header>Update Status</p-header>
+        <app-confirmation-popup [getRowData]="getListRowData" (getStatusUpdate)="statusUpdate($event)"
+            (closePopup)="closeStatusPop($event)">
+        </app-confirmation-popup>
+    </p-dialog>
+</div>
+<div *ngIf="updateOfferValue">
+    <p-dialog [(visible)]="updateOfferValue" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}">
+        <p-header>View Offer</p-header>
+        <app-update-offer [getRowData]="getListRowData" [tabSelectVale]="getUpdateTYpe" (closePopup)="closepop($event)">
+        </app-update-offer>
+    </p-dialog>
+</div>
+<div *ngIf="viewCustomerpop">
+    <p-dialog [(visible)]="viewCustomerpop" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}">
+        <p-header> CUSTOMER LIST</p-header>
+        <app-offer-customer-list [getRowData]="getListRowData">
+        </app-offer-customer-list>
+    </p-dialog>
+</div>
+<div *ngIf="viewMoreTableRow">
+
+    <p-dialog [(visible)]="viewMoreTableRow" [resizable]="true" [modal]="true" appendTo="body" positionTop="5"
+        [style]="{width: '80%'}">
+        <p-header>View More Details</p-header>
+        <!-- //==========Ritika Work===========================// -->
+        <p-tabView (onChange)="onTabChange1($event)" styleClass="tabview-custom">
+            <p-tabPanel>
+                <ng-template pTemplate="header">
+                    <span>Offer</span>
+                </ng-template>
+                <app-view-all-offer-history [listType]="listTypeValue" [getRowData]="getListRowData">
+                </app-view-all-offer-history>
+            </p-tabPanel>
+            <p-tabPanel>
+                <ng-template pTemplate="header">
+                    <span>Details</span>
+                </ng-template>
+                <label for="Offer Type" style="font-weight:Bold ;font-size: 20px; ">Offer Type : {{offertypeName}}
+                </label>
+                <br><br><br>
+                <!-- Offer Task -->
+                <div class="row" *ngIf="OfferOn == 'Offer Task'">
+                    <div class="col-6 item-one" *ngIf="includeCheck">
+                        <h5 style="font-weight:Bold ;text-align: center; ">Included Item</h5>
+                        <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+                            <div *cdkVirtualFor="let item of includeSectionData" class="example-item">{{item.OfferOn}}
+                            </div>
+                        </cdk-virtual-scroll-viewport>
+                    </div>
+                    <div class="col-6 item-two" *ngIf="excludeCheck">
+                        <h5 style="font-weight:Bold ;text-align: center;">Excluded Item</h5>
+                        <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+                            <div *cdkVirtualFor="let item of excludeSectionData" class="example-item">
+                                {{item.ExcludeItemName}}</div>
+                        </cdk-virtual-scroll-viewport>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Bill Discount  -->
+                    <div class="col-12 item-one" *ngIf="OfferOn != 'Offer Task'">
+                        <h5 style="font-weight:Bold ;text-align: center;"> Include/Exclude Item</h5>
+                        <!--   <div *cdkVirtualFor="let item of includeSectionData" class="example-item" >{{item.OfferOn}}</div> -->
+                        <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+                            <p-table [value]="ExcludeIncludeArr" responsiveLayout="scroll">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Is Include</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-itemm>
+                                    <!-- *cdkVirtualFor="let itemm of includeSectionData" : '0' -->
+                                    <tr>
+                                        <td *ngIf="itemm.OfferOn">{{itemm.OfferOn}}</td>
+                                        <td *ngIf="itemm.ExcludeItemName">{{itemm.ExcludeItemName}}</td>
+                                        <td> {{itemm.IsInclude}}</td>
+                                        <!-- <td>item.IsInclude</td> -->
+                                    </tr>
+                                    <!-- <tr *cdkVirtualFor="let item of excludeSectionData">
+                                <td>item.ExcludeItemName</td>
+                                <td>item.IsInclude</td>
+                            </tr> -->
+                                </ng-template>
+                            </p-table>
+                        </cdk-virtual-scroll-viewport>
+
+                    </div>
+                </div>
+                <br><br><br><br>
+                <label style="font-weight:Bold ;font-size: 20px;">Required Item</label>
+
+                <p-table [value]="BilldiscountDc">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Object Type</th>
+                            <th>Object Text</th>
+                            <th>Value Type</th>
+                            <th>Object Value</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-Billdiscount>
+                        <tr>
+                            <td>{{Billdiscount.ObjectType}}</td>
+                            <td>{{Billdiscount.ObjectText}}</td>
+                            <td>{{Billdiscount.ValueType}}</td>
+                            <td>{{Billdiscount.ObjectValue}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+            </p-tabPanel>
+
+        </p-tabView>
+        <!-- //==========Ritika Work===========================// -->
+
+        <!-- <app-view-all-offer-history [listType]="listTypeValue" [getRowData]="getListRowData">
+    </app-view-all-offer-history> -->
+    </p-dialog>
+
+</div>
+
+<div *ngIf="viewAllOferpop">
+    <p-dialog [(visible)]="viewAllOferpop" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '40%'}">
+        <p-header> All Offer Uploader</p-header>
+        <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx" chooseLabel="Choose"   [style]="{marginBottom: '14px'}" 
+        (uploadHandler)="onUpload($event)" #uploadCustom class=" align-self-end ml-2">
+        </p-fileUpload>
+
+        <a class="btn btn-danger" style=" background-color: #119150;color: white;" href="{{apiURL}}/ExcelGeneratePath//BillDiscountSampleFile.xlsx" download="">Download Sample</a>
+    </p-dialog>
+</div>
+
+<div id="history" *ngIf="showViewDataPop">
+    <p-dialog [(visible)]="showViewDataPop" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}">
+        <p-header>History</p-header>
+        <app-history [entity]="entity" [id]="getListRowData.OfferId"></app-history>
+    </p-dialog>
+</div>

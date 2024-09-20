@@ -1,0 +1,242 @@
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="customer-master">
+  <div class="row">
+    <div class="header">
+      <h3 class="m-2">Online Transaction Dashboard</h3>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-2">
+      <div class="form-group">
+        <label for="projectinput3">MOP</label>
+        <br>
+        <select id="desg" name="desg" class="form-control" [(ngModel)]="searchModel.value"
+          (change)="onValueChange($event.target.value)">
+          <option value="1">All</option>
+          <option value="2">Epaylater</option>
+          <option value="3">HDFC</option>
+          <option value="4">Truepay</option>
+          <option value="5">mPos</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="form-group">
+        <label for="projectinput3">OrderId</label>
+        <br>
+        <input class="form-control" type="number" placeholder="Enter OrderID" [(ngModel)]="searchModel.OrderId">
+      </div>
+    </div>
+    <div class="col-sm-2">
+      <div class="form-group">
+        <label for="projectinput3">SKCode</label>
+        <br>
+        <input class="form-control" type="text" placeholder="Enter Skcode" [(ngModel)]="searchModel.SKCode">
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group">
+        <label for="projectinput3">From Date</label>
+        <br>
+        <p-calendar name="startDateInput" [showIcon]="true" name="fromDate" [(ngModel)]="searchModel.FromDate">
+        </p-calendar>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group">
+        <label for="projectinput3">To Date</label>
+        <br>
+        <p-calendar name="endDateInput" [showIcon]="true" name="fromDate" [(ngModel)]="searchModel.ToDate"></p-calendar>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <div class="form-group">
+        <label for="projectinput3">Search</label>
+        <br>
+        <button type="button" class="btn btn-raised btn-raised btn-primary  " (click)="search(searchModel)">
+          Search
+        </button>
+      </div>
+    </div>
+    <div class="col-md-1">
+      <div class="form-group">
+        <label>Export</label>
+        <div></div>
+        <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="exportDateBased()">
+          Export
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="row">
+    <div class="col-md-3" *ngIf="searchModel.value== 2">
+      <div class="col-md-3">
+        <label>ePay(xlsx Only)*</label>
+        <input class="btn btn-primary" id="file" type="file" (change)="upload($event.target.files)" />
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploader1()" [disabled]="!IsExtension">
+          Upload
+        </button>
+      </div>
+    </div>
+    <div class="col-md-3" *ngIf="searchModel.value==3">
+      <div class="col-md-3">
+        <label>HDFC*</label>
+        <input class="btn btn-primary" id="file" type="file" (change)="upload($event.target.files)" />
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploader()" [disabled]="!IsExtension">
+          Upload
+        </button>
+      </div>
+    </div>
+
+    <div class="col-md-3" *ngIf="searchModel.value==3">
+      <div class="col-md-3">
+        <label>NetBanking*</label>
+        <input class="btn btn-primary" id="file" type="file" (change)="upload($event.target.files)" />
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploader3()" [disabled]="!IsExtension">
+          Upload
+        </button>
+      </div>
+    </div>
+    <div class="col-md-3" *ngIf="searchModel.value==5">
+      <div class="col-md-3">
+        <label>mPos(xlsx Only)*</label>
+        <input class="btn btn-primary" id="file" type="file" (change)="upload($event.target.files)" />
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploader2()" [disabled]="!IsExtension">
+          Upload
+        </button>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <label for="projectinput3"></label><br />
+      <input type="number" placeholder="Enter Assignment Id" class="form-control" [(ngModel)]="searchKey">
+    </div>
+    <div class="col-md-3">
+      <label for="projectinput3"></label><br />
+      <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="searchData(searchKey)" >
+          <span class="glyphicon glyphicon-trash glyph"> </span>  Search by AssignmentID
+      </button>
+  </div>
+    <div class="col-md-1">
+      <label for="projectinput3"></label><br />
+        <button type="button" class="btn btn-raised btn-raised btn-primary  " (click)="Refresh()">
+          Refresh
+        </button>
+    </div>
+  </div>
+
+</section>
+<div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+  <div class="position-relative">
+    <div class="position-relative">
+      <p-table #dt [columns]="cols" [value]="preport" [paginator]="true" [rows]="20" dataKey="OrderId"
+        [scrollable]="true" scrollHeight="70vh" text-align: center>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="text-align: center">
+              Date
+            </th>
+            <th style="text-align: center">
+              Warehouse
+            </th>
+            <th style="text-align: center">
+              Skcode
+            </th>
+            <th style="text-align: center">
+              OrderId
+            </th>
+            <th style="text-align: center">
+              MOP
+            </th>
+            <th style="text-align: center">
+              Ordered Amount
+            </th>
+            <th style="text-align: center">
+              OrderStatus
+            </th>
+            <th style="text-align: center">
+              TXN Status
+            </th>
+            <th style="text-align: center">
+              TXN ID
+            </th>
+            <th style="text-align: center">
+              TXN Status
+            </th>
+            <th style="text-align: center">
+              Staus
+            </th>
+            <th style="text-align: center">
+              AssignmentID
+            </th>
+            <th style="text-align: center">
+              Settlement Date
+            </th>
+            <th style="text-align: center">
+              Comment
+            </th>
+          </tr>
+
+        </ng-template>
+        <ng-template pTemplate="body" let-image let-rowIndex="rowIndex">
+          <tr>
+            <td style="text-align: center">{{image.Date | date:'medium'}}</td>
+            <td style="text-align: center">{{image.Warehouse}}</td>
+            <td style="text-align: center">{{image.Skcode}}</td>
+            <td style="text-align: center">{{image.OrderId}}</td>
+            <td style="text-align: center">{{image.MOP}}</td>
+            <td style="text-align: center">{{image.OrderAmount}}</td>
+            <td style="text-align: center">{{image.Orderstatus}}</td>
+            <td style="text-align: center">{{image.TxnAomunt}}</td>
+            <td style="text-align: center">{{image.TxnID}}</td>
+            <!-- <td style="text-align: center">{{image.TxnStatus}}</td> -->
+            <td style="text-align: center" *ngIf="(image.TxnStatus  && image.IsRefund== true)" >
+              <span style="color: #f57812" class="label label-success ng-binding">Refunded</span>
+            </td>
+            <td style="text-align: center" *ngIf="(image.TxnStatus  && image.IsRefund== false)">
+              <span style="color: #61994e" class="label label-info ng-binding">Success</span>
+            </td>
+            <td style="text-align: center" *ngIf="(image.IsSettled == false)">
+              <span style="color: #ff0000" class="label label-danger ng-binding">Un-Verified</span>
+            </td >
+            <td style="text-align: center" *ngIf="(image.IsSettled == true && image.UploadId>0)">
+              <span style="color: #40ff00" class="label label-success ng-binding">Auto-Verified</span>
+            </td>
+            <td style="text-align: center" *ngIf="(image.IsSettled == true && image.UploadId==0)">
+              <span style="color: #fac832" class="label label-info ng-binding">Manual-Verified</span>
+            </td>
+            <td style="text-align: center">{{image.DeliveryIssuanceId}}</td>
+            <td style="text-align: center">{{image.SettleDate | date:'medium'}}</td>
+            <td style="text-align: center">
+              <button type="button" class="btn btn-raised btn-primary" style="margin-bottom: 0;" (click)="Show(image)">
+                View</button>
+            </td>
+
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+<!--POP UP-->
+<div *ngIf="isOpenPopup">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '50%', overflow: 'auto'}">
+    <textarea readonly>{{popupdata.SettlComments}}</textarea>
+  </p-dialog>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

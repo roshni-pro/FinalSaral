@@ -1,0 +1,221 @@
+<p-toast [style]="{marginTop: '280px'}"></p-toast>
+<p-confirmDialog header="Confirmation" [baseZIndex]="201" appendTo="body" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>
+<div class="row m-0">
+    <div class="col-12">
+        <div id="kick-start" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3 class="card-title">Internal Transfer</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <form #form1="ngForm">
+                                        <select id="desg" name="desg" #ctrl class="form-control"
+                                            [(ngModel)]="selectedWarehouses" required
+                                            (change)="getInternalTransferList()">
+                                            <option [selected]="true" default [value]="null">--select warehouse--
+                                            </option>
+                                            <ng-container *ngFor="let warehouse of warehouseList">
+                                                <option [value]="warehouse.WarehouseId">
+                                                    {{warehouse.WarehouseName}}
+                                                </option>
+                                            </ng-container>
+                                        </select>
+                                    </form>
+
+                                </div>
+                                <div class="col-md-3" *ngIf="MasterTransferList && MasterTransferList.length">
+                                    <input style="margin-top: 29px;" type="text" class="form-control"
+                                        placeholder="search warehouse / item"
+                                        (keyup)="globalsearch($event.target.value)" [(ngModel)]="globalsearchval">
+                                </div>
+                                <div style="margin-top: -108px; margin-left: 794px;
+                                color: blue;" class="col-md-3" *ngIf="MasterTransferList && MasterTransferList.length">
+                                    <h6 style="font-weight: 600;"><b><u>Total Amount :</u>
+                                            {{getTotal() | number :'1.0-2'}}</b></h6>
+                                </div>
+
+                                <div style="margin-top: -72px;
+                                margin-left: 815px;
+                                color: darkorange;" class="col-md-6"
+                                    *ngIf="MasterTransferList && MasterTransferList.length">
+                                    <h6 style="font-weight: 600; margin-left: -19px;"><b><u>Warehouse Amount</u>
+                                            <br>
+                                            <br>
+
+                                            <!-- <hr> -->
+                                            <div>
+                                                <ul *ngFor="let a of calculateByToWarehouseArray()">
+                                                    <div>
+
+                                                        <div style="color: darkslategrey;">
+                                                            
+                                                                <b style="color: darkslategray;">
+                                                                    {{a.OtherWarehouseName}}
+                                                                </b>
+                                                            
+                                                            :
+                                                            <b style="color:black;">
+                                                                {{a.Amount | number :'1.0-2'}}
+                                                            </b>
+                                                            <hr style="margin-left: -8px;
+                                                            width: 30%;">
+                                                        </div>
+
+                                                    </div>
+                                                </ul>
+                                            </div>
+
+                                        </b></h6>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<ng-container>
+
+    <!-- <p-table *ngIf="immutabletransferlist && immutabletransferlist.length" #dt [resizableColumns]="true"
+        [autoLayout]="true" class="center" [paginator]="true" [rows]="10" [value]="internaltransferlist" [lazy]="true"
+        [totalRecords]="totalRecords" (onLazyLoad)="load($event)" [scrollable]="true" scrollHeight="70vh" text-align:
+        center>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="text-align: center">Select</th>
+                <th style="text-align: center">
+                    S.no
+                </th>
+                <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="text-align: center">
+                    {{col.header}}
+                </th>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded" let-i="rowIndex">
+            <tr>
+                <td (click)="getData(rowData)" [ngClass]="{'sel':rowData.IsSelected} ">
+                    <i *ngIf="!rowData.IsSelected" class="fa fa-square-o fa-2x"
+                        aria-hidden="true"></i>
+                    <i *ngIf="rowData.IsSelected" class="fa fa-check-square-o fa-2x"
+                        style="font-size:30px;color:orangered"
+                        aria-hidden="true"></i>
+
+                </td>
+                <td style="text-align: center">
+                    {{i+1}}
+                </td>
+                <td *ngFor="let col of cols" style="text-align: center">
+                    {{rowData[col.field]}}
+                </td>
+
+            </tr>
+        </ng-template>
+    </p-table> -->
+
+    <p-table *ngIf="immutabletransferlist && immutabletransferlist.length" #dt [resizableColumns]="true"
+        value="internaltransferlist" [autoLayout]="true" class="center" [paginator]="true" [rows]="10"
+        [value]="internaltransferlist" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="load($event)"
+        [scrollable]="true" scrollHeight="70vh" text-align: center>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="text-align: center">Select</th>
+                <th style="text-align: center">
+                    S.no
+                </th>
+                <!-- <th style="text-align: center">City</th> -->
+                <th style="text-align: center">Warehouse Name</th>
+                <th style="text-align: center">Item Name</th>
+                <th style="text-align: center">ABC Classification</th>
+                <th style="text-align: center; width: 100px;">Item No</th>
+                <th style="text-align: center;">Item MultiMrp Id</th>
+                <th style="text-align: center">
+                    <div *ngIf="editMode == false">Required Quantity</div>
+                    <div *ngIf="editMode == true">Editable Required Quantity</div>
+                </th>
+                <th style="text-align: center">Other Warehouse Name</th>
+                <th style="text-align: center">Other Warehouse Available Quantity</th>
+                <th style="text-align: center">Total Price</th>
+                <th style="text-align: center">Price</th>
+                <th style="text-align: center">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+            <tr>
+                <td (click)="getData(rowData)" style="text-align: center;" [ngClass]="{'sel':rowData.IsSelected} ">
+                    <i *ngIf="!rowData.IsSelected" class="fa fa-square-o fa-2x" aria-hidden="true"></i>
+                    <i *ngIf="rowData.IsSelected" class="fa fa-check-square-o fa-2x"
+                        style="font-size:30px;color:orangered" aria-hidden="true"></i>
+
+                </td>
+                <td style="text-align: center">
+                    {{i+1}}
+                </td>
+                <!-- <td style="text-align: center">{{rowData.City}}</td> -->
+                <td style="text-align: center">{{rowData.WarehouseName}}</td>
+                <td style="text-align: center ">{{rowData.Itemname}}</td>
+                <td style="text-align: center ">{{rowData.ABCClassification}}</td>
+                <td style="text-align: center ; width: 100px;">{{rowData.ItemNumber}}</td>
+
+                <td style="text-align: center">{{rowData.ItemMultipMrpId}}</td>
+
+                <td style="text-align: center">
+                    <div>
+                        <input [disabled]="!rowData.edit" id="requiredqty" class="requiredqty" type="number"
+                            [(ngModel)]="rowData.Requiredqty" (keyup)="detectRowEdit(rowData, $event.target.value)" />
+                    </div>
+
+
+                </td>
+
+
+                <td style="text-align: center">{{rowData.OtherWarehouseName}}</td>
+                <td style="text-align: center">{{rowData.OtherWarehouseAvailableqty}}</td>
+                <td style="text-align: center">{{(rowData.Price * rowData.Requiredqty)  | number :'1.0-2'}}</td>
+                <td style="text-align: center">{{rowData.Price | number :'1.0-2'}}</td>
+                <td style="text-align: center">
+
+                    <button pButton type="button" icon="pi pi-pencil" class="ui-button-info"
+                        (click)="editData(rowData); rowData.edit = true;"></button>
+                    <!-- <button *ngIf="editing" pButton type="button" pSaveEditableRow icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button> -->
+                    <ng-container *ngIf="rowData.edit == true">
+                        <button *ngIf="editCancel == true" pButton type="button" icon="pi pi-times"
+                            class="ui-button-danger"
+                            (click)="onRowEditCancel(rowData,i); rowData.edit = false;"></button>
+                    </ng-container>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="col-md-3">
+        <button style="cursor: pointer;" type="button" class="btn btn-raised btn-raised btn-primary"
+            *ngIf="transferList && transferList.length" (click)="isInternalTransferPost()">
+            Post Internal Transfer Order
+        </button>
+
+
+    </div>
+
+</ng-container>
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

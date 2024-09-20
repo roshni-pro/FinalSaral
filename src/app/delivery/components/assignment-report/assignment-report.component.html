@@ -1,0 +1,177 @@
+<div class="my-2 mb-0 mt-4 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>ASSIGNMENT REPORTS</b></h3>
+    </div>
+    <!-- <div>
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: 10px;"
+            (click)="add()"> <i class="fa fa-plus-circle"></i>  ADD ASSIGNMENT
+        </button>
+    </div> -->
+</div>
+
+<div class="mt-0">
+    <div class="ui-fluid p-3 shadow m-2 bg-white rounded table table-hover">
+        <!-- =======Top Filter Search Section Start here======== -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <form class="form">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="projectinput3">Select Warehouse</label>
+                                <p-multiSelect id="role=" name="role" [options]="WarehouseList"
+                                    [(ngModel)]="serachData.wherehouseId" #role="ngModel" optionLabel="WarehouseName">
+                                </p-multiSelect>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="startdateValNew"><b>Start Date: </b></label><br>
+                                <p-calendar [showIcon]="true" id="startdateValNew"
+                                    (ngModelChange)="startDateUpdate($event)" [(ngModel)]="startDateSearch"
+                                    name="startdateValNew" [readonlyInput]="true" #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="endDate"><b>End Date: </b></label><br>
+                                <p-calendar [showIcon]="true" id="endDate" (ngModelChange)="endDateVal($event)"
+                                    [(ngModel)]="end" name="EndDate" [readonlyInput]="true" #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-5" style="margin-top: 28px;">
+                            <div class="form-group">
+                                <label for="projectinput3"></label>
+                                <button type="button" class="btn btn-raised btn-raised btn-primary mr-2"
+                                    (click)="searchdata()">
+                                    Search
+                                </button>
+                                <button type="button" class="btn mr-2"
+                                    (click)="ExportAssignmentReport()" 
+                                    style="background-color: #00bffa;color: white;border-color: #00bffa;margin-top: -17px;">
+                                    Export Assignment Report
+                                </button>
+                                <button type="button" class="btn"
+                                    (click)="ExportAll(searchdta?.AllExport)"
+                                    style="background-color: green;color: white;border-color: green;margin-top: -17px;">
+                                    Export All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- =======Top Filter Search Section End here======== -->
+
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
+                    <th class="col-md-5"></th>
+                    <th>Number of Assignments</th>
+                    <th>Amount</th>
+                    <th>Export</th>
+
+                </tr>
+                <tr>
+                    <!--<td>SavedAsDraft <button class="btn btn-primary"  style="border-radius: 15px"  (click)="Export(Warehouseid,type='SavedAsDraft')"><span class="glyphicon glyphicon-export"> </span>  Export</button> </td>-->
+                    <!--<td (click)="Export(Warehouseid,type='SavedAsDraft')">SavedAsDraft</td>-->
+                    <td>SavedAsDraft</td>
+
+                    <td>{{searchdta?.SavedAsDraft}}</td>
+                    <td>{{searchdta?.SavedAsDraftAmount| number : '2.2-2'}}</td>
+                    <td><button class="btn" style="border-radius: 15px;background-color: green;color: white;"
+                            (click)="Export(searchdta?.SavedAsDraftExcel)"><span class="glyphicon glyphicon-export">
+                            </span>Export</button></td>
+                </tr>
+                <tr>
+                    <td>Assigned </td>
+                    <!--<td (click)="Export(Warehouseid,type='Assigned')">Assigned</td>-->
+                    <td>{{searchdta?.Assigned}}</td>
+                    <td>{{searchdta?.AssignedAmount| number : '2.2-2'}}</td>
+                    <td><button class="btn" style="border-radius: 15px;background-color: green;color: white;"
+                            (click)="Export(searchdta?.AssignedExcel)"><span class="glyphicon glyphicon-export">
+                            </span>Export</button></td>
+                </tr>
+                <tr>
+                    <td>Accepted </td>
+                    <!--<td (click)="Export(Warehouseid,type='Accepted')">Accepted</td>-->
+                    <td>{{searchdta?.Accepted}}</td>
+                    <td>{{searchdta?.AcceptedAmount| number : '2.2-2'}}</td>
+                    <td><button class="btn" style="border-radius: 15px;background-color: green;color: white;"
+                            (click)="Export(searchdta?.AcceptedExcel)"><span class="glyphicon glyphicon-export">
+                            </span>Export</button></td>
+                </tr>
+                <tr>
+                    <td>Rejected</td>
+                    <!--<td (click)="Export(Warehouseid,type='Rejected')">Rejected</td>-->
+                    <td>{{searchdta?.Rejected}}</td>
+                    <td>{{searchdta?.RejectedAmount| number : '2.2-2'}}</td>
+                    <td><button class="btn" style="border-radius: 15px;background-color: green;color: white;"
+                            (click)="Export(searchdta?.RejectedExcel)"><span class="glyphicon glyphicon-export">
+                            </span>Export</button> </td>
+                </tr>
+                <tr>
+                    <td>Pending</td>
+                    <!--<td (click)="Export(Warehouseid,type='Pending')">Rejected</td>-->
+                    <td>{{searchdta?.Pending}}</td>
+                    <td>{{searchdta?.PendingAmount| number : '2.2-2'}}</td>
+                    <td> <button class="btn" style="border-radius: 15px;background-color: green;color: white;"
+                            (click)="Export(searchdta?.PendingExcel)"><span class="glyphicon glyphicon-export">
+                            </span>Export</button></td>
+                </tr>
+                <tr>
+                    <td>Submitted </td>
+                    <!--<td (click)="Export(Warehouseid,type='Submitted')">Rejected</td>-->
+                    <td>{{searchdta?.Submitted}}</td>
+                    <td>{{searchdta?.SubmittedAmount| number : '2.2-2'}}</td>
+                    <td><button class="btn" style="border-radius: 15px;background-color: green;color: white;"
+                            (click)="Export(searchdta?.SubmittedExcel)"><span class="glyphicon glyphicon-export">
+                            </span>Export</button></td>
+                </tr>
+                <tr>
+                    <td>Payment Accepted</td>
+                    <!--<td (click)="Export(Warehouseid,type='Payment Accepted')">Payment Accepted</td>-->
+                    <td>{{searchdta?.PaymentAccepted}}</td>
+                    <td>{{searchdta?.PaymentAcceptedAmount| number : '2.2-2'}}</td>
+                    <td> <button class="btn" style="border-radius: 15px;background-color: green;color: white;"
+                            (click)="Export(searchdta?.PaymentAcceptedExcel)"><span class="glyphicon glyphicon-export">
+                            </span>Export</button></td>
+                </tr>
+                <tr>
+                    <td>Payment Submitted Amount </td>
+                    <!--<td (click)="Export(Warehouseid,type='Payment Submitted')">Payment Submitted Amount</td>-->
+                    <td>{{searchdta?.PaymentSubmitted}}</td>
+                    <td>{{searchdta?.PaymentSubmittedAmount| number : '2.2-2'}}</td>
+                    <td><button class="btn" style="border-radius: 15px;background-color: green;color: white;"
+                            (click)="Export(searchdta?.PaymentSubmittedExcel)"><span class="glyphicon glyphicon-export">
+                            </span>Export</button></td>
+                </tr>
+                <tr>
+                    <td>Freezed </td>
+                    <!--<td (click)="Export(Warehouseid,type='Freezed')">Freezed</td>-->
+                    <td>{{searchdta?.Freezed}}</td>
+                    <td>{{searchdta?.FreezedAmount| number : '2.2-2'}}</td>
+                    <td><button class="btn" style="border-radius: 15px;background-color: green;color: white;"
+                            (click)="Export(searchdta?.FreezedExcel)"><span class="glyphicon glyphicon-export">
+                            </span>Export</button></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s">
+    </p-progressSpinner>
+</div>

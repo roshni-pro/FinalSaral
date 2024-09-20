@@ -1,0 +1,97 @@
+<div>
+    <h3 class="heading mt-4">Executive Success Store Target Dashboard</h3>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label><b>City:</b></label>
+                    <p-multiSelect  [options]="cityList" placeholder="--Select a City--" [(ngModel)]="CityObj" [filter]="true" 
+                    optionLabel="label"  id="Cityid" name="CityName" optionValue="Cityid" (onChange)="GetWarehouse(CityObj)"></p-multiSelect>
+                    <!-- <p-multiSelect [options]="cityList" [(ngModel)]="CityObj" defaultLabel="Select City" (onChange)="GetWarehouse(CityObj)"
+                    optionLabel="label" selectedItemsLabel="{0} City selected"  ></p-multiSelect> -->
+                </div>
+                <div class="col-md-3">
+                    <label><b>Warehouse:</b></label>
+                    <p-multiSelect id="WarehouseId" name="WarehouseName"  [options]="WareHouseList"   [filter]="true" (onChange)="GetClusterList(warehouseObj);getStore()"
+                    [(ngModel)]="warehouseObj" optionLabel="label" optionValue="value" placeholder="--Select Warehouse--">
+                    </p-multiSelect>
+                </div>
+                <div class="col-md-3">
+                    <label><b>Store Name:</b></label>
+                    <p-dropdown  [options]="StoreList" placeholder="--Select a Store--" optionLabel="Name" [(ngModel)]="Store" (onChange)="ChangeStore(Store)"></p-dropdown>
+                </div> 
+                <div class="col-md-3">
+                    <label><b>Select Cluster<span class="required">*</span></b></label>
+                    <p-multiSelect id="Category" name="Category" [options]="clusterList" [(ngModel)]="SelectedCluster"  (onChange)="ChangeCluster(SelectedCluster)"
+                    optionLabel="ClusterName" placeholder="Select Cluster"  > 
+                    </p-multiSelect>
+                </div>
+                <!-- <div class="col-md-2">
+                    <label><b>Select Cluster<span class="required">*</span></b></label>
+                    <p-multiSelect id="Category" name="Category" [options]="clusterList" [(ngModel)]="SelectedCluster" 
+                    optionLabel="ClusterName" placeholder="Select Cluster"  > 
+                    </p-multiSelect>
+                </div>        -->
+                <!-- <div  class="text-right col-md-2 mt-4">
+                    <button class="btn btn-primary mr-1" (click)="Search()">Search</button>
+                    <button class="btn btn-primary mr-1" (click)="Clear()" >Clear</button>
+                    <button class="btn btn-success mr-1" (click)="Export()" >Export</button>
+                </div> -->
+            </div>
+            <div class="row">
+                <div class="col-md-3">        
+                    <label><b>Enter Month:</b></label>
+                    <!-- (keydown)="space($event)" -->
+                    <p-calendar [style]="{'width':'100%'}" [(ngModel)]="dateValue" view="month" dateFormat="mm/yy" ></p-calendar>
+                </div>
+                <div class="col-md-9 text-right mt-4">
+                    <button class="btn btn-primary ml-2" (click)="Search()">Search</button>
+                    <button class="btn btn-primary ml-2" (click)="Clear()" >Clear</button>
+                    <button class="btn btn-success ml-2" (click)="Export()" >Export</button>
+                    <!-- <button class="btn btn-success ml-2" (click)="ExportAll()">Export All</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-body">
+            <p-table [value]="ReportFilterData" [paginator]="true" [rows]="20" [(first)]="first"  [showCurrentPageReport]="true" class="center">
+                <ng-template pTemplate="header" >
+                    <tr >
+                        <!-- <th style="width:75px"><b> S.N.</b></th> -->
+                        <th  ><b> Executive Name</b></th>
+                        <th ><b> Target </b></th>
+                        <th ><b> Store </b></th>
+                        <th ><b> Achivement</b></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData  let-rowIndex="rowIndex">
+                    <tr>
+                        <!-- <td style="width:75px">{{rowIndex+1}}</td> -->
+                        <td >{{rowData.ExecutiveName==null?'--':rowData.ExecutiveName}}</td>
+                        <td >{{rowData.Target}}</td>
+                        <td>{{rowData.Store==null?'--':rowData.Store}}</td>
+                        <td >{{rowData.Achievement}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+
+
+

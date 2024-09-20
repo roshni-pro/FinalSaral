@@ -1,0 +1,537 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="Group">
+  <div class="row">
+    <h4 style="padding-top: 20px; padding-left: 20px"><b>!!ORDER CANCEL REQUEST!!</b></h4>
+  </div>
+  <p-tabView (onChange)="onTabChange($event)">
+    <div *ngIf="show">
+
+    </div>
+
+    <p-tabPanel header="Delivery Cancel Request" [selected]="true">
+
+      <form class="form " name="form" #groupForm="ngForm">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <br>
+              <label for="Warehouse" class="col-md-5">Select Hub:<span style="color:red">*</span></label>
+              <!-- <select id="Warehouse" name="WarehouseName" class="form-control" [(ngModel)]="group.Warehouseid"
+                #WarehouseId="ngModel" required="1">
+                <option *ngFor="let WareHouse of warehouses" [ngValue]="WareHouse.WarehouseId">
+                  {{WareHouse.WarehouseName}}
+                </option>
+              </select> -->
+              <p-multiSelect [options]="warehouses" name="WarehouseName" [(ngModel)]="group.Warehouseid" [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName">                          
+              </p-multiSelect> 
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <br>
+              <label for="orderType" class="col-md-5">Order Id<span style="color:red">
+                *</span></label>
+              <input type="number" id="ID" name="Orderid" class="form-control" name="oname" placeholder="Enter OrderId "
+                [(ngModel)]="group.Orderid" #OrderId="ngModel" />
+              <div class="col-md-6"></div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <br>
+              <label for="SKCode" class="col-md-5">SK Code<span style="color:red">
+                *</span></label>
+              <input type="text" id="Code" class="form-control" name="Sname" placeholder="Enter SkCode"
+                [(ngModel)]="group.SkCode" #SkCode="ngModel" />
+              <div class="col-md-6"></div>
+            </div>
+          </div>
+
+          <div class="col-md-1">           
+            <div class="form-group">
+              <br> <br>
+              <label class="col-md-12">&nbsp;</label>
+              <button type="button" class="btn btn-raised btn-primary " (click)="Search(group)">
+                Search
+              </button>
+            </div>
+          </div>
+          <div class="col-md-1">           
+            <div class="form-group">
+              <br> <br>
+              <label class="col-md-12">&nbsp;</label>
+              <button type="button" class="btn btn-raised btn" (click)="reset()">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div class="col-md-1">           
+            <div class="form-group">
+              <br> <br>
+              <label class="col-md-12">&nbsp;</label>
+              <button type="button" class="btn btn-raised btn" (click)="getExport()">
+                Export
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="row text-left" >
+            <div class="col-md-12">
+                <div class="card noneHoverRow">
+                    <p-table #dt [value]="OLIST" [paginator]="true"  [lazy]="true" [rows]="20" [scrollable]="true"
+                    [totalRecords]="totalRecords" (onLazyLoad)="load($event)" 
+                        scrollHeight="130vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Order Id</th>
+                                <th>SkCode</th>
+                                <th>Mobile Number</th>
+                                <th>WarehouseName</th>
+                                <th>Status</th>
+                                <th>Dispatched Amount</th>
+                                <th>ReDispatchCount</th>
+                                <th>Order Date</th>
+                                <th>DCR Date</th>
+                                <th>Change Status</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir>
+                            <!-- (ir.CurrentStatus == 'Dispatched')?{'background-color': '#a0c2a5'}:{'background-color':'white'} -->
+                            <tr>
+                                <td>
+                                    <div>{{ir.OrderId}}</div>
+                                </td>
+                                <td>{{ir.SkCode}}</td>
+                                <td>{{ir.Customerphonenum}}</td>
+                                <td>{{ir.WarehouseName}}</td>
+                                <td>{{ir.Status}}</td>
+                                <td>{{ir.DispatchAmount | number:'1.0-0'}}</td>
+                                <td>{{ir.ReDispatchCount}}</td>
+                                <td>{{ir.CreatedDate |  date:'medium'}}</td>
+                                <td>
+                                  {{ir.Distance |  date:'medium'}}
+                                </td>
+                                <td>
+                                  <button type="button" class="btn btn-raised btn-primary"
+                                  (click)="updateStatus(ir)">
+                                  Change Status
+                                </button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+      </div>
+    </p-tabPanel>
+  
+    <p-tabPanel header="Delivery ReDispatch">
+      <form class="form" #ReDispatchForm="ngForm">
+
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group">
+              <br>
+              <label for="Warehouse" class="col-md-0">Select Hub:<span style="color:red">*</span></label>
+              <select id="DWarehouse" name="DWarehouseName" class="form-control" [(ngModel)]="group.WarehouseId"
+                #WarehouseId="ngModel" required="1">
+                <option *ngFor="let WareHouse of warehouses" [ngValue]="WareHouse.WarehouseId">
+                  {{WareHouse.WarehouseName}}
+                </option>
+              </select>
+
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <br>
+              <label for="OrderId" class="col-md-5">Order Id<span style="color:red">
+                *</span></label>
+              <input type="number" id="ID" class="form-control" name="oname" placeholder="Enter OrderId "
+                [(ngModel)]="group.OrderId" #OrderId="ngModel" />
+              <div class="col-md-6"></div>
+              <!-- <div *ngIf="isInvalid && !Link.valid && Link.errors.required">
+                              <code>Youtube Link is required</code>
+                            </div> -->
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <br>
+              <label for="SKCode" class="col-md-5">SK Code<span style="color:red">
+                *</span></label>
+              <input type="text" id="Code" class="form-control" name="Sname" placeholder="Enter SkCode"
+                [(ngModel)]="group.SkCode" #SkCode="ngModel" />
+              <div class="col-md-6"></div>
+              <!-- <div *ngIf="isInvalid && !Link.valid && Link.errors.required">
+                      <code>Youtube Link is required</code>
+                    </div> -->
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <br> <br>
+              <button type="button" class="btn btn-raised btn-primary " (click)="SearchRD(group)">
+                Search
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </form>
+      <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="row text-left" >
+            <div class="col-md-12">
+                <div class="card noneHoverRow">
+                    <p-table #dt [value]="RDList" [paginator]="true" [rows]="20" [scrollable]="true"
+                        scrollHeight="130vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Order Id</th>
+                                <th>SkCode</th>
+                                <th>Mobile Number</th>
+                                <th>WarehouseName</th>
+                                <th>Status</th>
+                                <th>OrderAmount</th>
+                                <th>ReDispatchCount</th>
+                                <th>Created Date</th>
+                                <th>DCR Date</th>
+                                <th>Change Status</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir>
+                            <!-- (ir.CurrentStatus == 'Dispatched')?{'background-color': '#a0c2a5'}:{'background-color':'white'} -->
+                            <tr>
+                                <td>
+                                    <div>{{ir.OrderId}}</div>
+                                </td>
+                                <td>{{ir.Skcode}}</td>
+                                <td>{{ir.Customerphonenum}}</td>
+                                <td>{{ir.WarehouseName}}</td>
+                                <td>{{ir.Status}}</td>
+                                <td>{{ir.GrossAmount}}</td>
+                                <td>{{ir.ReDispatchCount}}</td>
+                                <td>{{ir.CreatedDate |  date:'medium'}}</td>
+                                <td>
+                                  {{ir.Distance |  date:'medium'}}
+                                </td>
+                                <td>
+                                  <button type="button" class="btn btn-raised btn-primary"
+                                  (click)="updateStatusRD(ir)">
+                                  Change Status
+                                </button>
+                                </td>
+                                <!-- <td *ngIf="ir.ReDispatchCount >=3">
+                                  <button type="button" class="btn btn-raised btn"
+                                  (click)="updateStatusRD(ir)">
+                                 Send Approval
+                                </button>
+                                </td> -->
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+      </div>
+    </p-tabPanel> 
+    <p-tabPanel header="Export Report">
+      <form class="form" #Export="ngForm">
+
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="Warehouse" class="col-md-0">Select Type:<span style="color:red">*</span></label>
+              <select id="DWarehouse" name="DWarehouseName" class="form-control" [(ngModel)]="addexport.type">
+                <option value="" disabled>--Select--</option>
+                      <option value="1">DCR Export</option>
+                      <option value="2">Call Back Export</option>
+              </select>
+
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="projectinput3">From Date</label>
+              <br>
+              <p-calendar name="Start" [(ngModel)]="addexport.start" [showIcon]="true" 
+                name="fromDate" ></p-calendar>
+              <!-- <div [hidden]="!(isInvalid && !fromDate.valid)">
+                <code>Required!</code>
+              </div> -->
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label for="projectinput4">To Date</label>
+              <br>
+              <p-calendar name="end" [(ngModel)]="addexport.end" [showIcon]="true" name="toDate"
+                ></p-calendar>
+              <!-- <div [hidden]="!(isInvalid && !toDate.valid)">
+                <code>Required!</code>
+              </div> -->
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <div class="form-group">
+              <label></label>
+              <br>
+              <button type="button" class="btn btn-raised btn-primary " (click)="export(addexport)">
+                Export
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group">
+              <label></label>
+              <br>
+              <button type="button" class="btn btn-raised btn-primary " (click)="resetExport(addexport)">
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-tabPanel>
+  </p-tabView>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</section>
+  <div *ngIf="popUpopen">
+    <p-dialog [(visible)]="popUpopen" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+      <p-toast [style]="{marginTop: '80px'}"></p-toast>
+      <div class="row">
+        <h4 style="padding-top: 20px; padding-left: 20px"><b>Upadte Status</b></h4>
+      </div>
+      <hr>
+      <div class="row ">
+        <div class="col-sm-12">
+          <form class="form" #statusForm="ngForm">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="ware" class="font">Select Status</label>
+                    <br>
+                    <select id="ware" name="wareh" class="form-control" [(ngModel)]="searchModel.value">
+                      <option value="" disabled>--Select--</option>
+                      <option value="Reject">Reject Request</option>
+                      <option value="Delivery Canceled">Delivery Canceled</option>
+                      <option value="Delivery Redispatch" *ngIf="Redispatchedcount < 3">Delivery Redispatch</option>
+                    </select>
+                  </div>
+                </div>
+                <div *ngIf="searchModel.value == 'Reject' ">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <label for="validtoe">Comments</label>
+                      <input class="form-control" type="Commentst" name="searchwh" [(ngModel)]="data.Comments"
+                        placeholder="Comments">
+                    </div>
+                    <div class="col-sm-4">
+                      <label class="col-md-12">&nbsp;</label>
+                      <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                        Save</button>
+                    </div>
+                  </div>
+                </div>
+              <!-- </div> -->
+              <div *ngIf="searchModel.value == 'Delivery Canceled' ">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <label for="Status">Select Status</label>
+                    <select id="Status" name="Status" class="form-control" [(ngModel)]="data.regionStatus">
+                      <option value="" disabled>--Select--</option>
+                      <option value="Wrong Item was sent">Wrong Item was sent</option>
+                      <option value="Item Damaged or Expired">Item Damaged or Expired</option>
+                      <option value="Delivery Delay">Delivery Delay</option>
+                      <option value="Order Not Placed By Customer">Order Not Placed By Customer</option>
+                      <option value="Double Order Placed by Customer">Double Order Placed by Customer</option>
+                      <option value="MRP Issue">MRP Issue</option>
+                      <option value="Item Unavailability">Item Unavailability</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-4">
+                    <label for="validto">Comments</label>
+                    <input class="form-control" type="Commentsj" name="searchwhss" [(ngModel)]="data.Comments"
+                      placeholder="Comments">
+                  </div>                  
+                  <div class="col-sm-4">
+                    <label class="col-md-12">&nbsp;</label>
+                    <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                      Save</button>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="searchModel.value == 'Delivery Redispatch' ">
+                  <div class="form-group">
+                    <label for="wares" class="font">Select Status</label>
+                    <br>
+                    <select id="wares" name="wares" class="form-control" [(ngModel)]="searchModel2.value">
+                      <option value="" disabled>--Select--</option>
+                      <option value="Call back">Call back</option>
+                      <option value="Confirm">Confirm</option>
+                    </select>
+                  </div>
+              </div>
+                <!-- <div *ngIf="searchModel2.value=='Call back'">
+                  <div class="row">
+                    <div class="form-group">
+                      <label for="wareh" class="font">Select Status</label>
+                      <br>
+                      <select id="wareh" name="wareh" class="form-control" [(ngModel)]="searchModels.value">
+                        <option value="" disabled>--Select--</option>
+                        <option value="Confirms">Confirm</option>
+                        <option value="Delivery CanceledRD">Delivery Canceled</option>
+                      </select>
+                    </div>
+                  </div>
+                </div> -->
+                <div *ngIf="searchModel2.value == 'Confirm' ">
+                  <div class="row">                                
+                    <div class="col-sm-4">
+                      <label for="validto">Comments</label>
+                      <input class="form-control" type="Comments" name="searchwhqq" [(ngModel)]="data.Comments"
+                        placeholder="Comments">
+                    </div>
+                    <div class="col-sm-3" dateBtn>
+                      <label class="col-md-12" for="endDateInput">Date</label>
+                      <p-calendar name="endDateInput" [(ngModel)]="data.ToDate" [showIcon]="true" [minDate]="minDate" [maxDate]="maxDate" [readonlyInput]="true" inputId="min-max"  name="toDate" ></p-calendar>
+                    </div>
+                    <div class="col-sm-4">
+                      <label class="col-md-12">&nbsp;</label>
+                      <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                        Save</button>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="searchModel2.value == 'Call back' ">
+                  <div class="row">                                
+                    <div class="col-sm-4">
+                      <label for="validtoe">Comments</label>
+                      <input class="form-control" type="Commentse" name="searcheee" [(ngModel)]="data.Comments"
+                        placeholder="Comments">
+                    </div>
+                    <div class="col-sm-4">
+                      <label class="col-md-12">&nbsp;</label>
+                      <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="update(data)">
+                        Save</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </p-dialog>
+  </div>
+    <div *ngIf="callbackpop">
+    <p-dialog [(visible)]="callbackpop" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+  
+      <div class="row">
+        <h4 style="padding-top: 20px; padding-left: 20px"><b>Upadte Status</b></h4>
+      </div>
+      <hr>
+      <div class="row ">
+        <div class="col-sm-12">
+          <form class="form" #statusForm="ngForm">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="ware" class="font">Select Status</label>
+                    <br>
+                    <select id="ware" name="ware" class="form-control" [(ngModel)]="addData.value">
+                      <option value="" disabled>--Select--</option>
+                      <option *ngIf="Redispatchedcheck < 3"  value="Confirm">Confirm</option>
+                      <option value="Delivery Canceled">Delivery Canceled</option>
+                    </select>
+                  </div>
+                </div>
+                <div *ngIf="addData.value == 'Confirm' ">
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <label for="validtot">Comments</label>
+                      <input class="form-control" type="Commentsi" name="searchwhq" [(ngModel)]="data.Comments"
+                        placeholder="Comments">
+                    </div>
+                    <div class="col-sm-3" dateBtn>
+                      <label class="col-md-12" for="endDateInput">Date</label>
+                      <p-calendar  [(ngModel)]="data.ToDate" [showIcon]="true" [minDate]="minDate" [maxDate]="maxDate" [readonlyInput]="true" inputId="min-max" name="toDate" #toDate="ngModel"
+                      required="1" ></p-calendar>
+                    </div>
+                    &nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="col-sm-2">
+                      <label class="col-md-12">&nbsp;</label>
+                      <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="callBackRDupdate(data)">
+                        Save</button>
+                    </div>
+                  </div>
+                </div>
+              <!-- </div> -->
+              <div *ngIf="addData.value== 'Delivery Canceled' ">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <label for="validtoo">Comments</label>
+                    <input class="form-control" type="Commentsp" name="searchwhss" [(ngModel)]="dataDC.Comments"
+                      placeholder="Comments">
+                  </div>
+                  <div class="col-sm-4">
+                    <label class="col-md-12">&nbsp;</label>
+                    <button type="submit" class="btn btn-raised btn-primary" name="Update" (click)="callBackRDupdate(dataDC)">
+                      Save</button>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </p-dialog>
+  </div>
+  <div *ngIf="openHistory">
+    <p-dialog [(visible)]="openHistory" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+  
+      <div class="row">
+        <h4 style="padding-top: 20px; padding-left: 20px"><b>History</b></h4>
+      </div>
+      <hr>
+      <p-table #dt [value]="historylist"  [rows]="20" [scrollable]="true"
+      scrollHeight="130vh" text-align: center>
+      <ng-template pTemplate="header">
+          <tr>
+              <th>Order Id</th>
+              <th>Status</th>
+              <th>Assignment No.</th>
+              <th>Edit By</th>
+              <th>Updated Date</th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-ir>
+          <!-- (ir.CurrentStatus == 'Dispatched')?{'background-color': '#a0c2a5'}:{'background-color':'white'} -->
+          <tr>
+              <td>
+                  <div>{{ir.orderid}}</div>
+              </td>
+              <td>{{ir.Status}}</td>
+              <td>{{ir.DeliveryIssuanceId}}</td>
+              <td>{{ir.username}}</td>
+              <td>{{ir.CreatedDate |  date:'medium'}}</td>
+          </tr>
+      </ng-template>
+  </p-table>
+    </p-dialog>
+  </div>

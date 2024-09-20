@@ -1,0 +1,137 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+  <div class="header">
+    <h3 class="m-2"><b>Dboy Signed Design Slip</b></h3>
+  </div>
+</div>
+<div class="ui-fluid">
+  <form class="form" >
+    <div class="form-body">
+      <div class="row">
+        <div class="col-md-3" >
+          <div class="form-group">
+            <label for="projectinput3" class="col-md-3"><b>Warehouse</b></label>
+            <select id="ip" name="hub" class="form-control" [(ngModel)]="warehouseId" (ngModelChange)="onsearchDboy(warehouseId)">
+              <option value="">Select Warehouse</option>
+              <option *ngFor="let hub of hubList" [ngValue]="hub.WarehouseId">{{hub.WarehouseName}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput8">&nbsp;&nbsp;&nbsp;<b>Dboy</b></label>
+            <select id="dboy" name="dboy" class="form-control" [(ngModel)]="searchdata.DBoyId" (ngModelChange)="onsearchDboy(warehouseId)">
+              <option value="0">Select Dboy Name</option>
+              <option *ngFor="let dboy of dboyList" [ngValue]="dboy.PeopleID">
+                {{dboy.PeopleID}}-{{dboy.DisplayName}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput23"><b>Assignment ID</b></label>
+            <input type="text" id="ip9" name="AssignmentId" class="form-control" placeholder="AssignmentId"
+              [(ngModel)]="searchdata.AssignmentId" />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput23"><b>Slip No.</b></label>
+            <input type="text" id="id" name="Id" class="form-control" placeholder="Slip No."
+              [(ngModel)]="searchdata.Id" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <label for="dt"><b>From Date</b></label>
+          <p-calendar appendTo="body" [(ngModel)]="searchdata.StartDate" [showIcon]="true" name="FromDate">
+          </p-calendar>
+        </div>
+        <div class="col-md-3">
+          <label for="dt"><b>End Date</b></label>
+          <p-calendar appendTo="body" [(ngModel)]="searchdata.EndDate" [showIcon]="true" name="EndDate">
+          </p-calendar>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput8">&nbsp;&nbsp;&nbsp;<b>Select Type</b></label>
+            <select id="Type" name="Type" class="form-control" [(ngModel)]="searchdata.Type"   #Type="ngModel"  required="1">
+              <option value=null>Select Type Name</option>
+              <option>Unsignoff</option>
+              <option>SignOff</option>
+            </select>
+             <div class="col-md-6"></div>
+          <br />
+          <div *ngIf="isInvalid && !searchdata.valid && searchdata.errors.required">
+            <code>Type Name is required</code>
+          </div>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <br>
+          <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="search(searchdata)">
+            Search
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- For show the List data  -->
+<div class="position-relative">
+  <div class="position-relative">
+    <p-table #dt [columns]="cols" [value]="signedList" [paginator]="true" [rows]="20" [scrollable]="true"
+    dataKey="DeliveryIssuanceId">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Slip No.</th>
+          <th> Assignment </th>
+          <th> DBoy Name </th>
+          <th> Created Date </th>
+          <th *ngIf="searchdata.Type != 'Unsignoff'"> SignOff pdf </th>
+          <th *ngIf="searchdata.Type == 'Unsignoff'"> UNSignOff pdf </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td>{{rowData.Id}}</td>
+          <td>{{rowData.AssignmentId}}</td>
+          <td>{{rowData.DboyName}}</td>
+          <td>{{rowData.CreatedDate}}</td>
+          <td *ngIf="searchdata.Type != 'Unsignoff'">
+            <a href="javascript:void(0)" (click)="readCategoryfile(rowData)" ngbTooltip="Read File" [openDelay]="300"
+              [closeDelay]="500"><i aria-hidden="true" target="blank"></i>View</a>
+          </td>
+          <td *ngIf="searchdata.Type == 'Unsignoff'">
+            <a href="javascript:void(0)" (click)="readCategoryfileUN(rowData)" ngbTooltip="Read File" [openDelay]="300"
+              [closeDelay]="500"><i aria-hidden="true" target="blank"></i>View</a>
+           
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <br><br>
+  </div>
+</div>
+
+<div *ngIf="isPDF">
+  <p-dialog [(visible)]="isPDF" [resizable]="false" [modal]="true" appendTo="body" positionTop="100" [style]="{width: '70%',height: '90%', overflow: 'auto'}">
+    <p-header>
+      View File
+    </p-header>
+    <div class="position-relative">
+      <iframe [src]="safeSrc" height="800px" width="100%"></iframe>
+      <div align="center"></div>
+    </div>
+  </p-dialog>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,193 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="row m-0">
+    <div class="col-12">
+        <!-- Kick start -->
+        <div id="kick-start" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Coupon Codes List</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label> Search Coupon Code:</label>
+                                <div>
+                                    <input type="text" class="form-control" placeholder="Search Coupon Code"
+                                        [(ngModel)]="filtercouponcodes.SearchString">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="form-group">
+
+                                <div>
+                                    <label for="startdate"><b>Start Date: </b></label><br>
+                                    <p-calendar [showIcon]="true" [(ngModel)]="filtercouponcodes.StartDate"
+                                        name="startDate" required="1" [readonlyInput]="true" required
+                                        #dateRangeListInput>
+                                    </p-calendar>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label> Expiry Date:</label>
+                                <div>
+                                    <p-calendar [showIcon]="true" [(ngModel)]="filtercouponcodes.EndDate" name="EndDate"
+                                        required="1" [readonlyInput]="true" required #dateRangeListInput>
+                                    </p-calendar>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <label> Search:</label>
+                                <div>
+                                    <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="filtercouponcodes.skip = 0; filtercouponcodes.take = 10; dt.reset(); GetCouponCodeDetails();"
+                                        label="Search"></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <div class="form-group" style="margin-left: 20px;">
+                                <label> Reset:</label>
+                                <div>
+                                    <button type="button" pButton
+                                        (click)="initialize(); dt.reset(); GetCouponCodeDetails();"
+                                        label="Reset"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3" style="margin-left: -7%;">
+                            <div class="form-group">
+                                <div>
+                                    <button class="btn btn-raised btn-raised btn-primary c1 pull-right"
+                                        (click)="uploadCoupon()">
+                                        <i class="fa fa-upload"></i>
+                                        Upload Coupons</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--/ Kick start -->
+    </div>
+
+</div>
+
+
+<p-table #dt [paginator]="true" [rows]="10" [value]="couponCodes" [lazy]="true" [columns]="columns"
+    [totalRecords]="TotalRecords" (onLazyLoad)="load($event)" [paginator]="true" [scrollable]="true" scrollHeight="70vh"
+    text-align: center>
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th>
+                S.no
+            </th>
+            <ng-container *ngFor="let col of columns">
+                <th>
+                    {{col.header}}
+                </th>
+
+            </ng-container>
+            <th>
+                Available To
+            </th>
+            <th>
+                Applied By
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-i="rowIndex">
+        <tr>
+            <td>
+                {{i+1}}
+            </td>
+            <ng-container *ngFor="let col of columns; let i = index">
+
+                <td>
+                    <i *ngIf="col.field == 'MinOrderAmount' || col.field == 'CouponAmount'" class="fa fa-inr"
+                        aria-hidden="true"></i>
+                    {{col.field == 'CreatedDate' ||  col.field =='ExpiryDate' ? (rowData[col.field] | date) : rowData[col.field]}}
+                </td>
+
+            </ng-container>
+            <td>
+                <button style=" color: #009DA0; border-color: #009DA0;" class="btn"
+                    (click)="getAssignedList(rowData.AvailableToBuyers, 'AvailableToBuyers')">
+                    View
+                </button>
+            </td>
+            <td>
+                <button style=" color: #009DA0; border-color: #009DA0;" class="btn"
+                    (click)="getAssignedList(rowData.AppliedByBuyers, 'AppliedByBuyers')">
+                    View
+                </button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-dialog [(visible)]="displayBuyerDetails" *ngIf="buyerDetails && buyerDetails.length" [modal]="true" appendTo="body"
+    [responsive]="true" [style]="{width: '70%', minWidth: '70%'}" [minY]="70" [baseZIndex]="199">
+    <p-header>
+        {{heading}}
+    </p-header>
+    <div class="ui-fluid" style="overflow: scroll;">
+
+
+        <div class="ui-g">
+
+            <div class="ui-g-12">
+                <table class="table ">
+                    <tr>
+                        <th>Sno.</th>
+                        <th>CustomerName</th>
+                        <th>Mobile</th>
+                        <th>SkCode</th>
+                    </tr>
+                    <tr *ngFor="let item of buyerDetails; let i = index">
+                        <td>{{i+1}}</td>
+                        <td>{{item.CustomerName}}</td>
+                        <td>{{item.Mobile}}</td>
+                        <td>{{item.SkCode}}</td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <!-- <p-footer>
+
+        <button type="button" pButton icon="pi pi-check" (click)="assignDBoy(irOutstandingForm)"
+            [disabled]="!deliveryBoyExisting.FirstName  || !deliveryBoyExisting.Mobile || deliveryBoyExisting.Mobile <=0 ||  selectedList.length == 0 || deliveryBoyExisting.Mobile.toString().length < 10 || deliveryBoyExisting.Mobile.toString().length > 10  "
+            label="Assign Delivery Boy"></button>
+
+    </p-footer> -->
+</p-dialog>
+
+<div *ngIf="isUploadedCoupon">
+    <app-coupon-code-upload (close)="closeUploadingCouponDialog()"></app-coupon-code-upload>
+</div>

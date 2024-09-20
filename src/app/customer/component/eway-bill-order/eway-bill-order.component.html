@@ -1,0 +1,264 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+<section id="customer-master">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="m-2">Eway Bill Order</h3>
+    </div>
+
+    <div>
+      <button label="Export Full Current Stock" class="btn btn-raised btn-success m-2 shadow"
+        (click)="exportOrder()">Export Eway Bill Order</button>
+    </div>
+  </div>
+
+  <div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+      (click)="toggleSearch()">
+      <h5 class="m-0">Search By</h5>
+      <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+    <div id="search-content p-2" *ngIf="isSearch">
+      <div class="row ">
+        <div class="col-sm-12">
+          <form class="form" #ledgerForm="ngForm">
+            <div class="form-body">
+              <div class="row p-2 px-5">
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput3">City:</label>
+                    <br>
+                    <select id="desg" name="desg" class="form-control" [(ngModel)]="data.cityId"
+                      (change)="getWarehosues(data.cityId)">
+                      <option value="undefined">--select--</option>
+                      <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                        {{ city.CityName }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput">Warehouse:</label>
+                    <br>
+                    <select id="des" name="des" class="form-control" [(ngModel)]="data.WarehouseId">
+                      <option value="" selected>--select--</option>
+                      <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                        {{warehouse.WarehouseName}} {{warehouse.CityName}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <label for="projectinput">Order Id</label>
+                  <input id="des" type="text" name="OrderId" class="form-control" [(ngModel)]="data.OrderId"
+                    placeholder="Enter Order Id for search" />
+                </div>
+                <div class="col-md-2">
+                  <label for="projectinput">SKCode</label>
+                  <input id="des" type="text" name="SkCode" class="form-control" [(ngModel)]="data.SkCode"
+                    placeholder="Enter Order Id for search" />
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="startdate"><b>Start Date: </b></label>
+                    <p-calendar id="sdate" name="sdate" [(ngModel)]="data.StartDate" [monthNavigator]="true"
+                      [yearNavigator]="true" yearRange="1900:2030" placeholder="Start Date"></p-calendar>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <label for="enddate"><b>End Date: </b></label>
+                  <p-calendar id="edate" name="edate" [(ngModel)]="data.EndDate" placeholder="End Date"
+                    [monthNavigator]="true" [yearNavigator]="true" yearRange="1900:2030"></p-calendar>
+                </div>
+                <div class="col-md-3">
+                  <label class="first">Status</label>
+                  <select id="suppCat" name="ewayStatus" class="form-control col-md-8" [(ngModel)]="data.status">
+                    <option value="">Default</option>
+                    <!-- <option value="Pending">Pending</option> -->
+                    <option value="Ready to Dispatch">Ready to Dispatch</option>
+                    <option value="Issued">Issued</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivery Redispatch">Delivery Redispatch</option>
+                    <option value="ReadyToPick">ReadyToPick</option>
+                    <!-- <option  value="Delivered">Delivered</option>
+              <option  value="sattled">Sattled</option>
+              <option  value="Post Order Canceled">Post Order Canceled</option> -->
+                  </select>
+                </div>
+                <div class="col-md-4" style="margin-top: 8px;">
+                  <label for="projectinput"></label><br>
+                  <button type="button" class="btn btn-raised btn-raised btn-primary"
+                    (click)="getEwaybillList(data)">Search</button>
+                </div>
+              </div>
+              <hr>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ui-fluid shadow p-3 bg-white rounded table table-hover">
+    <!-- <div class="position-relative">
+      <div class="position-absolute tax-details" *ngIf="isDetails">
+        <app-customer-details [details]="selectedRowDetails" [activeFields]="activeFields"
+          (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)"
+          class="d-flex justify-content-end"></app-customer-details>
+      </div>
+    </div> -->
+
+
+    <p-table #dt [columns]="cols" [value]="orderlist" [lazy]="true" [totalRecords]="totalRecords"
+      (onLazyLoad)="load($event,data)" [paginator]="true" [rows]="20" [loading]="loading" dataKey="Id"
+      [scrollable]="true" scrollHeight="65vh" text-align: center>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="text-align: center">
+            Order Id
+          </th>
+          <th style="text-align: center">
+            Sales Person Details
+          </th>
+          <th style="text-align: center">
+            Customer Detail
+          </th>
+          <th style="text-align: center">
+            Order Amount
+          </th>
+          <th style="text-align: center">
+            Status
+          </th>
+          <th style="text-align: center">
+            Distance
+          </th>
+          <th style="text-align: center">
+            Eway Bill Number.
+          </th>
+          <!-- <th style="text-align: center">
+            TransDocNo
+          </th>
+          <th style="text-align: center">
+            TransName
+          </th>
+          <th style="text-align: center">
+            VehNo
+          </th>
+
+          <th style="text-align: center">
+            TransMode
+          </th>
+          <th style="text-align: center">
+            TransId
+          </th>
+          <th style="text-align: center">
+            VehType
+          </th> -->
+          <!-- <th style="text-align: center">
+                Upload File
+              </th> -->
+          <!-- <th style="text-align: center">
+                download File
+              </th> -->
+          <th style="text-align: center">
+            Update
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-pageData let-columns="columns" let-expanded="expanded">
+        <tr>
+          <td style="text-align: center">{{pageData.OrderId}}</td>
+          <td style="text-align: center">{{pageData.SalesPerson}}<br>{{pageData.SalesMobile}}</td>
+          <td style="text-align: center"><b>{{pageData.Skcode}}</b><br>{{pageData.ShopName}} -
+            {{pageData.CustomerName}}<br>{{pageData.Customerphonenum}}</td>
+          <td style="text-align: center">{{pageData.GrossAmount+pageData.WalletAmount +pageData.BillDiscountAmount |
+            number : '1.1-2' }}</td>
+          <td style="text-align: center">{{pageData.Status}}</td>
+          <td style="text-align: center">{{pageData.Distance}} KM</td>
+          <td>
+            <input type="text" id="order" name="order" class="form-control" [(ngModel)]="pageData.EwayBillNumber"
+              (keyup)="spaceValidator(pageData.EwayBillNumber, pageData)"
+              [disabled]="pageData.Status!='Ready to Dispatch' && pageData.Status!='Issued'  && pageData.Status!='Delivery Redispatch'  ">
+          </td>
+          <!--<td>
+            <input type="text" id="TransDocNo" name="TransDocNo" class="form-control" [(ngModel)]="pageData.TransDocNo"
+              [disabled]="pageData.Status!='Ready to Dispatch'">
+          </td>
+          <td>
+            <input type="text" id="TransName" name="TransName" class="form-control" [(ngModel)]="pageData.TransName"
+              [disabled]="pageData.Status!='Ready to Dispatch'">
+          </td>
+          <td>
+            <input type="text" id="VehNo" name="VehNo" class="form-control" [(ngModel)]="pageData.VehNo"
+              (keyup)="spaceValidatorVehNo(pageData.VehNo, pageData)" [disabled]="pageData.Status!='Ready to Dispatch'">
+          </td>
+          <td>
+            <input type="text" id="TransMode" name="TransMode" class="form-control" [(ngModel)]="pageData.TransMode"
+              [disabled]="pageData.Status!='Ready to Dispatch'">
+          </td>
+          <td>
+            <input type="text" id="TransId" name="TransId" class="form-control" [(ngModel)]="pageData.TransId"
+              [disabled]="pageData.Status!='Ready to Dispatch'">
+          </td>
+          <td>
+            <input type="text" id="VehType" name="VehType" class="form-control" [(ngModel)]="pageData.VehType"
+              [disabled]="pageData.Status!='Ready to Dispatch'">
+          </td> -->
+
+
+
+          <!-- <td>
+            <input class="btn btn-primary" id="file" type="file" (change)="upload($event.target.files)"  style="width: 140px;"/>
+            <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploader()" [disabled]="IsExtension">
+              Upload
+            </button>          
+            </td> -->
+          <!-- <td>  -->
+          <!-- <div class="form-group">
+                    <img alt="" src="{{baseURL}}{{EwayBillFileUrls}}" class="img-square" *ngIf="pageData.EwayBillFileUrls">
+                  </div>                  -->
+          <!-- <a [href]="baseCategory" download="">DownloadFile</a> -->
+          <!-- {{hostUrl}} -->
+          <!-- <a href="#" (click)="download()">Download File</a>
+               <img  alt="" [src]="baseCategory.LogoUrl" height="100" *ngIf="baseCategory.LogoUrl">  -->
+          <!-- </td> -->
+          <td>
+            <button type="button" class="btn btn-raised btn-raised btn-primary " (click)="updateEwayOrder(pageData)"
+              [disabled]="pageData.Status!='Ready to Dispatch' && pageData.Status!='Issued'  && pageData.Status!='Delivery Redispatch' ">Update</button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+
+    <!-- <p-table [columns]="cols" [value]="orderlist" [lazy]="true" [totalRecords]="totalRecords"
+      (onLazyLoad)="load($event)" [paginator]="true" [rows]="20" dataKey="Id" [scrollable]="true" scrollHeight="65vh"
+      text-align: center>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols" style="text-align: center">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+        <tr>
+          <td *ngFor="let col of columns" style="text-align: center">
+            {{rowData[col.field]}}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table> -->
+
+  </div>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  <div class="row" *ngIf="isResultFalse">
+    <h4 style="margin-left: 25px"><b>No Data Found</b></h4>
+  </div>
+</section>

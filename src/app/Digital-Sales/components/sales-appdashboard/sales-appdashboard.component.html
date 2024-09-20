@@ -1,0 +1,118 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="card">
+    <div class="card-header">
+        <h3>Sales App DashBoard</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+
+            <div class="col-sm-2">
+                <label for="">Warehouse:</label>
+                <select name="" value="" class="form-control col md-3" [(ngModel)]="filterdata.WarehouseId"
+                    (change)="OnChange(filterdata.WarehouseId)">
+                    <option Value="0">--Select--</option>
+                    <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WarehouseId">
+                        {{item.WarehouseName}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-sm-2">
+                <label>SalesMan</label><br>
+                <p-multiSelect [style]="{minWidth:''}" id="Executive" name="Executive" [options]="ExecList"
+                    [(ngModel)]="selectedExecutive" [panelStyle]="{minWidth:'25em'}" optionLabel="ExecutiveName">
+                </p-multiSelect>
+
+            </div>
+            <div class="col-sm-3">
+                <label for="FromDate">StartDate</label>
+                <input type="date" id="StartDate" name="StartDate" class="form-control"
+                    [ngModel]="filterdata.StartDate | date:'yyyy-MM-dd'"
+                    (ngModelChange)="filterdata.StartDate  = $event" />
+            </div>
+            <div class="col-sm-3">
+                <label for="FromDate">EndDate</label>
+                <input type="date" id="EndDate" name="EndDate" class="form-control"
+                    [ngModel]="filterdata.EndDate |date:'yyyy-MM-dd'"
+                    (ngModelChange)="filterdata.EndDate = $event" />
+            </div>
+            <div class="col-md-2 mt">
+                <input type="button" id="btnSrch" (click)="Search()" class="btn btn-raised btn-info" value="Search"
+                    [disabled]="!filterdata.WarehouseId && !selectedExecutive  && !filterdata.EndDate   && !filterdata.StartDate ">&nbsp;
+                <input type="button" id="btnclr" (click)="clear()" class="btn btn-raised btn-danger"
+                    value="Clear">&nbsp;
+                <input type="button" id="btnExport" (click)="Export()" class="btn btn-raised btn-warning" value="Export"
+                    [disabled]="!filterdata.WarehouseId && !selectedExecutive">
+            </div>
+        </div>
+        <p-table [value]="SalesDeshboardList" [paginator]="true" [lazy]="false" [rows]="10">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Exective Name</th>
+                    <th>Warehouse Name</th>
+                    <th>Cluster Name</th>
+                    <th>Total Customer</th>
+                    <th>Total Beat</th>
+                    <th>Customer Plann</th>
+                    <th>Visited </th>
+                    <th>Conversion</th>
+                    <th>Order Amount</th>
+                    <th>Avg Line</th>
+                    <th>Order count</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowIndex="rowIndex" let-list>
+                <tr>
+                    <td>{{list.ExectiveName}}</td>
+                    <td>{{list.WarehouseName}}</td>
+                    <td>{{list.ClusterName}}</td>
+                    <td>{{list.TotalCustomer}}</td>
+                    <td>{{list.TotalBeat}}</td>
+                    <td>{{list.CustomerPlann}}</td>
+                    <td>{{list.Visited}}
+                        <span *ngIf="list.VisitDetails">
+                            <button class="btn btn-gray btn-xs" (click)="ExportVisit(list.VisitDetails)">
+                                <i class="fa fa-share-square-o"></i></button>
+                        </span>
+                    </td>
+                    <td>{{list.Conversion}}</td>
+                    <td>{{list.OrderAmount}}</td>
+                    <td>{{list.AvgLine}}</td>
+                    <td>{{list.Ordercount}}</td>
+                </tr>
+            </ng-template>
+            <!-- <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+                    <tr>
+                        <td [attr.colspan]="columns.length + 1">
+                            <div class="ui-g ui-fluid" style="font-size:16px;padding:20px">
+                                <div class="ui-g-12 ui-md-3" style="text-align:center">
+                                    <img [attr.alt]="rowData.brand" src="assets/showcase/images/demo/car/{{rowData.brand}}.png">
+                                </div>
+                                <div class="ui-g-12 ui-md-9">
+                                    <div class="ui-g">
+                                        <div class="ui-g-12">
+                                            <b>Vin:</b> {{rowData.vin}}
+                                        </div>
+                                        <div class="ui-g-12">
+                                            <b>Year:</b> {{rowData.year}}
+                                        </div>
+                                        <div class="ui-g-12">
+                                            <b>Brand:</b> {{rowData.brand}}
+                                        </div>
+                                        <div class="ui-g-12">
+                                            <b>Color:</b> {{rowData.color}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template> -->
+        </p-table>
+    </div>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,109 @@
+<p-toast></p-toast>
+<h3 class=" heading mt-4 abb" >Ledger Correction Entry</h3>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-3 mt-2">
+                    <label><b>Select Ledger Isssue Type<span class="required">*</span></b></label>
+                    <p-dropdown placeholder="Select Type" [options]="selectType" optionLabel="LedgerIsssueTypeLabel"
+                    (onChange)="LedgerIsssue(selectDataType)" [(ngModel)]="selectDataType">
+                    </p-dropdown>
+                </div>
+                <div class="col-sm-3 mt-2">
+                    <label><b>Enter SKCode<span class="required">*</span></b></label>
+                    <input type="text" placeholder="Enter SkCode" class="form-control" [(ngModel)]="SKCODE">
+                </div>    
+                <div class="col-sm-3 mt-2" *ngIf="showOrder">
+                    <label><b>Enter Order Id<span class="required">*</span></b></label>
+                    <input type="text" placeholder="Enter SkCode" class="form-control" [(ngModel)]="selectedOrderId">
+                </div>  
+                <div class="col-sm-3 mt-2">
+                    <button class="btn btn-primary" style="margin-top: 30px;"  (click)="addData()">Add</button>
+                    <button class="btn btn abc ml-3" style="margin-top: 14px;" (click)="showDialog()">History</button>
+                </div>
+               
+            </div>    
+        </div>
+    </div>
+</div>
+<br>
+<p-card>
+    <div *ngIf="addDataInTbl" class="d-flex mt-3 justify-content-between bg-white" >
+        <div class="sel-opt d-flex justify-content-between">
+          <p-table [value]="addDataInTbl">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:6rem"></th>
+                    <th>Type</th>
+                    <th>SKCode</th>
+                    <th>Status</th>
+                    <th>OrderId</th>
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-obj let-rowIndex="rowIndex">
+                <tr>
+                    <td style="width:6rem"></td>
+                    <td>{{obj.ActionType}}</td>
+                    <td>{{obj.SkCode}}</td>
+                    <td>{{obj.Status}}</td>
+                    <td>{{obj.orderId}}</td>
+                    <td><i class="pi pi-trash" (click)="confirm1(obj,rowIndex)" style="font-size: 2rem;color: orangered;"></i></td>
+                </tr>
+            </ng-template>
+          </p-table>
+       </div>
+      </div>
+      <br><br>
+      <div class="row">
+    <div class="col-12">
+      <button  *ngIf="addDataInTbl" class="btn btn-primary mr-2" (click)="saveData()" style="margin-left: 630px;">Save</button>
+      <button  *ngIf="addDataInTbl" class="btn btn abc mr-2" (click)="Process()" style="margin-left: 35px;margin-bottom: 13px;">Process</button>
+    </div>
+</div>
+</p-card>
+<p-dialog [(visible)]="displayModal" [style]="{width: '50vw',height:'100vw'}">
+    <ng-template pTemplate="header">
+        History
+    </ng-template>
+    <div class="row">
+        <div class="col-12">
+   <p-table #dt [globalFilterFields]="['SkCode']" [scrollable]="false" [paginator]="true" [rows]="5" [value]="histroyData" >
+    <ng-template pTemplate="caption">
+        <div style="text-align: right">
+            <i class="fa fa-search"></i>
+            <input type="text" pInputText size="50" placeholder="Search SkCode" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                style="width:auto;border: solid 1px #ddd;">
+        </div>
+    </ng-template>    
+    <ng-template pTemplate="header">
+            <tr>
+                <!-- <th style="width:6rem"></th> -->
+                <th>Type</th>
+                <th>SKCode</th>
+                <th>Date</th>
+                <th>OrderId</th>
+                <th>Status</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-obj>
+            <tr>
+                <!-- <td style="width:6rem"></td> -->
+                <td>{{obj.ActionType}}</td>
+                <td>{{obj.SkCode}}</td>
+                <td>{{obj.CreatedDate | date:'dd/MM/yyyy'}}</td>
+                <td>{{obj.orderId}}</td>
+                <td style="font-weight: bold;" [ngClass]="obj.Status=='Pending' ? 'red' : 'green'">{{obj.Status}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+    </div>
+</p-dialog>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+

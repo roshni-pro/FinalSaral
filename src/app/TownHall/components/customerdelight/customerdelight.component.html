@@ -1,0 +1,221 @@
+<app-town-hall-navigation></app-town-hall-navigation>
+<!-- Line Chart Starts -->
+<!-- Active stores scope starts-->
+<section id="horizontal-examples">
+    <div class="row text-left">
+        <div class="col-12 mt-3 mb-1">
+            <div class="content-header">
+                <span>
+                    <a href="javascript:void(0);" (click)="isEditable = !isEditable">Active Verified Stores</a>
+                    &nbsp;
+                    <a href="javascript:void(0);" *ngIf="isEditable" (click)="updateComment()"><i class="fa fa-floppy-o"
+                            aria-hidden="true"></i></a>
+                </span>
+
+            </div>
+            <p class="content-sub-header">.</p>
+        </div>
+    </div>
+
+    <div class="row text-left" matchHeight="card">
+
+        <div class="col-xl-12 col-lg-12">
+            <div class="card horizontal">
+                <div class="card-content d-flex justify-content-between">
+                    <div class="card-img cc">
+                        <!-- <img class="card-img-top img-fluid" src="assets/img/photos/06.jpg" alt="Card image cap"> -->
+                        <div *ngIf="ActiveVarifiedStoresChartData">
+                            <canvas height="500" baseChart class="chart" [datasets]="ActiveVarifiedStoresChartData"
+                                [labels]="activeStores" [options]="ActiveVarifiedStoresChartOptions"
+                                [colors]="ActiveVarifiedStoresChartColors" [legend]="lineChartLegend"
+                                [chartType]="lineChartType" (chartClick)="chartClicked($event)"></canvas>
+                        </div>
+                    </div>
+                    <div
+                        [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallCustomerDelightComments.ActiveVerifiedStores}">
+                        <div class="px-3">
+                            <table class="table ">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Month</th>
+                                        <th>Active</th>
+                                        <th>Verified</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let kpp of ActiveVarifiedStoresDataList; let i=index;">
+                                        <td>{{i+1}}</td>
+                                        <td>{{kpp.MonthName}}</td>
+                                        <td>{{kpp.TotalActiveStores}}</td>
+                                        <td>{{kpp.TotalVarifiedStores}}</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-stacked align-self-center xmr bck rghtt"
+                        *ngIf="!isEditable && townHallCommentsSection && townHallCommentsSection.TownHallCustomerDelightComments.ActiveVerifiedStores">
+                        <div class="card horizontal">
+                            <div class="card-content d-flex justify-content-between">
+                                <div class="vtnt"
+                                    [innerHTML]="townHallCommentsSection.TownHallCustomerDelightComments.ActiveVerifiedStores">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallCustomerDelightComments.ActiveVerifiedStores"
+            name="CRMLevelEditor" [style]="{'height':'320px'}"></p-editor>
+    </div>
+
+</section>
+<!-- Active stores scope ends-->
+
+
+<!-- DP Added scope starts-->
+<section id="horizontal-examples">
+    <div class="row text-left">
+        <div class="col-12 mt-3 mb-1">
+            <div class="content-header">DP Added</div>
+            <p class="content-sub-header">.</p>
+        </div>
+    </div>
+
+    <div class="row text-left" matchHeight="card">
+
+        <div class="col-xl-12 col-lg-12">
+            <div class="card horizontal">
+                <div class="card-content d-flex justify-content-between">
+                    <div class="card-img ac-kpp-clr">
+                        <!-- <img class="card-img-top img-fluid" src="assets/img/photos/06.jpg" alt="Card image cap"> -->
+                        <div *ngIf=" DPAddedChartData">
+                            <canvas height="500" baseChart class="chart" [datasets]=" DPAddedChartData"
+                                [labels]="DPAdded" [options]=" DPAddedChartOptions" [colors]=" DPAddedChartColors"
+                                [legend]="lineChartLegend" [chartType]="lineChartType"
+                                (chartClick)="chartClicked($event)"></canvas>
+                        </div>
+                    </div>
+                    <div [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallCustomerDelightComments.ActiveVerifiedStores}">
+                        <div class="px-3">
+                            <table class="table ">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Month</th>
+                                        <th>PointsAdded</th>
+                                        <th>PointsUsed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let kpp of DPAddedDataList; let i=index;">
+                                        <td>{{i+1}}</td>
+                                        <td>{{kpp.MonthName}}</td>
+                                        <td>{{kpp.PointsAdded}}</td>
+                                        <td>{{kpp.PointsUsed}}</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-stacked align-self-center xmr bck rghtt"
+                        *ngIf="!isEditable && townHallCommentsSection && townHallCommentsSection.TownHallCustomerDelightComments.DPAdded">
+                        <div class="card horizontal">
+                            <div class="card-content d-flex justify-content-between">
+                                <div class="vtnt"
+                                    [innerHTML]="townHallCommentsSection.TownHallCustomerDelightComments.DPAdded"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallCustomerDelightComments.DPAdded" name="CRMLevelEditor"
+            [style]="{'height':'320px'}"></p-editor>
+    </div>
+
+</section>
+<section id="horizontal-examples">
+    <div class="row text-left">
+        <div class="col-12 mt-3 mb-1">
+            <div class="content-header">CRM Levels</div>
+            <p class="content-sub-header">.</p>
+        </div>
+    </div>
+
+    <div class="row" matchHeight="card">
+        <div class="col-xl-8 col-lg-12 col-12">
+            <div class="card ">
+                <div class="card-header">
+                    <h4 class="card-title"></h4>
+                </div>
+                <div class="card-content">
+                    <div id="bar-bar1" class="height-500" *ngIf="CRMlevelChartData && CRMlevelChartData.length >0">
+                        <canvas baseChart class="chart" [datasets]="CRMlevelChartData" [labels]="CRMlevel"
+                            [options]="CRMlevelChartOptions" [colors]="CRMlevelChartColors"
+                            [legend]="CRMlevelChartLegend" [chartType]="CRMlevelChartType"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-12 col-12">
+            <div class="card inv-rght">
+                <div class="card-header">
+                    <h4 class="card-title">CRM Levels </h4>
+                </div>
+                <div class="card-content rght-inv">
+
+                    <table class="table table-responsive-sm text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Month</th>
+                                <th>Level 0</th>
+                                <th>Level 1</th>
+                                <th>Level 2</th>
+                                <th>Level 3</th>
+                                <th>Level 4</th>
+                                <th>Level 5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let level of CRMlevelDataList; let i = index;">
+                                <td>{{i+1}}</td>
+                                <td>{{level.MonthName}}</td>
+                                <td>{{level.L0Count}}</td>
+                                <td>{{level.L1Count}}</td>
+                                <td>{{level.L2Count}}</td>
+                                <td>{{level.L3Count}}</td>
+                                <td>{{level.L4Count}}</td>
+                                <td>{{level.L5Count}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+        <p-editor [(ngModel)]="townHallCommentsSection.TownHallCustomerDelightComments.CRMLevel" name="CRMLevelEditor"
+            [style]="{'height':'320px'}"></p-editor>
+    </div>
+    <div class="col-xl-12 col-lg-12"
+        *ngIf="!isEditable && townHallCommentsSection && townHallCommentsSection.TownHallCustomerDelightComments.CRMLevel">
+        <div class="card horizontal">
+            <div class="card-content d-flex justify-content-between">
+                <div class="vtnt" [innerHTML]="townHallCommentsSection.TownHallCustomerDelightComments.CRMLevel"></div>
+            </div>
+        </div>
+    </div>
+</section>

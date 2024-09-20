@@ -1,0 +1,97 @@
+
+<ng-container>
+
+    <div class="row m-0" (keydown)="handleKeyboardEvent($event)">
+        <div class="col-12">
+            
+            <div id="kick-start" class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3 class="card-title">Buyer Capacity Graph</h3>
+                        </div>
+                        <div class="col-md-3">
+                            <form #form1="ngForm">
+                                <select id="desg" name="desg" #ctrl class="form-control" [(ngModel)]="whouseId"
+                                    (change)="buyerId = null; setWarehouse($event.target.value, ctrl)" required>
+                                    <option [selected]="true" default [value]="null">--select warehouse--
+                                    </option>
+                                    <ng-container *ngFor="let warehouse of warehouselist">
+                                        <option [value]="warehouse.WarehouseId">
+                                            {{warehouse.WarehouseName}}
+                                        </option>
+                                    </ng-container>
+                                </select>
+                            </form>
+                        </div>
+                    
+
+                    </div>
+
+                </div>
+                <div class="card-content" *ngIf="initial">
+                    <div class="card-body">
+                        <canvas baseChart [datasets]="barChartData" [labels]="labels" [chartType]="'bar'"
+                            [legend]="true" [options]="options" height="120" #chart
+                            (chartClick)="openSubGraph($event, chart)">
+                        </canvas>
+                        <div class="col-md-14">
+                            <div class="row" *ngIf="forIndexArr.length != 1 && forIndexArr.length != 2">
+                                <div class="col-md-2" style="margin-right: 10%;">
+                                </div>
+                                <ng-container *ngFor="let itm of forIndexArr; let i = index">
+                                    
+                                    <a href="javascript:void(0)" class="pin" style="color: black; cursor: pointer; font-size: small; margin-right: 3.5%; margin-top: -2.5%;"
+                                        class="col-md-1" (click)="subGraphDisplay(i)">
+                                        {{itm.BuyerName}}
+                                </a>
+                                </ng-container>
+                            </div>
+                            <div class="row" *ngIf="forIndexArr.length == 1">
+                                <div class="col-md-2" style="margin-right: 10%;">
+                                </div>
+                                <ng-container *ngFor="let itm of forIndexArr; let i = index">
+                                    <a class="pin" href="javascript:void(0)" style="color: black; cursor: pointer; font-size: small; margin-right: 3.5%; margin-top: -2.5%; margin-left: 50%"
+                                        class="col-md-1" (click)="subGraphDisplay(i)">
+                                        {{itm.BuyerName}}
+                                </a>
+                                </ng-container>
+                            </div>
+                            <div class="row" *ngIf="forIndexArr.length == 2">
+                                <div class="col-md-2" style="margin-right: 10%;">
+                                </div>
+                                <ng-container *ngFor="let itm of forIndexArr; let i = index">
+                                    <a class="pin" href="javascript:void(0)" style="color: black; cursor: pointer; font-size: small; margin-right: 3.5%; margin-top: -2.5%; margin-left: 50%"
+                                        class="col-md-1" (click)="subGraphDisplay(i)">
+                                        {{itm.BuyerName}}
+                                </a>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <div style="margin-left: 450px;">
+                            <br>
+                            <i *ngIf="initial" class="fa fa-arrow-circle-left"
+                                style="font-size:36px; margin-right: 20px;" (click)="navigate(37)"></i>
+                            {{graphData && graphData.WarehouseName ? graphData.WarehouseName : ''}}
+
+                            <i *ngIf="initial" class="fa fa-arrow-circle-right"
+                                style="font-size:36px ; margin-left: 20px;" (click)="navigate(39)"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <p-toast [style]="{marginTop: '20px'}"></p-toast>
+
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+</ng-container>
+
+<app-subgraph *ngIf="buyerId && buyerId != null && whouseId && whouseId != null" [buyerId]="buyerId" [whouseId]="whouseId"></app-subgraph>
+

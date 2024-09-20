@@ -1,0 +1,181 @@
+<div class="row mt-4">
+  <div class="col-md-10 text-center"><b>
+      <h2 style="color: #ff5b1e; font-weight: 600; "> Personal Home </h2>
+    </b> </div>
+</div>
+<div class="row">
+  <div class="col-sm-3">
+    <p-dropdown [options]="WarehouseList" [style]="{'size':'50px'}" [filter]="true" optionLabel="WarehouseName"
+      placeholder="Select Warehouse" optionValue="WarehouseId" [(ngModel)]="Warehouse"
+      (ngModelChange)="onWarehouseChange()"></p-dropdown>
+  </div>
+  <div class="col-md-3"></div>
+  <div class="col-sm-4">
+  </div>
+  <div class="col-sm-2">
+    <button class="btn btn-raised btn-primary" (click)="ClearFields()">Add New Section</button>
+  </div>
+</div>
+<div class="row d-flex justify-content-between ">
+  <div class="col-md-5">
+    <div>
+      <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between" style="margin-right: 45px;">
+          <p-card class="table-card" [style]="{width: '120%', height: '100%' }">
+            <div class="cfr-table">
+              <ng-container>
+                <p-table [value]="CategoryList" [scrollable]="true" scrollHeight="40vh"
+                  [reorderableColumns]="true" responsiveLayout="scroll">
+                  <ng-template pTemplate="header" pReorderableColumn>
+                    <tr>
+                      <th></th>
+                      <th>S.No</th>
+                      <th>Section</th>
+                      <th>Delete</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-index="rowIndex">
+                    <tr [pReorderableRow]="index">
+
+                      <td>
+                        <span class="pi pi-bars" pReorderableRowHandle (dragenter)="SaveChanges()"></span>
+                      </td>
+                      <td>{{index+1}}</td>
+                      <td (click)="Edit(rowData)">{{rowData.SectionName}}</td>
+                      <td>
+                        <i class="pi pi-trash" (click)="confirm(rowData)" style="font-size: 2rem;color: orangered;"></i>
+                      </td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                      <td colspan="15" style="text-align: center;">
+                        <h5><b>No Data Found.</b></h5>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </ng-container>
+            </div>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <p-dialog class="dialog" header="Custom Items" [(visible)]="showDialogpop" [modal]="true" appendTo="body" [style]="{'width': '60vw' ,'margin-top':'-9%'}" [draggable]="false
+  " [resizable]="false">
+
+    <div class="row ">
+      <div class="col-1 mt-1 text-center">
+        <label>Item</label>
+      </div>
+      <div class="col-3 mt-1 ">
+        <input type="text" class="form-control" name="code" [(ngModel)]="Searchby"
+        placeholder="Search by item" #Code="ngModel" required="1"
+        maxlength="50" minlength="3"/>
+      </div>
+      <div class="col-md-3 mt-1"> <button class="btn btn-raised btn-primary" (click)="getItemList()">Search</button></div>
+      <div class="col-3 mt-1">
+        <p-multiSelect [options]="ItemList" [(ngModel)]="getSelectedItem" optionValue="ItemNumber"
+          placeholder="Custom Item" optionLabel="ItemName"></p-multiSelect>
+      </div>
+      <div class="col-md-1 mt-1">
+        <button class="btn btn-raised btn-primary" (click)="onchangeItemList(getSelectedItem)">Add</button>
+      </div>
+    </div>
+    <br>
+    <p-card class="table-card">
+      <div class="cfr-table">
+        <ng-container>
+          <p-table [value]="itemListShow"  scrollHeight="30vh" [reorderableColumns]="true"  [rows]="5" [scrollable]="true" responsiveLayout="scroll">
+            <ng-template pTemplate="header" pReorderableColumn>
+              <tr>
+                <th></th>
+                <th>Item Name</th>
+                <th>Item Number</th>
+                <th>Store</th>
+                <th>Selling Price</th>
+                <th>Status</th>
+                <th>Delete</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns" let-index="rowIndex" >
+              <tr [pReorderableRow]="index">
+                <td><span class="pi pi-bars" pReorderableRowHandle></span></td>
+                <td>{{rowData.ItemName}}</td>
+                <td>{{rowData.ItemNumber}}</td>
+                <td>{{rowData.StoreName}}</td>
+                <td>{{rowData.SellingPrice}}</td>
+                <td>{{rowData.ActiveStatus}}</td>
+                <td>
+                  <i class="pi pi-trash" (click)="confirm1(rowData)" style="font-size: 2rem;color: orangered;"></i>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <div class="row mt-2">
+            <div class="col-md-5"></div>
+            <div class="col-md-7"><button class="btn btn-raised btn-primary" (click)="onSave()">Save</button></div>
+          </div>
+        </ng-container>
+      </div>
+    </p-card>
+  </p-dialog>
+  <div class="col-md-6 border" style="margin-right: 15px;">
+    <div class="row mt-4">
+      <div class="col-md-5"><label>Section Name</label></div>
+      <div class="col-md-6"> <input type="text" placeholder="Section Name" 
+          class="form-control" [(ngModel)]="SectionName" /></div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-md-5"><label>Hindi Section Name</label></div>
+      <div class="col-md-6"> <input type="text"  placeholder="Section Hindi Name(optional)"
+          class="form-control" [(ngModel)]="SectionHindiName" /></div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-md-5"><label>Items</label></div>
+      <div class="col-md-6"> <p-dropdown [options]="itemListData" optionLabel="label" optionValue="value"
+          placeholder="Select Item" [(ngModel)]="type" (onChange)="onchangecustomlist(type)"></p-dropdown></div>
+    </div>
+    <br>
+    <div class="row" *ngIf="showCustomList">
+      <div class="col-md-5"><label>Custom List</label></div>
+      <div class="col-md-6"> <p-dropdown [options]="CustomListData" placeholder="Select CustomList" optionLabel="label"
+          [(ngModel)]="CustomList" optionValue="value"></p-dropdown></div>
+      <br>
+    </div>
+    <div class="row" *ngIf="showCustomList">
+      <div class="col-md-9" style="margin-left: 60%;margin-top: 15px;"><button class="btn btn-raised btn-primary"
+          (click)="onSave()">Save</button></div>
+    </div>
+    <div class="row" *ngIf="showCustomURL">
+      <div class="col-md-5"><label>Custom URL</label></div>
+      <div class="col-md-4">
+        <input type="text" style="width: 159%; height: 35px;" placeholder="Enter Url" [(ngModel)]="URL" />
+      </div>
+    </div>
+    <div class="row" *ngIf="showCustomURL">
+      <div class="col-md-9" style="margin-left: 60%;margin-top: 15px;"><button class="btn btn-raised btn-primary"
+          (click)="onSave()">Save</button></div>
+    </div>
+
+    <div class="row" *ngIf="showListItem">
+      <div class="col-md-5"><label>Custom Item</label></div>
+      <div class="col-md-6"><button class="btn btn-raised btn-primary" (click)="showDialogPop()">View/Add items</button>
+      </div>
+      <br>
+    </div>
+    <div class="row" *ngIf="showListItem">
+      <div class="col-md-3"></div>
+      <div class="col-md-9" ><button class="btn btn-raised btn-primary" (click)="onSave()">Save</button></div>
+    </div>
+  </div>
+</div>
+  <p-blockUI [blocked]="block"></p-blockUI>
+  <p-progressSpinner *ngIf="block"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+    <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>

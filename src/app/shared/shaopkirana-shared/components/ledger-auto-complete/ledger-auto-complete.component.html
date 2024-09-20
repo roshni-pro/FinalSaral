@@ -1,0 +1,25 @@
+<div class=ui-g *ngIf="!isSelected">
+    <div class="ui-g-6" *ngIf="!ledgerTypeName">
+        <select id="desg" name="desg" class="form-control" [(ngModel)]="selectedLedgerTypeID"
+            (ngModelChange)="onLedgerTypeChange()">
+            <option [ngValue]="null">select</option>
+            <option *ngFor="let ledgerType of ledgerTypeList" [ngValue]="ledgerType.ID">
+                {{ ledgerType.code }}
+            </option>
+        </select>
+    </div>
+    <div [ngClass]="{'ui-g-6':!ledgerTypeName, 'ui-g-12': ledgerTypeName}">
+        <p-autoComplete [(ngModel)]="selectedLedger" [suggestions]="ledgerList" (completeMethod)="getLedgerList($event)"
+            field="Name" [size]="30" placeholder="enter at least 3 chars" [minLength]="1" name="ledgerName"
+            (onSelect)="onSelectLedger($event)" name="ledgerName" required="true" #ledgerName="ngModel">
+        </p-autoComplete>
+    </div>
+</div>
+<div class=ui-g *ngIf="isSelected">
+    <div class="ui-g-12">
+        <div class="ui-inputgroup">
+            <input class="form-control" [(ngModel)]="ledgerValue.Name" disabled>
+            <button pButton type="button" icon="pi pi-times" (click)="cancel()" class="ui-button-danger"></button>
+        </div>
+    </div>
+</div>

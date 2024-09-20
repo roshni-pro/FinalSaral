@@ -1,0 +1,326 @@
+<div *ngIf="showDirectionDialog" class="nu-12">
+    <app-consumer-order-direction [location]="selectedLocation" (close)="onCloseDirectionDialog($event)">
+    </app-consumer-order-direction>
+</div>
+
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+
+<div class="container">
+    <div class="my-2 d-flex justify-content-between">
+        <div class=" header">
+            <h3 class="m-2">Consumer Orders <i class="fa fa-shopping-bag" aria-hidden="true"></i></h3>
+        </div>
+    </div>
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="search-head rounded d-flex p-2 px-4 justify-content-between align-items-center"
+            (click)="toggleSearch()">
+            <h5 class="m-0">Filters</h5>
+            <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+        </div>
+        <div id="search-content p-2" *ngIf="isSearch">
+            <form class="form" #ConsumerForm="ngForm">
+                <div class="form-body container">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="orderType">Invoice No.</label>
+                                <input type="text" placeholder="InvoiceNo" [(ngModel)]="data.InvoiceNo" id="InvoiceNo"
+                                    name="InvoiceNo" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="orderType">Order Status</label>
+                                <p-dropdown [(ngModel)]="data.CartStatus" name="status" [options]="OrderStatusV1">
+                                </p-dropdown>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="startdate"><b>Start Date: </b></label><br>
+                                <p-calendar [showIcon]="true" [(ngModel)]="data.StartDate" name="startDate"
+                                    [readonlyInput]="true" required #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="startdate"><b>End Date: </b></label><br>
+                                <p-calendar [showIcon]="true" [(ngModel)]="data.EndDate" name="EndDate"
+                                    [readonlyInput]="true" required #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3" *ngIf="clusterList">
+                            <div class="form-group">
+                                <label for="orderType">Cluster</label>
+                                <select name="clusterName" class="form-control" [(ngModel)]="data.ClusterId">
+                                    <option [ngValue]="null">
+                                        Select
+                                    </option>
+                                    <option *ngFor="let cluster of clusterList" [value]="cluster.ClusterId">
+                                        {{cluster.ClusterName}}
+                                    </option>
+                                </select>
+                                <!-- <input type="text" id="Search" [(ngModel)]="data.SearchString"
+                                    (ngModelChange)="onGlobalSearch()" placeholder="Enter Consumer Name or Mobile"
+                                    name="search" class="form-control"> -->
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="orderType">Global Search</label>
+                                <input type="text" id="Search" [(ngModel)]="data.SearchString"
+                                    (ngModelChange)="onGlobalSearch()" placeholder="Enter Consumer Name or Mobile"
+                                    name="search" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="col-md-9" style="padding-top: 30px">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="onSearch(data)">
+                                    Search
+                                </button> &nbsp;
+                                <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="onReset()">
+                                    Reset
+                                </button>&nbsp;&nbsp;
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="exportConsumerInvoice(data)">
+                                    Export Invoice List
+                                </button> &nbsp;
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                    (click)="exportItemlist(data)">
+                                    Export Item List
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="ui-fluid shadow p-3 bg-white rounded table table-hover">
+        <div class="position-relative">
+            <div class="position-absolute order-details" *ngIf="isDetails">
+                <app-consumer-itemdetails [details]="selectedRowDetails" (isdetailsclose)="isDetailsFalse($event)"
+                    (closev1)="CloseItemDetils($event)" (refreshParent)="ngOnInit()" class="d-flex justify-content-end">
+                </app-consumer-itemdetails>
+            </div>
+            <p-table #dt [value]="ConsumerOrderList" [lazy]="true" [totalRecords]="totalRecords"
+                (onLazyLoad)="load($event)" [paginator]="true" [rows]="PageSize" dataKey="CartId" [scrollable]="true"
+                scrollHeight="70vh">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="text-align: center">seller Name</th>
+                        <th style="text-align: center">Cluster</th>
+                        <th style="text-align: center; min-width: 150px; width: 150px;">Buyer Name</th>
+                        <th style="text-align: center">Invoice No</th>
+                        <th style="text-align: center">Order Amount</th>
+                        <th style="text-align: center">Payment Mode</th>
+                        <th style="text-align: center">Buyer Mobile</th>
+                        <th style="text-align: center">Status</th>
+                        <th style="text-align: center">Order Date</th>
+                        <th style="text-align: center">Details</th>
+                        <th style="text-align: center">Edit/Status</th>
+                        <th style="text-align: center">Invoice</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                    <tr>
+                        <td style="text-align: center">{{rowData.SellerName}}</td>
+                        <td style="text-align: center">{{rowData.ClusterName}}</td>
+                        <td style="text-align: center; min-width: 150px; width: 150px;">
+                            {{rowData.BuyerName}}
+                            <br>
+                            <a href="javascript:;" (click)="openLocation(rowData)">{{rowData.ShippingAddress}}</a>
+                        </td>
+                        <td style="text-align: center">{{rowData.InvoiceNo}}</td>
+                        <td style="text-align: center">{{rowData.OrderAmount}}</td>
+                        <td style="text-align: center">{{rowData.PaymentMode}}</td>
+                        <td style="text-align: center">{{rowData.BuyerMobile}}</td>
+                        <td style="text-align: center">{{rowData.CartStatus}}</td>
+                        <td style="text-align: center">{{rowData.InvoiceDate}}</td>
+                        <td style="text-align: center">
+                            <div (click)="openDetails(rowData,$event)">
+                                <i class="fa fa-lg fa-info-circle"></i>
+                            </div>
+                            <!-- <button class="btn tblBtn" (click)="openDetails(rowData,$event)">Details</button> -->
+                        </td>
+                        <td style="text-align: center">
+                            <div (click)="OpenPopup(rowData)">
+                                <i class="fa fa-lg fa-edit"></i>
+                            </div>
+                            <!-- <button class="btn tblBtn blkBtn" (click)="OpenPopup(rowData)">Change Status</button> -->
+                        </td>
+                        <td>
+                            <div *ngIf="rowData.CartStatus=='Delivered' 
+                            || rowData.CartStatus=='Shipped'|| rowData.CartStatus=='settled' || rowData.CartStatus=='Cancelled' "
+                                (click)="PrintInvoice(rowData)">
+                                <i class="fa fa-lg fa-print"></i>
+                                <!-- <button class="btn tblBtn grayBtn" (click)="PrintInvoice(rowData)">Print
+                                    Invoice</button> -->
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <div *ngIf="order">
+        <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+            [style]="{width: '70%',height:'auto', overflow: 'auto'}">
+            <p-header>
+                Change Order Status
+            </p-header>
+            <div class="ui-fluid">
+                <form #statusForm="ngForm">
+                    <div class="ui-g">
+
+                        <div class="ui-g-12">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="name"><b>Order Status</b></label>
+                                        <select id="orderStatus" name="orderStatus" class="form-control"
+                                            [(ngModel)]="order.CartStatus" (ngModelChange)="onstatusChange()"
+                                            required="1" #orderStatus="ngModel">
+                                            <option *ngFor="let unit of selectedOrderStatus" [value]="unit.value">
+                                                {{ unit.label}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div *ngIf="isFormInvalid && !orderStatus.valid && orderStatus.errors.required"
+                                        style="font-size: 16px;">
+                                        <code>Please select valid orderStatus</code>
+                                    </div>
+                                    <div *ngIf="isDelivered">
+                                        <code>Only Settled is allowed.</code>
+                                    </div>
+                                    <div *ngIf="isPending">
+                                        <code>Pending status is not allowed.</code>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-8">
+                                    <label for="input"><b>Enter Reason *</b></label>
+                                    <input type="text" name="Reason" class="form-control" id="reason"
+                                        [(ngModel)]="order.Reason" placeholder="Enter Reason" maxlength="50"
+                                        minlength="2" #Reason="ngModel">
+                                    <div *ngIf="resonrequired" style="font-size: 16px;">
+                                        <code>Reason is required.</code>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4" *ngIf="showDeliveryBoy">
+                                    <div class="form-group">
+                                        <label for="name"><b>Delivery Boy</b></label>
+
+                                        <select id="orderStatus" name="dboyNumber" class="form-control"
+                                            [(ngModel)]="selectedDboy" [required]="order.CartStatus== 'Confirmed'"
+                                            #dboyNumber="ngModel">
+                                            <option [ngValue]="null">select dboy</option>
+                                            <option *ngFor="let boy of deliveryBoyList" [ngValue]="boy">
+                                                {{ boy.FirstName}} {{ boy.LastName}}
+                                                ( {{boy.Mobile}})
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div *ngIf="isFormInvalid && !dboyNumber.valid && dboyNumber.errors.required"
+                                        style="font-size: 16px;">
+                                        <code>Please select dboy</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="ui-g-12">
+                            <div class="bdry"> </div>
+                            <button class="btn btn-raised btn-raised btn-primary pull-right"
+                                (click)="onCancelPopup()">Cancel</button>
+                            <button class="btn btn-raised btn-raised btn-primary pull-right" style="margin-right: 20px;"
+                                (click)="saveStatus(order,statusForm)">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </p-dialog>
+    </div>
+
+    <div *ngIf="selectedque">
+        <p-dialog [(visible)]="isDboyPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+            [style]="{width: '70%',height:'auto', overflow: 'auto'}">
+            <p-header>
+                Edit/Dboy Details
+            </p-header>
+            <div class="ui-fluid">
+                <form #DboyForm="ngForm">
+                    <div class="ui-g">
+                        <div class="ui-g-6">
+                            <div class="ui-g">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="input">Dboy FirstName</label>
+                                        <input type="text" name="dBoyName" class="form-control" id="dBoyName"
+                                            [(ngModel)]="selectedque.FirstName" placeholder="Enter first Name"
+                                            required="1" #dBoyName="ngModel" disabled>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="input">Dboy LastName</label>
+                                        <input type="text" name="dBoyLstName" class="form-control" id="dBoyLstName"
+                                            [(ngModel)]="selectedque.LastName" placeholder="Enter Last Name"
+                                            required="1" #dBoyLstName="ngModel" disabled>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="name"><b>DBoy List</b></label>
+                                            <select id="dBoylist" name="dBoylist" class="form-control" required="1">
+                                                <option value="0">--Select---</option>
+                                                <option *ngFor="let db of dBoyList" [ngValue]="db.Id">
+                                                    {{ db.FirstName}} {{db.LastName}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="name">Address:</label>
+                                        <input type="text" name="Address" class="form-control" id="Address"
+                                            [(ngModel)]="selectedque.Address" placeholder="Enter Address" disabled>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="name">Mobile:</label>
+                                        <input type="text" name="Mobile" class="form-control" id="Mobile"
+                                            [(ngModel)]="selectedque.Mobile" placeholder="Enter Mobile" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-12">
+                            <div class="bdry"> </div>
+                            <button class="btn btn-raised btn-raised btn-primary pull-right"
+                                (click)="Cancel()">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </p-dialog>
+    </div>
+
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

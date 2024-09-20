@@ -1,0 +1,60 @@
+<div class="col-md-12">
+  <div class="card pt-2">
+    <div class="card-content">
+      <div class="px-3">
+        <form class="form" name="form" #agentEditForm="ngForm">
+            <input autocomplete="false" name="hidden" type="text" style="display:none;">
+          <div class="form-body col-12">
+
+       
+            <h5 class="m-1 ml-2"><strong>Edit Agent</strong></h5>
+            <hr>
+            <div class="row"  *ngIf="agent">
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-5">
+                  <div class="form-group ">
+                      <label for="a" class="col-md-6">Agent Full Name: *</label>
+                      <input type="text" id="CityName" class="form-control" name="cname" [(ngModel)]="agent.DisplayName"
+                      placeholder="Agent Full Name:" #firstName="ngModel" required="1" maxlength="50" minlength="2" /> 
+                      <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">                   
+                        <code>Agent Name is required</code>
+                    </div>
+                    <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                        <code>minlength 2</code>
+                    </div>
+                    </div>
+              </div>
+                    <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="a" class="col-md-6">Agent Code: *</label>
+                        <input type="text" id="CityName" class="form-control" name="cname" [(ngModel)]="agent.Agentcode"
+                        placeholder="Agent code:" #firstName="ngModel" required="1" maxlength="50" minlength="2" /> 
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">                   
+                          <code>Agent code is required</code>
+                      </div>
+                      <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                          <code>minlength 2</code>
+                      </div>
+                      </div>
+
+              </div>
+            </div>
+
+            
+            <div class="form-actions right col-sm-12 p-3">
+              <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+               Cancel
+              </button>
+              <button type="button" class="btn btn-raised btn-primary" (click)="update(agentEditForm)">
+                Save
+              </button>
+            </div> 
+          </div>   
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

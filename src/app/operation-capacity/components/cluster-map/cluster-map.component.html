@@ -1,0 +1,70 @@
+<div class="col-xl-12 col-lg-12 tp">
+    <div class="card">
+      <div class="sk">
+        <div class="tooltip-clu" *ngIf="selectedPolygon">      
+          <span >
+            {{selectedPolygon.warehouse}} - {{selectedPolygon.ClusterName ? selectedPolygon.ClusterName: ''}}
+          </span>
+          <table *ngFor="let rowData of selectedClusterInfo">
+            <thead>
+                <tr>
+                    <!-- <th>Cluster Name</th>   -->
+                    <th>Load</th>
+                    <th>Touch Point </th>      
+                    <th>No. Of Order</th>  
+                    <th>No. Of Trip</th>  
+                  </tr>
+            </thead>
+            <tbody>
+                <tr >
+                    <!-- <td>{{rowData.ClusterName}}</td> -->
+                    <td>{{rowData.TotalWeight}}</td>
+                    <td>{{rowData.CustomerCount}}</td>
+                    <td>{{rowData.OrderCount}}</td>
+                    <td>{{rowData.TripCount}}</td>
+                  </tr>
+            </tbody>
+          </table>
+        </div>
+              <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [zoomControl]="true"
+                [fullscreenControl]="fullscreenControl" [disableDefaultUI]="false" [zoomControl]="false"
+                [fullscreenControlOptions]="options" [style.height.px]="myInnerHeight">
+                <div *ngIf="clusterWarehouseWise">
+                  <agm-polygon [fillColor]="item.fillColor"
+                    *ngFor="let item of clusterWarehouseWise.clusters; let i=index" [polyDraggable]="false"
+                    [fillOpacity]="0.4" [paths]="item.clusterlatlng" [editable]="false" strokeOpacity="0.1"
+                    (polyPathsChange)="onPolygonChange($event, item, i)"
+                    (polyClick)="polyClicked(item, clusterWarehouseWise)">
+                  </agm-polygon>
+                </div>
+              </agm-map>
+      </div>
+    </div>
+</div>
+<div class="col-xl-12 col-lg-12">
+    <div class="ui-fluid shadow bg-white rounded table table-hover">
+        <p-table [value]="clusterInfoList" #dt [globalFilterFields]="['ClusterName']">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>S No.</th>
+                <!-- <th>Cluster Name</th>   -->
+                <th>Load</th>
+                <th>Touch Point </th>      
+                <th>No. Of Order</th>  
+                <th>No. Of Trip</th>  
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+              <tr >
+                <td>{{i+1}}</td>
+                <!-- <td>{{rowData.ClusterName}}</td> -->
+                <td>{{rowData.TotalWeight}}</td>
+                <td>{{rowData.CustomerCount}}</td>
+                <td>{{rowData.OrderCount}}</td>
+                <td>{{rowData.TripCount}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+    
+      </div>
+</div>

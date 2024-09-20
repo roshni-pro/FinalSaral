@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script>
+    $.urlParam = function (name) {
+      var results = new RegExp('[\?&]' + name + '=([^&#]*)')
+        .exec(window.location.search);
+
+      return (results !== null) ? results[1] || 0 : false;
+    }
+    $(document).ready(function () {
+      var custid = $.urlParam('customerid');
+      var lang = $.urlParam('lang');
+      var wid = $.urlParam('wid');
+      $("#Param").text("CustomerId :" + custid + " <br /> WarehouseId :" + wid + " <br /> Language :" + lang);
+    });
+  </script>
+</head>
+
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+
+
+<div *ngIf="showQuestions" style="margin-top: 30px;">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <div class="center col-12">
+
+        <!-- <h1 class="h11">ShopKirana Survey <i class="ft-check-circle"></i> </h1> -->
+        <!-- <img src="assets/img/ShopKiranaLogo.png"> -->
+        <img src="assets/img/ShopKiranaLogo.png" class="wcr">
+      </div>
+      <div class="col-12">
+
+        <h5 class="h12"><b> {{surveyData.SurveyName}} </b></h5>
+
+        <h5 class="h13"><i class="icon-clock"></i> Survey
+          Validity({{surveyData.StartDate | date}})--({{surveyData.EndDate | date}}) </h5>
+      </div>
+    </div>
+  </div>
+  <br>
+  <p class="progresswidth">
+    <ngb-progressbar type="info" [value]="answeredValue">
+    </ngb-progressbar>
+  </p>
+  <h5 style="text-align: center;"><b> {{surveyData.AnsweredCount}} of {{surveyData.QuestionCount}} </b></h5>
+  <h5 style="text-align: center;"><b>{{answeredValue | number : '1.0-1'}}%</b></h5>
+
+
+  <br>
+
+  <h2 class="queStyle">{{questionToShow.QueName}}</h2>
+
+  <br>
+  <div class="radio" *ngFor="let key of questionToShow.AnswerList let i = index">
+    <label class="ansStyle">
+      <input type="radio" name="keys_on_hand" [value]="key.AnswerId" [(ngModel)]="SelectedAnswer">
+
+      {{key.Answer}}
+    </label>
+  </div>
+  <br>
+  <br>
+
+
+  <div style="text-align: center;" class="col-12">
+    <h5 style="text-align: center;" class="h122"><b> You Will Get {{questionToShow.Point}} Points for this Question
+      </b>
+    </h5>
+  </div>
+  <br>
+  <br>
+  <div style="text-align: center;">
+    <button pButton type="button" [disabled]="SelectedAnswer == -1" (click)="onSubmit(SelectedAnswer)"
+      class="btn btnStyle ui-btn-rounded"><b
+        style="font-family: 'Segoe UI', Tahoma, Geneva, Verdan;color:#ffffff;">Next</b></button>
+    <!-- <button (click)="onSubmit(SelectedAnswer)" type="button" class="btn btn-raised btn-round mr-1 btn-warning"
+      [disabled]="SelectedAnswer == -1">Next</button> -->
+  </div>
+
+</div>
+
+</html>
+
+<div *ngIf="dontshowQuestions">
+  <div class="my-2 d-flex justify-content-between">
+    <div class=" header">
+      <div class="center col-12">
+
+        <!-- <h1 class="h11">ShopKirana Survey <i class="ft-check-circle"></i> </h1> -->
+        <!-- <img src="assets/img/ShopKiranaLogo.png"> -->
+        <img src="assets/img/ShopKiranaLogo.png" class="wcr">
+      </div>
+      <div style="text-align: center;" class="col-12">
+
+        <h5 class="h12"> {{surveyData.SurveyName}} </h5>
+
+
+        <h5 class="h13"><i class="icon-clock"></i> Survey
+          Validity({{surveyData.StartDate | date}})--({{surveyData.EndDate | date}}) </h5>
+      </div>
+
+    </div>
+  </div>
+  <p class="progresswidth">
+    <ngb-progressbar type="info" [value]="answeredValue">All Questions Answered</ngb-progressbar>
+  </p>
+  <h5 style="text-align: center;"><b> {{surveyData.QuestionCount}} of {{surveyData.AnsweredCount}}</b>..</h5>
+  <h5 style="text-align: center;"><b>{{answeredValue}}%</b></h5>
+  <br>
+  <h3 style="text-align: center;">Thanks for filling out our Survey form!</h3>
+  <h5 style="text-align: center;" class="h122"><b>{{surveyData.PointsEarned}} - Points will be Add into your Accout.</b>
+  </h5>
+</div>
+
+
+<div *ngIf="commingSoonScreen" class="screen">
+
+  Comming Soon..
+  <br>
+  <br>
+  <h3 class="submitform">Please,Check After Some Time.</h3>
+  <h3>Thank You...</h3>
+
+</div>
+
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

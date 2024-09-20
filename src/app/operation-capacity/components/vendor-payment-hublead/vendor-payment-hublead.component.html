@@ -1,0 +1,747 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section style="position: relative;">
+
+    <div class="col-xl-12 col-lg-12">
+        <div class="header">
+            <h3 class="m-2"><b>Vendor Payment Automation</b></h3>
+        </div>
+        <div class="card">
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Select Warehouse</label>
+                            <p-dropdown id="warehouseList" name="warehouseList" [options]="warehouseList"
+                                [filter]="true" (onChange)="onChangeWarehouse()" [(ngModel)]="selectedWarehouse"
+                                optionLabel="label" placeholder="Select Warehouse">
+                            </p-dropdown>
+
+                        </div>
+
+                        <div class="col-3" style="margin-inline:20px ;">
+                            <label>Transporter</label>
+                            <p-dropdown id="Transporter" name="Transporter" [options]="transporterList" [filter]="true"
+                                optionValue="fleetId" (onChange)="onChangefleettype()" [(ngModel)]="selectedTransporter"
+                                optionLabel="TransportName" placeholder="Select Transporter">
+                            </p-dropdown>
+                        </div>
+
+                        <div class="col-2">
+                            <label>Fleet Type</label>
+
+                            <input type="text" class="form-control" [(ngModel)]="fleettype" [disabled]="fleettype">
+                        </div>
+
+                        <div class="col-3">
+
+                            <label>Select Month</label>
+
+                            <p-calendar [(ngModel)]="date" view="month" placeholder="Select Month"
+                                [style]="{'width':'100%'}" [showIcon]="true" dateFormat="mm/yy" [readonlyInput]="true">
+                            </p-calendar>
+                        </div>
+
+                        <div class="col-1">
+
+                            <label></label>
+
+                            <br>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary m-1 "
+                                style="margin-left:15px" (click)="getTransporterPaymentDetailList()">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-3" *ngIf="generatedInvoicePath">
+                            <label></label>
+
+                            <br>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary m-1 "
+                                (click)="openGeneratedInvoiceImage()" style="margin-left:15px">
+                                View Generated Invoice </button>
+
+                        </div>
+
+                        <div class="col-3" *ngIf="invoicePath">
+                            <label></label>
+
+                            <br>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary m-1 "
+                                (click)="openuploadedInvoice()" style="margin-left:15px">
+                                View Uploaded Invoice </button>
+
+                        </div>
+
+
+                        <div class="col-3" *ngIf="checkfinalized">
+                            <label></label>
+
+                            <br>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary m-1 "
+                                style="margin-left:15px" (click)="final()">
+                                Finalize </button>
+
+                            <button type="button" class="btn btn-raised btn-raised btn-primary m-1 "
+                                style="margin-left:15px" (click)="addVehicle(null)">
+                                Add Vehicle
+                            </button>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="row" *ngIf="TranspoterPaymentDetailList && TranspoterPaymentDetailList.length >0">
+                        <div class="col-12" >
+                            <table class="my-tb">
+                                <tr class="pnk">
+                                    <td class="hd">Approval Status :</td>
+                                    <td class="dtl">{{ApprovalStatusString}}</td>
+                                    <td class="hd">Payment Status : </td>
+                                    <td  class="dtl">{{PaymentStatusString}}</td>
+                                </tr>
+                                <tr class="aqya">
+                                    <td class="hd">Regional :</td>
+                                    <td class="dtl" colspan="3">{{transporterPaymentResponse.RegionalComment?transporterPaymentResponse.RegionalComment: '-' }}</td>
+                                </tr>
+                                <tr class="aqya">
+                                    <td class="hd">Regional Lead : </td>
+                                    <td  class="dtl" colspan="3">{{transporterPaymentResponse.RegionalLeadComment?transporterPaymentResponse.RegionalLeadComment: '-'}}</td>
+                                </tr>
+                                <tr class="aqya">
+                                    <td class="hd">HQ Ops Lead :</td>
+                                    <td class="dtl" colspan="3">{{transporterPaymentResponse.HQOpsLeadComment?transporterPaymentResponse.HQOpsLeadComment: '-'}}</td>
+                                </tr>
+                                <tr class="org">
+                                    <td class="hd">Account Associate :</td>
+                                    <td class="dtl" colspan="3">{{transporterPaymentResponse.AccountComment?transporterPaymentResponse.AccountComment: '-'}}</td>  
+                                </tr>
+                                <tr class="org">
+                                    <td class="hd">Account Lead : </td>
+                                    <td  class="dtl" colspan="3">{{transporterPaymentResponse.AccountLeadComment?transporterPaymentResponse.AccountLeadComment: '-'}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <p-table [value]="TranspoterPaymentDetailList" [lazy]="true" [lazy]="true" [paginator]="false"
+            [scrollable]="true" scrollDirection="horizontal">
+            <ng-template pTemplate="header">
+                <tr class="myheader">
+                    <th style="width: 100px">S.No </th>
+                    <th style="width: 100px">Attendance</th>
+                    <th style="width: 100px">Transport Name</th>
+                    <th style="width: 100px">Vehicle Type</th>
+                    <th style="width: 100px">Vehicle No</th>
+                    <th style="width: 100px">MonthlyContractKm</th>
+                    <th style="width: 100px">Utilized KM</th>
+                    <th style="width: 100px">MonthlyContractAmt</th>
+                    <th style="width: 100px">Utilized Amt</th>
+                    <th style="width: 100px">ExtraKM</th>
+                    <th style="width: 100px">ExtraKM Amt</th>
+                    <th style="width: 100px">Toll Amt</th>
+                    <th style="width: 100px">Other Expenses</th>
+                    <th style="width: 100px">Payable Amt</th>
+                    <th style="width: 150px">Action</th>
+                </tr>
+
+
+            </ng-template>
+
+            <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                <tr>
+                    <td style="width: 100px">{{i+1}}</td>
+                    <td style="width: 100px">
+                        {{rowData.Attendance}}
+                    </td>
+                    <td style="width: 100px" (click)="getPaymentVehicleAttadanceList(rowData)">
+                        <u>{{rowData.TransportName}}</u>
+                    </td>
+                    <td style="width: 100px">{{rowData.VehicleType}}</td>
+                    <td style="width: 100px">{{rowData.VehicleNo}}</td>
+                    <td style="width: 100px">{{rowData.MonthlyContractKm}}</td>
+                    <td style="width: 100px">{{rowData.UtilizedKm}}</td>
+                    <td style="width: 100px">
+                        <div *ngIf="!rowData.isEditable">
+                            {{rowData.MonthlyContractAmount | number : '1.2-2'}}
+                        
+                        </div>
+                        <div *ngIf="rowData.isEditable">
+                            Daily Amount
+                            <input type="number" class="form-control" [(ngModel)]="rowData.DaywiseContractAmount" (ngModelChange)="onChangeDailyContractAmount(rowData)">
+                        </div>
+                    </td>
+                    <td style="width: 100px">{{rowData.UtilizedAmount | number : '1.2-2'}}</td>
+                    <td style="width: 100px">{{rowData.ExtraKm}}</td>
+                    <td style="width: 100px">{{rowData.ExtraKmAmt | number : '1.2-2'}}</td>
+                    <td style="width: 100px" *ngIf="!rowData.isEditable">{{rowData.TollAmount| number : '1.2-2'}}</td>
+                    <td style="width:100px" *ngIf="rowData.isEditable ">
+                        <input type="number" [(ngModel)]="rowData.TollAmount" class="form-control" min="0"
+                            (ngModelChange)="onChangeTollAmount(rowData)" />
+
+                    </td>
+                    <td style="width: 100px" *ngIf="!rowData.isEditable">{{rowData.OtherExpense | number : '1.2-2'}}
+                    </td>
+
+                    <td style="width: 100px" *ngIf="rowData.isEditable">
+                        <input type="number" [(ngModel)]="rowData.OtherExpense" class="form-control" />
+
+                    </td>
+                    <td style="width: 100px">{{rowData.PayableAmount | number : '1.2-2'}}</td>
+
+                    <td style="width: 150px" *ngIf="!rowData.isEditable">
+
+                        <!-- [ngClass]="{'btn btn-raised btn-raised btn-primary': checkfinalized, 'btn btn-raised btn-warning mr-1 ': !checkfinalized}" -->
+                        <!-- class="btn btn-raised btn-raised btn-primary" -->
+                        <a class="m-a" [disabled]="!checkfinalized"
+                            (click)="editUpdateTransporterPayment(rowData)">Update</a>
+
+                        <a class="m-a" *ngIf="rowData.IsManuallyEdit && checkfinalized"
+                            (click)="updateTransporterPaymentDetail(rowData)">
+                            <span>&nbsp; | Edit</span>
+                        </a>
+
+                    </td>
+                    <td style="width:150px;" *ngIf="rowData.isEditable" [disabled]="!checkfinalized">
+                        <i class="pi pi-check" (click)="updateTransporterPayment(rowData)"></i>
+                        <i class="pi pi-times mr-2" (click)="cancel(rowData)"></i>
+                    </td>
+                    <!-- <td style="width:100px;" (click)="getpaymenthistoryList(rowData)">
+                        <i class="fa fa-history" aria-hidden="true"></i>
+                    </td> -->
+                </tr>
+                <tr>
+                    <td colspan="13"  *ngIf="rowData.isEditable || rowData.Remark">
+                        <div *ngIf="rowData.isEditable">
+                            <input class="form-control txt-r" [(ngModel)]="rowData.Remark">
+                        </div>
+                        <div class="txt-r" *ngIf="!rowData.isEditable && rowData.Remark">
+                            <span style="color:rgb(232, 104, 30)">Remark:</span> {{rowData.Remark}}
+                        </div>
+                        
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="footer" class="back">
+                <tr *ngIf="TranspoterPaymentDetailList&&TranspoterPaymentDetailList.length>0">
+                    <td style="width: 100px">Total</td>
+                    <td style="width: 100px"></td>
+                    <td style="width: 100px"></td>
+                    <td style="width: 100px"></td>
+                    <td style="width: 100px"></td>
+                    <td style="width: 100px"></td>
+                    <td style="width: 100px"></td>
+                    <td style="width: 100px">{{totalMonthlyContractKm | number : '1.2-2'}}</td>
+                    <td style="width: 100px">{{totalUtilizedAmount | number : '1.2-2'}}</td>
+                    <td style="width: 100px"></td>
+                    <!-- <td style="width: 100px"></td> -->
+                    <td style="width: 100px">{{totalExtraKmAmt| number : '1.2-2'}}</td>
+                    <td style="width: 100px">{{totalTollAmount | number : '1.2-2'}}</td>
+                    <td style="width: 100px"></td>
+                    <td style="width: 100px">{{totalPayableAmount| number : '1.2-2'}}</td>
+                    <td style="width: 100px"></td>
+                    <!-- <td style="width: 100px"></td> -->
+                    <!-- <td style="width: 100px"></td> -->
+                    <!-- <td style="width: 100px"></td>
+                    <td style="width: 100px"></td> -->
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <span class="emptymsg">No Record</span>
+            </ng-template>
+        </p-table>
+
+    </div>
+
+
+
+    <p-dialog header="Edit" [(visible)]="displaypopup" [modal]="true" [blockScroll]="true" closable="true"
+        positionTop="0" appendTo="body" [style]="{'width': '100%' ,  'height':'100%'}" [draggable]="false"
+        [resizable]="false" appendTo="body">
+
+
+        <div class="row mt-1">
+            <p-tabView styleClass="tabview-custom">
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <i class="pi pi-calendar"></i>
+                        <span>Document List</span>
+
+                    </ng-template>
+                    <div class="row mt-1">
+
+                        <div class="col-3" *ngIf="checkfinalized">
+                            <label><b>Select Document Type</b></label>
+                            <p-dropdown [options]="documentType" [(ngModel)]="selectedDoc"
+                                (onChange)="selectedUpload(selectedDoc)" optionLabel="label"
+                                placeholder="Select Document">
+                            </p-dropdown>
+
+
+
+                        </div>
+                        <div class="col-3" *ngIf="selectedDoc && checkfinalized">
+                            <label> <b>Upload Document</b></label>
+                            <input #myInput type="file" style="margin-left: 17px;margin-bottom: 10px;" multiple="true"
+                                (change)="onUpload($event.target.files)" name="file" id="myInput" />
+                            <br>
+
+
+                        </div>
+
+                        <div class="col-1"></div>
+                        <div class="col-3" *ngIf="selectedDoc && checkfinalized">
+
+                            <label for=""></label>
+                            <br>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary m-1 "
+                                style="margin-left:15px" (click)="saveTransportDoc()">
+                                Save
+                            </button>
+
+                        </div>
+
+                        <br>
+                        <div class="mt-3">
+                            <div class="card-body m-bdy">
+                                <p-table [value]="doclist" [paginator]="true" [rows]="5">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>S.No </th>
+                                            <th>Doc Type</th>
+
+                                            <th>Doc Path</th>
+                                            <th *ngIf="checkfinalized">Action</th>
+                                        </tr>
+
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                        <tr>
+                                            <td>{{i+1}}</td>
+                                            <td>{{rowData.DocTypeName}}</td>
+
+                                            <td (click)="openImage(rowData.DocPath)"><b><u>{{rowData.DocPath}}</u></b>
+                                            </td>
+                                            <td *ngIf="checkfinalized"><i class="pi pi-trash"
+                                                    (click)="deleteDoc(rowData)"></i></td>
+                                        </tr>
+
+
+
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage">
+                                        <span class="emptymsg">No Record</span>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+
+                    </div>
+                </p-tabPanel>
+                <p-tabPanel header="Header II">
+                    <ng-template pTemplate="header">
+                        <i class="pi pi-user"></i>
+                        <span>Detail List</span>
+
+                    </ng-template>
+                    <div class="mt-3">
+                        <div class="card-body m-bdy">
+
+                            <p-table [value]="transpoterDetailList">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>S.No </th>
+                                        <th>Created Date</th>
+                                        <th>Vehicle NO</th>
+                                        <th>Vehicle Type</th>
+                                        <th>Fleet Type</th>
+                                        <th>Start KM</th>
+                                        <th>Close KM</th>
+                                        <th>Total KM</th>
+
+                                    </tr>
+
+                                </ng-template>
+                                <ng-template pTemplate="body" let-data let-i="rowIndex">
+                                    <tr>
+                                        <td>{{i+1}}</td>
+                                        <td><b>{{data.AttendanceDate}}</b></td>
+                                        <td><b>{{data.VehicleNo}}</b></td>
+                                        <td><b>{{data.VehicleType}}</b></td>
+                                        <td><b>{{data.FleetType}}</b></td>
+                                        <td><b>{{data.StartKm}}</b></td>
+                                        <td><b>{{data.ClosingKm}}</b></td>
+                                        <td><b>{{data.TotalKm}}</b></td>
+                                    </tr>
+
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <span class="emptymsg">No Record</span>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </p-tabPanel>
+
+            </p-tabView>
+
+        </div>
+
+
+
+
+
+
+    </p-dialog>
+
+    <p-dialog header="Finalize" [(visible)]="displayTax" [modal]="true" [blockScroll]="true" closable="true"
+        positionTop="0" [style]="{'width': '100vw' ,  'height':'100vh'}" [draggable]="false" [resizable]="false"
+        appendTo="body">
+        <div class="row mt-1">
+
+
+            <div class="card-content">
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-4">
+
+                            <label><b>Select Tax Type</b></label>
+
+
+                            <p-dropdown [options]="taxType" [(ngModel)]="selectedTax" optionLabel="label"
+                                placeholder="Select Tax Type">
+                            </p-dropdown>
+                        </div>
+
+
+
+
+
+                        <div class="col-4">
+                            <label> <b> Invoice No.</b></label>
+
+                            <input type="text" class="form-control" [(ngModel)]="invoiceNumber">
+                            <br>
+                        </div>
+
+
+                        <div class="col-4">
+                            <label> <b>Select Invoice Date</b></label>
+                            <p-calendar name="startDateInput" [(ngModel)]="invoiceDate" appendTo="body"
+                                [showIcon]="true" name="startDate" [monthNavigator]="true" [yearNavigator]="true"
+                                [yearRange]="yearRangeForCalender"></p-calendar>
+
+                            <br>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-10" *ngIf="!(invoicePath&&invoicePath.length>0)">
+                            <label> <b></b></label>
+                            <input #myInput1 type="file" accept="image/png, image/jpeg,.pdf"
+                                style="margin-left: 17px;margin-top: 10px;" multiple="true"
+                                (change)="onuploadInvoice($event.target.files)" name="file" id="myInput1" />
+                            <br>
+                        </div>
+
+
+                        <div class="col-10" *ngIf="invoicePath&&invoicePath.length>0">
+                            <label> <b>Uploaded Invoice *</b></label>
+                            <br>
+                            <!-- <button class="delete-image-button" (click)="crossonInvoiceImage()">x</button> -->
+
+                            <button class="delete-image-button" (click)="crossonInvoiceImage()">x</button>
+                            <label (click)="openuploadedInvoice()"><b><u>{{invoicePath}}</u></b></label>
+                            <!-- <img style="height: 350px; width: 80%;" src="{{transporterInvoicePath}}"> -->
+
+                            <br>
+                        </div>
+
+                        <!-- <div class="col-5"></div> -->
+                        <div class="col-2">
+                            <label for=""></label>
+                            <br>
+
+                            <button type="button" class="btn btn-raised btn-raised btn-primary m-1 "
+                                (click)="finalized()" style="margin-left:15px">
+                                Finalize
+                            </button>
+
+                        </div>
+                    </div>
+                    <p-progressSpinner *ngIf="blocked"
+                        [style]="{width: '50px', height: '50px', left: '48%', top: '48%'}" strokeWidth="8"
+                        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+                </div>
+            </div>
+        </div>
+        <br>
+    </p-dialog>
+
+    <!-- 
+    <p-dialog header="Payment History" [(visible)]="displayhistory" [modal]="true" [blockScroll]="true" closable="true"
+        [style]="{'width': '65%' ,  'height':'75%'}" [draggable]="false" [resizable]="false" appendTo="body">
+
+        <div class="container-fluid">
+            <p-table [value]="paymentHistoryList">
+                <ng-template pTemplate="header">
+
+                    <tr>
+                        <th>S.No </th>
+                        <th>Action</th>
+                        <th>Role</th>
+                        <th>CreatedDate</th>
+                        <th>DisplayName</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-data let-i="rowIndex">
+                    <tr>
+                        <td>{{i+1}}</td>
+                        <td>{{data.Action}}</td>    
+                        <td>{{data.Role}}</td>
+                        <td>{{data.CreatedDate  | date}}</td>
+                        <td>{{data.DisplayName}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </p-dialog> -->
+</section>
+
+<div *ngIf="isOpenAddVehicle">
+
+    <p-dialog header="Add Vehicle" [(visible)]="isOpenAddVehicle" [modal]="true" [blockScroll]="true" closable="true"
+        positionTop="0" [style]="{'width': '100vw' ,  'height':'100vh'}" [draggable]="false" [resizable]="false"
+        appendTo="body">
+        <div class="">
+            <div class="card-content">
+                <!-- <div class="card-body">
+                    <form #vehicleForm="ngForm">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button class="mybbb" (click)="addUpdateVehicle()">Add</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3" *ngIf="selectedVehicleToEdit && selectedVehicleToEdit.VehicleNo">
+                                <label><b>Vehicle Number</b></label>
+                                <input disabled type="text" class="form-control"
+                                    [(ngModel)]="selectedVehicleToEdit.VehicleNo" name="vehicleNumber">
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Select Vehicle</b></label>
+                                <p-dropdown [options]="vehicleList" [(ngModel)]="selectedVehicle"
+                                    (ngModelChange)="onChangeVehicle()" optionLabel="VehicleNo"
+                                    placeholder="Select Vehicle" name="selectedVehicle">
+                                </p-dropdown>
+                                <div *ngIf="vehicleForm.submitted && !selectedVehicle" class="text-danger">Field Missing
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Monthly Contract KM</b></label>
+                                <input disabled type="number" class="form-control"
+                                    [(ngModel)]="addedVehicle.MonthlyContactKm" name="monthlyContractKm">
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Utilized KM</b></label>
+                                <input type="number" class="form-control" [(ngModel)]="addedVehicle.UtilizedKm"
+                                    name="utilizedKm" required>
+                                <div *ngIf="vehicleForm.submitted && !addedVehicle.UtilizedKm" class="text-danger">Field
+                                    Missing</div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label><b>Monthly Contract Amount</b></label>
+                                <input disabled type="number" class="form-control"
+                                    [(ngModel)]="addedVehicle.MonthlyContactAmt" name="monthlyContractAmt">
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Utilized Amount</b></label>
+                                <input type="number" class="form-control" [(ngModel)]="addedVehicle.UtilizedAmount"
+                                    (ngModelChange)="reCalculatePayableAmount()" name="utilizedAmount" required>
+                                <div *ngIf="vehicleForm.submitted && !addedVehicle.UtilizedAmount" class="text-danger">
+                                    Field Missing</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Extra KM</b></label>
+                                <input type="number" class="form-control" [(ngModel)]="addedVehicle.ExtraKm"
+                                    (ngModelChange)="onChangeExtraKM()" name="extraKm" required>
+                                <div *ngIf="vehicleForm.submitted && !addedVehicle.ExtraKm" class="text-danger">Field
+                                    Missing</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Per Extra KM Charge</b></label>
+                                <input disabled type="number" class="form-control"
+                                    [(ngModel)]="addedVehicle.ExtraKmCharge" name="extraKmCharge">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label><b>Extra KM Amount</b></label>
+                                <input disabled type="number" class="form-control" [(ngModel)]="addedVehicle.ExtraKmAmt"
+                                    name="extraKmAmt">
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Toll Amount</b></label>
+                                <input type="number" class="form-control" [(ngModel)]="addedVehicle.TollAmount"
+                                    (ngModelChange)="reCalculatePayableAmount()" name="tollAmount" required>
+                                <div *ngIf="vehicleForm.submitted && !addedVehicle.TollAmount" class="text-danger">Field
+                                    Missing</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Other Expense</b></label>
+                                <input type="number" class="form-control" [(ngModel)]="addedVehicle.OtherExpense"
+                                    (ngModelChange)="reCalculatePayableAmount()" name="otherExpense" required>
+                                <div *ngIf="vehicleForm.submitted && !addedVehicle.OtherExpense" class="text-danger">
+                                    Field Missing</div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-offset-9 col-sm-3">
+                                <label><b>Net Payable Amount</b></label>
+                                <input disabled type="number" class="form-control"
+                                    [(ngModel)]="addedVehicle.PayableAmount" name="payableAmount">
+                            </div>
+                        </div>
+                    </form>
+                </div> -->
+
+                <div class="card-body">
+                    <form #vehicleForm="ngForm" (ngSubmit)="addUpdateVechile(vehicleForm)">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="submit" class="mybbb">Add</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3" *ngIf="selectedVehicleToEdit && selectedVehicleToEdit.VehicleNo">
+                                <label><b>Vehicle Number</b></label>
+                                <input disabled type="text" class="form-control"
+                                    [(ngModel)]="selectedVehicleToEdit.VehicleNo" name="vehicleNumber">
+                            </div>
+                            <div class="col-sm-3" *ngIf="!selectedVehicleToEdit">
+                                <label><b>Select Vehicle</b></label>
+                                <select class="form-control" [(ngModel)]="selectedVehicle" name="selectedVehicle"
+                                    required (ngModelChange)="onChangeVehicle()">
+                                    <option *ngFor="let vehicle of vehicleList" [ngValue]="vehicle">{{ vehicle.VehicleNo
+                                        }}</option>
+                                </select>
+                                <div *ngIf="vehicleForm.submitted && !selectedVehicle" class="text-danger">Field Missing
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Monthly Contract KM</b></label>
+                                <input disabled type="number" class="form-control"
+                                    [(ngModel)]="addedVehicle.MonthlyContactKm" name="monthlyContractKm">
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Utilized KM</b></label>
+                                <input type="number" class="form-control" min="0" [(ngModel)]="addedVehicle.UtilizedKm"
+                                    name="utilizedKm" required>
+                                <div *ngIf="vehicleForm.submitted && (!addedVehicle.UtilizedKm && addedVehicle.UtilizedKm !== 0)"
+                                    class="text-danger">Field Missing</div>
+                                <div *ngIf="vehicleForm.submitted && addedVehicle.UtilizedKm < 0" class="text-danger">
+                                    Invalid Value</div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label><b>Monthly Contract Amount</b></label>
+                                <input disabled type="number" class="form-control"
+                                    [(ngModel)]="addedVehicle.MonthlyContactAmt" name="monthlyContractAmt">
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Utilized Amount</b></label>
+                                <input type="number" class="form-control" min="0"
+                                    [(ngModel)]="addedVehicle.UtilizedAmount"
+                                    (ngModelChange)="reCalculatePayableAmount()" name="utilizedAmount" required>
+                                <div *ngIf="vehicleForm.submitted && (!addedVehicle.UtilizedAmount && addedVehicle.UtilizedAmount !== 0)"
+                                    class="text-danger">Field Missing</div>
+                                <div *ngIf="vehicleForm.submitted && addedVehicle.UtilizedAmount < 0"
+                                    class="text-danger">Invalid Value</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Extra KM</b></label>
+                                <input type="number" class="form-control" min="0" [(ngModel)]="addedVehicle.ExtraKm"
+                                    (ngModelChange)="onChangeExtraKM()" name="extraKm" required>
+                                <div *ngIf="vehicleForm.submitted && (!addedVehicle.ExtraKm && addedVehicle.ExtraKm !== 0)"
+                                    class="text-danger">Field Missing</div>
+                                <div *ngIf="vehicleForm.submitted && addedVehicle.ExtraKm < 0" class="text-danger">
+                                    Invalid Value</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Per Extra KM Charge</b></label>
+                                <input disabled type="number" class="form-control"
+                                    [(ngModel)]="addedVehicle.ExtraKmCharge" name="extraKmCharge">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-3">
+                                <label><b>Extra KM Amount</b></label>
+                                <input disabled type="number" class="form-control" [(ngModel)]="addedVehicle.ExtraKmAmt"
+                                    name="extraKmAmt">
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Toll Amount</b></label>
+                                <input type="number" class="form-control" min="0" [(ngModel)]="addedVehicle.TollAmount"
+                                    (ngModelChange)="reCalculatePayableAmount()" name="tollAmount" required>
+                                <div *ngIf="vehicleForm.submitted && (!addedVehicle.TollAmount && addedVehicle.TollAmount !== 0)"
+                                    class="text-danger">Field Missing</div>
+                                <div *ngIf="vehicleForm.submitted && addedVehicle.TollAmount < 0" class="text-danger">
+                                    Invalid Value</div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label><b>Other Expense</b></label>
+                                <input type="number" class="form-control" min="0"
+                                    [(ngModel)]="addedVehicle.OtherExpense" (ngModelChange)="reCalculatePayableAmount()"
+                                    name="otherExpense" required>
+                                <div *ngIf="vehicleForm.submitted && (!addedVehicle.OtherExpense && addedVehicle.OtherExpense !== 0)"
+                                    class="text-danger">Field Missing</div>
+                                <div *ngIf="vehicleForm.submitted && addedVehicle.OtherExpense < 0" class="text-danger">
+                                    Invalid Value</div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-offset-9 col-sm-3">
+                                <label><b>Net Payable Amount</b></label>
+                                <input disabled type="number" class="form-control" min="1"
+                                    [(ngModel)]="addedVehicle.PayableAmount" name="payableAmount" required>
+                                <div *ngIf="vehicleForm.submitted && (!addedVehicle.PayableAmount && addedVehicle.PayableAmount !== 0)"
+                                    class="text-danger">Field Missing</div>
+                                <div *ngIf="vehicleForm.submitted && addedVehicle.PayableAmount < 1"
+                                    class="text-danger">Invalid Value</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <br>
+    </p-dialog>
+
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-toast toast-container></p-toast>

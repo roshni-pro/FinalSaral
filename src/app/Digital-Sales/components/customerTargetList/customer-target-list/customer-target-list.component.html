@@ -1,0 +1,170 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="Company Target">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+          <h3 class="content-header">Company Target </h3>
+        </div>
+        <div>
+          <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-bottom: 0;"
+          (click)="addCompanyTarget()">
+          <i class="fa fa-plus-circle"></i> Add Company Target</button>
+        </div> 
+    </div>
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+      <div class="card-body">
+          <div class="row">            
+                 <div class="form-group col-md-2">
+                  <label for="city"><b>City</b><span  style="color:red"> *</span></label><br>
+                   <!-- [disabled]="disablefield" -->
+                   <select id="city" name="city" class="form-control" [(ngModel)]="companyTarget.CityId" 
+                      #cityId="ngModel" required >
+                     <option value="0" disabled>--Select City--</option>
+                     <option *ngFor="let city of CityList" [ngValue]="city.Cityid">{{city.CityName}}
+                     </option>
+                   </select>
+                 </div>
+               <div class="form-group col-md-2"> 
+                 <div class="form-group">
+                   <label for="sb"><b>SubCategory</b><span  style="color:red"> *</span></label>
+                   <!-- [disabled]="disablefield" -->
+                   <select id="sb" name="sb" class="form-control" [(ngModel)]="companyTarget.SubCatId" 
+                     placeholder="Select SubCategory" required="1" #SubCategoryId="ngModel" (ngModelChange)="GetBrand(companyTarget.SubCatId)">
+                     <div class="col-md-6"></div>
+                     <option value="0"disabled>Select SubCategorys</option>
+                     <option *ngFor="let sb of SubCategoryList" [ngValue]="sb.SubCategoryId">
+                       {{sb.SubcategoryName}}
+                     </option>
+                   </select>
+                 </div>
+               </div>
+               <div class="form-group col-md-2">
+                 <div class="form-group">
+                   <label for="projectinput3"><b>Start Date</b><span  style="color:red"> *</span></label>                   
+                   <!-- [disabled]="disablefield"   -->
+                   <p-calendar name="startDateInput" [(ngModel)]="companyTarget.StartDate" [showIcon]="true" 
+                    name="fromDate" ></p-calendar>
+               </div>     
+               </div>
+               <div class="form-group col-md-2">
+                 <div class="form-group">
+                   <label for="projectinput4"><b>End Date</b><span  style="color:red"> *</span></label>
+                   <p-calendar name="startDateInput" [(ngModel)]="companyTarget.EndDate" [showIcon]="true" 
+                   name="fromDate" ></p-calendar>
+               </div>
+               </div>   
+               <div class="form-group col-md-2"> 
+                <div class="form-group">
+                  <label for="projectinput2"><b>Brands</b><span style="color:red"> *</span></label>
+                  <p-multiSelect [options]="BrandList" name="SubsubcategoryName" [(ngModel)]="companyTarget.SubsubCategoryid" [panelStyle]="{minWidth:'10em'}" optionLabel="SubsubcategoryName">               
+                  </p-multiSelect> 
+                </div>
+              </div> 
+              <div class="col-md-2" style="padding-top: 30px">
+                <div class="form-group">
+                  <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="search(companyTarget)">Search</button>
+                  <button type="button" class="btn btn-raised btn-raised btn-primary "style="margin-left:15px" (click)="clear()">
+                     Clear
+                  </button>  
+                </div>
+              </div>      
+          </div>
+          <!-- <div *ngFor="let SubCatTargetBrand Of companyTarget.subCatTargetBrands">
+            <app-company-target [subCatTargetBrand]="SubCatTargetBrand" [brandList]="BrandList" [cityId]="companyTarget.CityId"
+              (onBranChange)="brandChangeEvent($event)"></app-company-target>
+          </div>
+          <div class="row">
+            <button (click)="AddBrand()">Add Brand</button>
+          </div> -->
+          <div class="position-relative">
+            <p-table [value]="getsearchData" [paginator]="true" [lazy]="true" (onLazyLoad)="load($event)" [rows]="10"
+              [totalRecords]="count" dataKey="CityId" [scrollable]="true" scrollHeight="130vh" text-align: center>
+      
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="text-align: center"  > CityName </th>
+                  <th style="text-align: center"> SubCategoryName </th>
+                  <th style="text-align: center"> StartDate </th>
+                  <th style="text-align: center"> EndDate </th>
+                  <th style="text-align: center" >Specific Customers </th>
+                  <th  colspan="2" style="text-align: center"> Brands /Action </th>
+                  <!-- <th style="text-align: center"> Action </th> -->
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData >
+                <tr>
+                  <td style="text-align: center;vertical-align: middle;">{{rowData.CityName}}</td>
+                  <td style="text-align: center;vertical-align: middle;">{{rowData.SubCategoryName}}</td>
+                  <td style="text-align: center;vertical-align: middle;">{{rowData.StartDate | date: 'M/d/yy'}}</td>
+                  <td style="text-align: center;vertical-align: middle;">{{rowData.EndDate | date: 'M/d/yy'}}</td>
+                  <td style="text-align: center;vertical-align: middle;">
+                    <button type="button" class="btn btn-sm bg-success text-white mt-4" (click)="ImportCust(rowData.Id)" *ngIf="rowData.IsCustomerSpacific && !rowData.IsCustomerUploaded" >Import customers</button>
+                    <label for="" *ngIf="!rowData.IsCustomerSpacific && !rowData.IsCustomerUploaded">Not specific customer.</label>
+                    <label *ngIf="rowData.IsCustomerSpacific && rowData.IsCustomerUploaded">specific customers.</label>
+                   </td>
+                  <!-- <td>{{rowData.CreateDate | date: 'M/d/yy, h:mm a'}}</td> -->                 
+                  <td colspan="2">
+                      <table width="100%">
+                        <tr *ngFor="let col of rowData.brandList  let i = index" [attr.data-index]="i" >
+                          <td >
+                            {{i+1}}-{{col.BrandNames}}
+                          </td>
+                          <td>
+                            <button type="button" class="level" (click)="searchLevel(col,$event)">Levels</button>
+                            <button class="btn btn-sm bg-danger text-white m-2" *ngIf="col.IsActive " (click)="inactive(col,$event)">Deactivate</button>
+                            <button class="btn btn-sm bg-success text-white m-2" *ngIf="!col.IsActive" (click)="active(col,$event)">Activate</button>
+                            <button type="button" class="excel" (click)="getBrandCustomerTargetlist(col,$event)">ExportTargetCust</button>
+                          </td>
+                       
+                        </tr>
+                      </table>
+                  </td> 
+              
+                
+               
+                  
+                  <!-- <td style="text-align: center">
+                      <div *ngFor="let col of rowData.brandList  let i = index" [attr.data-index]="i">
+                        <span>
+                          {{i+1}}-{{col.BrandNames}}
+                    
+                          <button type="button" class="level" (click)="searchLevel(col,$event)">Levels</button>
+                          <button class="btn btn-sm bg-danger text-white m-2" *ngIf="col.IsActive " (click)="inactive(col,$event)">Deactivate</button>
+                          <button class="btn btn-sm bg-success text-white m-2" *ngIf="!col.IsActive" (click)="active(col,$event)">Activate</button>
+                         
+                          <button type="button" class="excel" (click)="getBrandCustomerTargetlist(col,$event)">ExportTargetCust</button>
+                        </span>
+  
+                      </div>
+                    </td> -->
+                    </tr>
+              </ng-template>
+            </p-table>
+            <p-dialog header="Import Customers" [(visible)]="visible" [style]="{width: '30vw'}"  [modal]="true" appendTo="body" [draggable]="false" [resizable]="false">
+              <div class="row">
+                <div class="col-3">
+                  <a href="../../../../../assets/sample_importTargetCustomer.xlsx" class="btn btn-sm bg-success text-white mt-2" download>Download sample</a>
+                </div>
+                <div class="col mt-1">
+                  <input #myInput type="file"   multiple="false" (change)="onUpload($event.target.files)"  name="file" id="myInput"  />
+                  <button type="button" class="btn btn-sm bg-success text-white mt-2 " (click)="UploadCust()">Upload Excel</button>
+                </div>
+              </div>
+          </p-dialog>
+          </div>
+      </div>
+      <!-- <div class="card-footer text-right">
+          <div>
+          <button type="button" class="btn btn-raised btn-warning mr-1" style="float:right;" (click)="SaveData()">
+              Post
+          </button>
+        </div>
+      </div> -->
+    </div>
+  </section>
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+    
+  

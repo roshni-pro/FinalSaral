@@ -1,0 +1,176 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+
+    <h3 style="color:#ff5b1e;font-weight: 400;">Credit Request Configuration</h3>
+
+</div>
+<div class="card">
+    <div class="row  ml-2">
+        <div class="col-md-3">
+            <label><b>Select Store</b></label>
+            <p-multiSelect id="id" name="Name" placeholder="Select a Store" [options]="allStoreList" [filter]="true"
+                [(ngModel)]="selectedStore" optionLabel="Name">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-3">
+            <label><b>Enter Skcode</b></label>
+            <input type="text" class="form-control" placeholder="Enter Skcode" [(ngModel)]="selecteditem">
+        </div>
+
+        <div class="col-md-4 mt-3">
+            <button class="btn btn-primary mr-2 " (click)="ForSearchHit();SearchList($event)">Search</button>
+            <button class="btn btn-success mr-2 " (click)="ForSearchHit();Export($event)">Export</button>
+
+            <button class="btn btn-primary mr-2 " *ngIf="roleListarry" (click)="AddPopUp()">Add</button>
+            <button class="btn btn-raised btn-raised btn-primary ml-2"  *ngIf="roleListarry"  (click)="uploadbtn()">
+                <i class="fa fa-upload"></i></button>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <p-table [value]="itemLists" [paginator]="true" [rows]="10" [lazy]="true" [totalRecords]="totalRecords"
+        (onLazyLoad)="load($event)" [scrollable]="true" scrollHeight="60vh" [(first)]="first">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>S.No.</th>
+                <th>StoreName</th>
+                <th>CustomerName</th>
+                <th>SkCode</th>
+                <th>MobileNo</th>
+                <th>Available Limit</th>
+                <th>Used Limit</th>
+                <th  *ngIf="roleListarry" >CreditLimit</th>
+                <th *ngIf="roleListarry" >Active</th>
+                <th>History</th>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data let-index="rowIndex">
+            <tr>
+                <td>{{index + 1}}</td>
+                <td>{{data.StoreName}}</td>
+                <td>{{data.CustomerName}}</td>
+                <td>{{data.SkCode}}</td>
+                <td>{{data.Mobile}}</td>
+                <td>{{data.AvailableRemainingAmount}}</td>
+                <td>{{data.UsedCreaditLimit}}</td>
+                <td *ngIf="data.IsActive==true && roleListarry">
+                    <div class="row">
+                        <div class="col d-flex">
+                            <input type="text" class="form-control" (keydown)="space($event)"
+                                (keypress)="keyPress($event)" id="craditlimit" name="craditlimit"
+                                style="height: fit-content;margin-right: 2px;" [(ngModel)]="data.CreditLimit">
+                            <button class="btn btn-primary" (click)="UpdateCraditLimit(data)" pTooltip="Save"> <i
+                                    class="fa fa-check-square-o fa-1x"></i></button>
+                        </div>
+                    </div>
+                </td>
+                <td *ngIf="data.IsActive==false && roleListarry">{{data.CreditLimit}}</td>
+                <td *ngIf="roleListarry">
+                    <p-inputSwitch name="IsActive" [(ngModel)]="data.IsActive"
+                        (ngModelChange)="ActiveInactive(data,data.IsActive)">
+                    </p-inputSwitch>
+                </td>
+                <td><button class="btn btn-primary" (click)="history(data.Id)">History</button></td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="13" style="text-align: center;">
+                    <br>
+                    <h4><b>No Data Found.</b></h4>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-dialog header="Upload" [(visible)]="uploadPopUp" [resizable]="false" (onHide)="cancell()" [modal]="true"
+    appendTo="body" positionTop="100" [style]="{width: '45vw',height: '30%',left: '310px'}">
+    <div class="card">
+        <div class="row d-flex" style="padding: 18px">
+            <div class="col ml-1">
+                <button class="btn btn-primary" style="margin-top: 11px;" (click)="DownloadSampleFile()">Download
+                    SampleFile</button>
+
+                <input #myInput type="file" style="margin-bottom: 30px;margin-left: 18px;" multiple="false"
+                    accept=".xls,.xlsx" (change)="onUpload($event.target.files) " name="file" id="myInput" />
+
+                <button class="btn btn-primary" style="margin-top: 11px;" accept=".xlsx,.xls"
+                    (click)="Uploader()">Upload
+                    file</button>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog header="Add New" [(visible)]="AddpopUpDialog" [resizable]="false" (onHide)="AddCancel()" [modal]="true"
+    appendTo="body" positionTop="30" [style]="{width: '45vw',height: '35vh',left: '369px'}">
+    <div class="card" style=" padding: 1px 22px;">
+        <div class="row mb-3">
+            <div class="col">
+                <label><b>Store</b> <span style="color:#ff5b1e;">*</span></label>
+                <p-dropdown placeholder="Select Store" [options]="AddStoreList" optionLabel="Name"
+                    [(ngModel)]="SelectedStore" [filter]="true"></p-dropdown>
+            </div>
+
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label><b>SKcode</b><span style="color:#ff5b1e;">*</span></label>
+                <input type="text" class="form-control" style="width: 172%;" [(ngModel)]="SelectedSkcode"
+                    placeholder="Enter SKcode">
+            </div>
+            <div class="col" style="text-align: end;margin-top: 29px;">
+                <button class="btn btn-primary" (click)="SeachAdd()">Search</button>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label><b>Shop Name</b> <span style="color:#ff5b1e;">*</span></label>
+                <p-dropdown [options]="customerlist" placeholder="Select ShopName" [(ngModel)]="SelectedShopName"
+                    optionLabel="fullname" [filter]="true"> </p-dropdown>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label><b> Credit Limit</b> <span style="color:#ff5b1e;">*</span></label>
+                <input type="text" (keydown)="space($event)" (keypress)="keyPress($event)" class="form-control"
+                    [(ngModel)]="SelectedCreditlimit" placeholder="Enter CreditLimit">
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col">
+                <label><b>DueDays</b><span style="color:#ff5b1e;">*</span></label>
+                <input type="text" (keydown)="space($event)" (keypress)="keyPress($event)" class="form-control"
+                    [(ngModel)]="SelectedDueDays" placeholder="Please Enter DueDays">
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col text-center">
+                <button class="btn btn-primary mr-2 " (click)="SaveAdd()">Save</button>
+                <button class="btn btn-primary " (click)="Cancel()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+<div id="history" *ngIf="historyDisplay">
+
+    <p-dialog [(visible)]="historyDisplay" [resizable]="true" [draggable]="false" [blockScroll]="true" [modal]="true"
+        appendTo="body" positionTop="100" [style]="{width: '70%'}">
+        <p-header>
+            History
+        </p-header>
+        <app-history [entity]="entity" [id]="historyId"></app-history>
+
+    </p-dialog>
+</div>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

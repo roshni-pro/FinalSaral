@@ -1,0 +1,93 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2"></div>
+          <div class="card-content">
+            <div class="px-3">
+
+              <form class="form form-inline" name="form" #regionEditForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i><b> Edit Region </b></h4>
+                  <div class="row col-md-12" *ngIf="region">
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="cname" class="col-md-6"><b> Region Name: </b><span  style="color:red"> *</span></label>
+                        <input type="text" id="cname" class="form-control col-md-6" name="cname" [(ngModel)]="region.RegionName" placeholder="Region Name" required="1" maxlength="50" minlength="2" (input)="inputValidator($event)"
+                        #firstName="ngModel" />
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code>Region Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength"><code>Minlength 2</code></div>
+                        <!-- </div> -->
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="people" class="col-md-6"><b> Region Manager Name: </b><span  style="color:red"> *</span></label>
+                        <select id="people" name="people" class="form-control col-md-6"  #RegionmanagerName="ngModel"
+                          [(ngModel)]="region.RegionManagerId" placeholder="Select Region Manager Name" required="1">
+                          <div class="invalid-feedback">
+                            <code>Region Manager Name is required</code>
+                          </div>
+                          <option *ngFor="let people of peopleList" [ngValue]="people.PeopleID">
+                            {{ people.DisplayName }}
+                          </option>
+                        </select>
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !RegionmanagerName.valid && RegionmanagerName.errors.required">
+                          <code>Region manager Name is required</code>
+                        </div>
+                        <!-- </div> -->
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="zone" class="col-md-6"> <b> Zone Name: </b><span  style="color:red"> *</span></label>
+                        <!-- <div class="col-md-6"> -->
+                        <select id="zone" name="zone" class="form-control col-md-6" [(ngModel)]="region.ZoneId"
+                          placeholder="Select Zone Manager Name"  required="1" maxlength="50" minlength="2"
+                          #ZoneName="ngModel">
+                          <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code>Zone Name is required</code>
+                        </div>
+                          <!-- <div class="invalid-feedback">
+                            <code>Zone Name is required</code>
+                          </div> -->
+                          <option *ngFor="let zone of zoneList" [ngValue]="zone.ZoneId">
+                            {{ zone.ZoneName }}
+                          </option>
+                        </select>
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !ZoneName.valid && ZoneName.errors.required">
+                          <code>Zone Name is required</code>
+                        </div>
+                      </div>
+                    <!-- </div>   -->
+                    </div> 
+                  </div>
+                </div>
+
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    Cancel
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="update(regionEditForm)">
+                    Save
+                  </button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

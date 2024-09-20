@@ -1,0 +1,368 @@
+<div class="container-fluid">
+
+    <div class="row mt-2">
+        <div class="col-12">
+            <h1 style="color: rgb(255, 136, 0)">Stocks</h1>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body"> 
+              <div class="row">
+                  <div class="col-md">
+                <p-dropdown [options]="stockList" [(ngModel)]="selectedStockType" optionLabel="name" (onChange)="stockTypeSearchList=[];totalRecord=0;GetBrand();">
+                </p-dropdown>
+            </div>
+
+            <div class="col-md">
+                <p-multiSelect [options]="warehouseList" [(ngModel)]="warehouseID" defaultLabel="Select a warehouse"  (onChange)="stockTypeSearchList=[];totalRecord=0;GetBrand();"
+                 optionLabel="label" selectedItemsLabel="{0} items selected"></p-multiSelect>
+                <!-- <select id="desg" name="desg" class="form-control" [(ngModel)]="warehouseID" required="true" (change)="stockTypeSearchList=[];totalRecord=0">
+                    <option [ngValue]="null">Select Warehouse</option>
+                    <option *ngFor="let whouse of warehouseList" [ngValue]="whouse.WarehouseId">
+                        {{ whouse.WarehouseName }}
+                    </option>
+                </select> -->
+                <!-- <p *ngIf="invalidItem" style="color: red">
+                    please select warehouse
+                </p> -->
+            </div>
+
+            <div class="col-md">
+                <p-multiSelect [options]="BrandList" [(ngModel)]="BrandID" defaultLabel="Select a Brand"  
+                 optionLabel="BrandName"></p-multiSelect>
+            </div>
+
+            <!-- <div class="col-md-3" *ngIf="isSelected">
+                <div class="ui-inputgroup">
+                    <input class="form-control" [(ngModel)]="itemValue.itemname" disabled>
+                    <button pButton type="button" icon="pi pi-times" (click)="cancel()"
+                        class="ui-button-danger"></button>
+                </div>
+            </div>
+            <div [ngClass]="{'col-md-3':!warehouseName, 'ui-g-12': warehouseName}" *ngIf="!isSelected">
+                <p-autoComplete appendTo="body" [(ngModel)]="selectedItem" [suggestions]="itemList"
+                    (completeMethod)="getitemList($event)" [disabled]="warehouseName && warehouseName != ''"
+                    field="itemname" [size]="30" placeholder="Search Items (min 3 letters)" [minLength]="1"
+                    (onSelect)="onSelectItem($event)" name="itemname" required="true" #ledgerName="ngModel">
+                </p-autoComplete>
+
+            </div> -->
+            <div class="col-md">
+                <input type="text" class="form-control" [(ngModel)]="itemValue.itemname" placeholder="Search by Item name">
+            </div>
+
+            <div class="col-md">
+                <button type="button" class="btn btn-primary " (click)="cleart();searchStockList()"> Search </button>
+                <button type="button" class="btn btn-primary ml-2 " (click)="exportStockList()"> export </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="row align-items-center p-2">
+                    <div class="col-12 text-center">
+                        <p-table [value]="stockTypeSearchList" [paginator]="true" [rows]="10" [lazy]="true" [(first)]="first" 
+                            (onLazyLoad)="load($event)" [totalRecords]="totalRecord" [scrollable]="true" class="center">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Warehouse Name</th>
+                                    <th>ItemNumber</th>
+                                    <th>Item Name</th>
+                                    <th>Item Multi MRP</th>
+
+                                    <th *ngIf="selectedStockType.value == 'CL'">MRP</th>
+                                    <th *ngIf="selectedStockType.value == 'N' || selectedStockType.value=='NR'">APP</th>
+                                    <th>Created Date</th>
+                                    <th>Qty</th>
+                                    <th>Action</th>
+                                    <!-- <th *ngIf="showTransactionRow">Transactions</th> -->
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-row let-index>
+                                <tr>
+                                    <td>{{row.WarehouseName}}</td>
+                                    <td>{{row.ItemNumber}}</td>
+                                    <td>{{row.ItemName}}</td>
+                                    <td>{{row.ItemMultiMRPId}}</td>
+                                    <td *ngIf="selectedStockType.value == 'CL'">{{row.MRP}}</td>
+                                    <td *ngIf="selectedStockType.value == 'N' || selectedStockType.value=='NR'">{{row.APP != null ? row.APP : 0}}</td>
+                                    <td>{{row.CreatedDate | date}}</td>
+                                    <td style="background-color: #74c18c;margin-top: 10px;display: inline-block;border-radius: 10px;color: white;font-size: 17px;padding: 9px 10px;" (click)="openInventoryPopup(row)">{{row.Inventory}}</td>
+                                    <td>
+                                        <button class="btn btn-primary" type="button"
+                                            (click)="openHistory(row)">History</button>
+                                    </td>
+                                    <!-- <td *ngIf="showTransactionRow">
+                                        <button class="btn btn-primary" type="button"
+                                            (click)="openTransactionPopup(row)">Transaction</button>
+                                    </td> -->
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <h5>Data Not Found</h5>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+<!--  CLEARANCE HISTORY LIST -->
+<p-dialog [(visible)]="isClearance" [resizable]="true" [modal]="true" appendTo="body" positionTop="20"
+    [style]="{width: '75vw'}"
+    [contentStyle]="{'height': '500px', 'max-height': '500px', 'min-height': '500px', 'overflow-y': 'auto'}">
+    <p-header>
+        <p>Clearance Stock History</p>
+    </p-header>
+    <div class="text-right"> <button type="button" class="btn btn-primary mt-2" (click)="export()">Export</button></div>
+    
+    <div class="row">
+        <div class="col-12 text-center">
+            <div>
+
+                <p-table #dt [value]="clearanceData" [paginator]="true" [(first)]="first"
+                    [totalRecords]="clearanceDataTotalRecords" [lazy]="true" (onLazyLoad)="loadData($event,null)"
+                    [rows]="stockHistoryPageFilter.Take" text-align: center>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Warehouse</th>
+                            <th>ItemMultiMRPID</th>
+                            <th>ItemName</th>
+                            <th>ItemNumber</th>   
+                            <th>MRP</th>
+                            <th>NetInventory</th> 
+                            <th>In Out Qty</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                            <th>User</th> 
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-row>
+                        <tr>
+                            <td>{{row.WarehouseName}}</td>
+                            <td>{{row.ItemMultiMRPId}}</td>
+                            <td>{{row.ItemName?row.ItemName:'--'}}</td>
+                            <td>{{row.ItemNumber}}</td>
+                            <td>{{row.MRP}}</td>
+                            <td>{{row.NetInventory}}</td>
+                            <td style="width:80px">{{row.Inventory}}</td>
+                            <td style="width:230px">{{row.Comment}}</td>
+                            <td>{{row.CreatedDate |date : 'medium'}}</td>
+                            <td>{{row.PeopleFirstName}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+            </div>
+        </div>
+</p-dialog> 
+
+
+
+<p-dialog [(visible)]="historyPopUp" [resizable]="true" [modal]="true" appendTo="body" positionTop="20"
+    [style]="{width: '75vw'}"
+    [contentStyle]="{'height': '500px', 'max-height': '500px', 'min-height': '500px', 'overflow-y': 'auto'}">
+    <p-header>
+     <p *ngIf="selectedStockType.value == 'N'">Non Sellable Stock History</p>
+     <p  *ngIf="selectedStockType.value == 'NR'">Non Revenue Stock History</p>
+    </p-header>
+    <div class="text-right"> <button type="button" class="btn btn-primary mt-2" (click)="export()">Export</button></div>
+    <div class="row">
+        <div class="col-12 text-center">
+            <div>
+
+                <p-table #dt [value]="stockHistory.StockHistoryData" [paginator]="true"
+                    [totalRecords]="stockHistory.TotalRecords" [lazy]="true" (onLazyLoad)="loadData($event,null)"
+                    [rows]="stockHistoryPageFilter.Take" text-align: center>
+
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Warehouse</th>
+                            <th>ItemMultiMRPID</th>
+                            <th>ItemName</th>
+                            <th>ItemNumber</th>  
+                            <th *ngIf="selectedStockType.value == 'NR'">MRP</th>  
+                            <th *ngIf="selectedStockType.value == 'CL'">MRP</th>
+                            <th *ngIf="selectedStockType.value == 'N'">APP</th>
+                            
+                            <th>In Out Qty</th>
+							<th>NetInventory</th> 
+                            <th>Comment</th>
+                            <th>Date</th>
+                            <th>User</th>
+                            <!-- <th>Ref Stock</th> -->
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-row>
+                        <tr>
+                            <td>{{row.WarehouseName}}</td>
+                            <td>{{row.ItemMultiMRPId}}</td>
+                            <td>{{row.ItemName?row.ItemName:'--'}}</td>
+                            <td>{{row.ItemNumber}}</td>
+                            <td *ngIf="selectedStockType.value == 'NR'">{{row.MRP}}</td>
+                            <td *ngIf="selectedStockType.value == 'CL'">{{row.MRP}}</td>
+                            <td *ngIf="selectedStockType.value == 'N'">{{row.APP != null ? row.APP : 0}}</td>
+                            <td style="width:80px">{{row.Inventory}}</td>
+                            <td>{{row.NetInventory}}</td>
+                            <td style="width:230px">{{row.Comment}}</td>
+                            <td>{{row.CreatedDate |date : 'medium'}}</td>
+                            <td>{{row.PeopleFirstName}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<!-- [contentStyle]="{'height': '500px', 'max-height': '500px', 'min-height': '500px', 'overflow-y': 'auto'}" -->
+<p-dialog [(visible)]="TransactionPopup" [resizable]="true" [modal]="true" appendTo="body" positionTop="0"
+    [style]="{width: '100vw', height:'100vh', 'overflow-y': 'hidden'}" [resizable]="false">
+    <p-header>
+        <p>Transaction Page</p>
+    </p-header>
+    <div class="row">
+        <div class="col-12 text-center">
+            <p-table [value]="stockTransactionList" [paginator]="true" [rows]="10" [lazy]="true" [scrollable]="true"
+                class="center" [(selection)]="selectedtransactionList">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Select</th>
+                        <th>Batch Code</th>
+                        <th>Unit Price</th>
+                        <th>Mfg. Date</th>
+                        <th>Exp. Date</th>
+                        <th>Total Qty</th>
+                        <th>Available Qty</th>
+                        <th>Transfer Qty</th>
+                        <!-- <th>Updated unit Price</th> -->
+                        <th>Discount</th>
+                        <th>Value/Percentage</th>
+                        <th>Clearance Price</th>
+                        <th>Promo Cost</th>
+                        <!-- <th>Max Order Value</th> -->
+                        <th>Shelf Life Days</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row let-index>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="row" (click)="enableImputs(row)"></p-tableCheckbox>
+                        </td>
+                        <td>{{row.BatchCode}}</td>
+                        <td>{{row.UnitPrice}}</td>
+                        <td>{{row.MFGDate | date}}</td>
+                        <td>{{row.ExpiryDate | date}}</td>
+                        <td>{{row.Qty}}</td>
+                        <td>{{row.AvailQty}}</td>
+                        <td>
+                            <input type="number" [(ngModel)]="row.tranferQty" min=0 [max]="row.AvailQty"
+                                class="form-control" [disabled]="row.selected">
+                        </td>
+                        <!-- <td>
+                            <input type="number" [(ngModel)]="row.UpdatedUnitPrice" min=0 class="form-control"
+                                [disabled]="row.selected">
+                        </td> -->
+                        <td>
+                            <input type="number" [(ngModel)]="row.discount" min=0 class="form-control"
+                                [disabled]="row.selected">
+                        </td>
+                        <td>
+                            <select [disabled]="row.selected" id="discTyp" name="discTyp" class="form-control"
+                                [(ngModel)]="row.selectedDiscountType" (change)="changediscountType(row)">
+                                <option value="Percentage">Percentage</option>
+                                <option value="Value">Value</option>
+                            </select>
+                        </td>
+                        <td>
+                            <ng-container *ngIf="row.selectedDiscountType == 'Percentage'">
+                                Perc rate after dic applied
+                                (unitPrice*(100-Disc%))/100
+                            </ng-container>
+                            <ng-container *ngIf="row.selectedDiscountType == 'Value'">
+                                value rate after dic applied
+                                (unitPrice-Discount)
+                            </ng-container>
+                        </td>
+                        <td>
+                            <ng-container *ngIf="row.selectedDiscountType == 'Percentage'">
+                                Perc how much disc applied
+                                (unitPrice*(Disc%))/100
+                            </ng-container>
+                            <ng-container *ngIf="row.selectedDiscountType == 'Value'">
+                                value how much disc applied
+                                (discoint)
+                            </ng-container>
+                        </td>
+                        <!-- <td>
+                            <input type="number" min=0 class="form-control" [disabled]="row.selected">
+                        </td> -->
+                        <td>{{row.dateDifference}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <h5>Data Not Found</h5>
+                </ng-template>
+            </p-table>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" type="button" (click)="tranferSelectedQuantity()">Transfer Selected
+                Quantity</button>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog [(visible)]="inventorypopup" [resizable]="true" [modal]="true" appendTo="body" positionTop="20"
+    [style]="{width: '75vw'}"
+    [contentStyle]="{'height': '500px', 'max-height': '500px', 'min-height': '500px', 'overflow-y': 'auto'}">
+    <p-header>
+        <p  *ngIf="selectedStockType.value == 'CL'"> Clearance Stock Items</p>
+        <p *ngIf="selectedStockType.value == 'N'"> Non-Sellable Stock Items</p>
+        <P *ngIf="selectedStockType.value == 'NR'">Non-Revenue Stock Items</P>
+    </p-header>
+    <div class="row">
+        <div class="col-12 text-center">
+            <div>
+                <p-table #dt [value]="qtyList" [paginator]="true"
+                    [rows]="10" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>SNo</th>
+                            <th>Batch Code</th>
+                            <th>Qty</th>
+                            <th>MFG Date</th>
+                            <th>Expiry Date</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+                        <tr>
+                            <td>{{rowIndex + 1}}</td>
+                            <td>{{row.BatchCode}}</td>
+                            <td>{{row.Qty}}</td>
+                            <td>{{row.MFGDate | date}}</td>
+                            <td>{{row.ExpiryDate | date}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</p-dialog>

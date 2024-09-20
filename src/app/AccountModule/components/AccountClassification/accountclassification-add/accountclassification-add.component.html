@@ -1,0 +1,60 @@
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form" name="form" #accountclassificationForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Add Account Classification Info</h4>
+                  <div class="row col-md-12" *ngIf="account">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="fname"> Name</label>
+                        <input type="text" id="fname" class="form-control" name="fname"
+                          [(ngModel)]="account.Name" placeholder="Enter the First Name" required="1" maxlength="50" minlength="2"
+                          #firstName="ngModel" />
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code> Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                            <code>Minlength 2</code>
+                          </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="lname">Descripation</label>
+                        <input type="text" id="lname" class="form-control" name="lname"
+                          [(ngModel)]="account.Description" placeholder="Enter the Last Name" required="1" maxlength="50" minlength="2"
+                          #descName="ngModel" />
+                        <div *ngIf="isInvalid && !descName.valid && descName.errors.required">
+                          <code>Descripation is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !descName.valid && descName.errors.minlength">
+                            <code>Minlength 2</code>
+                          </div>                      
+                    </div>              
+                  </div>
+                </div>
+                </div>
+                <div class="form-actions right">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                   Cancel
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary" (click) = "onclick(accountclassificationForm)">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

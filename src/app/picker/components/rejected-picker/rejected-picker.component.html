@@ -1,0 +1,281 @@
+<!-- <p>rejected-picker works!</p> -->
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Rejected Order Picker List</h3>
+    </div>
+</div>
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+            <div class="d-flex">
+                <div class="mr-4">
+                    <label><b>Select Warehouses<span class="required">*</span></b></label>
+                    <p-multiSelect id="Category" name="Category" [options]="WareHouseList" [(ngModel)]="selectedWareHouse" (onChange)="getClusterlist()"  
+                    optionLabel="label" placeholder="Select WareHouse"  > 
+                    </p-multiSelect>
+                </div>
+                 <div class="mr-4">
+                    <label><b>Select Cluster<span class="required">*</span></b></label>
+                    <p-multiSelect id="Category" name="Category" [options]="clusterList" [(ngModel)]="SelectedCluster" 
+                    optionLabel="ClusterName" placeholder="Select Cluster"  > 
+                    </p-multiSelect>
+                </div>      
+                <div class="mr-4">
+                    <label><b>Select Date Range</b></label><br>
+                    <p-calendar [showIcon]="true" [(ngModel)]="selectDate" selectionMode="range" [readonlyInput]="true" showButtonBar="true" inputId="range">
+                    </p-calendar>
+                </div>           
+                <div class="mr-4">
+                    <label><b>Enter Picker Number / Order Number
+                        </b></label><br>   
+                        <input type="text"  required="1" (keypress)="keyPress($event)" maxlength="9" type="tel" name="Title" class="form-control" [(ngModel)]="EnterPN" />
+                </div>      
+            </div>
+            <div style="margin-top:28px;">                            
+                <button  class="btn btn-primary mr-2" (click)="GetRejectedPickerList()">Search</button>   
+                <button class="btn btn-primary " (click)="ExportF()" >Export</button>                    
+            </div>
+        </div>
+    </div>
+    <div class="row ml-1">
+        <span style="color: red;"><b> Default system generated data will be for last one month.</b></span>
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <p-table [scrollable]="false" [value]="PickerList" [totalRecords]="Totalcount"  [scrollable]="true" [lazy]="true" (onLazyLoad)="load($event)" 
+     [paginator]="true" [rows]="20" >
+        <ng-template pTemplate="header">
+            <tr >
+                <th style="width: 20%;">Picker Number</th>
+                <th style="width: 20%;">Picker Name</th>
+                <th style="width: 20%;">WareHouse Name</th>
+                <th style="width: 20%;">Inventory Checker</th>
+                <th style="width: 20%;">No. of Orders</th>
+                <th style="width: 20%;">Line Item Quantity</th>
+                <th style="width: 20%;">Order Number</th>
+                <th style="width: 20%;">Total Order Value</th>
+                <th style="width: 20%;">Created Date</th>
+                <th style="width: 20%;">Reject Date/Time</th>
+                <th style="width: 20%;">Rejected By</th>
+            </tr>         
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr (click)="openitem(item,$event,selectedWareHouse)">
+                <td>{{item.PickerNumber}}</td>
+                <td>{{item.PickerpersonName}}</td>  
+                <td>{{item.WarehouseName}}</td>
+                <td>{{item.InventorySupNAme}}</td> 
+                <td>{{item.NoOfOrders}}</td>
+                <td>{{item.LineItemQuantity}}</td>
+                <td>{{item.OrderNumber}}</td>
+                <td>{{item.amt}}</td>
+                <td>{{item.CreatedDate | date:'medium'}}</td>
+                <td>{{item.RejectedDate | date:'medium'}}</td> 
+                <td>{{item.RejectedBy}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="ispopupIdDetail"
+ [resizable]="false" positionTop="50" [modal]="true" appendTo="body" [style]="{width: '83%',height: '90%', overflow: 'auto', top: '30px'}">
+    <form class="container-fluid">
+        <div>
+            <h3 style="text-align: center;"> 
+            <b>Rejected Picker List</b></h3>
+        </div>
+    </form>
+
+    <form class="ovelFieldForm form form-inline" name="form" #orderForm="ngForm" style="position: relative;z-index: 9;">
+        <div  style="padding:10px; position: relative; z-index: 9;">
+            <div class="waterMark" style="width: 50%;position: absolute;top: 31%;left: 49%;transform: skew(23deg, -36deg);height: 313px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+                <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+            </div>
+            <div style="position: absolute; right: 15px; margin-top: 40px;">
+                <img src="assets/img/logo/Logo.png" width="200px">
+            </div>
+            <div class="col-md-12 text-right" style="font-weight: bold;font-size: 165%;">
+                <a class="view" (click)="printV()" style="margin-right: 70px;">
+                    <b><u>Print View</u></b>
+                  </a>
+            </div>
+                <div class="col-md-12">                    
+                    <div>
+                        <b>Picker Number :</b><br>
+                        <b>Picker Name :</b><br>
+                        <b>Warehouse :</b><br>
+                        <b>CreatedDate :</b><br>
+                        <b>CreatedBy :</b><br>
+                        <b>Cluster Name :</b><br>
+                        <b>DBoy Name :</b><br>
+                    </div>
+                    <div style="margin-left: 140px;   margin-top: -155px;">
+                        {{Id}}<br>
+                        {{pickerPerson}}<br>
+                        {{WarehouseName}}<br>
+                        {{CreatedDate}}<br>         
+                        {{dboy}}<br>
+                        {{ClusterName}}<br>
+                        {{createdby}}
+                    </div>      
+                </div><br><br>
+            <div class="row " >
+                <div class="col-md-12">                    
+                    <p-table [paginator]="true" [value]="Listres" [rows]="5" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">Order Id</th>
+                                <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">Item Name</th>
+                                <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">Item Multi MRP ID</th>
+                                <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">MRP</th>
+                                <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">QTY</th>
+                                <!-- <th>Boxex & Piece</th> -->
+                                <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">Remark</th>
+                                <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">History</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item> 
+                            <tr>
+                                <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.OrderId}}</td>
+                                <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.ItemName}}</td> 
+                                <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.ItemMultiMrpId}}</td>
+                                <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.price}}</td>
+                                <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.Qty}}</td>
+                                <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.Comment}}</td>
+                                <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >
+                                    <a class="view" (click)="openHistory(item,$event)">
+                                        <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr> 
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage" let-columns>
+                            <tr>
+                                <td colspan="7" style="text-align: center;">
+                                <h5><b>No Data Found.</b></h5>
+                            </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>                    
+                </div>
+            </div> 
+        </div>
+    </form>
+</p-dialog>
+
+<p-dialog [(visible)]="historyHide"
+[resizable]="false" [modal]="true" appendTo="body" positionTop="50" [style]="{width: '83%',height: '90%', left : '11px', overflow: 'auto'}">
+    <form class="container-fluid">
+        <div>
+            <h3 style="text-align: center;"> 
+            <b>Rejected Picker List</b></h3>
+        </div>
+    </form>
+
+    <form class="ovelFieldForm form form-inline" name="form" #orderForm="ngForm" style="position: relative;z-index: 9;">
+        <div  style="padding:10px; position: relative; z-index: 9;">
+            <div id="print-section" style="padding:10px 15px; position: relative;z-index: 9;">
+                <div class="waterMark" style="width: 50%;position: absolute;top: 31%;left: 49%;transform: skew(23deg, -36deg);height: 313px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+                    <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+                </div>
+                <div style="position: absolute; right: 15px; margin-top: 40px;">
+                    <img src="assets/img/logo/Logo.png" width="200px">
+                </div>
+                <!-- <div id="print-section" style="padding:10px 15px; position: relative;z-index: 9;"> -->
+                <div class="col-md-12 text-right" style="font-weight: bold;font-size: 165%;">
+                    <button class="print_btn" printSectionId="print-section" ngxPrint
+                    [printStyle]="{hiddenDiv : {'opacity': '100%', 'display':'block'}}">Print</button>
+                </div>
+                <div class="col-md-12" id="print-section">                
+                        <div>
+                            <b>Picker Number :</b><br>
+                            <b>Picker Name :</b><br>
+                            <b>Warehouse :</b><br>
+                            <b>CreatedDate :</b><br>
+                            <b>CreatedBy :</b><br>
+                            <b>Cluster Name :</b><br>
+                            <b>DBoy Name :</b><br>
+                        </div>
+                        <div style="margin-left: 140px;   margin-top: -155px;">
+                            {{Id}}<br>
+                            {{pickerPerson}}<br>
+                            {{WarehouseName}}<br>
+                            {{CreatedDate}}<br>         
+                            {{dboy}}<br>
+                            {{ClusterName}}<br>
+                            {{createdby}}
+                        </div>      
+                </div><br><br>
+                <div class="row " >
+                    <div class="col-md-12">                    
+                            <p-table [paginator]="true" [value]="Listres" [rows]="5" [scrollable]="true" scrollHeight="130vh" text-align: center id="print-section">
+                                <ng-template pTemplate="header">
+                                    <tr >
+                                        <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">Order Id</th>
+                                        <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">Item Name</th>
+                                        <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">Item Multi MRP ID</th>
+                                        <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">MRP</th>
+                                        <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">QTY</th>
+                                        <!-- <th>Boxex & Piece</th> -->
+                                        <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">Remark</th>
+                                        <!-- <th style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">History</th> -->
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item> 
+                                    <tr>
+                                        <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.OrderId}}</td>
+                                        <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.ItemName}}</td> 
+                                        <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.ItemMultiMrpId}}</td>
+                                        <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.price}}</td>
+                                        <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.Qty}}</td>
+                                        <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >{{item.Comment}}</td>
+                                        <!-- <td  style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >
+                                            <a class="view" (click)="openHistory(item,$event)">
+                                                <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                                            </a>
+                                        </td> -->
+                                    </tr> 
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage" let-columns>
+                                    <tr>
+                                        <td colspan="7" style="text-align: center;">
+                                        <h5><b>No Data Found.</b></h5>
+                                    </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>                    
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </form>
+</p-dialog>
+<div *ngIf="historypopup">
+<p-dialog [(visible)]="historypopup" 
+[resizable]="false" [modal]="true" appendTo="body" positionTop="50" [style]="{width: '83%',height: '90%', left : '11px', overflow: 'auto'}">
+    <p-header>
+        <h4
+            style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+            <b>History </b>
+        </h4>
+    </p-header>
+    <app-history [entity]="entity" [id]="historyDetailid"></app-history> 
+    <footer></footer>
+</p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

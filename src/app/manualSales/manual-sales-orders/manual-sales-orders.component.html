@@ -1,0 +1,170 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="customer-master">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3> Manual sales Order Master</h3>
+    </div>
+    <div>
+      <button pButton type="button" label="Add New Order" (click)="goToAddOrderM()" class="btn btn-raised btn-primary"></button>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover gr-ir-tb-wd">
+  <div class="position-relative">
+    <div class="position-absolute document-details">
+    </div>
+    <div class="position-relative">
+      <p-table #dt [columns]="cols" [value]="Itemlist" [paginator]="true" [rows]="10" [scrollable]="true"
+        scrollHeight="70vh" text-align: center>
+        <ng-template pTemplate="caption">
+          <div style="text-align: right">
+              <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+              <input type="text" pInputText size="50" placeholder="Search"
+                  (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+          </div>
+          </ng-template>   
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of cols" style="text-align: initial">
+              {{col.header}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+          <tr>
+            <td *ngFor="let col of columns" style="text-align: initial">
+              {{rowData[col.field]}}
+              <div class="d-flex flex-column align-items-center" *ngIf="col.bool">
+                <button class="btn btn-raised btn-primary" (click)="Action(rowData)">Order Items</button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+
+btn
+<div id="print-section" *ngIf="isOpenPopup">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+    <p-header>
+      Order Item List
+    </p-header>
+
+    <div id="divtoPrint" class="client-document-container">
+      <style type="text/css">
+        @media print {
+          .no-print {
+            display: none !important;
+          }
+
+          .border {
+            border: 1px solid #000 !important;
+          }
+
+          th,
+          td {
+            border: solid #000 !important;
+            border-width: 0 1px 1px 0 !important;
+            border-spacing: 0;
+            padding: 0;
+            text-align: center;
+          }
+        }
+      </style>
+      <div class="containers">
+        <div class="container-fluid">
+          <br />
+          <div class="row">
+            <table class="table table-bordered" style="font-size:14px!important;  border: 1px solid #000;" width="100%">
+              <tbody class="border">
+                <tr>
+                  <td colspan="3" style="text-align:center;font-size:large;"> <strong style="text-align:center;">Sales
+                      Order Detail</strong></td>
+                </tr>
+                <tr>
+                  <td height="50" width="20%"> <img width="200px" height="200px"
+                      src="../../../assets/img/sk_logo.png" /> <br />
+                  </td>
+                  <td height="50" width="40%">
+                    <p style="font-size:large;">
+                      <strong style="color:orangered;"> ShopKirana E Trading Pvt. Ltd.</strong> <br />
+                      <span> Address:&nbsp; 201, 2nd Floor, A22/3 SP 365,</span> <br />
+                      <span> Janjeerwala Square, Indore-4552001,</span><br />
+                      <span> Madhya Pradesh.</span>
+                    </p>
+                  </td>
+                  <td height="50" width="40%">
+                    <p style="padding:3px;">
+                      <span style="float:left"> <strong style="color:orangered;"> Buyer Details </strong></span><br />
+                      <span style="float:left">Buyer Name : {{popupdata.Name}}</span><br />
+                      <span style="float:left">Buyer Mobile: {{popupdata.MobileNo}} </span><br />
+                      <span style="float:left">Buyer Address: {{popupdata.Address}}</span><br />
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+              <div class="table-responsive">
+                <table *ngIf="itemdatass" class="table table-striped table-bordered table-hover"
+                  style=" border: 1px solid #000;" width="100%">
+                  <thead>
+                    <tr>
+                      <th *ngFor="let col of colsv1">{{col.header}}</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let PurchaseorderDetail of itemdatass">
+                      <td *ngFor="let col of colsv1">
+                        {{PurchaseorderDetail[col.field]}}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td colspan="5"> <span style="float:left"><strong>Grand Total:
+                          </strong></span></td>
+                      <td>
+                        <span style=" float: left;color: black;font-weight:bold; font-size:large;">
+                          <i class="fa fa-inr"></i> {{popupdata.TotalOrderAmount}}/-&nbsp;</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <br />
+            <div class="col-lg-4 col-md-4 col-sm-4">
+              <div class="row pad-top-botm">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                  <hr />
+                  <button  printTitle="SalesInvoice"   printSectionId="print-section" ngxPrint class="btn btn-raised btn-primary print1" icon="print"
+                    text="Print" (click)="printPage()">print Invoice</button> </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr style="border-top: dotted 4px;" />
+    </div>
+  </p-dialog>
+</div>
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

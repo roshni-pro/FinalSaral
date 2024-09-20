@@ -1,0 +1,150 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section >
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header">
+        <h3 class="m-2"><b>Customer Target Dashboard</b></h3>
+      </div>       
+    </div>
+    <h5 class="m-2"><b>Brand Details</b></h5>
+    <div class="container">
+            <!-- <div class="filterBar"> -->
+        <form class="">
+            <div class="row">
+                <div class=" col-sm-3">
+                    <div class="form-group">
+                        <label for="name"><b>Month</b></label>
+                        <select class="form-control" id="Month" name="Month" [(ngModel)]="FinalData.Month">
+                            <option value="">Select</option>
+                            <option [ngValue]="1">January</option>
+                            <option [ngValue]="2">February</option>
+                            <option [ngValue]="3">March</option>
+                            <option [ngValue]="4">April</option>
+                            <option [ngValue]="5">May</option>
+                            <option [ngValue]="6">June</option>
+                            <option [ngValue]="7">July</option>
+                            <option [ngValue]="8">August</option>
+                            <option [ngValue]="9">September</option>
+                            <option [ngValue]="10">October</option>
+                            <option [ngValue]="11">November</option>
+                            <option [ngValue]="12">December</option>
+                        </select>
+                    </div>
+                </div>
+                <div class=" col-sm-3">
+                    <div class="form-group">
+                        <label for="Year"><b>Year</b></label>
+                        <select id="years" name="years"  class="form-control" [(ngModel)]="FinalData.Year">
+                            <option *ngFor="let year of years" >
+                                {{year}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class=" col-sm-3">
+                    <div class="form-group">
+                        <label class="col-sm-12"><b>&nbsp;</b></label>
+                        <button type="button" class="btn btn-raised btn-primary align-self-end" (click)="searchbrand(FinalData)">Export</button>
+                    </div>                       
+                </div>
+            </div>
+        </form>
+            <!-- </div> -->
+    </div>
+    <h5 class="m-2"><b>Customer Target Details </b></h5>
+    <div class="container">
+
+        <!-- <div class="filterBar"> -->
+            <form class="">
+                <div class="row">
+                    <div class=" col-sm-3">
+                        <div class="form-group">
+                            <label for="name"><b>Month</b></label>
+                            <select class="form-control" id="Month1" name="Month1" [(ngModel)]="Final.Month1">
+                                <option value="">Select</option>
+                                <option [ngValue]="1">January</option>
+                                <option [ngValue]="2">February</option>
+                                <option [ngValue]="3">March</option>
+                                <option [ngValue]="4">April</option>
+                                <option [ngValue]="5">May</option>
+                                <option [ngValue]="6">June</option>
+                                <option [ngValue]="7">July</option>
+                                <option [ngValue]="8">August</option>
+                                <option [ngValue]="9">September</option>
+                                <option [ngValue]="10">October</option>
+                                <option [ngValue]="11">November</option>
+                                <option [ngValue]="12">December</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class=" col-sm-3">
+                        <div class="form-group">
+                            <label for="Year"><b>Year</b></label>
+                            <select id="yearss" name="yearss"  class="form-control" [(ngModel)]="Final.Year1">
+                                <option *ngFor="let year of yearss" >
+                                    {{year}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class=" col-sm-3">
+                        <div class="form-group">
+                            <label class="col-sm-12"><b>&nbsp;</b></label>
+                            <button type="button" class="btn btn-raised btn-primary align-self-end" (click)="Search(Final)">Export</button>
+                        </div>                       
+                    </div>
+                </div>
+            </form>
+        <!-- </div> -->
+
+    </div>
+    <div class="container">
+
+        <!-- <div class="filterBar"> -->
+        <form class="">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="name"><b>SkCode</b></label>
+                        <input class="form-control" type="text"  name="SkCode" [(ngModel)]="data1.SkCode"
+                        placeholder="SkCode">
+                    </div>
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="col-sm-12"><b>&nbsp;</b></label>
+                        <button type="button" class="btn btn-raised btn-primary align-self-end" (click)="datasearch(data1)">Search</button>
+                    </div>                       
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label class="col-sm-12"><b>&nbsp;</b></label>
+                        <button type="button" class="btn btn-raised btn-primary align-self-end" (click)="reset(item)">Reset</button>
+                    </div>                       
+                </div>
+            </div>
+            <div class="row">
+                <div class=" col-sm-3">
+                    <div class="form-group">
+                        <label for="name"><b>Running Month Target</b></label>
+                        <input class="form-control" type="text"  name="Month" [(ngModel)]="Target" placeholder="Running Month Target" disabled>
+                    </div>
+                </div>
+
+                <div class=" col-sm-3">
+                    <div class="form-group">
+                        <label for="name"><b>Target Active Till Date</b></label>
+                        <input class="form-control" type="text"  name="Active" [(ngModel)]="CurrentVolume" placeholder="Target Active Till Date" disabled>
+                    </div>
+                </div>
+            </div>
+        </form>
+            <!-- </div> -->
+    </div>
+    
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> 
+</section>
+ 

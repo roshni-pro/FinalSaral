@@ -1,0 +1,124 @@
+<div class="ui-fluid">
+  <section>
+    <!-- *ngIf="!isDetails" -->
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="content-header">Buyer List</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="published"><b>Buyers:</b></label><br>
+        <p-multiSelect [style]="{minWidth:'22em'}" appendTo="body" [options]="buyerList" [(ngModel)]="selectedBuyer"
+          name="buyerInput" optionLabel="DisplayName" (onPanelHide)="onPanelHide()">
+        </p-multiSelect>
+
+      </div>
+
+      
+      <div class="col-sm-2">
+        <label for="validfrom">Start Date</label>
+        <p-calendar  name="StartDate" placeholder="Start Date" [(ngModel)]="data.StartDate" [showIcon]="true"  name="StartDate" ></p-calendar>
+
+      </div>
+
+      <div class="col-sm-2">
+        <label for="validto">End Date</label>
+        <p-calendar  name="EndDate" placeholder="End Date" [(ngModel)]="data.EndDate" [showIcon]="true"  name="EndDate" ></p-calendar>
+      </div>
+
+      <div class="col-md-2" style="margin-top:1.7%;">
+        <button type="submit" class="btn btn-raised btn-primary" (click)="onSave(data)">Search </button>
+
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <div></div>
+          <button type="button" style="text-align:left;" class="btn btn-raised btn-raised btn-primary" (click)="export()">
+            Export
+          </button>
+        </div>
+      </div>
+         &nbsp;
+  <br /><br />
+  <br /> <br/>
+  <br/>
+
+      <div class="position-relative">
+        <p-table [value]="buyerData" [paginator]="true" [rows]="5" dataKey="BuyerId" [scrollable]="true"
+          scrollHeight="40vh" text-align: center>
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>
+                BuyerName
+              </th>
+              <th>
+                SaleAmount
+              </th>
+              <th>
+                ClosingStock
+              </th>
+              <th>
+                GrossMargin
+              </th>
+
+              <th>
+                InventoryDays
+              </th>
+              <th>
+                Active Articles
+              </th>
+              <th>
+                Active Vendor
+              </th>
+
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData>
+
+
+            <tr>
+              <td>
+                {{rowData.BuyerName}}
+              </td>
+
+              <td class="test" (click)="toggle1(rowData)">
+                {{rowData.SaleAmount}}
+              </td>
+              <td class="test1" (click)="toggle2(rowData)">
+                {{rowData.ClosingStock}}
+              </td>
+              <td class="test2" (click)="toggle3(rowData)">
+                {{rowData.GrossMargin}}%
+              </td>
+              <td class="test3" (click)="toggle4(rowData)">
+                {{rowData.InventoryDays}}
+              </td>
+              <td class="test4">
+                {{rowData.ActiveArticles}}
+              </td>
+              <td>
+                {{rowData.ActiveVendors}}
+              </td>
+            </tr>
+          </ng-template>
+      
+        </p-table>
+        
+      </div>
+    </div>
+  </section>
+
+
+
+  <app-buyer-details [name]="name" [data]="buyerDetails" [Columns]=Columns (isdetailsclose)="closeDetails($event)" *ngIf="isDetails">
+  </app-buyer-details>
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '30px', height: '40px', position: 'center', left: '50%', top: '10%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</div>

@@ -1,0 +1,43 @@
+<form class="form mr-t-10" #notificationDetailForm="ngForm">
+    <div class="form-body">
+        <h4 class="form-section"><i class="fa fa-gift" aria-hidden="true"></i>Notification Details</h4>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group" *ngIf="autoNotification">
+                    <label for="projectinput1">Auto Dial Url</label>
+                    <input [(ngModel)]="autoNotification.AutoDialUrl" name="autoDialUrlInput" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div>
+            <app-notification-fcm-notifcation></app-notification-fcm-notifcation>
+        </div>
+        <div>
+            <app-notification-text-message></app-notification-text-message>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="projectinput1">Send To</label>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p-checkbox name="isSupplierNotificationInput" label="Supplier"
+                            [(ngModel)]="autoNotification.IsSupplierNotification"
+                            (ngModelChange)="onChangeSendToType('supplier')" binary="true"></p-checkbox>
+                    </div>
+                    <div class="col-md-4">
+                        <p-checkbox name="isCustomerNotificationInput" label="Customer"
+                            [(ngModel)]="autoNotification.IsCustomerNotification"
+                            (ngModelChange)="onChangeSendToType('customer')" binary="true"></p-checkbox>
+                    </div>
+                    <div class="col-md-4">
+                        <p-checkbox name="isPeopleNotificationInput" label="People"
+                            [(ngModel)]="autoNotification.IsPeopleNotification"
+                            (ngModelChange)="onChangeSendToType('people')" binary="true"></p-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</form>

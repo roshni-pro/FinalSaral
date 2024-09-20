@@ -1,0 +1,99 @@
+<section id="tax-details">
+  <div class="email-app-mail-content px-2 py-0 h-100 border-left border-left-2">
+    <div class="email-app-mail-content-detail h-100 overflow-hidden">
+      <div class="info-header">
+          <button type="button" class="close" aria-label="Close" (click)="closeDetails(false)">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="float-right mx-4">
+              <!-- <button class="btn btn-sm bg-warning text-white m-2" *ngIf="details.Active" (click)="open(activationModal)">Deactivate</button>
+              <button class="btn btn-sm bg-warning text-white m-2" *ngIf="!details.Active" (click)="open(activationModal)">Activate</button> -->
+              <!-- Activation Modal Start -->
+              <ng-template #activationModal let-modal>
+                  <div class="modal-header">
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                  </div>
+                  <div class="modal-body d-flex flex-column align-items-center">
+                  <h2>Are You Sure?</h2>
+                  <p class="m-2" style="text-align: center"><strong>Note:</strong> This will <strong><span *ngIf="details.Active">Deactivate</span><span *ngIf="!details.Active">Activate</span></strong> the account-group in the database.</p>
+                  </div>
+                  <div class="modal-footer d-flex p-0 justify-content-center">
+                  <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0" (click)="modal.close('No click')">Cancel</button>
+                  <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0" (click)="ToggleActivation(details)"><span *ngIf="details.Active">Deactivate</span><span *ngIf="!details.Active">Activate</span></button>
+                  </div>
+              </ng-template>
+              <!-- Activation Modal End -->
+              <button class="btn btn-sm bg-danger text-white m-2" (click)="onDelete(details)">Remove</button>
+              <!-- Remove Modal Start -->
+              <!-- <ng-template #removeModal let-modal>
+                  <div class="modal-header">
+                      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                      <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body d-flex flex-column align-items-center">
+                      <h2>Are You Sure?</h2>
+                      <p class="m-2" style="text-align: center"><strong>Note:</strong> This will permanently delete the supplier from the records.</p>
+                      <!-- <form class="col-12">
+                          <div class="form-group col-12">
+                              <label for="DeleteComment">Add Comments</label>
+                              <textarea class="form-control" id="DeleteComment" rows="3"  name="DeleteComment" [(ngModel)] = "rowData.DeleteComment" ></textarea>
+                          </div>
+                      </form> -->
+                  <!--</div>
+                  <div class="modal-footer d-flex p-0 justify-content-center">
+                      <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0" (click)="modal.close('No click')">Cancel</button>
+                      <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0" (click)="onDelete(details)">Delete</button>
+                  </div>
+              </ng-template> -->
+              <!-- Remove Modal End -->
+            </div>
+          <h3 class="m-2">{{details[activeFields[0].field]}}</h3>
+          
+          <ul class="nav border-bottom">
+              <li class="nav-item" (click)="overviewDisplay($event)">
+                <a [ngClass]="activeTabClass[0].isActive==true? 'nav-link active' : 'nav-link' " id="overview-btn">Overview</a>
+              </li>
+              <li class="nav-item" (click)="editFormDisplay($event)">
+                <a [ngClass]="activeTabClass[1].isActive==true? 'nav-link active' : 'nav-link' ">Edit</a>
+              </li>
+              <li class="nav-item" (click)="switchActive($event,'historyDisplay')">
+                  <a [ngClass]="activeTabClass[2].isActive==true? 'nav-link active' : 'nav-link' ">History</a>
+                </li>
+                
+          </ul>
+      </div>
+      <div id="editForm" *ngIf="displayTabs[1].bool" class="info-div m-2">
+          <!-- <div class="scale-small"> -->
+              <div>
+              <app-accountgroup-add [ID]="details.ID" (isdetailsclose)="closeDetails($event)" (refreshParent) = "RefreshParent()"></app-accountgroup-add>
+          </div>
+      </div>
+
+      <div id="depo" *ngIf="displayTabs[2].bool" class="info-div m-2">
+        <!-- <app-depot></app-depot> -->
+    </div>
+
+      <!-- Depo Start -->
+      <div id="depo" *ngIf="displayTabs[2].bool" class="">
+        
+      </div>
+      <!-- Depo End -->
+  
+        <div id="overview" *ngIf="displayTabs[0].bool" class="info-div text-sm">
+          <!-- <div class="info-heading text-bold-600 m-3"><h4>Supplier Info</h4></div> -->
+          <div class="info-content">
+            <div class="row m-2 mx-4">
+              <div class="col-md-6 d-flex" *ngFor="let activeField of activeFields">
+                <div class="info-label font-weight-bold m-2">{{activeField.label}}</div>
+                <div class="info-value m-2">{{details[activeField.field]}}</div>
+              </div>
+            </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,97 @@
+<div class="header">
+    <h3 class="m-2">Order Reconciliation MIS</h3>
+</div>
+<div class="row mb-2">
+    <div class="col">
+        <label><b style="font-weight: 500;">Select MOP *</b></label><br>
+        <p-dropdown id="MOP" name="MOP" [options]="MOP" [filter]="true" [(ngModel)]="paymentmode"
+            (onChange)="mopStatus(paymentmode)" optionLabel="name" optionValue="code"
+            selectedItemsLabel="{0} MOP selected" placeholder="Select MOP">
+        </p-dropdown>
+    </div>
+    <div class="col">
+        <label><b style="font-weight:500 ;">Select Recon Status *</b></label><br>
+        <p-dropdown id="reason" name="reason" [options]="Reason" [(ngModel)]="SelectedReason" optionLabel="name"
+            placeholder="Select Recon Status">
+        </p-dropdown>
+    </div>
+    <div class="col">
+        <label><b style="font-weight:500 ;">Select Date Range</b></label><br>
+        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [showIcon]="true" showButtonBar="true"  
+        [readonlyInput]="true" inputId="range" placeholder="select date range"  [style]="{'width': '214px'}" ></p-calendar>
+       
+    </div>
+    <div class="col">
+        <label><b style="font-weight:500 ;">Search</b></label><br>
+        <input type="text" class="form-control" placeholder="TransactionId/OrderID" [(ngModel)]="keyword"
+            style="width:100%; border-radius: 19px; height: 50%;">
+    </div>
+
+    <div class="col mt-4">
+        <button class="btn btn-primary mr-2" (click)="onSave($event) ;ForSearchHit()">Search</button>
+        <button class="btn btn-Success" (click)="onexport()">Export</button>
+    </div>
+
+</div>
+<div class="row mt-2" *ngIf="mop">
+    <div class="col-md-5  mb-2">
+        <input #myInput *ngIf=" mop=='hdfc' || mop=='UPI'" type="file" style="margin-left: 17px;margin-bottom: 10px;"
+            multiple="false" (change)="onUploadCheque($event.target.files)" name="file" id="myInput" />
+        <br>
+        <div class="col-md-12 mt-2" *ngIf="mop=='hdfc'">
+            <button class="btn btn-primary" accept=".xlsx" (click)="UploadHDFC()">Upload HDFC</button>
+        </div>
+        <div class="col-md-12 mt-2" *ngIf="mop=='UPI'">
+            <button class="btn btn-primary" accept=".xlsx" (click)="uploadUpiFile()">Upload UPI</button>
+        </div>
+    </div>
+</div>
+<p-table [value]="MisList" [totalRecords]="totalcount" [paginator]="true" [rows]="10" [scrollable]="true" [lazy]="true"
+    [(first)]="first" (onLazyLoad)="loadData($event)" scrollHeight="38rem"
+    currentPageReportTemplate="Showing {first} to {last} of {totalcount} entries">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>S.No</th>
+            <th>Transaction Date</th>
+            <th>Transaction Id</th>
+            <th>Order Id</th>
+            <th>Order Status</th>
+            <th>Order Amount</th>
+            <th>Order SettlEment Date</th>
+            <th>Transaction Amount</th>
+            <th>Bank Settlement Date</th>
+            <th>Status</th>
+            <th>Created Date</th>
+            <th>Created By</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-index="rowIndex">
+        <tr>
+            <td>{{index+1}}</td>
+            <td>{{rowData.TransactionDate |date:'dd-MM-yyyy'}}</td>
+            <td>{{rowData.TransactionId?rowData.TransactionId:'-'}}</td>
+            <td>{{rowData.OrderId?rowData.OrderId:'-'}}</td>
+             <td>{{rowData.OrderStatus?rowData.OrderStatus:'-'}}</td>
+             <td>{{rowData.OrderAmount?rowData.OrderAmount:'-'}}</td>
+             <td>{{rowData.OrderSettlmentDate | date:'dd-MM-yyyy'}}</td>
+             <td>{{rowData.TransactionAmount?rowData.TransactionAmount:'-'}}</td>
+             <td>{{rowData.BankSettlmentDate?rowData.BankSettlmentDate:'-'}}</td>
+             <td>{{rowData.Status?rowData.Status:'-'}}</td>
+             <td>{{rowData.CreatedDate |date:'dd-MM-yyyy'}}</td>
+             <td>{{rowData.CreatedBy?rowData.CreatedBy:'-'}}</td>
+            
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+        <tr>
+            <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,237 @@
+
+<p-confirmDialog header="Confirmation" [baseZIndex]="201" appendTo="body" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>
+
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2">PR Payment Summary</h3>
+    </div>
+    <div class="ui-g-2">
+        <button pButton type="button" label="Redirect To PR" (click)="redirectiroutstanding()"
+            class="btn btn-raised btn-primary mr-1 shadow mr-24 a1"></button>
+    </div>
+</div>
+<div class="ui-fluid">
+    <section id="basic-form-layouts">
+        <div class="shadow bg-white py-2">
+            <div class="ui-g">
+                <div class="ui-g-12" *ngIf="paginator">
+                    <p-toast [style]="{marginTop: '150px', 'position': 'absolute'}"></p-toast>
+
+                    <p-table [value]="list" [paginator]="true" [rows]="paginator.Take" [lazy]="true"
+                        [totalRecords]="totalCount" (onLazyLoad)="loadLazy($event)">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Total Amount</th>
+                                <th>Payment Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                            <tr>
+                                <td>
+                                    <a class="tc" href="javascript:void(0);" (click)="getBySummaryId(ir.Id)">
+                                        {{ir.TotalAmount| number: '1.2-2'}}
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <a class="tc" href="javascript:void(0);" (click)="getBySummaryId(ir.Id)">
+                                        {{ir.PaymentDate | date:'mediumDate'}}
+                                    </a>
+
+                                </td>
+                                <!-- <td>
+                                    <button class="btn btn-raised btn-raised btn-primary" (click)="getReport(ir)">
+                                        Generate Report</button>
+                                </td> -->
+                                <td>
+                                    <!-- <div *ngIf="ir.IsPROutstandingPending"> -->
+                                    <div *ngIf="ir.IsPROutstandingPending">
+                                        <button class="btn btn-raised btn-raised btn-primary" (click)="getReport(ir)">
+                                            Generate Report</button>
+                                        <p-fileUpload name="{{'myfile'+ i}}" customUpload="true" name="{{'fl_' + ir.Id}}"
+                                            (uploadHandler)="onUpload($event, uploadCustom, ir.Id)" #uploadCustom>
+                                            <code>*</code>
+                                        </p-fileUpload>
+                                    </div>
+
+                                    <div *ngIf="!ir.IsPROutstandingPending">
+                                        <!-- Approved -->
+                                        <a href="javascript:void(0);" (click)="getExcel(ir)">
+                                            Freezed & Export
+                                        </a>
+
+                                    </div>
+
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</div>
+
+<div *ngIf="showDialog">
+    <p-dialog [(visible)]="showDialog" [style]="{width: '80vw'}" [baseZIndex]="100" appendTo="body">
+        <p-header>
+            Update UTR 
+        </p-header>
+        <table class="table table-striped">
+            <tr>
+                <th>Supplier Name</th>
+                <th>Warehouse Name</th>
+                <th>Total Amount</th>
+                <th>Paid Amount</th>
+                <th>Payment Date</th>
+                <th>Payment Status</th>
+                <th>RefNo</th>
+            </tr>
+            <tr *ngFor="let detail of paymentDetailList; let i = inde;"
+                [ngClass]="{'rd': detail.PaymentStatus=='Rejected' , 'gr': detail.PaymentStatus=='Approved' }">
+                <td>{{detail.SupplierName}}</td>
+                <td>{{detail.WarehouseName}}</td>
+                <td>{{detail.TotalAmount}}</td>
+                <td>{{detail.PaidAmount}}</td>
+                <td>{{detail.PaymentDate | date}}</td>
+                <td>
+                    <select name="{{'name_'+ i}}" class="form-control" [(ngModel)]="detail.PaymentStatus">
+                        <option *ngFor="let status of detailStatusList;" [value]="status.val">{{status.label}} </option>
+                    </select>
+                </td>
+                <td>
+                    <input class="form-control" name="{'ref_no_' + i}" [(ngModel)]="detail.RefNo">
+                </td>
+            </tr>
+        </table>
+        <p *ngIf="invalidRefNo"> Please Enter Reference Number </p>
+        <p-footer>
+            <button *ngIf="!isWaiting" (click)="update()">Update</button>
+        </p-footer>
+    </p-dialog>
+    <p-blockUI [blocked]="true"></p-blockUI>
+</div>
+
+<div *ngIf="showDetails">
+    <p-dialog [(visible)]="showDetails" [style]="{width: '80vw'}" [baseZIndex]="100" appendTo="body">
+        <p-header>
+            Request Details
+        </p-header>
+        <table class="table table-striped">
+            <tr>
+                <th>Action</th>
+                <th>SupplierName</th>
+                <th>Warehouse Name</th>
+                <th>PurchaseOrderId</th>
+                <th>TotalAmount</th>
+                <th>PaidAmount</th>
+                <th>TDS Amount</th>
+                <th>PaymentDate</th>
+                <th>Selected Bank</th>
+                <th>PaymentStatus</th>
+                <th>RefNo</th>
+            </tr>
+            <tr *ngFor="let detail of paymentDetailList; let i = index"
+                [ngClass]="{'rd': detail.PrPaymentStatus=='Rejected' , 'gr': detail.PrPaymentStatus=='Approved' }">
+                <td>
+                    <a href="javascript:void(0);" *ngIf="detail.PrPaymentStatus == 'Pending'"
+                        (click)="rejectPayment(detail)">Reject</a>
+                    <span *ngIf="detail.PrPaymentStatus != 'Pending'">N/A</span>
+
+                </td>
+                <td>{{detail.SupplierName}}</td>
+                <td>{{detail.WarehouseName}}</td>
+                <td>{{detail.PurchaseOrderId}}</td>
+                <td>{{(detail.TotalAmount+detail.TDSAmount) | number: '1.2-2'}}</td>
+                <td>{{detail.PaidAmount}}</td>
+                <td>{{detail.TDSAmount | number: '1.2-2'}}</td>
+                <td>{{detail.PaymentDate | date}}</td>
+                <td *ngIf="!detail.check">{{detail.BankName}}<i class="pi pi-pencil" style="font-size: 1.5rem; margin-top: 1.5px;" *ngIf="detail.PrPaymentStatus=='Pending' && i==0" (click)="onEditBank(detail)"></i> </td>
+                
+                <!-- <td  *ngIf="detail.check">{{BankData|json}}<p-dropdown [options]="bankList" [(ngModel)]="BankData"  optionLabel="Name"></p-dropdown></td> -->
+                <div *ngIf="detail.check">
+                    <select [(ngModel)]="BankData.ID"  >
+                      <option value="null" disabled>select</option>
+                      <option *ngFor="let ban of bankList" [ngValue]="ban.ID">
+                         {{ban.Name}} </option>
+                    </select>
+                    <button class="one" type="button" pButton pRipple icon="pi pi-check"  (click)="onRowEditSave(detail)" ></button>&nbsp;
+                    <button class="one" type="button" pButton pRipple icon="pi pi-times" (click)="onRowClose(detail)"></button>
+                </div>
+                <td>{{detail.PrPaymentStatus}}</td>
+                <td>{{detail.RefNo}}</td>
+            </tr>
+        </table>
+    </p-dialog>
+    <p-blockUI [blocked]="true"></p-blockUI>
+</div>
+
+
+<div *ngIf="exportShow">
+    <p-dialog [(visible)]="exportShow" [style]="{width: '50vw'}" [baseZIndex]="100" appendTo="body">
+        <p-header>
+            Purchase Request Payment Details
+        </p-header>
+        <table class="table table-striped">
+            <tr>
+                <th>Supplier Name</th>
+                <th>Warehouse Name</th>
+                <th>PurchaseOrderId</th>
+                <th>Total Amount</th>
+                <th>Paid Amount</th>
+                <th>Payment Date</th>
+                <th>Payment Status</th>
+                <th>RefNo</th>
+            </tr>
+            <tr *ngFor="let detail of exportList; let i = index;">
+                <td>{{detail.SupplierName}}</td>
+                <td>{{detail.WarehouseName}}</td>
+                <td>{{detail.PurchaseOrderId}}</td>
+                <td>{{detail.TotalAmount}}</td>
+                <td>{{detail.PaidAmount}}</td>
+                <td>{{detail.PaymentDate | date}}</td>
+                <td>{{detail.PrPaymentStatus}}</td>
+                <td>{{detail.RefNo}}</td>
+            </tr>
+        </table>
+        <div>
+            <button type="button" (click)="ExportToExcel();" pButton icon="pi pi-info-circle"
+                label="Export To Excel"></button>
+        </div>
+    </p-dialog>
+    <p-blockUI [blocked]="true"></p-blockUI>
+</div>
+<hr>
+
+<div class="col-md-12">
+    <div class="row">
+        <div class="header">
+            <h3 class="m-2">Export PR Payment Details</h3>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="ui-g-2">
+            <label>Export From</label>
+            <p-calendar [(ngModel)]="exportpaginator.StartDate" [showIcon]="true"></p-calendar>
+        </div>
+        <div class="ui-g-2">
+            <label>Export To</label>
+            <br>
+            <p-calendar [(ngModel)]="exportpaginator.EndDate" [showIcon]="true"></p-calendar>
+        </div>
+        <div class="ui-g-2">
+            <label>Export Details</label>
+            <br>
+            <button type="button" (click)="getPurchaseRequestPaymentDetails();" pButton
+                label="Export To Excel"></button>
+
+            <!-- <button pButton type="button" label="Export To Excel" (click)="getPurchaseRequestPaymentDetails()"
+                class="btn btn-raised btn-primary"></button> -->
+        </div>
+    </div>
+</div>

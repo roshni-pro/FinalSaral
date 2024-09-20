@@ -1,0 +1,40 @@
+export interface TripPlannerConfirmedMasterVM {
+    Id: number;
+    TripPlannerMasterId: number | null;
+    TripDate: Date | string;
+    TripNumber: number;
+    VehicleNumber: string;
+    WarehouseId: number;
+    DboyId: number;
+    TotalWeight: number;
+    TotalDistanceInMeter: number;
+    TotalTimeInMins: number;
+    TotalAmount: number;
+    OrderCount: number;
+    CustomerCount: number;
+    WarehouseLat: number;
+    WarehouseLng: number;
+    VehicleCapacityInKg: number;
+    VehicleType: string;
+    AgentId: number;
+    VehicleId: number;
+    DriverId: number | null;
+    IsFreezed: boolean;
+    ReportingTime: Date | null;
+    StartKm: number;
+    FleetType:any;
+    LateReportingTimeInMins: number | null;
+    PenaltyCharge: number | null;
+    TripPlannerConfirmMasterId : number | null;
+    IsPickerGenerated: boolean | null;
+    IsVisibleToDboy: boolean | null;
+    IsPickerRequired: boolean | null;
+    OrderPickerMasterId: number | null;
+    DeliveryIssuanceIdList: number[] | null;
+    IsNotLastMileTrip:boolean | null;
+    TripTypeEnum: number |0;
+    IsReplacementVehicleNo: boolean;
+    ReplacementVehicleNo: string;
+    VehicleFare:number|null;
+
+}

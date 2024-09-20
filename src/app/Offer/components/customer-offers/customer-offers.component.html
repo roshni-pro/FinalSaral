@@ -1,0 +1,220 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="offer" >
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header">
+        <h3 class="m-2"><b>Eligible Offer Customers</b></h3>
+      </div>
+    </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+      <form class="form">
+          <div class="row">
+            <!-- <div class="col-md-2">
+              <div class="form-group">
+                <label for="projectinput3">Select Warehouse</label>
+                <select id="city" name="city" class="form-control" [(ngModel)]="data.WarehouseId" >
+                  <option value="">Select Warehouse</option>
+                  <option *ngFor="let city of WarehouseList" [ngValue]="city.WarehouseId">{{city.WarehouseName}}
+                  </option>
+                </select>
+              </div>
+            </div> -->
+            <div class="col-md-2">
+              <div class="form-group">
+                  <label for="SKCode">SKCode</label>
+                  <input type="text" id="SKCode" name="SKCode" class="form-control" [(ngModel)]="data.SKCode"
+                        placeholder="SKCode" required = "1" maxlength="10" #SKCode="ngModel">
+                      <div class="col-md-4"></div>
+                      <div *ngIf="isInvalid && !SKCode.valid && SKCode.errors.required">
+                        <code>SKCode is required</code>
+                      </div>
+              </div>
+          </div>
+          <div class="col-md-2">
+              <div class="form-group">
+                  <label for="OfferCode">Offer Code</label>
+                  <input type="text" id="OfferCode" name="OfferCode" class="form-control" [(ngModel)]="data.OfferCode"
+                  placeholder="Offer Code" required = "1" maxlength="10" #OfferCode="ngModel">
+                      <div class="col-md-4"></div>
+                      <div *ngIf="isInvalid && !OfferCode.valid && OfferCode.errors.required">
+                        <code>Offer Code is required</code>
+                      </div>
+              </div>
+          </div>
+          <div class="col-md-2">
+              <div class="form-group">
+                  <label for="startdate"><b>Start Date: </b></label><br>
+                  <p-calendar [showIcon]="true" [(ngModel)]="data.start" name="startDate"
+                      [readonlyInput]="true" required #dateRangeListInput>
+                  </p-calendar>
+              </div>
+          </div>
+          <div class="col-md-2">
+              <div class="form-group">
+                  <label for="startdate"><b>End Date: </b></label><br>
+                  <p-calendar [showIcon]="true" [(ngModel)]="data.end" name="EndDate"
+                      [readonlyInput]="true" required #dateRangeListInput>
+                  </p-calendar>
+              </div>
+          </div>
+          <div class="col-md-1" style="margin-top: 6px;">
+              <div class="form-group">
+                <label for="projectinput3"></label>
+                <button type="button" class="btn btn-raised btn-raised btn-success" 
+                (click)="customerOffer(data.WarehouseId,data.SKCode,data.OfferCode,data.start,data.end)" *ngIf="btnsave == false">
+                Search
+            </button>
+              </div>
+            </div>
+            <div class="col-md-1" style="margin-top: 28px;">
+              <div class="form-group">
+                <label for="projectinput3"></label>
+                <button type="button" class="btn btn-raised btn-raised btn-info" (click)="exportCustomerEstimationOffer()" >
+                Export
+            </button>
+              </div>
+            </div>
+            </div>
+      </form>
+   
+    <!-- <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover"> -->
+      <!-- <div class="ui-g-12"> -->
+        <p-table [value]="customerEstimationList" [paginator]="true" [lazy]="true"
+        (onLazyLoad)="load($event,data.WarehouseId,data.SkCode,data.OfferCode,data.start,data.end)" [rows]="100"
+         [scrollable]="true" scrollHeight="130vh" text-align: center>
+        <ng-template pTemplate="header">
+          <tr style="text-align: center;">
+            <!-- <table class="table table-stripped table-hover table-sm ">
+            <thead style="text-align: center;"> -->
+              <th>Offer Id</th>
+              <th>Order Ids</th> 
+              <th>Offer Code</th>   
+              <th>Offer On</th>   
+              <th>Customer Name</th>   
+              <th>SkCode</th>  
+              <th>Mobile</th>              
+              <th>Order value</th> 
+              <!-- <th>Dispatch Value</th>   -->
+              <th>Discount </th> 
+              <th>Type</th>
+              <!-- <th>Dispatch Discount</th>                                                    -->
+              <th>Action</th> 
+                
+            <!-- </thead>
+            <tbody> *ngFor="let row of customerEstimationList" -->
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
+                <tr style="text-align: center;" > 
+                  <td>{{row.OfferId}}</td>                   
+                  <td>{{row.OrderIds}}</td>  
+                    <td>{{row.OfferCode}}</td>   
+                    <td>{{row.OfferOn}}</td>  
+                    <td>{{row.CustomerName}}</td>      
+                    <td>{{row.Skcode}}</td>  
+                    <td>{{row.MobileNo}}</td>     
+                    <td>{{row.OrderValue}}</td> 
+                    <!-- <td>{{row.DispatchValue  }}</td>      -->
+                     <td>{{row.Discount}}</td>     
+                    <!-- <td >
+                      <div *ngIf="amtsign == true">{{row.Discount}} Rs.</div>
+                      <div *ngIf="amtsign == false">{{row.Discount}} %.</div>
+                    </td>  -->
+                    <!-- <td *ngIf="amtsign == true">{{row.Discount}} Rs.</td> 
+                    <td *ngIf="percentsign == true">{{row.Discount}} %</td>  -->
+                    <td>{{row.Slaboffer}}</td> 
+                    <!-- <td>{{row.DispatchDiscount   }}</td>       -->
+                    
+                    <td >
+                        <a href="javascript:void(0);" (click)="openDetails(row,$event)"><b><u>Redeem</u></b></a>
+                        </td>                
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </section>
+            <!-- </tbody>
+        </table> -->
+    <!-- </div> -->
+  <!-- </div> -->
+
+    <div *ngIf="isItemdetail">
+        <p-dialog [(visible)]="isItemdetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="30"
+        class="testme" [style]="{overflow: 'auto'}">
+            <p-header>
+              <div class="hideCloseHeader">
+                <h4 style="position: absolute; top: 12px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;font-weight: initial;">
+                    <div *ngIf = "selectedRowDetails.OfferOn == 'ItemPost'">
+                      <b> Item Post offer  </b>
+                    </div>
+                    <div *ngIf = "selectedRowDetails.OfferOn == 'Slab'">
+                      <b> Slab offer  </b>
+                    </div>
+                  </h4>
+                    <div class="hideClose"></div>
+                    </div>
+
+            </p-header>
+            <div class="borderTable" style="padding:10px 15px; position: relative;z-index: 9;">
+              <form class=" form form-inline" name="form" >
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="row">
+                      <div class="col-6">
+                        <div style="margin-top: 23px;"><b>Offer Code: </b></div>
+                          <div style="margin-top: 45px;"><b>Order Amount:</b></div>
+                        <div style="margin-top: 45px;"><b>Dispatch Amount:</b></div>
+                        <div style="margin-top: 45px;"><b> Offer On:</b></div>
+                        <div style="margin-top: 45px;"><b>Discount:</b></div>
+                        <div style="margin-top: 45px;"><b>Dispatch Discount:</b></div>               
+                        <div style="margin-top: 45px;"><b>Cal Discount:</b></div>
+            
+                      </div>
+                      <div class="col-6">
+                        <div style="margin-top: 15px;">
+                          <input type="text" id="OfferCode" name="OfferCode" class="form-control" [(ngModel)]="selectedRowDetails.OfferCode"
+                          placeholder="OfferCode" disabled >
+                        </div>
+                        <div style="margin-top: 30px;">
+                          <input type="text" id="OrderValue" name="OrderValue" class="form-control" [(ngModel)]="selectedRowDetails.OrderValue"
+                          placeholder="Order Amount" disabled>
+                        </div>
+                        <div style="margin-top: 30px;">
+                          <input type="text" id="DispatchAmount" name="DispatchAmount" class="form-control" [(ngModel)]="Disdata.DispatchAmount"
+                          placeholder="Dispatch Amount" disabled>
+                        </div>
+                        <div style="margin-top: 30px;">
+                          <input type="text" id="OfferOn" name="OfferOn" class="form-control" [(ngModel)]="selectedRowDetails.OfferOn"
+                          placeholder="Offer On" disabled> 
+                        </div>
+                        <div style="margin-top: 30px;">
+                          <input type="text" id="DipstachDicount" name="DipstachDicount" class="form-control" [(ngModel)]="selectedRowDetails.Discount"
+                          placeholder="DipstachDicount" disabled>
+                        </div>
+                        <div style="margin-top: 30px;">
+                          <input type="number" id="DispatchDiscount" name="CalculateDiscountvalue" class="form-control" [(ngModel)]="Disdata.DipstachDicount"
+                          placeholder="Dispatch Discount" disabled >
+                        </div>  
+                        <div style="margin-top: 30px;">
+                          <input type="number" id="calDiscount" name="calDiscount" class="form-control" [(ngModel)]="selectedRowDetails.DispatchDiscount" (ngModelChange)="calDiscount(selectedRowDetails.DispatchDiscount)" placeholder="Cal Discount"  >
+                          <div class="col-md-4"></div>
+                          <div *ngIf="validFormcalDisc == true">
+                              <code>Cal Discount Should be Greater then 0.</code>
+                          </div>
+                          <div *ngIf="validFormcalDis == true">
+                              <code>Cal Discount Should not be Negative.</code>
+                          </div>
+                        </div>                        
+                      </div>
+                    </div>
+                  </div> 
+                   
+                  <div class="col-md-12 text-center">
+                      <button class="btn btn-raised btn-raised btn-primary a1" style="margin-top:30px; margin-right: 30px;" *ngIf="redeemHide == false" (click)="redeem(selectedRowDetails)">
+                          Redeem</button>   
+                      <button class="btn btn-raised btn-raised btn-primary a1" (click)="Cancel()" style="margin-top:30px;">Cancel</button>
+                  </div>
+                </div>
+               </form>     
+          </div>
+      </p-dialog>
+    </div>

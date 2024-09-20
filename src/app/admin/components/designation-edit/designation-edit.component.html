@@ -1,0 +1,74 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form-inline" name="form" #desgEditForm="ngForm">
+                <div class="form-body">
+                  <!-- <h4 class="form-section"><i class="ft-user"></i> Edit Designation</h4> -->
+                  <h4 class="form-section"><i class="ft-user"></i><b> Designation </b></h4>
+                  <div class="row col-md-12" *ngIf="designation">
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="dname" class="col-md-6"><b>Designation Name:</b><span  style="color:red"> *</span></label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="dname" class="form-control col-md-6" name="name" [(ngModel)]="designation.DesignationName" (input)="inputValidator($event)"
+                          placeholder="Designation Name" required="1" maxlength="50" minlength="2"
+                          #firstName="ngModel" />
+                          <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code>Designation Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                            <code>minlength 2</code>
+                          </div>
+                      <!-- </div> -->
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group form-inline m-2">
+                        <label for="descp" class="col-md-6"><b> Description: </b></label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="descp" class="form-control col-md-6" name="descp"placeholder="Description" (input)="inputValidator($event)" [(ngModel)]="designation.Description">
+                      <!-- </div> -->
+                      </div>
+                    </div> 
+                    <div class="col-md-6">
+                      <div class="form-group form-inline m-2">
+                        <label for="level" class="col-md-6"> <b> Level: </b></label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="level" class="form-control col-md-6" name="level"placeholder="Level" (keypress)="keyPress($event)" [(ngModel)]="designation.Level"/>  
+                       <!-- </div> -->
+                      </div>
+                    </div>   
+                           
+                  </div>
+                </div>
+                    
+                    <div class="form-actions right  col-sm-12 p-3">
+                      <!-- <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                        <i class="ft-x"></i> Cancel
+                      </button> -->
+                      <!-- <button type="submit" class="btn btn-raised btn-primary">
+                        <i class="fa fa-check-square-o"></i> Save
+                      </button> -->
+                      <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                        Cancel
+                        </button>
+                      <button type="button" class="btn btn-raised btn-primary" (click)="update(desgEditForm)">
+                          Save
+                        </button>
+                    </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

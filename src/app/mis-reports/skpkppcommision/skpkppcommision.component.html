@@ -1,0 +1,85 @@
+
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">SKP-KPP Commision </h3>
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row d-flex">
+                <div class="col-sm-2 mt-2">
+                    <label><b>Select WareHouse<span class="required">*</span></b></label>
+                    <p-multiSelect id="Category" name="Category" [options]="WareHouseList" placeholder="Select WareHouse" [(ngModel)]="selectedWareHouse" [panelStyle]="{minWidth:'25em'}" [filter]="true"
+                            optionLabel="label">
+                        </p-multiSelect>
+                </div>
+                <div class="col-sm-2 mt-2">
+                    <label><b>Select Store<span class="required">*</span></b></label>
+                    <p-multiSelect id="id" name="Name"  placeholder="Select a Store" [options]="allStoreList"  [filter]="true" [(ngModel)]="selectedStore" optionLabel="Name">
+                    </p-multiSelect>
+                </div>
+                <div class="col-sm-2  mt-2">
+                    <label><b> Select Month</b></label>
+                    <p-calendar [showIcon]="true"  view="month" dateFormat="mm/yy" [(ngModel)]="selectDate" [readonlyInput]="true" ></p-calendar>
+                </div>
+                <div class="col-md-2 mt-2">
+                    <button type="button" class="btn btn-primary" (click)="emp();search($event)" style="margin-top: 27px; ">
+                        Search
+                    </button> &nbsp;
+                    <button type="button" class="btn btn-primary" (click)="clear()" style="margin-top: 27px; ">
+                    Clear
+                </button> &nbsp;
+                <button type="button" class="btn btn-success" (click)="export()" style="margin-top: 27px; ">
+                    Export
+                </button>
+                </div>
+                <div class="col-md-1 text-right" ></div>
+                <div class="col-md-2 text-right" >
+                    <button class=" btn mt-4" type="submit" (click)="DownLoadSampleFile()" style=" background-color: #119150;color: white;">Download Sample</button>
+                </div>
+            </div>    
+        </div>
+    </div>
+    <div class="row" > 
+        <div class="col-sm-6 col-lg-4 mt-2">
+            <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                (uploadHandler)="onUpload($event)" #uploadCustom>
+                <code>*</code>
+            </p-fileUpload>
+        </div>
+    </div>
+</div>
+
+<p-table [value]="ViewList" text-align:center [paginator]="true" [rows]="10" [totalRecords]="TotalRecords"  [scrollable]="true" [lazy]="true" [(first)]="first"
+(onLazyLoad)="load($event)"  scrollHeight="65vh"  >
+    <ng-template pTemplate="header" let-items>
+        <tr>
+            <th>StoreName</th>
+            <th>WarehouseName</th>
+            <th>Type(SPK / KPP)</th>
+            <th>Month</th>
+            <th>Year</th>
+            <th>Commission</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item  let-rowIndex="rowIndex">
+        <tr>
+            <td>{{item.StoreName}}</td>
+            <td>{{item.WarehouseName}}</td>
+            <td>{{item.Type}}</td>
+            <td>{{item.Month}}</td>
+            <td>{{item.Year}}</td>
+            <td>{{item.Commission}}</td>
+           
+        </tr>
+    </ng-template>
+</p-table>
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

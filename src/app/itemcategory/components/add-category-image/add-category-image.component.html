@@ -1,0 +1,107 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <!-- <form class="form form-inline" name="form" #testForm="ngForm" autocomplete="off" ngNativeValidate> -->
+              <form class="form form-inline" name="form" #categoryForm="ngForm">
+                <!-- <input autocomplete="false" name="hidden" type="text" style="display:none;"> -->
+                <div class="form-body">
+                  <h4 class="form-section" *ngIf="!isEdit"><i class="ft-user"></i><b> Add Category Image</b></h4>
+                  <h4 class="form-section" *ngIf="isEdit"><i class="ft-user"></i><b> Edit Category Image</b></h4>
+                  <div class="row col-md-12">
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="Apptype" class="col-md-6" >Select AppType:</label><br />
+                          <select class="form-control col-md-6" id="app" name="app" [(ngModel)]="addCategory.AppType" #AppType="ngModel" placeholder="Select AppType" [disabled]="isEdit">
+                              <option *ngFor="let ot of AppTypeList" [ngValue]="ot.code" >
+                                {{ot.name}}
+                              </option>
+                          </select>
+                          <div class="col-md-6">
+                            <div *ngIf="isInvalid && !AppType.valid && AppType.errors.required">
+                              <code>AppType is required</code>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="form-group m-2">
+                        <label for="category" class="col-md-6"><b> Select Category Name:<span style="color:red"> *</span></b></label>
+                        <select id="category_id" name="category_id" class="form-control col-md-6"
+                          [(ngModel)]="addCategory.Categoryid" placeholder="Select Category" #Categoryid="ngModel" [disabled]="isEdit">
+                          <option value="" disabled>select</option>
+                          <option *ngFor="let category of allCategory" [ngValue]="category.Categoryid">
+                            {{ category.CategoryName }}
+                          </option>
+                        </select>
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !Categoryid.valid && Categoryid.errors.required">
+                          <code>Category Name is required</code>
+                        </div>
+                        <!-- <div *ngIf="isInvalid && !BaseCategoryName.valid && BaseCategoryName.errors.minlength">
+                          <code>Minlength 2</code>
+                        </div> -->
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="uploadAdvertisements" class="col-md-6">Upload Image:</label>
+                        <input class="btn btn-primary col-md-6" #myInput id="file" type="file" accept="image/*"
+                          (change)="upload($event.target.files)" />
+
+                        <div class="col-md-6"></div>
+                        <img alt="" [src]="addCategory.LogoUrl" height="100" *ngIf="addCategory.LogoUrl">
+                      </div>
+                    </div>
+
+
+                    <div class=" col-md-6">
+                      <div class="form-group m-2">
+                        <label for="active" class="col-md-6"> <b>Active</b></label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="isActive" name="isActive"
+                            type="checkbox" [(ngModel)]="addCategory.IsActive">
+                          <label class="custom-control-label" for="isActive"></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <div class="col-md-6"></div>
+                        <button type="button" class="btn btn-raised btn-primary" *ngIf="imageEnable" (click)="uploader1()">
+                          Upload
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <!-- </div> -->
+                </div>
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    <i class="ft-x"></i> Cancel
+                  </button>
+                  <!-- *ngIf="isEdit" -->
+                  
+                  <button *ngIf="!isEdit" type="submit" class="btn btn-raised btn-primary" (click)="onclick(categoryForm)">
+                    <i class="fa fa-check-square-o"></i> Save</button>
+                    
+                  <button *ngIf="isEdit" type="submit" class="btn btn-raised btn-primary" (click)="onclick(categoryForm)">
+                    <i class="fa fa-check-square-o"></i> Update</button>
+                </div>
+              </form>  
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

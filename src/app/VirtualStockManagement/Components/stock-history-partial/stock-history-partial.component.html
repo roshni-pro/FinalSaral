@@ -1,0 +1,52 @@
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+
+<div class="row text-left vr-scrl" *ngIf="stockHistory">
+    <div class="col-12">
+        <button class="btn btn-primary" (click)="Export()" type="button" >Export History</button>
+    </div>
+    <div class="col-12">
+        <p-table #dt [value]="stockHistory.PageList" [paginator]="true" 
+        [totalRecords]="stockHistory.TotalRecords" [lazy]="true" (onLazyLoad)="loadData($event)" 
+        [rows]="filter.Take" text-align: center>
+       
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>ItemMultiMRPID</th>
+                    <th>ItemName</th>
+                    <th>ItemNumber</th>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Warehouse</th>
+                    <th>EntityType</th>
+                    <th>EntityId</th>                    
+                    <th>QTY</th>
+                    <th>Ref Stock</th>
+                    <th>Reason</th>
+
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td>{{row.ItemMultiMRPId}}</td>
+                    <td>{{row.ItemName}}</td>
+                    <td>{{row.ItemNumber}}</td>
+                    <td>{{row.CreatedDateString}}</td>
+                    <td>{{row.Email}}</td>
+                    <td>{{row.WarehouseName}}</td>
+                    <td> {{row.EntityType}}</td>
+                    <td> {{row.EntityId}}</td>
+                    <td>{{row.InOutQty}}</td>
+                    <td>{{row.RefStockCode}}</td>
+                    <td>{{row.Reason}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+</div>

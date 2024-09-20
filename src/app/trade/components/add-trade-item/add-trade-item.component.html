@@ -1,0 +1,266 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="row">
+  <h2 *ngIf="!ID" style="padding-top: 20px; padding-left: 20px"><b>Add New TRADE ITEM</b></h2>
+  <h2 *ngIf="ID" style="padding-top: 20px; padding-left: 20px"><b>Edit ITEM</b></h2>
+</div>
+<hr>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form " name="form" #ItemAddForm="ngForm">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label for="name">Item Name*</label>
+                      <input type="text" name="Item" class="form-control" id="ItemName" [(ngModel)]="ItemData.ItemName"
+                        placeholder="item Name" required="1" minlength="2" #ItemName="ngModel">
+                      <div *ngIf="isInvalid && !ItemName.valid && ItemName.errors.required">
+                        <code>Item Name is required</code>
+                      </div>
+                      <div *ngIf="isInvalid && !ItemName.valid && ItemName.errors.minlength">
+                        <code>Minlength 2</code>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="name">MRP*</label>
+                      <input type="number" name="MRP" class="form-control" id="MRP" [(ngModel)]="ItemData.MRP"
+                        placeholder="Enter MRP" required="1" maxlength="10" #MRP="ngModel">
+                      <div *ngIf="isInvalid && !MRP.valid && MRP.errors.required">
+                        <code>MRP is required</code>
+                      </div>
+                    </div>
+
+                    <!-- <div class="form-group">
+                      <label for="BasePrice">Base Price*</label>
+                      <input type="number" name="Base" class="form-control" id="BasePrice"
+                        [(ngModel)]="ItemData.BasePrice" placeholder="Enter BasePrice" required="1" maxlength="10"
+                        #BasePrice="ngModel">
+                      <div *ngIf="isInvalid && !BasePrice.valid && BasePrice.errors.required">
+                        <code>Base Price is required</code>
+                      </div>
+                    </div> -->
+
+                    <div class="form-group">
+                      <label for="Category">Category Name*</label>
+                      <select [disabled]="ID" id="Category" name="Category" class="form-control"
+                        [(ngModel)]="ItemData.CategoryName" maxlength="50" minlength="2">
+                        <!-- <div *ngIf="isInvalid && !Categorys.valid && Categorys.errors.required">
+                          <code class="padding">Categorys Name is required</code>
+                        </div> -->
+                        <option value="">--Select Category---</option>
+                        <option *ngFor="let Category of CategoryName" [ngValue]="Category">
+                          {{ Category }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="name">Select Base Category Name*</label>
+                      <select [disabled]="ID" id="BaseCategory" name="BaseCategory" class="form-control"
+                        [(ngModel)]="ItemData.BaseCategoryName">
+                        <!-- <div *ngIf="isInvalid && !BaseCategorys.valid && BaseCategorys.errors.required">
+                          <code class="padding">BaseCategorys Name is required</code>
+                        </div> -->
+                        <option value="">--Select Base Category---</option>
+                        <option *ngFor="let BaseCategory of BaseCategoryName" [ngValue]="BaseCategory">
+                          {{ BaseCategory }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <div class="form-group">
+                        <label for="ConsumerItem" class="col-md-6" style="color:black; font-size: medium; "> IsZaruri
+                          Item </label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <div class=" col-md-3">
+                            <input class="custom-control-input" id="customCheckboxInline2" name="customCheckboxInline2"
+                              type="checkbox" [(ngModel)]="ItemData.IsConsumerItem">
+                            <label class="custom-control-label" for="customCheckboxInline2"></label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div *ngIf="ItemData.ImagePath" class="ui-g-12">
+                      <img title="Item image" [src]="ItemData.ImagePath" class="wcr">
+                    </div>
+
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="b">Upload Item Image <span class="required">*</span></label>
+                        <input class="btn btn-primary" id="file" type="file"
+                          (change)="uploadItem($event.target.files)" />
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploaderItem()">
+                          Upload
+                        </button>
+                        <div *ngIf="isItemImage">
+                          <code>Image is required.Please Upload Item Image !</code>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-6">
+                    <div *ngIf="!EnterManually" class="form-group">
+                      <label for="name">Select Brand Name*</label>
+                      <select [disabled]="ID" (change)="onChangeSelectionData(ItemData.BrandName)" id="Brand"
+                        name="Brand" class="form-control" [(ngModel)]="ItemData.BrandName">
+                        <!-- <div *ngIf="isInvalid && !BrandNames.valid && BrandNames.errors.required">
+                          <code class="padding">Brand Name is required</code>
+                        </div> -->
+                        <option value="">--Select Brand---</option>
+                        <option *ngFor="let Brand of BrandName" [ngValue]="Brand">
+                          {{ Brand }}
+                        </option>
+                        <option value="EnterManually">
+                          other (Enter Manually)
+                        </option>
+                      </select>
+                    </div>
+
+                    <div *ngIf="EnterManually" class="form-group">
+                      <label for="name">
+                        <strong style="color:orangered;font-size: medium;">
+                          Enter Brand Name Manually</strong>
+                      </label>
+                      <input [disabled]="ID" type="text" name="Manually" class="form-control"
+                        id="EnterBrandNameManually" [(ngModel)]="ItemData.BrandName"
+                        placeholder="Enter Brand Name Manually" maxlength="100">
+                      <!-- <div *ngIf="isInvalid && !EnterBrandNameManually.valid && EnterBrandNameManually.errors.required">
+                        <code>Brand Name required</code>
+                      </div> -->
+                    </div>
+
+                    <div class="form-group">
+                      <label for="name">Unit Of Quantity*</label>
+                      <input type="number" name="Unit" class="form-control" id="UnitOfQuantity"
+                        [(ngModel)]="ItemData.UnitOfQuantity" placeholder="Enter UnitOfQuantity" required="1"
+                        maxlength="10" #UnitOfQuantity="ngModel">
+                      <div *ngIf="isInvalid && !UnitOfQuantity.valid && UnitOfQuantity.errors.required">
+                        <code>Unit Of Quantity required</code>
+                      </div>
+                    </div>
+
+                    <!-- <div class="form-group">
+                          <label for="name">Unit Of Measurement*</label>
+                          <input type="number" name="Measurement" class="form-control" id="UnitOfMeasurement"
+                            [(ngModel)]="ItemData.UnitOfMeasurement" placeholder="Enter UnitOfMeasurement" required="1" maxlength="10"
+                            #UnitOfMeasurement="ngModel">
+                          <div *ngIf="isInvalid && !UnitOfMeasurement.valid && UnitOfMeasurement.errors.required">
+                            <code>Unit Of Measurement is required</code>
+                          </div>
+                        </div>
+                   -->
+
+                    <div class="form-group">
+                      <label for="name">Unit Of Measurement*</label>
+                      <select id="UnitOfMeasurement" name="UnitOfMeasurement" class="form-control"
+                        [(ngModel)]="ItemData.UnitOfMeasurement" required="1" maxlength="50" minlength="2"
+                        #UnitOfMeasurementInput="ngModel">
+
+                        <option *ngFor="let unit of UnitOfMeasurement" [value]="unit.value">
+                          {{ unit.label}}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="name">Select Sub Category Name*</label>
+                      <select [disabled]="ID" id="SubCategory" name="SubCategory" class="form-control"
+                        [(ngModel)]="ItemData.SubCategoryName">
+                        <!-- <div *ngIf="isInvalid && !SubCategorys.valid && SubCategorys.errors.required">
+                          <code class="padding">SubCategorys Name is required</code>
+                        </div> -->
+                        <option value=" ">---Select Sub Category---</option>
+                        <option *ngFor="let SubCategory of SubCategoryName" [ngValue]="SubCategory">
+                          {{ SubCategory }}
+                        </option>
+                      </select>
+                    </div>
+                    
+                    <!-- <div class="form-group">
+                      <label for="name">Selling Price *</label>
+                      <input type="number" name="SellingDP" class="form-control" id="SellingDP"
+                        [(ngModel)]="ItemData.SellingDP" placeholder="Enter SellingDP" required="1" maxlength="10"
+                        #SellingDP="ngModel">
+                      <div *ngIf="isInvalid && !SellingDP.valid && SellingDP.errors.required">
+                        <code>SellingDP is required</code>
+                      </div>
+                    </div> -->
+
+                    <!-- <div class="form-group">
+                      <label for="name">Buying Price *</label>
+                      <input type="number" name="BuyingDP" class="form-control" id="BuyingDP"
+                        [(ngModel)]="ItemData.BuyingDP" placeholder="Enter BuyingDP" required="1" maxlength="10"
+                        #BuyingDP="ngModel">
+                      <div *ngIf="isInvalid && !BuyingDP.valid && BuyingDP.errors.required">
+                        <code>BuyingDP is required</code>
+                      </div>
+                    </div> -->
+
+                    <div class="form-group">
+                      <div class="form-group">
+                        <label for="active" class="col-md-6" style="color:black; font-size: medium; "> IsTrade Item </label>
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <div class=" col-md-3">
+                            <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1"
+                              type="checkbox" [(ngModel)]="ItemData.IsTradeItem">
+                            <label class="custom-control-label" for="customCheckboxInline1"></label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div *ngIf="ItemData.BrandImagePath" class="ui-g-12">
+                      <img title="brand image" [src]="ItemData.BrandImagePath" class="wcr">
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="b">Upload Brand Image (Optional)</label>
+                        <input class="btn btn-primary" id="file" type="file"
+                          (change)="uploadBrand($event.target.files)" />
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group m-1">
+                        <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploaderBrand()">
+                          Upload
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+
+              <div class="row  float-right" style="padding-right: 15px; margin-bottom: 40px;">
+
+                <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                  <i class="ft-x"></i> Cancel
+                </button>
+                <button type="submit" class="btn btn-raised btn-primary" (click)="onSave(ItemAddForm)">
+                  <i class="fa fa-check-square-o"></i> Save
+                </button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,370 @@
+<!-- Basic form layout section start -->
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2"></div>
+          <div class="card-content" *ngIf="people">
+            <div class="px-3">
+              <form class="form" name="form">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Personal Info</h4>
+                  <div class="row">
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="fname">First Name</label>
+                        <input type="text" id="fname" class="form-control" name="fname"
+                          [(ngModel)]="people.PeopleFirstName" placeholder="Enter the First Name">
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="lname">Last Name</label>
+                        <input type="text" id="lname" class="form-control" name="lname"
+                          [(ngModel)]="people.PeopleLastName" placeholder="Enter the Last Name"> 
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <p-calendar [(ngModel)]="people.DOB" id="dob" name="dob" showIcon="true"></p-calendar>
+                        <!-- <input type="date" id="dob" class="form-control" name="dob" [(ngModel)]="people.DOB"> -->
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="doj">Date of Join </label>
+                        <p-calendar [(ngModel)]="people.DataOfJoin" id="doj" name="doj" showIcon="true"></p-calendar>
+                        <!-- <input type="date" id="doj" class="form-control" name="doj" [(ngModel)]="people.DataOfJoin"> -->
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="enddt">End Date</label>
+                        <p-calendar [(ngModel)]="people.EndDate" id="enddt" name="enddt" showIcon="true"></p-calendar>
+                        <!-- <input type="date" id="enddt" class="form-control" name="enddt" [(ngModel)]="people.EndDate"> -->
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="dom">Date of Marriage</label>
+                        <p-calendar [(ngModel)]="people.DataOfMarriage" id="dom" name="dom" showIcon="true">
+                        </p-calendar>
+                        <!-- <input type="date" id="dom" class="form-control" name="dom" [(ngModel)]="people.DataOfMarriage"> -->
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-control" name="email" [(ngModel)]="people.Email" placeholder="Enter the Email">
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="mob">Mobile</label>
+                        <input type="number" id="mob" class="form-control" name="mob" [(ngModel)]="people.Mobile">
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="state">Select State</label>
+
+                        <select id="state" name="state"  class="form-control"  [(ngModel)]="people.Stateid" placeholder="Select State">
+                          <option *ngFor="let state of stateList" [ngValue]="state.Stateid">
+                            {{ state.StateName }}
+                          </option>
+                        </select>
+
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <fieldset class="form-group">
+                          <label for="city">Select City</label>
+                          <select id="city" name="city" class="form-control" [(ngModel)]="people.Cityid" >
+                              <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                                {{ city.CityName }}
+                              </option>
+                            </select>
+                      </fieldset>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="desg">Designation</label>
+                        <select id="desg" name="desg"  class="form-control"  [(ngModel)]="people.Desgination">
+                          <option *ngFor="let designation of designationList" [ngValue]="designation.DesignationName">
+                            {{ designation.DesignationName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="status">Status</label>
+                        <!-- <p-dropdown [options]="statusList" id="status" name="status" [(ngModel)]="selectedStatus"
+                        (ngModelChange)="onChangeStatus()" placeholder="Select a Status" optionLabel="Status">
+                      </p-dropdown>-->
+                        <!--   <input type="text" id="status" class="form-control" name="status" [(ngModel)]="people.Status"> + -->
+                        <select id="status" name="status" class="form-control" data-toggle="tooltip"
+                          data-trigger="hover" data-placement="top" data-title="Status" placeholder="Select a Status">
+                          <option value="status">--SelectStatus--</option>
+                          <option value="started">OnRoll</option>
+                          <option value="not started">OffRoll</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="loc">Location</label>
+                        <!-- <input type="text" id="loc" class="form-control" name="loc" [(ngModel)]="people.Location"> -->
+                        <select id="loc" name="loc" class="form-control" data-toggle="tooltip" data-trigger="hover"
+                          data-placement="top" data-title="Location" placeholder="Select a Location">
+                          <option value="loc">--Select--</option>
+                          <option value="loc">Central</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="permission">Permission</label>
+                        <input type="text" id="permission" class="form-control" name="permission"
+                          [(ngModel)]="people.Permissions">
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="wareid">Select Warehouse</label>
+                        <select id="wareid" name="wareid"  class="form-control"  [(ngModel)]="people.WarehouseId">
+                          <option *ngFor="let warehouse of warehouseList" [ngValue]="warehouse.WarehouseId">
+                            {{ warehouse.WarehouseName }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="dept">Department</label>
+                        <!-- <p-dropdown [options]="departmentList" id="dept" name="dept" [(ngModel)]="selectedDepartment"
+                          (ngModelChange)="onChangeDepartment()" placeholder="Select a Department"
+                          optionLabel="Department"></p-dropdown> -->
+                          <select id="dept" name="dept"  class="form-control"  [(ngModel)]="people.Department">
+                              <option *ngFor="let dept of departmentList" [ngValue]="dept.Department">
+                                {{ dept.Department }}
+                              </option>
+                            </select>
+                        <!-- <input type="text" id="dept" class="form-control" name="dept" [(ngModel)]="people.Department"> -->
+                      </div>
+                    </div>
+
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="amt">Deposit Amount</label>
+                        <input type="text" id="amt" class="form-control" name="amt" [(ngModel)]="people.DepositAmount">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Buisness Info</h4>
+
+                  <div class="row">
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="sal">Salary</label>
+                        <input type="number" id="sal" class="form-control" name="sal" [(ngModel)]="people.Salary">
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="bsal">Basic Salary</label>
+                        <input type="number" id="bsal" class="form-control" name="bsal" [(ngModel)]="people.B_Salary">
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="hra">HRA</label>
+                        <input type="number" id="hra" class="form-control" name="hra" [(ngModel)]="people.Hra_Salary">
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="calowance">Conveyance Allowance </label>
+                        <input type="number" id="calowance" class="form-control" name="calowance"
+                          [(ngModel)]="people.CA_Salary">
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="dalowance">Dearness Allowance</label>
+                        <input type="number" id="dalowance" class="form-control" name="dalowance"
+                          [(ngModel)]="people.DA_Salary">
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="lta">LTA</label>
+                        <input type="number" id="lta" class="form-control" name="lta" [(ngModel)]="people.Lta_Salary">
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="pf">PF</label>
+                        <input type="number" id="pf" class="form-control" name="pf" [(ngModel)]="people.PF_Salary">
+                      </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="esi">ESI</label>
+                        <input type="number" id="esi" class="form-control" name="esi" [(ngModel)]="people.ESI_Salary">
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="mi">Monthly Incentive</label>
+                        <input type="number" id="mi" class="form-control" name="mi" [(ngModel)]="people.M_Incentive">
+                      </div>
+                    </div>
+                    <div class="col-sm-2">
+                      <div class="form-group">
+                        <label for="yi">Yearly Incentive</label>
+                        <input type="text" id="yi" class="form-control" name="yi" [(ngModel)]="people.Y_Incentive">
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class="form-actions center">
+                    <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                      <i class="ft-x"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-raised btn-primary" (click) = "onclick()">
+                      <i class="fa fa-check-square-o"></i> Save
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- <div class="form-body">
+                <h4 class="form-section"><i class="ft-user"></i> Image Info</h4>
+
+                <div class="row">
+                  <div class="col-sm-2">
+
+                    <div class="form-group">
+                      <label>Upload Image</label>
+                      <input type="file" class="form-control-file" id="img" name="name" [(ngModel)]="people.ImageUrl">
+                    </div>
+                  </div>
+
+                 <div class="col-sm-2">
+                    <div class="form-group">
+                      <label>Adhar Card</label>
+                      <input type="file" class="form-control-file" id="acard" name="acard"  [(ngModel)]="people.Y_Incentive">
+                    </div>
+                  </div>
+
+                  <div class="col-sm-2">
+                    <div class="form-group">
+                      <label>Pan Card</label>
+                      <input type="file" class="form-control-file" id="pcard" name="pcard" [(ngModel)]="people.Y_Incentive">
+                    </div>
+                  </div>
+
+                  <div class="col-sm-2">
+                    <div class="form-group">
+                      <label>Marksheet</label>
+                      <input type="file" class="form-control-file" id="marksheet" name="marksheet" [(ngModel)]="people.MarkSheet">
+                    </div>
+                  </div>
+                </div> 
+
+                <div class="form-actions right">
+                  <button type="button" class="btn btn-raised btn-warning mr-1">
+                    <i class="ft-x"></i> Previous
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary">
+                    <i class="fa fa-check-square-o"></i> Save
+                  </button>
+                </div>
+
+              </div>  -->
+<!-- 
+              <div class="form-body">
+                  <div class="row">
+                      <div class="col-xl-4 col-lg-6 col-md-12">
+                          <fieldset class="form-group">
+                              <label for="basicSelect">Basic Select</label>
+                              <select class="form-control" id="basicSelect">
+                                <option>Select Option</option>
+                                <option>Option 1</option>
+                                <option>Option 2</option>
+                                <option>Option 3</option>
+                                <option>Option 4</option>
+                                <option>Option 5</option>
+                              </select>
+                          </fieldset>                                
+                      </div>
+                      <div class="col-xl-4 col-lg-6 col-md-12">
+                          <fieldset class="form-group">
+                              <label for="customSelect">Custom select</label>
+                              <select class="custom-select d-block w-100" id="customSelect">
+                                  <option selected>Open this select menu</option>
+                                  <option value="1">One</option>
+                                  <option value="2">Two</option>
+                                  <option value="3">Three</option>
+                              </select>
+                          </fieldset>                                
+                      </div>
+                      <div class="col-xl-4 col-lg-6 col-md-12">
+                          <fieldset class="form-group">
+                              <label for="countrySelect">Multiple select</label>
+                              <select class="form-control" id="countrySelect" multiple="multiple">
+                                  <option selected="selected">United States</option>
+                                  <option>Canada</option>
+                                  <option selected="selected">United Kingdom</option>
+                                  <option>Japan</option>
+                                  <option>Australia</option>
+                                  <option>Germany</option>
+                                  <option selected="selected">India</option>
+                                  <option>Italy</option>
+                                  <option>Sweden</option>
+                                  <option>France</option>
+                                  <option>New Zealand</option>
+                                  <option>Switzerland</option>
+                                  <option>Russia</option>
+                                  <option>England</option>
+                                  <option>Norway</option>
+                                  <option>Greece</option>
+                                  <option>Philippines</option>
+                                  <option>Ireland</option>
+                                  <option>China</option>
+                                  <option>South Korea</option>
+                              </select>
+                          </fieldset>                                
+                      </div>
+                  </div>
+              </div> -->
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+<!-- // Basic form layout section end -->

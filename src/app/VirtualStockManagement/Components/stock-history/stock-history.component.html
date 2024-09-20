@@ -1,0 +1,48 @@
+<div id="kick-start" class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-12">
+                <h4 class="card-title">Stock History</h4>
+            </div>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4">
+                    <select class="form-control" [(ngModel)]="selectedStock" (ngModelChange)="onSelectStock()">
+                        <option [ngValue]="null"> select stock</option>
+                        <option *ngFor="let stock of stockList; index as i;" [ngValue]="stock">
+                            {{stock.DisplayName}}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <select id="warehouse" name="warehouse" class="form-control" [(ngModel)]="warehouseId"
+                        (ngModelChange)="onWarehouseChange()">
+                        <option [ngValue]="null">Select Warehouse</option>
+                        <option *ngFor="let whouse of warehouseList" [ngValue]="whouse.WarehouseId">
+                            {{ whouse.WarehouseName }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-4">
+                    <p-autoComplete *ngIf="!itemValue" appendTo="body" [(ngModel)]="selectedItem"
+                        [suggestions]="itemList" (completeMethod)="getitemList($event)" [disabled]="!warehouseId"
+                        field="itemname" [size]="30" placeholder="Search Items (min 3 letters)" [minLength]="1"
+                        (onSelect)="onSelectItem($event)" name="itemname" required="true" #ledgerName="ngModel">
+                    </p-autoComplete>
+                    <div class="ui-inputgroup" *ngIf="itemValue" >
+                        <input class="form-control" [(ngModel)]="selectedItem.itemname" disabled>
+                        <button pButton type="button" icon="pi pi-times" (click)="cancelItem()"
+                            class="ui-button-danger"></button>
+                    </div>
+                </div>
+                <div class="cop-12" *ngIf="showHistory">
+                    <br>
+                    <app-stock-history-partial [filter]="stockHistoryPageFilter"></app-stock-history-partial>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

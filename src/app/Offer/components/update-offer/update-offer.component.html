@@ -1,0 +1,216 @@
+<div>
+    <form class="form" #offerUpateForm="ngForm">
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="SelectWarehouse">Warehouse</label>
+                    <input type="text" placeholder="Select Warehouse" [(ngModel)]="getRowData.WarehouseName"
+                        id="SelectWarehouse" name="SelectWarehouse" class="form-control" required="1" maxlength="50"
+                        minlength="4" #SelectWarehouse="ngModel" disabled>
+                </div>
+            </div>
+
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="OfferName">Start Date-Time</label><br>
+                    <span> {{getRowData.start | date : 'dd MMM yyyy - hh:mm a'}}
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="OfferName">End Date-Time</label><br>
+                    <span> {{getRowData.end | date : 'dd MMM yyyy - hh:mm a'}}
+                    </span>
+                </div>
+            </div>
+
+
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="OfferCategory">Offer Category</label>
+                    <input type="text" placeholder="Offer Category" [(ngModel)]="getRowData.OfferCategory"
+                        id="OfferName" name="OfferCategory" class="form-control" required="1" maxlength="50"
+                        minlength="4" #OfferCategory="ngModel" disabled>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="itemname">Item List:</label>
+                    <input type="text" placeholder="item Name" [(ngModel)]="getRowData.itemname" id="OfferName"
+                        name="itemname" class="form-control" required="1" maxlength="50" minlength="4"
+                        #itemname="ngModel" disabled>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="chk-tp">
+                        <label for="multitimeUse"> Multi Time Use:</label><br>
+                        <p-checkbox [disabled]="true" binary="true" id="multitimeUse" name="multitimeUse"
+                            [(ngModel)]="getRowData.IsMultiTimeUse" label="Multi Time Use">
+                        </p-checkbox>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="chk-tp">
+                        <label for="useOther"> Use Other Offer:</label><br>
+                        <p-checkbox [disabled]="true" binary="true" id="useOther" name="useOther"
+                            [(ngModel)]="getRowData.OfferWithOtherOffer" label="Use Other Offer">
+                        </p-checkbox>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 row" *ngIf="tabSelectVale == 'BillDiscount'">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="bOfferOn">Offer On</label>
+                        <input type="text" placeholder="Percentage" [(ngModel)]="getRowData.BillDiscountOfferOn"
+                            id="bOfferOn" name="bOfferOn" class="form-control" required="1" maxlength="50" minlength="4"
+                            #bOfferOn="ngModel" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="BillDiscountType">Bill Discount Type</label>
+                        <input type="text" placeholder="Percentage" [(ngModel)]="getRowData.BillDiscountType"
+                            id="BillDiscountType" name="BillDiscountType" class="form-control" required="1"
+                            maxlength="50" minlength="4" #BillDiscountType="ngModel" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Percentage">Percentage</label>
+                        <input type="text" placeholder="Percentage" [(ngModel)]="getRowData.DiscountPercentage"
+                            id="OfferName" name="Percentage" class="form-control" required="1" maxlength="50"
+                            minlength="4" #Percentage="ngModel" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="MinOrderQuantity">Bill Amount Min Limit</label>
+                        <input type="text" placeholder="item Name" [(ngModel)]="getRowData.DiscountPercentage"
+                            id="MinOrderQuantity" name="MinOrderQuantity" class="form-control" required="1"
+                            maxlength="50" minlength="4" #MinOrderQuantity="ngModel" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="MaxBillAmount">Bill Amount Max Limit </label>
+                        <input type="text" placeholder="item Name" [(ngModel)]="getRowData.MaxBillAmount"
+                            id="MaxBillAmount" name="MaxBillAmount" class="form-control" required="1" maxlength="50"
+                            minlength="4" #MaxBillAmount="ngModel" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Maximum">Maximum Discount </label>
+                        <input type="text" placeholder="item Name" [(ngModel)]="getRowData.MaxDiscount" id="OfferName"
+                            name="Maximum" class="form-control" required="1" maxlength="50" minlength="4"
+                            #Maximum="ngModel" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="LineItem">Number Of Line Items </label>
+                        <input type="text" placeholder="item Name" [(ngModel)]="getRowData.LineItem" id="LineItem"
+                            name="LineItem" class="form-control" required="1" maxlength="50" minlength="4"
+                            #LineItem="ngModel" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 row" *ngIf="tabSelectVale == 'Offer'">
+
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="MinOrderQuantity">On Min Order Quantity</label>
+                        <input type="text" placeholder="On Min Order Quantity" [(ngModel)]="getRowData.MinOrderQuantity"
+                            id="OfferName" name="MinOrderQuantity" class="form-control" required="1" maxlength="50"
+                            minlength="4" #MinOrderQuantity="ngModel" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="FreeOfferType">Type </label>
+                        <input type="text" placeholder="Offer Name" [(ngModel)]="getRowData.FreeOfferType"
+                            id="OfferName" name="FreeOfferType" class="form-control" required="1" maxlength="50"
+                            minlength="4" #FreeOfferType="ngModel" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="itemname">Items </label>
+                        <input type="text" placeholder="Offer Name" [(ngModel)]="getRowData.itemname" id="itemname"
+                            name="itemname" class="form-control" required="1" maxlength="50" minlength="4"
+                            #itemname="ngModel" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="OfferName">Item Limit </label>
+                        <input type="text" placeholder="Offer Name" [(ngModel)]="getRowData.OfferName" id="OfferName"
+                            name="OfferName" class="form-control" required="1" maxlength="50" minlength="4"
+                            #OfferName="ngModel" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="NoOffreeQuantity">No. Of free Quantity </label>
+                        <input type="text" placeholder="Offer Name" [(ngModel)]="getRowData.NoOffreeQuantity"
+                            id="OfferName" name="NoOffreeQuantity" class="form-control" required="1" maxlength="50"
+                            minlength="4" #NoOffreeQuantity="ngModel" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="FreeWalletPoint">Freebies Available Quantity </label>
+                        <input type="text" placeholder="Freebies Available Quantity "
+                            [(ngModel)]="getRowData.FreeWalletPoint" id="FreeWalletPoint" name="FreeWalletPoint"
+                            class="form-control" required="1" maxlength="50" minlength="4" #FreeWalletPoint="ngModel"
+                            disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="FreeItemMRP">Free Sale Quantity</label>
+                        <input type="text" placeholder="Offer Name" [(ngModel)]="getRowData.FreeItemMRP" id="OfferName"
+                            name="FreeItemMRP" class="form-control" required="1" maxlength="50" minlength="4"
+                            #FreeItemMRP="ngModel" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="Description">Description </label>
+                    <input type="text" placeholder="Description" [(ngModel)]="getRowData.Description" id="OfferName"
+                        name="Description" class="form-control" required="1" maxlength="1500" minlength="4"
+                        #Description="ngModel" disabled>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-actions d-flex justify-content-end col-sm-12">
+            <button type="button" class="btn btn-raised btn-primary mr-2" (click)="updateOffer()">
+                Update
+            </button>
+            <button type="button" class="btn btn-raised btn-primary" (click)="onCancel()">
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>

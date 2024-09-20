@@ -1,0 +1,102 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="offer" >
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2"><b>Offer Checker</b></h3>
+        </div>
+        <!-- <div>
+          <button type="button" class="btn btn-raised btn-info float-right align-self-end" style="margin-top: 9px;margin-left: 8px;" (click)="addGullak()">
+            <i class="fa fa-plus-circle"></i> Add Gullak
+          </button>
+          <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: 9px;" (click)="commentPopup()" >
+            <i class="fa fa-plus-circle"></i> Reject
+          </button>
+        </div> -->
+      </div></section>
+      <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+        <table class="table table-stripped table-hover table-sm ">
+          <thead style="text-align: center;">
+            <!-- <th>Select</th> -->
+            <th>Offer Code</th>   
+            <th>Offer On</th>   
+            <th>Customer Name</th>   
+            <th>SkCode</th>  
+            <th>Mobile</th> 
+            <th>Order Ids</th> 
+            <th>Order value</th> 
+            <th>Discount </th>
+            <th>Updated Discount</th> 
+            <!-- <th>Dispatch Value</th>                                                    -->
+            <!-- <th>Status</th>   -->
+            <th>Reject</th>
+            <th>Accept</th> 
+          </thead>
+          <tbody>
+              <tr style="text-align: center;" *ngFor="let row of CheckerData">
+                <!-- <td (click)="getData(row)" [ngClass]="{'sel':row.IsSelected} ">
+                  <i *ngIf="!row.IsSelected" class="fa fa-square-o fa-2x"
+                      aria-hidden="true"></i>
+                  <i *ngIf="row.IsSelected" class="fa fa-plus-square"
+                      style="font-size:30px;color:orangered"
+                      aria-hidden="true"></i>
+               </td> -->
+                  <td>{{row.OfferCode}}</td>   
+                  <td>{{row.OfferOn}}</td>  
+                  <td>{{row.CustomerName}}</td>      
+                  <td>{{row.Skcode}}</td>  
+                  <td>{{row.MobileNo}}</td>   
+                  <td>{{row.OrderIds}}</td>      
+                  <td>{{row.OrderValue}}</td> 
+                  <td>{{row.Discount}}</td> 
+                  <td>{{row.DispatchDiscount}}</td>
+                  <!-- <td>{{row.DispatchValue}}</td>       -->
+                  <!-- <td>{{row.Status}}</td>       -->
+                  <td>
+                    <a href="javascript:void(0);" (click)="commentPopup(row,$event)"><b><u>Reject</u></b></a>
+                  </td>
+                  <td>
+                    <a href="javascript:void(0);" (click)="addGullak(row,$event)"><b><u>Accept</u></b></a>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+    </div>
+
+    <div *ngIf = "commentSection == true">
+  <p-dialog header="Comment" [(visible)]="commentSection" [resizable]="false" [modal]="true" appendTo="body"
+  positionTop="100" [style]="{width: '560'}">
+  <form class="form form-inline" name="form" #offercheckerForm="ngForm">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="form-group m-2">
+            <label for="a" class="col-md-6"><b>Comment:</b><span style="color:red"> *</span></label>
+            <input type="text" id="comment" class="form-control col-md-6" name="comment" [(ngModel)]="Comment"
+              placeholder="Comment" rows="4" cols="50" (ngModelChange)="commentbox(offercheckerForm,Comment)" #comment="ngModel" required="1" maxlength="50" minlength="5" />
+            <div class="col-md-6"></div>
+            <div *ngIf="isInvalid && !comment.valid && comment.errors.required">
+              <code>Comment is required</code>
+            </div>
+            <div *ngIf="isInvalid && !comment.valid && comment.errors.minlength">
+              <code>minlength 5</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" *ngIf = "savebtn == true">
+          <label for="a" class="col-md-6"></label>
+          <button type="button" class="btn btn-raised btn-primary pull-right"
+            style="margin-top: 13px;padding-left: 25px;padding-right: 25px"
+            (click)="rejectOffer(offercheckerForm,Comment,selectedr)"><b>Save</b></button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</p-dialog>
+    </div>
+    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+      <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+      </p-footer>
+    </p-confirmDialog>

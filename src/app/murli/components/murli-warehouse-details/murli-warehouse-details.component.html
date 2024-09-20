@@ -1,0 +1,73 @@
+<section id="customer-master">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="">Murli Warehouse Details</h3>
+    </div>  
+    <div class="mar">
+      <button type="button" class="btn btn-raised btn-primary mr-2" (click)="back()"> Back </button>
+     
+      <button type="button" class="btn btn-raised btn-primary" (click)="add()"><i class="fa fa-plus-circle"></i> Add Items </button>
+    </div>
+  </div>
+  
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover mar-top">
+    <div class="position-relative">
+        <p-table  #dt [globalFilterFields]="cols"  [value]="warehouseItemList" [paginator]="true" [rows]="20" dataKey="WarehouseId"  [style]  [scrollable]="true" scrollHeight="70vh"  class="center" >
+            <ng-template pTemplate="header" >
+                <tr>
+                  <th  class="center" >
+                  WarehouseName 
+                  </th>
+                  <th class="center" >
+                  Text
+                  </th>
+                  <th  class="center">
+                  From Date
+                  </th>
+                  <th  class="center">
+                    To Date
+                  </th>
+                  <th  class="center">
+                      Audio
+                  </th>
+                  <th class="right">
+                      Active/InActive
+                  </th>
+                  <th class="center">
+                    Delete
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData  let-columns="columns"  let-expanded="expanded" >
+                <!-- <tr  (click)="openDetails(rowData,$event)"></tr> -->
+                <tr>
+                  <td>
+                    {{rowData.WarehouseName}}
+                  </td>
+                  <td>
+                    {{rowData.HindiTopItem}}
+                  </td>
+                  <td>
+                    {{rowData.FromDate | date:'medium'}}
+                  </td>
+                  <td>
+                    {{rowData.ToDate | date:'medium'}}
+                  </td>
+                  <td>
+                      <audio controls class="audiowidth">
+                          <source src="{{rowData.Mp3url}}" type="audio/mp3">
+                      </audio>
+                  </td>
+                  <td class="right">                      
+                      <p-checkbox name="groupname"  [(ngModel)]="rowData.IsActive" binary="true" (ngModelChange)="isactiveitem(rowData)"></p-checkbox>
+                  </td>
+                  <td class="center">
+                    <button  class="pi pi-trash" aria-hidden="true"  (click)="remove(rowData)"> </button>
+                  </td>
+                </tr>
+              </ng-template>
+        </p-table>    
+    </div>
+  </div>
+
+</section>

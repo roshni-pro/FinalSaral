@@ -1,0 +1,208 @@
+<br>
+<br>
+<h1 class="h11"><i class="fa fa-shopping-bag" aria-hidden="true"></i>Post Internal Transfer Order
+
+    <hr>
+
+    <div class="card-content">
+
+        <div class="px-3">
+            <form class="form" name="form" #internaltransferform="ngForm">
+                <div class="form-body">
+                    <!-- <h4 class="form-section"><i class="ft-user"></i> Edit Designation</h4> -->
+                    <h4 class="form-section"><b> Add Items </b></h4>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dname"><b> From Warehouse:</b> *</label>
+                                    <select id="dname" name="desg" #ctrl1="ngModel" class="form-control"
+                                        (change)="returnListFromCityId() ; globalsearch('')"
+                                        [disabled]="transferOrderItemList.length"
+                                        [(ngModel)]="transferOrderItem.RequestFromWarehouseId" required>
+                                        <option [selected]="true" default [value]=null>--select warehouse--
+                                        </option>
+                                        <ng-container *ngFor="let whousefrom of warehousefromlist">
+                                            <option [value]="whousefrom.WarehouseId">
+                                                {{whousefrom.WarehouseName}}
+                                            </option>
+                                        </ng-container>
+                                    </select>
+
+
+                                    <p *ngIf="invalidForm && transferOrderItem.RequestFromWarehouseId == null"
+                                        style="color: red;">Wh From is required</p>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="descp"><b> To Warehouse: </b></label>
+                                    <!-- <div class="col-md-6"> -->
+                                    <select id="descp" name="desag" #ctrl2="ngModel" class="form-control"
+                                        [disabled]="transferOrderItemList.length"
+                                        [(ngModel)]="transferOrderItem.RequestToWarehouseId" required>
+                                        <option [selected]="true" default [value]="null">--select warehouse--
+                                        </option>
+                                        <ng-container *ngFor="let warehouseto of warehousetolist">
+                                            <option [value]="warehouseto.WarehouseId">
+                                                {{warehouseto.WarehouseName}}
+                                            </option>
+                                        </ng-container>
+                                    </select>
+                                    <div></div>
+
+                                    <div *ngIf="invalidForm && transferOrderItem.RequestToWarehouseId == null">
+                                        <p style="color: red;">Wh To is required</p>
+                                    </div>
+                                    <!-- </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group ">
+                                    <label for="level"> <b> Search Item: </b></label>
+                                    <br>
+                                    <p-autoComplete [(ngModel)]="transferOrderItem.Itemname" #itemnm="ngModel"
+                                        (onFocus)="checkIfFromExists($event)" [style]="{'height':'102%'}"
+                                        [inputStyle]="{'height':'102%'}" [suggestions]="items" field="itemname"
+                                        (onSelect)="setItem($event)" #itemsL (completeMethod)="globalsearch($event)"
+                                        id="itemname" name="itemmain" required>
+                                    </p-autoComplete>
+                                    <div
+                                        *ngIf="invalidForm && (!transferOrderItem.StockId || transferOrderItem.Itemname == '')">
+                                        <p style="color: red;">Items required</p>
+                                    </div>
+                                    <!-- </div> -->
+                                </div>
+                                <div></div>
+
+
+                            </div>
+                            <div class="col-md-6" style="margin-top: 10px;">
+                                <div class="form-group">
+                                    <label for="level"> <b> No Of Pieces: </b></label>
+                                    <!-- <div class="col-md-6"> -->
+                                    <input type="number" #ctrl3="ngModel" required
+                                        [(ngModel)]="transferOrderItem.Noofpics" id="level" class="form-control"
+                                        name="level" placeholder="no of pieces." />
+                                    <div *ngIf="invalidForm && transferOrderItem.Noofpics == null">
+                                        <p style="color: red;">No Of Pieces required</p>
+                                    </div>
+                                </div>
+                                <div></div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-9">
+
+                                </div>
+                                <div class="col-md-2">
+                                    <div  class="text-right">
+                                        <button style="margin-left: 60px;" *ngIf="!editSaved" type="button"
+                                            class="btn btn-outline-success active form-control" value="Add"
+                                            (click)="add(internaltransferform)">
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                            Add Item
+                                        </button>
+                                        <button style="margin-left: 60px;" *ngIf="editSaved" type="button"
+                                            class="btn btn-outline-success active form-control" value="Add"
+                                            (click)="updateCurrentItem(internaltransferform)">
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                            Update Item
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <br>
+                    <p-toast style="position: fixed;" [style]="{marginTop: '80px'}"></p-toast>
+
+                </div>
+
+
+
+
+            </form>
+
+        </div>
+
+        <hr>
+        <div class="card-content">
+            <div class="form-body" *ngIf="transferOrderItemList && transferOrderItemList.length">
+                <h4 class="form-section"> <i class="fa fa-list" aria-hidden="true"></i> <b> Items List </b></h4>
+
+                <hr>
+                <div style="overflow: auto;">
+                    <!-- <p-table  [autoLayout]="true" class="center" [resizableColumns]="true" [autoLayout]="true" class="center" [paginator]="true" [rows]="10"
+                 #dt [resizableColumns]="true" [autoLayout]="true" class="center" 
+                    [value]="transferOrderItemList" [totalRecords]="transferOrderItemList.length" [scrollable]="true"
+                    scrollHeight="70vh" text-align: center> -->
+
+
+
+
+                    <p-table #dtable [resizableColumns]="true" [autoLayout]="true" class="center"
+                        [value]="transferOrderItemList" [totalRecords]="transferOrderItemList.length"
+                        [scrollable]="true" scrollHeight="70vh" text-align: center>
+
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="text-align: center">
+                                    S.no
+                                </th>
+                                <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="text-align: center">
+                                    {{col.header}}
+                                </th>
+                                <th>
+                                    Delete
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded"
+                            let-i="rowIndex">
+                            <tr>
+                                <td style="text-align: center; cursor: pointer;" (click)="setCurrentItem(i)">
+                                    {{i+1}}
+                                </td>
+                                <td *ngFor="let col of cols" style="text-align: center;cursor: pointer; "
+                                    (click)="setCurrentItem(i)">
+
+                                    {{col.field == 'Itemname' ? rowData.Itemname.itemname : rowData[col.field]}}
+                                </td>
+                                <td>
+                                    <button class="pi pi-trash trash" aria-hidden="true" (click)="trash(i)"> </button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+            <div class="text-right" *ngIf="transferOrderItemList && transferOrderItemList.length">
+                <div class="form-actions right  col-sm-12 p-3">
+
+                    <button *ngIf="transferOrderItemList.length" type="button"
+                        [disabled]="!transferOrderItemList.length" class="btn btn-raised btn-primary" (click)="save()"
+                        style="margin-left: 240px;">
+                        Post Transfer Orders
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+    <br><br>

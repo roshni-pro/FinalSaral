@@ -1,0 +1,221 @@
+<div>
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Sales Intent Approval</h3>
+    </div>
+</div>
+<!-- search div start -->
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover mob">
+    <div class="row ">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-lg-2 mt-2">
+                    <label><span class="required">*</span><b>Select Request:</b></label>
+                    <p-dropdown [options]="requestdrop" [(ngModel)]="selectRequest" (onChange)="getRequest()" optionLabel="name"></p-dropdown>
+                    <!-- <button type="button" class="btn btn-primary" routerLink="../showpendingrequest">Settled Request</button>&nbsp; -->
+                </div>
+                <div class="col-lg-2 mt-2">
+                    <label><span class="required">*</span> <b> Select Brand </b> </label>
+                    <p-multiSelect [options]="brandList" placeholder="Select Brand"
+                        [(ngModel)]="selectedSubsubCatregory" [panelStyle]="{minWidth:'100%'}"
+                        optionLabel="BrandName"></p-multiSelect> 
+                </div>
+                <div class="col-lg-2  mt-2">
+                    <label><b> Brand Name </b> </label>
+                    <input type="text" placeholder="Enter BrandName" class="form-control" name="brandname"
+                        [(ngModel)]="brandname">
+                </div>
+                <div class="col-lg-2 mt-2">
+                    <label><b>Select Month/Year: </b></label>
+                    <p-calendar [showIcon]="true" [(ngModel)]="selectdate" view="month" dateFormat="yy/mm/01">
+                    </p-calendar>
+                </div>
+                <div class="col-lg-4 mt-2">
+                    <button type="button" (click)="Searchhit()" (click)="searchData()" class="btn btn-primary" style="margin-top: 27px;">
+                        Search
+                    </button>
+                    <button type="button" (click)="clear()" class="btn btn-primary ml-2" 
+                    style="margin-top: 27px; color: white;background-color: red !important;border-color: red !important;">
+                        Clear
+                    </button>
+                    <button type="button" (click)="exportDownload()" class="btn btn-primary ml-2" 
+                    style="margin-top: 27px; color: white;background-color: green !important;border-color: green !important;">
+                        Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- search div End -->
+</div>
+<!-- Pending Request -Start-->
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center" *ngIf="showPending">
+    <p-table [value]="salesData" [scrollable]="true" [totalRecords]="totalRecordPending" 
+    (onLazyLoad)="pendingLoad($event)" [lazy]="true" [paginator]="true" [rows]="10" [responsive]="false" [(first)]="first"  [tableStyle]="{'min-width': '120rem'}">
+        <ng-template pTemplate="header">
+                <tr>
+                    <th>Category</th>
+                    <th>Brand</th>       
+                    <th>Product</th>
+                    <th>Item Name</th>
+                    <th>ROC</th>
+                    <th>System Forcasted Qty</th>
+                    <th>Sellers Additional Qty</th>
+                    <th>Buying Price</th>
+                    <th>Warehouse Name</th>
+                    <th>MOQ</th>
+                    <th>No Of Sets</th>
+                    <!-- <th>Buying Price</th> -->
+                    <th>ETA Date</th>
+                    <th style="width: 12%;">Buyer Rejection Comments</th>
+                    <th>Requested By</th>
+                    <!-- <th *ngIf="inventoryForecastingSalesSeniorExecutive">Sales Lead Approval</th>
+                    <th *ngIf="inventoryForecastingExecutive">Buyers Lead Approval</th> -->
+                    <th >Sales Lead Approval</th>
+                    <th >Buyers Lead Approval</th>
+                </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex" let-item>
+            <tr class="tr1">
+                <td>{{item.Category}}</td>
+                <td>{{item.Brand}}</td> 
+                <td>{{item.Product}}</td>
+                <td>{{item.Item_Display_Name}}</td>
+                <td>{{item.Tag}}</td>
+                <td>{{item.System_Forecasted_Qty}}</td>
+                <td>{{item.Sellers_Additional_Qty}}</td>
+                <td>{{item.Selling_Price}}</td>
+                <td>{{item.WarehouseName}}</td>
+               
+                <td>{{item.MinOrderQty}}</td>
+                <td>{{item.NoOfSet}}</td>
+                <!-- <td>{{item.BuyingPrice}}</td> -->
+                <td>{{item.ETADate}}</td>
+                <td style="width: 12%;">
+                    <ng-container *ngIf="item.isReject == 0 else otherForReject">
+                        <p-dropdown [options]="cmtList" [(ngModel)]="item.Comments" placeholder="Search" optionLabel="Comments" appendTo="body"
+                            (onChange)="cmtSaveForSalesIntent(item)" [disabled]="item.IsSalesLeadApproved == 0">
+                        </p-dropdown>
+                    </ng-container>
+                    <ng-template #otherForReject>
+                        <ng-container *ngIf="item.isReject == 1">
+                            Auto Rejected
+                        </ng-container>
+                    </ng-template>
+                </td>
+                <td>{{item.Requested_By}}</td>
+                <!-- [disabled]=!item.System_Forecasted_Qty -->
+                <!-- <td *ngIf="inventoryForecastingSalesSeniorExecutive"> -->
+                <td >
+                    <ng-container *ngIf="item.IsSalesLeadApproved == 1 && (salesRoleNameRegion || salesRoleNameCountry || hqMasterRole || inventoryForecastingSalesSeniorExecutive|| cm5lead)  else second">
+                        <button type="button" style="background-color:rgb(152, 227, 121); color: whitesmoke;"
+                            class="btn btn-raised" disabled>Approved</button>
+                        <button type="button" class="btn btn-raised btn-danger" disabled
+                            style="background-color:rgb(206, 124, 92); color:whitesmoke;">Reject</button>
+                    </ng-container>
+                    <ng-template #second>
+                        <ng-container *ngIf="item.IsSalesLeadApproved == 0 && (salesRoleNameRegion || salesRoleNameCountry || hqMasterRole || inventoryForecastingSalesSeniorExecutive || cm5lead)">
+                            <button type="button" style="background-color:rgb(83, 150, 54); color: whitesmoke;"
+                                class="btn btn-raised"
+                                (click)="salesApprovedRejectStatus('0','0',item,'Approved')">Approved</button>
+                            <button type="button" class="btn btn-raised btn-danger"
+                                (click)="salesApprovedRejectStatus('0','1',item,'Reject')"
+                                class="btn btn-primary">Reject</button>
+                        </ng-container>
+                    </ng-template>
+                </td>
+                <!-- <td *ngIf="inventoryForecastingExecutive"> -->
+                <td >
+                    <ng-container
+                        *ngIf="item.IsBuyerLeadApproved == 0 && item.IsSalesLeadApproved == 0 && (buyerRoleNameSourcing || buyerRoleNameRegional || hqMasterRole || inventoryForecastingExecutive) else buyersecond">
+                        <button type="button" disabled style="background-color:rgb(152, 227, 121); color: whitesmoke;"
+                            class="btn btn-raised">Approved</button>
+                        <button type="button" disabled class="btn btn-raised btn-danger"
+                            style="background-color:rgb(206, 124, 92); color:whitesmoke;">Reject</button>
+                    </ng-container>
+                    <ng-template #buyersecond>
+                        <ng-container *ngIf="item.IsBuyerLeadApproved == 0  && (buyerRoleNameSourcing || buyerRoleNameRegional || hqMasterRole || inventoryForecastingExecutive) else buyerthird">
+                            <button type="button" (click)="buyersApprovedRejectStatus('1','0',item,'Approved')"
+                                style="background-color:rgb(76, 159, 41); color: whitesmoke;"
+                                class="btn btn-raised">Approved</button>
+                            <button type="button" class="btn btn-primary"
+                                (click)="buyersApprovedRejectStatus('1','1',item,'Reject')">Reject</button>
+                        </ng-container>
+                    </ng-template>
+                    <ng-template #buyerthird>
+                        <ng-container *ngIf="item.IsBuyerLeadApproved == 1 && (buyerRoleNameSourcing || buyerRoleNameRegional || hqMasterRole)">
+                            <button type="button" disabled
+                                style="background-color:rgb(152, 227, 121); color: whitesmoke;" class="btn btn-raised">Approved</button>
+                            <button type="button" disabled class="btn btn-raised btn-danger"
+                                style="background-color:rgb(206, 124, 92); color:whitesmoke;" class="btn btn-raised btn-danger">Reject</button>
+                        </ng-container>
+                    </ng-template>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<!--Pending Request -End-->
+
+<!-- Settle Request -Start -->
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center" *ngIf="showSettle">
+    <p-table [value]="saleslist" [scrollable]="true" [totalRecords]="totalRecordSettle"  [tableStyle]="{'min-width': '120rem'}"
+    (onLazyLoad)="settelLoad($event)" [lazy]="true" [paginator]="true" [rows]="10" [(first)]="first">
+         <ng-template  pTemplate="header">
+             <tr>
+                 <th>Category</th>
+                 <th>Brand</th>
+                 <th>Product</th>
+                 <th>ItemName</th>
+                 <th>ROC</th>
+                 <th>System Forcasted Qty</th>
+                 <th>Sellers Additional Qty</th>
+                 <th>Buying Price</th>
+                 <th>Warehouse Name</th>
+                 <th>MOQ</th>
+                 <th>No Of Sets</th>
+                 <th>ETA Date</th>
+                 <th>Buyer Rejection Comments</th>
+                 <th>Requested By</th>
+                 <th>Sales Lead Approval</th>
+                 <th>Buyers Lead Approval</th>
+             </tr>
+         </ng-template>
+         <ng-template pTemplate="body"  let-item let-rowIndex="rowIndex" let-item>
+             <tr  class="tr1">
+                 <td>{{item.Category}}</td>
+                 <td>{{item.Brand}}</td>
+                 <td>{{item.Product}}</td>
+                 <td>{{item.Item_Display_Name}}</td>
+                 <td>{{item.Tag?item.Tag:'--'}}</td>
+                 <td>{{item.System_Forecasted_Qty}}</td>
+                 <td>{{item.Sellers_Additional_Qty}}</td>
+                 <td>{{item.Selling_Price}}</td>
+                 <td>{{item.WarehouseName}}</td>
+                 <td>{{item.MinOrderQty}}</td>
+                 <td>{{item.NoOfSet}}</td>
+                 <td>{{item.ETADate}}</td>
+                 <td>{{item.Comments}}</td>
+                 <td>{{item.Requested_By}}</td>
+                 <td [ngClass]="item.IsSalesLeadApproved=='Approved' ? 'green': item.IsSalesLeadApproved=='Rejected' ? 'red':'black' ">{{item.IsSalesLeadApproved}}</td>
+                 <td [ngClass]="item.IsBuyerLeadApproved=='Approved' ? 'green':'red'">{{item.IsBuyerLeadApproved}}</td>
+                 <!-- [disabled]=!item.System_Forecasted_Qty -->
+                 <!-- <td><button type="button"  class="btn btn-raised" 
+                    style="background-color:orange;color:whitesmoke">
+                    Pending
+                </button></td>
+                 <td><button type="button" class="btn btn-raised " 
+                    style="background-color:orange;color:whitesmoke ">
+                    Pending
+                </button></td> -->
+            </tr>
+          </ng-template>
+     </p-table>
+ </div>
+<!--Settle Request -End -->
+<p-confirmDialog appendTo="body" header="Confirmation" [style]="{width: '40vw'}" [baseZIndex]="10000"></p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

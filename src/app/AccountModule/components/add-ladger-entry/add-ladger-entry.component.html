@@ -1,0 +1,190 @@
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form" name="form" #addLedgerEntryForm="ngForm">
+                <input autocomplete="false" name="hidden" type="text" style="display:none;">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Add Information</h4>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="vcht">VoucherType</label>
+                        <select id="vcht" name="vcht" class="form-control" [(ngModel)]="ladgerEntry.VouchersTypeID"
+                          (ngModelChange)="vouchertypeChanged(ladgerEntry.VouchersTypeID)">
+                          <option *ngFor="let at of voucherTypeList" [ngValue]="at.ID">
+                            {{ at.Name }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="date"> Date</label>
+                        <p-calendar [(ngModel)]="ladgerEntry.Date" id="date" name="date" showIcon="true"
+                          dateFormat="dd/mm/yy" required #date="ngModel">
+                        </p-calendar>
+                        <code *ngIf="isFormInvalid && !date.valid && date.errors.required">
+                            Date is required
+                        </code>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="pert"> Ref No</label>
+                        <input type="text" id="pert" class="form-control" name="pert"
+                          [(ngModel)]="ladgerEntry.RefNo" placeholder="Enter Particulars" required
+                          #perticular="ngModel">
+                        <code *ngIf="isFormInvalid && !perticular.valid && perticular.errors.required">
+                              Required!
+                        </code>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div>
+                        <label for="vchno"> Voucher No</label>
+                      </div>
+                      <div class="input-group mb-3" *ngIf="ladgerEntry.VouchersNo">
+                        <input type="text" class="form-control" aria-label="Enter Code" aria-describedby="basic-addon2"
+                          id="vchCode" name="vchCode" [(ngModel)]="voucher.Code" disabled="2">
+                      </div>
+
+                      <div class="input-group mb-3" *ngIf="!ladgerEntry.VouchersNo">
+                        <input type="text" class="form-control" placeholder="Voucher Code" aria-label="Enter Code"
+                          aria-describedby="basic-addon2" id="vcoNo" name="vcoNo" [(ngModel)]="vchCode" required="1"
+                          (click)="addVoucher()" #vcoNo="ngModel">
+                        <div class="input-group-append">
+                          <button class="btn btn-outline-primary" type="button" (click)="addVoucher()">Generate</button>
+                        </div>
+                        <code class="dis" name="VouchersNoError" id="VouchersNoError"
+                          *ngIf="isFormInvalid &&  (!vcoNo.valid && vcoNo.errors.required)">
+                            Required!
+                        </code>
+                        <code class="dis" name="VouchersNoError" id="VouchersNoError"
+                          *ngIf="isFormInvalid &&  !(!vcoNo.valid && vcoNo.errors.required) && ladgerEntry.VouchersNo == null">
+                          Generate Voucher No!
+                      </code>
+                      </div>
+
+                    </div>
+
+
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="partyLedgerType"> Ledger Type</label>
+                        <select id="partyLedgerType" name="partyLedgerType" class="form-control"
+                          [(ngModel)]="partyLedgerID">
+                          <option *ngFor="let ledgerType of ledgerTypeList" [ngValue]="ledgerType.ID">
+                            {{ ledgerType.code }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="partyLedgerName"> Ledger Name</label>
+                        <p-autoComplete [(ngModel)]="selectedParty" [suggestions]="partyLedgerList" field="Name"
+                          (onSelect)="onSelectParty()" (completeMethod)="searchPartyLedger($event, partyLedgerID)"
+                          id="partyLedgerName" name="partyLedgerName" required #partyLedger="ngModel"></p-autoComplete>
+                        <code
+                          *ngIf="isFormInvalid && (!ladgerEntry.AffectedLadgerID || (!partyLedger.valid && partyLedger.errors.required))">
+                              Party Required
+                        </code>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="debitCredit"> Debit/Credit</label>
+                        <select id="debitCredit" name="debitCredit" class="form-control" [(ngModel)]="isDebit" (ngModelChange)="onDebitCreditChange()">
+                          <option [ngValue]="true">Debit </option>
+                          <option [ngValue]="false">Credit</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="{{isDebit? 'debit': 'credit'}}">
+                          {{isDebit? 'Debit': 'Credit'}}</label>
+                        <span *ngIf="!isDebit">
+                          <input type="number" id="creditAmount" class="form-control" name="creditAmountInput"
+                            [(ngModel)]="ladgerEntry.Credit" placeholder="Enter Credit Amount" [required]="!isDebit"
+                            #creditAmountIp="ngModel">
+                          <code
+                            *ngIf="(isFormInvalid && !creditAmountIp.valid && creditAmountIp.errors.required)">
+                               Required
+                          </code>
+                        </span>
+                        <span *ngIf="isDebit">
+                          <input type="number" id="debitAmount" class="form-control" [required]="isDebit"
+                            name="debitAmnt" [(ngModel)]="ladgerEntry.Debit" placeholder="Enter Debit Amount"
+                            #debitAmount="ngModel">
+                          <code *ngIf="(isFormInvalid && !debitAmount.valid && debitAmount.errors.required)">
+                              Required
+                          </code>
+                        </span>
+
+                      </div>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="affactedPartyLedgerType">Affacted Ledger Type</label>
+                        <select id="affactedPartyLedgerType" name="affactedPartyLedgerType" class="form-control"
+                          [(ngModel)]="affactedPartyLedgerID">
+                          <option *ngFor="let ledgerType of ledgerTypeList" [ngValue]="ledgerType.ID">
+                            {{ ledgerType.code }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="affactedPartyLedgerName"> Affacted Ledger Name</label>
+                        <p-autoComplete [(ngModel)]="selectedAffactedParty" [suggestions]="partyLedgerList" field="Name"
+                          (onSelect)="onSelectAffactedParty()"
+                          (completeMethod)="searchPartyLedger($event, affactedPartyLedgerID)"
+                          id="affactedPartyLedgerName" name="affactedPartyLedgerName" required
+                          #affactedPartyLedger="ngModel"></p-autoComplete>
+                        <code
+                          *ngIf="isFormInvalid && (!ladgerEntry.AffectedLadgerID || (!affactedPartyLedger.valid && affactedPartyLedger.errors.required))">
+                              Party Required
+                        </code>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- <div class="clearfix"></div> -->
+                  <!-- <div class="row">
+                    <app-ledger-drop-down name="dropdwon-ledgr" [(ngModel)]="selectedAffactedParty" required>
+                    </app-ledger-drop-down>
+                  </div> -->
+
+                </div>
+                <div class="form-actions  right col-sm-12">
+                  <button type="button" (click)="save(addLedgerEntryForm)" class="btn btn-raised btn-primary">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>

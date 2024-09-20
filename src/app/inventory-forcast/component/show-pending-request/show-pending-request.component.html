@@ -1,0 +1,77 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Sales Intent Old Request</h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row ">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-lg-3  mt-2">
+                    <label> <b> Name </b> </label>
+                    <input type="text" placeholder="Enter BrandName" class="form-control" [(ngModel)]="brandname" >
+                </div>
+                <div class="col-lg-2 mt-2">
+                    <label> <b> Select Month </b> </label>
+                    <p-calendar [showIcon]="true" view="month" dateFormat="mm/yy/01" [(ngModel)]="selectdate"></p-calendar>
+                </div>
+
+                <div class="col-lg-5 mt-2">
+                    <button type="button"   class="btn btn-primary " 
+                        style="margin-top: 27px;" (click)="salesIntentShow()">
+                        Search
+                    </button>
+                    <button type="button"   class="btn btn-primary ml-2" 
+                        style="margin-top: 27px;" (click)="clear()">
+                        Clear
+                    </button>
+                </div>
+                <div class="col-lg-2 mt-4">
+                        <button type="button" class="btn btn-primary" routerLink="../salesintentapproval"> Pending Request</button>
+                    </div>
+                </div>           
+        </div>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <p-table [value]="saleslist" [scrollable]="false" [paginator]="true" [rows]="5">
+         <ng-template  pTemplate="header">
+             <tr>
+                 <th>Category</th>
+                 <th>Brand</th>
+                 <th>Product</th>
+                 <th>System Forcasted Qty</th>
+                 <th>Sellers Additional Qty</th>
+                 <th>Selling Price</th>
+                 <th>Requested By</th>
+                 <th>Sales Lead Approval</th>
+                 <th>Buyers Lead Approval</th>
+             </tr>
+         </ng-template>
+         <ng-template pTemplate="body"  let-item let-rowIndex="rowIndex" let-item>
+             <tr  class="tr1">
+                 <td>{{item.Category}}</td>
+                 <td>{{item.Brand}}</td>
+                 <td>{{item.Product}}</td>
+                 <td>{{item.System_Forecasted_Qty}}</td>
+                 <td>{{item.Sellers_Additional_Qty}}</td>
+                 <td>{{item.Selling_Price}}</td>
+                 <td>{{item.Requested_By}}</td>
+                 <td>{{item.IsSalesLeadApproved}}</td>
+                 <td>{{item.IsBuyerLeadApproved}}</td>
+                
+                 <!-- [disabled]=!item.System_Forecasted_Qty -->
+                 <!-- <td><button type="button"  class="btn btn-raised" 
+                    style="background-color:orange;color:whitesmoke">
+                    Pending
+                </button></td>
+                 <td><button type="button" class="btn btn-raised " 
+                    style="background-color:orange;color:whitesmoke ">
+                    Pending
+                </button></td> -->
+            </tr>
+          </ng-template>
+     </p-table>
+ </div>
+
+

@@ -1,0 +1,1094 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="offer">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+
+            <h3 class="m-2"><b>Add New Offer</b></h3>
+        </div>
+    </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+        <form class="form">
+            <div class="row">
+                <!-- <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="City"> Select City:</label>
+                        <select id="city" name="city" class="form-control" (change)="getCityValue(data.CityId)"
+                            [(ngModel)]="data.CityId" required placeholder="Select City">
+                            <option value="" disabled>--Select--</option>
+                            <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                                {{ city.CityName }}
+                            </option>
+                        </select>
+                    </div>
+                </div> -->  
+                <div class="col-md-2">
+                    <label for="City"> Select Warehouse:</label>
+                    <p-multiSelect id="role=" name="role" [options]="getWherehouseList" [(ngModel)]="data.WarehouseId"
+                        #role="ngModel" optionLabel="WarehouseName"></p-multiSelect>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <div class="chk-tp mt-4">
+                            <p-checkbox binary="true" id="IsCRMOffer" name="IsCRMOffer"
+                                [(ngModel)]="data.IsCRMOffer" label="IsCRMOffer" (ngModelChange)="onClickCRMOffer()">
+                            </p-checkbox>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="apptype"> Select App Type:</label>
+                        <select id="apptype" name="apptype" class="form-control" [(ngModel)]="data.OfferAppType"
+                            required placeholder="Select Type" [disabled]="isCrmOfferFlag == true">
+                            <option value="" disabled>Select</option>
+                            <option value="Both">Both</option>
+                            <option value="Retailer App">Retailer App</option>
+                            <option value="Sales App">Sales App</option>
+                            <option value="Distributor App">Distributor App</option>
+                            <option value="Consumer">Consumer</option>
+                            <option value="BackendStore">Backend Store</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="noteMsg">
+                        <strong>Note :-</strong>
+                        <span> - * Bill Discount and Scratch card Separate use in OfferAppType.</span>
+                        <span> - * Item freebies are not Separate use in OfferAppType.</span>
+                        <span> - * Default status of offer created by Uploader will be Inactive. Please Activate the offer manually after creation.</span>
+                        <span> - * Please ensure if the same offer is created earlier to avoid any duplicate offer creation.</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover" *ngIf="open1StForm == true">
+        <div class="row ">
+            <div class="col-sm-12">
+                <form class="form" #distributorForm="ngForm">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="OfferName">Offer Name</label>
+                                    <input type="text" placeholder="Offer Name" [(ngModel)]="data.OfferName"
+                                        id="OfferName" name="OfferName" class="form-control" maxlength="50"
+                                        minlength="4" #OfferName="ngModel">
+                                    <div class="col-md-4"></div>
+                                    <div *ngIf="isInvalid && !OfferName.valid && OfferName.errors.required">
+                                        <code>Offer Name is required</code>
+                                    </div>
+                                    <div *ngIf="isInvalid && !OfferName.valid && OfferName.errors.minlength">
+                                        <code>Minlength 4</code>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="name">Offer Status</label>
+                                    <select class="form-control" id="status" name="status" [(ngModel)]="data.IsActive"
+                                        #status="ngModel">
+                                       // (ngModelChange)="offerStatus(WarehouseId,data.IsActive)">//
+                                        <option value="" disabled>Select</option>
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                    </select>
+                                    <div class="col-md-2"></div>
+                                    <div *ngIf="isInvalid && !status.valid && status.errors.required">
+                                        <code>Offer Status is required</code>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                          
+
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="projectinput3">Start Date<span style="color:red"> *</span></label>
+                                    <br>
+                                    <p-calendar [minDate]="minimumDate" tabindex="0" [disabledDates]="invalidDates" appendTo="body"
+                                        name="startDateInput" [(ngModel)]="data.StartDate" [showIcon]="true"
+                                        name="startDate" [showTime]="true" required #startDate="ngModel" 
+                                        [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" (onSelect)="onChangeStart($event)">
+                                    </p-calendar>
+                                    <div [hidden]="!(isInvalid && !startDate.valid)">
+                                        <code>Required!</code>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="projectinput5">End Date<span style="color:red"> *</span></label>
+                                    <br>
+                                    <p-calendar [minDate]="minimumDate" tabindex="0" [disabledDates]="invalidDates" appendTo="body"
+                                        name="endDateInput" [(ngModel)]="data.EndDate" [showIcon]="true" name="endDate"
+                                        required #endDate="ngModel" [monthNavigator]="true" [yearNavigator]="true"
+                                        [showTime]="true" yearRange="2000:2030"  (onSelect)="onChangeEndDate($event)">
+                                    </p-calendar>
+                                    <div [hidden]="!(isInvalid && !endDate.valid)">
+                                        <code>Required!</code>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="name">Offer On</label>
+                                    <select class="form-control" id="offeron" name="offeron" [(ngModel)]="data.OfferOn"
+                                        #offeron="ngModel"  (change)="ChooseFreeItem(data.OfferOn,data.StoreId,data.IsStore)">
+                                        <option value="" disabled>Select</option>
+                                        <!-- <option value="Item">Item</option> -->
+                                        <option value="BillDiscount">Bill Discount</option>
+                                        <option value="ScratchBillDiscount">Scratch Bill Discount</option>
+                                    </select>
+                                    <div class="col-md-2"></div>
+                                    <div *ngIf="isInvalid && !offeron.valid && offeron.errors.required">
+                                        <code>Offer Selection is required</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover" *ngIf="showScratchform || showBillform">
+        <div class="row">
+            <h1 class="formheading">Offer on {{showScratchform ? 'Scratch' : 'Bill Discount'}}</h1>
+            <hr>
+            <div class="col-sm-12">
+                <form class="form" #itemOfferForm="ngForm">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="chk-tp mt-4" *ngIf="data.OfferOn!='ScratchBillDiscount'">
+                                        <p-checkbox binary="true" id="autoPay" name="autoPay"
+                                            [(ngModel)]="data.IsAutoApply" label="Auto Apply">
+                                        </p-checkbox>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="row p-3 pt-0">
+                                    <p class="formText">Offer By</p>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="radio" id="storeSelValue" name="storeSelValue" value="Store"
+                                                (change)="updateOfferByValue($event.target.value)"
+                                                [(ngModel)]="data.IsStore">
+                                              <label for="storeSelValue">Store</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <input type="radio" id="storeone" name="storeone" value="Company"
+                                                (change)="updateOfferByValue($event.target.value)" checked
+                                                [(ngModel)]="data.IsStore">
+                                              <label for="storeone">Company</label><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 col-md-4" *ngIf="showStore">
+                                <div class="row">
+                                <label class="label">SELECTED STORE:</label>
+                                    <div class="form-group ml-2 col-8">
+                                        <select id="storeId" name="storeId" class="form-control"  [(ngModel)]="selectedStoredId" placeholder="Select Store" (ngModelChange)="dataChanged($event)">
+                                            <option value="" disabled>--Select--</option>
+                                            <option *ngFor="let item of storeList" [ngValue]="item.StoreId">{{ item.Name}}</option>
+                                        </select>      
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="selectUserType"> User Type:</label>
+                                    <select class="form-control" id="selectUserType" name="selectUserType"
+                                        [(ngModel)]="data.UserType" (change)="CallGCData($event.target.value); getchannellist(data)" 
+                                        required #selectUserType="ngModel">                                    
+                                        <option value="">----Choose User Type---</option>
+                                        <option value="AllCustomer">All Customer</option>
+                                        <option value="Customer" *ngIf="!MultiWarehouse" class="ng-scope">Customer
+                                        </option>
+                                        <option value="Group" class="ng-scope">Group</option>
+                                        <option value="Level">Customer Level</option>
+                                        <option value="KPPCustomer">KPP Customer</option>
+                                        <option value="PrimeCustomer">Prime Customer</option>
+                                        <option value="Channel" *ngIf="showStore" class="ng-scope">Channel</option>
+                                    </select>
+                                    <div *ngIf="isInvalid && !selectUserType.valid && selectUserType.errors.required">
+                                        <code>User Type is required</code>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="selectUserType"> User Type:</label>
+                                    <select class="form-control" id="selectUserType" name="selectUserType"
+                                        [(ngModel)]="data.UserType" (change)="CallGCData($event.target.value)">
+                                        <option value="">----Choose User Type---</option>
+                                        <option value="AllCustomer">All Customer</option>
+                                        <option value="Customer" *ngIf="!MultiWarehouse" class="ng-scope">Customer
+                                        </option>
+                                        <option value="Group" *ngIf="!MultiWarehouse" class="ng-scope">Group</option>
+                                        <option value="Level">Customer Level</option>
+                                        <option value="KPPCustomer">KPP Customer</option>
+                                        <option value="PrimeCustomer">Prime Customer</option>
+                                    </select>
+                                </div>
+                            </div>
+ -->
+                            <div class="col-md-3" *ngIf="data.UserType =='Group'">
+                                <div class="form-group">
+                                    <label for="GroupiD"> Customer List</label>
+                                    <select id="GroupiD" name="GroupiD" class="form-control" [(ngModel)]="data.GroupID" (ngModelChange)="onClickGroupList(data.GroupID)"
+                                        required placeholder="Select Main Item">
+                                        <option value="" disabled>----Choose---</option>
+                                        <option *ngFor="let item of groupData" [ngValue]="item.Id">
+                                            {{item.GroupName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6" *ngIf="data.UserType == 'Channel'">
+                                <div class="form-group">
+                                    <label for="selectItem"> Channel List:</label>
+                                            <p-multiSelect id="channl" name="channl" [filter]="true" [options]="ChannelTypeList"
+                                                [(ngModel)]="data.ChannelId" #role="ngModel" optionLabel="ChannelType" optionValue="ChannelMasterId" >
+                                            </p-multiSelect>
+                                </div>
+                            </div>
+                            <div class="col-md-3" *ngIf="data.UserType == 'Customer'  && !MultiWarehouse">
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <label for="SearchItem">Search Customer</label>
+                                        <input type="text" [(ngModel)]="data.skCode" id="SearchItem" id="SKCode"
+                                            name="SKCode" class="form-control" placeholder="Enter SkCode"
+                                            #SKCode="ngModel">
+                                    </div>
+                                    <div class="col-md-3 mt-2">
+                                        <button type="button" id="SearchCustomer" class="btn btn-ar btn-primary"
+                                            (click)="SearchCustomer()">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3" *ngIf="data.UserType == 'Customer'  && !MultiWarehouse">
+                                <div class="form-group">
+                                    <label for="Customerid"> Customer List</label>
+                                    <select id="Customerid" name="Customerid" class="form-control"
+                                        name="CustomerId1"
+                                        [(ngModel)]="data.CustomerId" required placeholder="Select Main Item">
+                                        <option value="" disabled>----Choose---</option>
+                                        <option *ngFor="let item of CustomerskCode" [ngValue]="item.CustomerId">
+                                            {{item.Name}} =>({{item.Skcode}})
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12" *ngIf="data.UserType == 'AllCustomer'">
+                                <input name="CustomerId2" [(ngModel)]="data.CustomerId" hidden value="-1" />
+                            </div>
+                            <div class="col-md-12" *ngIf="data.UserType == 'KPPCustomer'">
+                                <input name="CustomerId3" [(ngModel)]="data.CustomerId" hidden value="-2" />
+                            </div>
+                            <div class="col-md-12" *ngIf="data.UserType == 'PrimeCustomer'">
+                                <input name="CustomerId4" [(ngModel)]="data.CustomerId" hidden value="-9" />
+                            </div>
+
+                            <div class="col-md-3" *ngIf="data.UserType == 'Level'">
+                                <label for="customerLvl">Customer Level:</label><b
+                                    style="color: red; margin-left: 10px">*</b>
+                                <select class="form-control" id="customerLvl" name="CustomerId5" [(ngModel)]="data.CustomerId">
+                                    <option value="" disabled>----Choose Level---</option>
+                                    <option value="-3">Level 0</option>
+                                    <option value="-4">Level 1</option>
+                                    <option value="-5">Level 2</option>
+                                    <option value="-6">Level 3</option>
+                                    <option value="-7">Level 4</option>
+                                    <option value="-8">Level 5</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6" *ngIf="showScratchform || showBillform" >
+                                <label for="exclusivegroup">Exclude user Type</label><b
+                                    style="color: red; margin-left: 10px">*</b>
+                                <select class="form-control" [(ngModel)]="exclusiveusertype" id="exclusivegroup" (change)="CallGCDataa($event.target.value,selectedStoredId)">
+                                    <option value="none"  >None</option>
+                                    <option value="Group">Group</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6" *ngIf="isexclusivegroupbool">
+                                <label for="inclusiveGroupiD">Group List</label>
+                                <select class="form-control" id="inclusiveGroupiD" name="inclusiveGroupiD" class="form-control" [(ngModel)]="data.ExcludeGroupId"
+                                    required placeholder="Select Main Item" >
+                                    <option value="" disabled>----Choose---</option>
+                                    <option *ngFor="let item of groupdataa" [ngValue]="item.Id">
+                                        {{item.GroupName}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div *ngIf="showBillform" class="col-md-3">
+                                <div class="form-group">
+                                    <label for="OfferLimit">Offer Limit :</label>
+                                    <input type="number" [(ngModel)]="data.FreeItemLimit" id="OfferLimit"
+                                        name="SearchItem" class="form-control" #OfferLimit="ngModel" min="1">
+                                    <div *ngIf="isInvalid && !OfferLimit.valid && OfferLimit.errors.required">
+                                        <code>Min Limit is required</code>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="showBillform" class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="chk-tp mt-4">
+                                                <p-checkbox binary="true" id="myltiTimeUse" name="myltiTimeUse"
+                                                    [(ngModel)]="data.IsMultiTimeUse" label="Multi Time Use">
+                                                </p-checkbox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="chk-tp mt-4">
+                                                <p-checkbox binary="true" id="UseOtherOffer" name="UseOtherOffer" (onChange)="onusewithotherpress(data)"
+                                                    [(ngModel)]="data.IsUseOtherOffer" label="Use Other Offer">
+                                                </p-checkbox>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2"  *ngIf="iscombinedofferseen" >
+                                        <label for="exclusiveGroupiD">Combined Offer Group List</label>
+                                        <!-- <select  id="exclusiveGroupiD" name="exclusiveGroupiD" class="form-control" [(ngModel)]="data.CombinedGroupId"
+                                             placeholder="Select Group">
+                                            <option value="" disabled>----Choose---</option>
+                                            <option *ngFor="let item of AllExclusivegroups" [ngValue]="item.Id">
+                                                {{item.Name}}
+                                            </option>
+                                        </select> -->
+                                        <p-dropdown id="exclusiveGroupiD" name="exclusiveGroupiD" [options]="AllExclusivegroups" [(ngModel)]="data.CombinedGroupId" optionLabel="Name" optionValue="Id"
+                                            filter="true" placeholder="Select group --">
+                                        </p-dropdown>
+                                    </div>  
+                                     
+                                    
+                                    <div class="col-md-2" *ngIf="iscombinedofferseen" >
+                                        
+                                            <div class="chk-tp mt-4">
+                                                <button class="btn btn-raised btn-success" (click)="createnewgroup()" >Create Offer Group</button>
+                                            </div>
+                                        
+                                    </div>      
+                                    <!-- <div class="col-md-4">
+                                        <div class="form-group">
+                                            <div class="chk-tp mt-4">
+                                                <p-checkbox binary="true" id="IsCRMOffer" name="IsCRMOffer"
+                                                    [(ngModel)]="data.IsCRMOffer" label="IsCRMOffer">
+                                                </p-checkbox>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+
+                            <div *ngIf="showBillform" class="col-md-6">
+                                <div class="form-group">
+                                    <label for="UseCount">Offer Use Count :</label>
+                                    <input type="number" [(ngModel)]="data.OfferUseCount" id="UseCount"
+                                        name="SearchItem" class="form-control" #UseCount="ngModel" min="1">
+                                    <div *ngIf="isInvalid && !UseCount.valid && UseCount.errors.required">
+                                        <code>Offer Use Count is required</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-md-6">
+                                <label for="offerType"> Type :</label>
+                                <select class="form-control ng-valid ng-dirty" id="offerType" name="offerType"
+                                    [(ngModel)]="data.FreeofferType"
+                                    (change)="ChooseFreeItem(data.FreeofferType,data.StoreId,data.IsStore)">
+                                    <option value=""  >----Choose Item Type---</option>
+                                  
+                                    <option
+                                        *ngIf="data.OfferOn == 'BillDiscount' && data.OfferOn != 'ScratchBillDiscount'"
+                                        value="BillDiscount" class="ng-hide">Bill Discount</option>
+                                    <option
+                                        *ngIf="data.OfferOn == 'ScratchBillDiscount' && data.OfferOn != 'BillDiscount'"
+                                        value="ScratchBillDiscount" class="ng-hide">Scratch Bill Discount</option>
+                                </select>
+                            </div> -->
+
+                            <div class="scretchOfferOn"> 
+                                
+                                <div class="ml-1">
+                                <label class="label">Upload Include , Exclude & Required Item Excel: </label>
+                            </div>
+                              <hr>
+                                <div class="row p-3 pt-0">
+                                  <!-- <input class="ml-2" type="file" accept=".xlsx, .xls" placeholder="Upload File" (change)="getEventFile($event.target.files)"> -->
+                                  <p-fileUpload  name="fileupload"  accept=".xlsx, .xls" [showUploadButton]="false" (onSelect)="onUpload1($event)"></p-fileUpload>
+                                  <!-- <button type="button" class="btn btn-raised btn-raised mt-3 btn-primary uploadBtn mt-2"
+                        (click)="onUpload()">
+                        Upload Excel
+                    </button> -->
+                                    <!-- <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                                    (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+                                    <code>*</code>
+                                     </p-fileUpload> -->
+                                     <div><a class="btn btn-danger ml-4 m-2" style=" background-color: #119150;color: white; margin-left: 20px;" href="{{apiURL}}/ExcelGeneratePath/OfferUploaderExcel.xlsx" download="">
+                                        Download Sample
+                                     </a></div>
+                                </div>
+
+                            </div>
+            <!--            <div class="scretchOfferOn">
+                               <div class="row p-3 pt-0">
+                                    <div class="col-md-3">
+                                        <p class="formText">Offer On</p>
+                                        <div class="row">
+                                            <div class="col-md-12" *ngIf="!showStore">
+                                                <div class="form-group mb-0">
+                                                    <input type="radio" id="ItemOffer" name="offer_store" value="items"
+                                                        (change)="updateItemChange($event.target.value)"
+                                                        [(ngModel)]="data.BillDiscountType">
+                                                      <label for="ItemOffer">Item</label>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="showStore" class="col-md-12">
+                                                <div class="form-group mb-0">
+                                                    <input type="radio" id="ItemsbCatOffer" name="ItemsbCatOffer"
+                                                        value="subcategory"
+                                                        (change)="updateItemChange($event.target.value)"
+                                                        [(ngModel)]="data.BillDiscountType">
+                                                      <label for="ItemsbCatOffer">Sub Category </label>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="showStore" class="col-md-12">
+                                                <div class="form-group mb-0">
+                                                    <input type="radio" id="brand" name="brand" value="brand"
+                                                        (change)="updateItemChange($event.target.value)"
+                                                        [(ngModel)]="data.BillDiscountType">
+                                                      <label for="brand">Brand</label>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="!MultiWarehouse && !showStore" class="col-md-12">
+                                                <div class="form-group mb-0">
+                                                    <input type="radio" id="ItemOfferCls" name="ItemOffer"
+                                                        value="itemClassification"
+                                                        (change)="updateItemChange($event.target.value)"
+                                                        [(ngModel)]="data.BillDiscountType">
+                                                      <label for="ItemOfferCls">Item Classification</label>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="!showStore" class="col-md-12">
+                                                <div class="form-group mb-0">
+                                                    <input type="radio" id="ItemOfferMargin" name="ItemOfferMargin"
+                                                        value="itemMargin" [(ngModel)]="data.BillDiscountType"
+                                                        (change)="updateItemChange($event.target.value)">
+                                                      <label for="ItemOfferMargin">Item Margin</label><br>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="!showStore" class="col-md-12">
+                                                <div class="form-group mb-0">
+                                                    <input type="radio" id="noneoffer" name="noneoffer"
+                                                        value="BillDiscount" checked [(ngModel)]="data.BillDiscountType"
+                                                        (change)="updateItemChange($event.target.value)">
+                                                      <label for="noneoffer">None</label><br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" *ngIf="itemSeectVal == 'itemMargin'">
+                                        <div class=" form-group">
+                                            <label for="MarginVal">Margin :</label>
+                                            <input type="number" [(ngModel)]="data.ItemMargin" id="MarginVal"
+                                                name="SearchItem" class="form-control" #MarginVal="ngModel" min="1">
+                                            <div *ngIf="isInvalid && !MarginVal.valid && MarginVal.errors.required">
+                                                <code>Margin is required</code>
+                                            </div>
+
+                                        </div>
+                                        <button type="button" class="btn btn-ar btn-primary"
+                                            (click)="GetItems(data.WarehouseId,'','','')">Reload
+                                            Items</button>
+                                    </div>
+
+                                    <div class="col-md-3" *ngIf="showIncludeItem && itemSeectVal == 'items'">
+                                        <div class="form-group">
+                                            <label for="selectItem"> Include Item:</label>
+                                            <input type="hidden" name="ItemIsInclude" id="ItemIsInclude"
+                                                style="margin:0" [(ngModel)]="data.isInclude" value="true" />
+                                            <p-multiSelect id="role=" name="role" [options]="ItemOfferList"
+                                                [(ngModel)]="data.excludeSelectData" #role="ngModel" optionLabel="Name">
+                                            </p-multiSelect>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" *ngIf="showIncludeItem && itemSeectVal == 'itemMargin'">
+                                        <div class="form-group">
+                                            <label for="selectItem"> Include Item:</label>
+                                            <input type="hidden" name="ItemIsInclude" class="form-control"
+                                                id="ItemIsInclude" style="margin:0" [(ngModel)]="data.isInclude"
+                                                value="true" />
+                                            <p-multiSelect id="role=" name="role" [options]="searchItemVal"
+                                                [(ngModel)]="data.excludeSelectData" #role="ngModel" optionLabel="Name">
+                                            </p-multiSelect>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" *ngIf="itemSeectVal == 'BillDiscount' && trueNoneValue">
+                                        <div class="form-group">
+                                            <label for="City"> Exclude Brand:</label>
+                                            <input type="hidden" name="ItemIsInclude" class="form-control"
+                                                id="ItemIsInclude" style="margin:0" [(ngModel)]="data.isInclude"
+                                                value="false" />
+                                            <p-multiSelect id="BillDiscountTypeIsInclude="
+                                                name="BillDiscountTypeIsInclude" [options]="storeBrand"
+                                                [(ngModel)]="data.noneExculdeData" #role="ngModel" optionLabel="Name">
+                                            </p-multiSelect>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3" *ngIf="itemSeectVal =='itemClassification'">
+                                        <div class="form-group">
+                                            <label for="site-name">Classification</label>
+                                            <select id="DDLItemClassification" class="form-control"
+                                                (change)="getclassifiledVal($event.target.value)">
+                                                <option value="" disabled>Select Value</option>
+                                                <option value="A">A</option>
+                                                <option value="B">B</option>
+                                                <option value="C">C</option>
+                                                <option value="D">D</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-ar btn-primary"
+                                                (click)="GetItems(data.WarehouseId,'','','')">Reload
+                                                Items</button>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="hidden" name="classId" class="form-control" id="classId"
+                                                style="margin:0" [(ngModel)]="data.isInclude" value="true" />
+                                            <label for="none">Include Item</label>
+                                            <p-multiSelect id="classIdtwo" name="classIdtwo"
+                                                [options]="itemClassificationdata" [(ngModel)]="data.excludeSelectData"
+                                                #classIdtwo="ngModel" optionLabel="Name">
+                                            </p-multiSelect>
+                                            <div ng-dropdown-multiselect="" style="width:200px" options="dataselect"
+                                                selected-model="itemsmodel" extra-settings="itemssettings"></div> 
+                                        </div>
+                                    </div>
+
+
+                                    <div *ngIf="data.IsStore && itemSeectVal == 'brand'">
+                                        <div>
+                                            <div class="form-group">
+                                                <label for="City"> Brand :</label>
+                                                <p-multiSelect id="BillDiscountTypeIsInclude="
+                                                    name="BillDiscountTypeIsInclude" [options]="brands"
+                                                    [(ngModel)]="data.isIncludeBillDiscountType" #role="ngModel"
+                                                    optionLabel="Name">
+                                                </p-multiSelect>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="button" class="btn btn-ar btn-primary"
+                                                    (click)="GetItemsByType(data.isIncludeBillDiscountType,'SubsubCategory', 'selectBrand')">Reload
+                                                    Items</button>
+                                                <i *ngIf="loadingIconForExcludedItemsListBr" class="pi pi-spin pi-spinner" style="font-size: 3em"></i>
+
+                                            </div>
+                                            <label for="City"> Exclude Item</label>
+                                            <input type="hidden" name="ItemIsInclude" class="form-control"
+                                                id="ItemIsInclude" style="margin:0" [(ngModel)]="data.isInclude"
+                                                value="false" />
+                                            <p-multiSelect id="role=" name="role" [options]="itemAllData"
+                                                [(ngModel)]="data.excludeSelectData" #role="ngModel" optionLabel="Name">
+                                            </p-multiSelect>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" *ngIf="itemSeectVal=='subcategory'">
+                                        <div class="form-group">
+                                            <label for="City"> Sub Category :</label>
+                                            <p-multiSelect id="subcategorynew" name="subcategorynew"
+                                                [options]="subcategorys" [(ngModel)]="data.subcategorymodel"
+                                                #role="ngModel" optionLabel="Name">
+                                            </p-multiSelect>
+                                            <input type="hidden" name="BillDiscountTypeIsInclude"
+                                                id="BillDiscountTypeIsInclude"
+                                                [(ngModel)]="data.isIncludeBillDiscountType" value="true" />
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-ar btn-primary"
+                                                (click)="GetItemsByType(data.subcategorymodel,'SubCategory', 'subcategory')">Reload
+                                                Items</button>
+                                                <i *ngIf="loadingIconForExcludedItemsListSC" class="pi pi-spin pi-spinner" style="font-size: 3em"></i>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="City"> Exclude Item</label>
+                                            <input type="hidden" name="ItemIsInclude" class="form-control"
+                                                id="ItemIsInclude" style="margin:0" [(ngModel)]="data.isInclude"
+                                                value="false" />
+                                            <p-multiSelect id="role=" name="role" [options]="itemAllData"
+                                                [(ngModel)]="data.excludeSelectData" #role="ngModel" optionLabel="Name">
+                                            </p-multiSelect>
+                                        </div>
+                                    </div>
+                                </div> -->
+                              
+                                <!-- <div class="row p-3 pt-0">
+                                    <p class="formText">Minimum Item Required</p>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                             <label for="selectItem"> User Type:</label> 
+                                            <select class="form-control" id="objectType" name="objectType"
+                                                [(ngModel)]="data.ObjectType"
+                                                (change)="FillCompanyBrand($event.target.value)">
+                                                <option value="Item" selected>Item</option>
+                                                <option value="brand">Brand</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" *ngIf="data.ObjectType=='Item'">
+                                        <div class="form-group row">
+                                            <div class="col-md-7 pr-0">
+                                                <input type="text" [(ngModel)]="data.SearchItemValue" id="itemVal"
+                                                    name="itemVal" class="form-control" #itemVal="ngModel" min="1">
+                                                <div *ngIf="isInvalid && !itemVal.valid && itemVal.errors.required">
+                                                    <code>This is required</code>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5 pl-0">
+                                                <button class="btn btn-primary reloadBtn" (click)="reloadItems()">
+                                                    Reload
+                                                    Items</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" *ngIf="data.ObjectType=='brand'">
+                                         <label for="City"> Select Brand</label>
+                                        
+                                        <p-multiSelect id="reqBrand"  name="reqBrand" [options]="ItemBrandList"
+                                            [(ngModel)]="data.ReqBrandselect" #reqBrand="ngModel" optionLabel="Name">
+                                        </p-multiSelect>
+                                    </div>
+                                    <div class="col-md-3" *ngIf="data.ObjectType=='Item'">
+                                        <label for="City"> Select Main Item</label>
+                                        <p-multiSelect id="reqItem" name="reqItem" [options]="searchItemVal"
+                                            [disabled]="!searchItemVal" [(ngModel)]="data.ReqItemselect"
+                                            #reqItem="ngModel" optionLabel="ItemName">
+                                        </p-multiSelect>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="selectItem"> User Type:</label>
+                                            <select class="form-control" id="selectionType" name="selectionType"
+                                                [(ngModel)]="data.qtyValue"
+                                                (change)="FillCompanyBrand($event.target.value)">
+                                                <option value="Qty">Qty</option>
+                                                <option value="Value">Value</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2" >
+                                        <div class="form-group">
+                                            <input  type="number" [(ngModel)]="data.txtObjectType" id="txtObjectType"
+                                                name="txtObjectType" class="form-control" #MinOrder="ngModel" min="1">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary reloadBtn" (click)="addItems()">
+                                            Add Items</button>
+                                    </div>
+
+                                    <div class="col-md-12" style="margin-top:10px"
+                                        *ngIf="data.OfferBillDiscountRequiredItems?.length>0">
+                                        <table class="table" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Object Type</th>
+                                                    <th>Item Name</th>
+                                                    <th>Type</th>
+                                                    <th>Value</th>
+                                                    <th>&nbsp;&nbsp;Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr
+                                                    *ngFor="let item of data.OfferBillDiscountRequiredItems; index as i">
+                                                    <td>{{item.ObjectType}}</td>
+                                                    <td>{{item.ObjectText}}</td>
+                                                    <td>{{item.ValueType}}</td>
+                                                    <td>{{item.ObjectValue}}</td>
+
+                                                    <td>&nbsp;&nbsp;<button type="button" class="btn btn-primary"
+                                                            (click)="RemoveItem(item, index)">Remove</button> </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            
+                            <div>
+                                <div class="row p-3 pt-0">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-0">
+                                            <label for="offerType"> Discount on :</label>
+                                            <select class="form-control ng-pristine ng-valid" id="offerType"
+                                                name="offerType" [(ngModel)]="data.BillDiscountOfferOn"
+                                                (change)="BillDiscountOfferOn()">
+                                                <option value="">----Choose Discount Type---</option>
+                                                <option value="Percentage">Percentage</option>
+                                                <option value="FreeItem"
+                                                    *ngIf="data.OfferOn == 'BillDiscount' && !MultiWarehouse">Free
+                                                    Item</option>
+
+                                                <!-- ngIf: data.OfferOn == 'BillDiscount' && !MultiWarehouse -->
+                                                <option value="WalletPoint">WalletPoint</option>
+                                                <!-- ngIf: data.OfferOn == 'ScratchBillDiscount' -->
+                                                <option value="DynamicWalletPoint"
+                                                    *ngIf="data.OfferOn == 'ScratchBillDiscount'" class="ng-scope">
+                                                    Dynamic
+                                                    Wallet Point</option>
+                                                <!-- end ngIf: data.OfferOn == 'ScratchBillDiscount' -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row p-3 pt-0" *ngIf="data.BillDiscountOfferOn == 'FreeItem'">
+                                        <p class="formText">Stock Hit</p>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="name"></label>
+                                                <p-radioButton name="groupname" value="true" label="From FreeStock"
+                                                    (click)="StockChange()" [(ngModel)]="data.IsDispatchedFreeStock">
+                                                </p-radioButton>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="name"></label>
+                                                <p-radioButton name="FromCurrentStock" (click)="StockChange()"
+                                                    value="false" label="From CurrentStock"
+                                                    [(ngModel)]="data.IsDispatchedFreeStock">
+                                                </p-radioButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mt-2 mb-2 row"
+                                        *ngIf="data.BillDiscountOfferOn =='DynamicWalletPoint' ">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="walletPOint">Wallet Point</label>
+                                                <span *ngFor="let OfferScratchWeight of data.OfferScratchWeights let index=index">
+                                                    <input type="number" id="walletPOint{{index}}" [(ngModel)]="OfferScratchWeight.WalletPoint" name="walletPOint{{index}}"
+                                                        class="form-control mb-2" min="0" />
+
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="weightpint">Weight %</label>
+                                                <span *ngFor="let OfferScratchWeight of data.OfferScratchWeights let index=index">
+                                                    <input type="number" id="weightpint{{index}}" name="weightpint{{index}}" [(ngModel)]="OfferScratchWeight.Weight"
+                                                        class="form-control mb-2" min="0" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input id="PreOfferID" name="PreOfferID" type="text" class="form-control"
+                                                [(ngModel)]="data.ApplyOn" value="PreOffer" placeholder="PreOffer"
+                                                #PreOfferID="ngModel" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6"
+                                        *ngIf="data.BillDiscountOfferOn=='WalletPoint' && data.OfferOn == 'BillDiscount'">
+                                        <label for="wallettypeValue">WalletType:</label>
+                                        <select class="selectSection form-control" id="wallettypeValue"
+                                            [(ngModel)]="data.WalletType"
+                                            (change)="getWalletTypeVal($event.target.value)">
+                                            <option value="" disabled>--Select--</option>
+                                            <option value="WalletPercentage">WalletPercentage</option>
+                                            <option value="Amount">Amount</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6"
+                                        *ngIf="data.BillDiscountOfferOn=='WalletPoint' && data.OfferOn == 'BillDiscount'">
+                                        <label for="applyOnData">ApplyON:</label><b
+                                            style="color: red; margin-left: 10px">*</b>
+                                        <select class="selectSection form-control" id="applyOnData"
+                                            [(ngModel)]="data.ApplyOn"
+                                            (change)="updateWalletApply($event.target.value)">
+                                            <option value="" disabled>--Select--</option>
+                                            <option value="PreOffer">Pre Offer</option>
+                                            <option value="PostOffer">Post Offer</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6" *ngIf="data.BillDiscountOfferOn=='WalletPoint'">
+                                        <label for="walletPOintData">WalletPoint:</label><b
+                                            style="color: red; margin-left: 10px">*</b>
+                                        <input id="walletPOintData" type="Number" name="walletPOintData" maxlength="60"
+                                            [(ngModel)]="data.BillDiscountWallet" class="form-control"
+                                            placeholder="Enter Wallet Point " />
+                                    </div>
+
+                                    <div class="col-md-6" *ngIf="data.BillDiscountOfferOn == 'FreeItem'">
+                                        <div class="form-group row">
+                                            <div class="col-md-9">
+                                                <label for="SearchItem">Search Item</label>
+                                                <input type="text" placeholder="&#xF002; Enter item Name for search"
+                                                    [(ngModel)]="data.freeItemSearch" id="SearchItem" name="SearchItem"
+                                                    class="form-control" #SearchItem="ngModel">
+                                            </div>
+                                            <div class="col-md-2 mt-1 text-right">
+                                                <br>
+                                                <button class="btn btn-primary" (click)="onItemSearch('FreeItem')">
+                                                    Search</button>
+                                            </div>
+                                            <div *ngIf="isInvalid && !SearchItem.valid && SearchItem.errors.required">
+                                                <code>Item Name is required</code>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 row" *ngIf="data.BillDiscountOfferOn == 'FreeItem'">
+                                        <div class="col-md-9">
+                                            <div class="form-group">
+                                                <label for="selectItem"> Item List:</label>
+                                                <select id="selectItem" name="selectItem" class="form-control"
+                                                    [(ngModel)]="data.FreeItemdata" required
+                                                    placeholder="Select Main Item">
+                                                    <option value="" >--Select--</option>
+                                                    <option *ngFor="let item of getFreeitemSearchItemList"
+                                                        [ngValue]="item">
+                                                        {{item.itemname}}=({{item.SellingSku}}) =>
+                                                        ({{item.PurchaseMinOrderQty}}) (ABC Category ->
+                                                        {{item.ABCCategory}})
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mt-3">
+                                            <button type="button" id="btnAddItem" class="btn mt-1 btn-ar btn-primary"
+                                                (click)="ItemStock()" value="Add">Add</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 row"
+                                        *ngIf="data.BillDiscountFreeItems && data.BillDiscountFreeItems.length">
+                                        <div class="col-md-12" style="margin-bottom: 30px;">
+                                            <table class="table">
+                                                <tr>
+                                                    <th style="width: 20%;">Free Item </th>
+                                                    <th>Stock Qty</th>
+                                                    <th>Free Stock Qty</th>
+                                                    <th>Free Qty</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                                <tr
+                                                    *ngFor="let BillDiscountFreeItem of data.BillDiscountFreeItems; index as i">
+                                                    <td>{{BillDiscountFreeItem.ItemName}}</td>
+                                                    <td>{{BillDiscountFreeItem.StockQty}}</td>
+                                                    <td><input type="number"
+                                                            [(ngModel)]="BillDiscountFreeItem.OfferStockQty"
+                                                            name="{{i +1 +'OfferStockQty'}}" />
+                                                    </td>
+                                                    <td><input type="number" [(ngModel)]="BillDiscountFreeItem.Qty"
+                                                            name="{{i +1 +'Qty'}}" /></td>
+                                                    <td>
+                                                        <button class="btn btn-danger"
+                                                            (click)="RemoveFreeItem(BillDiscountFreeItem)">Remove</button>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6"
+                                        *ngIf="data.BillDiscountOfferOn =='Percentage' && data.OfferOn == 'BillDiscount'">
+                                        <label for="PreOfferId">Parcentage Type:</label>
+                                        <input id="PreOfferId" name="PreOfferId" readonly class="form-control"
+                                            [(ngModel)]="data.ApplyOn" value="PreOffer" #PreOfferId="ngModel"
+                                            placeholder="PreOffer" />
+                                    </div>
+
+                                    <div class="col-md-6" *ngIf="data.BillDiscountOfferOn=='Percentage'">
+                                        <label for="discountPercentage">Percentage :</label><b
+                                            style="color: red; margin-left: 10px">*</b>
+                                        <input id="discountPercentage" name="discountPercentage" type="Number"
+                                            maxlength="60" class="form-control" [(ngModel)]="data.DiscountPercentage"
+                                            #discountPercentage="ngModel"
+                                            placeholder="Enter Bill Discount Percentage" />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="MinOrder">Bill Amount Min Limit :</label>
+
+                                            <input type="number" [(ngModel)]="data.BillAmount"
+                                                placeholder="Enter Bill Amount Limit" id="MinOrder" name="SearchItem"
+                                                class="form-control" #MinOrder="ngModel" min="1">
+                                            <div *ngIf="isInvalid && !MinOrder.valid && MinOrder.errors.required">
+                                                <code>Min Limit is required</code>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="MinOrder">Bill Amount Max Limit :</label>
+                                            <input type="number" [(ngModel)]="data.MaxBillAmount"
+                                                placeholder="Enter Bill Amount Limit" id="MinOrder" name="SearchItem"
+                                                class="form-control" #MinOrder="ngModel" min="1">
+                                            <div *ngIf="isInvalid && !MinOrder.valid && MinOrder.errors.required">
+                                                <code>Max Limit is required</code>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6" *ngIf="data.BillDiscountOfferOn != 'FreeItem'">
+                                        <div class="form-group">
+                                            <label for="MindiscountOrder">Maximum Discount :</label>
+
+                                            <input type="number" [(ngModel)]="data.MaxDiscount"
+                                                placeholder="Enter Maximum Bill Discount" id="MindiscountOrder"
+                                                name="SearchItem" class="form-control" #MindiscountOrder="ngModel"
+                                                min="1">
+                                            <div
+                                                *ngIf="isInvalid && !MindiscountOrder.valid && MindiscountOrder.errors.required">
+                                                <code>Maximum Discount is required</code>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6" *ngIf="data.OfferOn == 'BillDiscount'">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <label class="blockdiv" for="LineItemval">Number Of Line Items :</label>
+                                                <div class="col-md-7">
+                                                    <input id="LineItemval" name="LineItemval" type="Number"
+                                                        class="form-control" [(ngModel)]="data.LineItem"
+                                                        #LineItemval="ngModel"
+                                                        placeholder="Enter Number Of Line Items" />
+                                                </div>
+
+                                                <div class="col-md-5 text-right" style="padding-left: 0px;">
+                                                    <button type="button" id="AddLineValue"
+                                                        class="btn btn-ar btn-primary" (click)="AddLineItemValue()">Add
+                                                        Line Item Value</button>
+                                                </div>
+
+                                                <div
+                                                    *ngIf="data.OfferLineItemValues?.length> 0 && data.OfferOn == 'BillDiscount'">
+                                                    <div>
+                                                        <div class="row" style="padding-bottom:5px"
+                                                            *ngFor="let item of data.OfferLineItemValues; index as i">
+                                                            <div class="col-md-1 text-center">
+                                                                {{i+1}}
+                                                            </div>
+                                                            <div class="col-md-10">
+                                                                <input class="form-control" type="number"
+                                                                    name="item.itemValue{{i}}"
+                                                                    (change)="updateLineItem($event.target.value, i)" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6" *ngIf="data.OfferOn == 'ScratchBillDiscount'">
+                                        <div class="form-group">
+                                            <label for="offerCode">Offer Code :</label>
+                                            <input type="text" [(ngModel)]="data.OfferCode" id="offerCode"
+                                                name="offerCode" class="form-control" placeholder="Enter Offer Code"
+                                                #offerCode="ngModel">
+                                            <div *ngIf="isInvalid && !offerCode.valid && offerCode.errors.required">
+                                                <code>Offer Code is required</code>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="blockDiv row p-3 pt-0">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="discription">Description</label>
+                                    <textarea placeholder="Enter Description" class="form-control" name="discription" maxlength="1500"
+                                        label="discription" [(ngModel)]="data.discriptions"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="form-actions d-flex justify-content-end col-sm-12 p-3">
+                    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="onCancel()">
+                        <i class="ft-x"></i> Cancel
+                    </button>
+
+                    <button type="button" class="btn btn-raised btn-primary" [disabled]="disablesave"
+                        (click)="saveData(data)">
+                        <!-- selectExcludeItemmodel -->
+                        <i class="fa fa-check-square-o"></i>
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner> 
+
+<p-dialog [(visible)]="iscreatenewgroup" [style]="{width: '40vw'}" [resizable]="false" [baseZIndex]="10000"
+            [modal]="true" appendTo="body" [blockScroll]="true" [closable]="false" header="Add new Group" [draggable]="false">
+            <!-- <div class="header">
+                <h5 style="font-weight: 600;text-align: center;">Add new Group </h5>
+            </div> -->
+            
+                                    <!-- <input type="text" placeholder="Offer Name" [(ngModel)]="data.OfferName"
+                                        id="OfferName" name="OfferName" class="form-control" maxlength="50"
+                                        minlength="4" #OfferName="ngModel"> -->
+            <div class="row mt-4 ml-2">
+                <label for="newgrouopname">Group Name<span style="color:red"> *</span></label> &nbsp;
+                <input type="text" placeholder="Group Name" [(ngModel)]="newgrouopname"
+                                        id="newgrouopname" name="newgrouopname" (input)="onInputChange(newgrouopname)" (keypress)="omit_special_char($event)">
+
+            </div>
+            <br>
+            <div class="row mt-6">
+                <div class="col-3" style="text-align: center;">
+                    <button class="btn btn-raised btn-primary" (click)="Savegroup(newgrouopname)">Save</button>
+                </div>
+                <div class="col-3" style="text-align: center;">
+                    <button class="btn btn-raised btn-primary" (click)="Cancelgroup()">Cancel</button>
+                </div>
+            </div>
+        </p-dialog>

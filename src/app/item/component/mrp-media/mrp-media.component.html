@@ -1,0 +1,133 @@
+<!-- (onRowSelect)="onRowSelect($event)"
+            (onRowUnselect)="onRowUnselect($event)" -->
+
+<div class="mb-2">
+    <div class="row">
+        <div class="col-md-2">
+            <label class="mrp-font-weight-bold m-2">Item Number</label><br />
+            <label class="mrp-font-weight-bold m-2">{{itemNumber}}</label>
+        </div>
+        <div class="col-md-3">
+            <label for="site-name">Select Supplier:<span style="color:red;">*</span></label><br />
+            <!-- <select class="form-control" id="NIsuppler" name="NIsuppler" [(ngModel)]="SupplierId"
+          (change)="getDepotDetails(item.SupplierId)" required="1" #SupplierM="ngModel">
+          <option value="">---SELECT---</option>
+          <option *ngFor="let s of supplierList" [ngValue]="s.SupplierId">
+            {{s.Name}}
+          </option>
+        </select> -->
+            <p-dropdown [options]="supplierList" name="Supplier" placeholder="Select Supplier:"
+                [(ngModel)]="SelectedSupplier" id="Supplier" [panelStyle]="{minWidth:'25em'}" optionLabel="Name"
+                optionValue="SupplierId" (onChange)="getDepotDetails()" appendTo="body">
+            </p-dropdown>
+            <!-- {{SelectedSupplier|json}} -->
+            <!-- <label class="mrp-font-weight-bold m-2">BuyerId</label>
+            <input type="number" class=" form-control" [(ngModel)]="BuyerId" id="buyerId" name="buyerId" min="1"
+                (keypress)="onKeyPress($event)" required /> -->
+        </div>
+        <div class="col-md-3">
+            <label for="site-name">Select Depo:</label><br />
+            <!-- <select class="form-control" id="NIDepot" name="NIDepot" [(ngModel)]="DepoId">
+                <option value="">---SELECT---</option>
+                <option *ngFor="let s of depotList" [ngValue]="s.DepoId">
+                    {{s.DepoName}}
+                </option>
+            </select> -->
+            <p-dropdown [options]="depotList" name="Depo" placeholder="Select Depo:" [(ngModel)]="SelectedDepo"
+                id="Depo" [panelStyle]="{minWidth:'25em'}" optionLabel="DepoName" optionValue="DepoId" appendTo="body">
+            </p-dropdown>
+            <!-- {{SelectedDepo|json}} -->
+            <!-- <label class="mrp-font-weight-bold m-2">DepoId</label>
+            <input type="number" class=" form-control" [(ngModel)]="DepoId" id="DepoId" name="DepoId" min="1"
+                (keypress)="onKeyPress($event)" required /> -->
+        </div>
+        <div class="col-md-3">
+            <label for="site-name">Select Buyer:</label><br />
+            <!-- <select class="form-control" id="NIBuyer" name="NIBuyer" [(ngModel)]="BuyerId">
+                <option value="">---SELECT---</option>
+                <option *ngFor="let s of buyerList" [ngValue]="s.PeopleID">
+                    {{s.DisplayName}}
+                </option>
+            </select> -->
+            <p-dropdown [options]="buyerList" name="Buyer" placeholder="Select Buyer" [(ngModel)]="SelectedBuyer"
+                id="Buyer" [panelStyle]="{minWidth:'25em'}" optionLabel="DisplayName" optionValue="PeopleID"
+                appendTo="body">
+            </p-dropdown>
+            <!-- {{SelectedBuyer|json}} -->
+
+            <!-- <label class="mrp-font-weight-bold m-2">SupplierId</label>
+            <input type="number" class=" form-control" [(ngModel)]="SupplierId" id="SupplierId" name="SupplierId"
+                min="1" (keypress)="onKeyPress($event)" required /> -->
+        </div>
+    </div>
+</div>
+
+<p-table [value]="mrpMedia" [(selection)]="selectedmrpMedia" [tableStyle]="{'min-width': '50rem'}">
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width: 4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+            <th>ItemMultiMRPId</th>
+            <th>MRP</th>
+            <th>Active</th>
+            <th>ColourImage</th>
+            <th>ColourName</th>
+            <th>ItemLimitQty</th>
+            <th>Is Limit Active</th>
+            <th>Buyer</th>
+            <th>Depo</th>
+            <th>Supplier</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+        <tr>
+            <td>
+                <p-tableCheckbox [value]="item" (onChange)="onCheckboxChange($event, item)"></p-tableCheckbox>
+            </td>
+            <td>{{item.ItemMultiMRPId}}</td>
+            <td>
+                <!-- <input type="number" class="form-control" [(ngModel)]="item.MRP" /> -->
+                {{item.MRP}}
+            </td>
+            <td>
+                <p-inputSwitch [(ngModel)]="item.active" ></p-inputSwitch>
+            </td>
+           
+            <td>
+                <!-- <div *ngIf="!item.ColourImage">
+
+                </div> -->
+                <div *ngIf="item.ColourImage">
+                    <img style="height: 50px; width: 50%;" [src]="mediaURL + item.ColourImage" />
+                </div>
+            </td>
+            <td>
+                <!-- <input type="text" class="form-control" [(ngModel)]="item.ColourName"  /> -->
+                {{item.ColourName}}
+            </td>
+            <td>
+                <input type="number" class="form-control" [(ngModel)]="item.ItemLimitQty" />
+            </td>
+            <td>
+                <p-inputSwitch [(ngModel)]="item.LimitIsActive" ></p-inputSwitch>
+            </td>
+            <td>
+                {{item.BuyerName}}
+            </td>
+            <td>
+                {{item.DepoName}}
+            </td>
+            <td>
+                {{item.SupplierName}}
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<div *ngIf="selectedmrpMedia.length>0">
+    <button type="button" class="btn btn-primary" (click)="saveAddItem()">Save</button>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

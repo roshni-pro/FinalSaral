@@ -1,0 +1,203 @@
+
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+          <h3 class="content-header">Just in time </h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <label for="">Select Group</label>
+            <p-dropdown  placeholder="Select Group"  [options]="Groups" optionLabel="Name" optionValue="Id" [(ngModel)]="selectedStore" [filter]="true" 
+            (onChange)="Brands=[];searchData=[];totalRecords=0;selectedBrand=[];getBrandbyGroupId();">
+            </p-dropdown>
+        </div>
+        <div class="col-2">
+            <label for="">Select brand</label>
+            <p-multiSelect [options]="Brands" [(ngModel)]="selectedBrand" [filter]="true" optionLabel="BrandName" ></p-multiSelect>
+        </div>
+        <div class="col-1">
+            <label for="">Keyword</label>  
+            <input type="text" [(ngModel)]="Keyword" placeholder="search...." class="form-control" style="border-radius:25px;">
+        </div>
+        <div class="col mt-3 pt-1">
+            <button type="button" [disabled]="!selectedStore" class="btn btn-raised mr-1 float-right align-self-end" style="margin-bottom: 0;background-color:orangered;color: white;" (click)="exportdata()"   disabled>
+                <i class="fas fa-file-export"></i> Export data
+            </button>
+            <button type="button" class="btn btn-raised float-right mr-1" style="margin-bottom: 0;background-color: cadetblue;color: white;" 
+            [disabled]="!selectedStore" (click)="isAdd=true;Clear()" disabled>
+            <i class="fa fa-plus-circle"></i> Add new row
+        </button>
+        <p-fileUpload mode="basic" chooseLabel="Upload"  [files]="myfiles"  name="demo[]"  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"  
+        maxFileSize="1000000"    [disabled]="!selectedStore"
+        (onSelect)="Upload($event)"   class="float-right mr-1" disabled></p-fileUpload>
+        <button type="button" [disabled]="!selectedStore" class="btn btn-raised mr-1 float-right" style="margin-bottom: 0;background-color:rgb(173, 167, 71);color: white;" (click)="DownloadFile()"   disabled>
+            <i class="fa fa-download"></i> Download file
+        </button>
+        <button type="button" [disabled]="!selectedStore" class="btn btn-raised" style="margin-bottom: 0;background-color:orangered;color: white;" (click)="getExcelList()"   disabled>
+            <i class="fas fa-file-export"></i> Search
+        </button>
+        </div>
+    </div> 
+
+    <div class="card">
+        <div class="card-body">
+            <label for="" style="color: red;">* Showtypes in file accept only-  Fast / Slow / Non Moving</label>
+            <p-table [value]="searchData"  [paginator]="true" [rows]="10" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" [lazy]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th  width="15%" >BrandName</th>
+                        <th width="15%">ShowType</th>
+                        <th width="15%">Configuration %</th>
+                        <th>Action</th>
+                        <th>Active / Inactive</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data>
+                    <tr>
+                        <td>{{ data.BrandName }}</td>
+                        <td>{{ data.ShowType }}</td>
+                        <td>{{ data.Percentage|number:'1.2-2' }}</td>
+                        <td>
+                            <button type="button" (click)="isEditDialog(data);isEdit=true;" class="btn btn-raised" style="margin-bottom: 0;background-color: cadetblue;color: white;">  
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                            <button type="button" (click)="isHistory=true;itemName=data.BrandName" class="btn btn-raised ml-1" style="margin-bottom: 0;background-color:darkseagreen;color: white;" (click)="isHistory=true;Id=data.Id;" >
+                                <i class="fa fa-history"></i> History
+                            </button>
+                         
+                            <!-- <button *ngIf="data.IsActive==false" type="button"  class="btn btn-raised ml-1" style="margin-bottom: 0;background-color:darkgreen;color: white;" (click)="ActiveInactive(data.Id)">
+                                Active
+                            </button>
+                            <button *ngIf="data.IsActive==true" type="button"  class="btn btn-raised ml-1" style="margin-bottom: 0;background-color:rgb(185, 18, 18);color: white;"  (click)="ActiveInactive(data.Id)">
+                                Inactive
+                            </button> -->
+                           
+                           
+                            <button type="button"  class="btn btn-raised ml-1" style="margin-bottom: 0;background-color:rgb(185, 18, 18);color: white;" (click)="isEditDialog(data);isDelete=true;" >
+                                <i class="fa fa-trash-o"></i> Delete
+                            </button>
+                        </td>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox" [(ngModel)]="data.Status" (click)="ActiveInactive(data.Id,data.Status,data.IsActive)">
+                                <span class="slider round"></span>
+                              </label>
+                            <!-- <p-selectButton class="ml-1" [options]="stateOptions" [(ngModel)]="data.Status" optionLabel="label" optionValue="value" (onChange)="ActiveInactive(data.Id,data.Status)"></p-selectButton> -->
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            
+            <!-- Edit page -->
+            <p-dialog header="Edit Configuration" [(visible)]="isEdit"  positionTop="50" [modal]="true"
+                appendTo="body" [style]="{width: '50%', top: '50px'}">
+                <div class="row">
+                    <div class="col mb-2">
+                            <label for="">BrandName</label><br>
+                            <input type="text" [(ngModel)]="Editdata.BrandName" disabled>
+                    </div>
+                    <div class="col mb-2">
+                            <label for="ShowTypes">Show Types:</label><br />
+                            <select class="form-control" id="site-name" name="show" [(ngModel)]="Editdata.ShowType">
+                                <option value="">---SELECT---</option>
+                                <option value="Fast">Fast</option>
+                                <option value="Slow">Slow</option>
+                                <option value="Non Moving">Non Moving</option>
+                            </select>
+                    </div>
+                    <div class="col mb-2">
+                        <label for="">Configuration</label><br>
+                        <input type="number" [(ngModel)]="Editdata.Percentage" min="0" (keypress)="decimalFilter($event)" >
+                    </div>
+                    <!-- <div class="col mb-2">
+                        <label for="">Active/Inactive</label><br>
+                        <p-checkbox [(ngModel)]="Editdata.Active" [binary]="false" inputId="binary"></p-checkbox>
+                    </div> -->
+                </div>
+                <div class="row">
+                    <div class="col mb-2 mt-3">
+                        <button type="button" class="btn btn-raised mr-1 float-right align-self-end " style="margin-bottom: 0;background-color: cadetblue;color: white;" (click)="isEdit=false">
+                            Cancel
+                        </button>
+                        <button class="btn btn-raised mr-1 float-right " style="margin-bottom: 0;background-color: orangered;color: white;"  (click)="editConfig()">
+                            Edit
+                        </button>
+                    </div>
+                </div>
+                <div class="card">
+                    <p-messages [(value)]="msg" [enableService]="false"  ></p-messages>
+                </div>
+            </p-dialog>
+
+            <!-- confirmation dialog for delete -->
+            <p-dialog #cd appendTo="body" header="Confirmation" [(visible)]="isDelete">
+                <label> Are you sure want to delete? Changes will be saved </label>
+                <p-footer>
+                    <button type="button" class="btn btn-raised btn-danger mr-1"
+                        (click)="deleteConfig('Yes')">    <i class="fa fa-trash-o"></i> Yes</button>
+                    <button type="button" class="btn btn-raised btn-primary mr-1"
+                        (click)="deleteConfig('No')">No</button>
+                </p-footer>
+            </p-dialog>
+
+
+            <!-- History page -->
+            <div *ngIf="isHistory">
+                <p-dialog header="History" [(visible)]="isHistory" [resizable]="false" positionTop="50" [modal]="true"
+                    appendTo="body" [draggable]="false" [style]="{width: '60%', top: '30px'}">
+                    <label for=""> 
+                        <h3>{{itemName}}</h3>
+                    </label>
+                    <p>
+                        <!-- history code -->
+                        <app-history [entity]="entity" [id]="Id"></app-history>
+                        <button class="btn btn-raised btn-success  ml-1" (click)="isHistory=false"
+                            style="float:right;">Cancel
+                        </button>
+                    </p>
+                </p-dialog>
+            </div>
+
+            <!--  Add new row page-->
+            <p-dialog header="Add new row" [(visible)]="isAdd" positionTop="50" [modal]="true"
+                appendTo="body"  [style]="{width: '60%'}">
+                <div class="flex py-2 justify-content-center">
+                    <div class="row">
+                        <div class="col mb-2">
+                            <label for="">Select brand</label>  
+                            <p-dropdown [options]="subSubCategoryList" appendTo="body" optionLabel="BrandName" [(ngModel)]="Brand" placeholder="Select brand" [filter]="true"></p-dropdown>                          
+                        </div>
+                        <div class="col mb-2">
+                            <label for="ShowTypes">Show Types:</label><br />
+                            <select class="form-control" id="site-name" name="show" [(ngModel)]="AddData.ShowType">
+                                <option value="">---SELECT---</option>
+                                <option value="Fast">Fast</option>
+                                <option value="Slow">Slow</option>
+                                <option value="Non Moving">Non Moving</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="">Configuration %</label>
+                            <input type="number" class="form-control" placeholder="enter %" [(ngModel)]="AddData.Percentage">
+                        </div>
+                        <div class="col mb-2 mt-4">
+                            <button type="button"  class="btn btn-raised" style="margin-bottom: 0;background-color: cornflowerblue ;color: white;" (click)="addNewRow()">
+                                <i class="fa fa-plus-circle"></i> Add
+                            </button>
+                            <button type="button"  class="btn btn-raised ml-2" style="margin-bottom: 0;background-color: cadetblue;color: white;" (click)="isAdd=false;">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                    <div class="card">
+                        <p-messages [(value)]="messages" [enableService]="false" ></p-messages>
+                    </div>
+                   
+            </p-dialog>
+          
+            <p-toast ></p-toast>
+        
+        </div>
+    </div>

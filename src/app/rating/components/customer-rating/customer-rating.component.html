@@ -1,0 +1,341 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="mt-4 d-flex justify-content-between align-items-center">
+                <div class="header">
+                    <h3 class="">User Rating List</h3>
+                </div>
+                <div *ngIf="ratingList.length > 0">
+                    <button type="button" class="btn btn-raised float-right align-self-end btn-primary add-btn" (click)="exportExcel()">
+                        <i class="fa fa-download"></i> Excel Download
+                      </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-content p-2">
+                    <form class="form" name="form" #userRatingForm="ngForm">
+                    <div class="row">
+
+                        <div class="col-lg-3  col-md-6 col-sm-12">
+                            <label> <b>Rating Type</b></label>
+                            <select id="app_type" name="app_type" class="form-control" [(ngModel)]="AppType" (change)="onChangeAppType()">
+                                <option value="null">Select Rating Type</option>
+                                <option value="3">Customer Rating</option>
+                                <option value="2">Delivery Rating</option>                                
+                                <option value="1">Sales Rating</option>
+                            </select>
+                        </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-lg-3  col-md-6 col-sm-12" *ngIf="AppType > 0">
+                              <label for="ware"><b>Select City:</b></label>
+                              <p-multiSelect [options]="cityList" name="label" [(ngModel)]="selectedCityList" (onChange)="onSelectCity(selectedCityList)"
+                              (change)="onSelectCity(selectedCityList)" [panelStyle]="{minWidth:'25em'}" optionLabel="CityName" #label="ngModel" required="1">
+                              </p-multiSelect>
+                              <div *ngIf="isInvalid && !label.valid && label.errors.required">                   
+                                <code>City is required</code>
+                            </div>
+                          </div>
+                          <div class="col-lg-3  col-md-6 col-sm-12" *ngIf="AppType > 0">
+                              <label for="ware"><b>Select Hub:</b></label>
+                              <p-multiSelect [options]="hubList" name="hublabel" [(ngModel)]="selectedHubList" (onChange)="onSelectHub(selectedHubList)"
+                                [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName" #hublabel="ngModel" required="1">
+                              </p-multiSelect>
+                              <div *ngIf="isInvalid && !hublabel.valid && hublabel.errors.required">                   
+                                <code>Hub is required</code>
+                            </div>
+                          </div>
+                          <div class="col-lg-3  col-md-6 col-sm-12" *ngIf="AppType == 1">
+                            <label for="ware"><b>Select Cluster:</b></label>
+                            <p-multiSelect [options]="clusterList" name="ClusterLabel" [(ngModel)]="selectedCluster" (onChange)="onSelectCluster(selectedCluster)"
+                              [panelStyle]="{minWidth:'25em'}" optionLabel="ClusterName" #ClusterLabel="ngModel" required="1">
+                            </p-multiSelect>
+                            <div *ngIf="isInvalid && !ClusterLabel.valid && ClusterLabel.errors.required">                   
+                                <code>Cluster is required</code>
+                            </div>
+                        </div>
+                        <div class="col-lg-3  col-md-6 col-sm-12" *ngIf="AppType == 1">
+                            <label for="ware"><b>Select Sales Person:</b></label>
+                            <p-multiSelect [options]="salesPersonList" name="Saleslabel" [(ngModel)]="selectedSales"
+                              [panelStyle]="{minWidth:'25em'}" optionLabel="SalesPersonName" #Saleslabel="ngModel" required="1">
+                            </p-multiSelect>
+                            <div *ngIf="isInvalid && !Saleslabel.valid && Saleslabel.errors.required">                   
+                                <code>Sales Person is required</code>
+                            </div>
+                        </div>
+                        <div class="col-lg-3  col-md-6 col-sm-12" *ngIf="AppType == 2">
+                            <label for="ware"><b>Select Delivery Boy:</b></label>
+                            <p-multiSelect [options]="dBoyList" name="Dboylabel" [(ngModel)]="selectedDBoy" 
+                              [panelStyle]="{minWidth:'25em'}" optionLabel="DboyName" #Dboylabel="ngModel" required="1">
+                            </p-multiSelect>
+                            <div *ngIf="isInvalid && !Dboylabel.valid && Dboylabel.errors.required">                   
+                                <code>Delivery Boy is required</code>
+                            </div>
+                        </div>                       
+                          <div class="col-lg-3  col-md-6 col-sm-12" *ngIf="AppType > 0">
+                            <label><b>Date Range</b></label>
+                            <div>
+                            <p-calendar [(ngModel)]="rangeDates" id="start" name="start" showIcon="true" [readonlyInput]="true" inputId="range" selectionMode="range"
+                            [style]="{'width':'100%'}" [inputStyle]="{'width':'80%'}" appendTo="body"
+                            dateFormat="dd/mm/yy" placeholder="Select Date" (ngModelChange)="onClickDate()">
+                          </p-calendar>
+                        </div>
+                        </div>
+                        <!-- <div class="col-lg-3  col-md-6 col-sm-12" *ngIf="AppType > 0">
+                            <label><b>End</b></label>
+                            <div>
+                            <p-calendar [(ngModel)]="End" id="end" name="end" showIcon="true"
+                            dateFormat="dd/mm/yy" required #end="ngModel">
+                          </p-calendar>
+                          </div>
+                        </div> -->
+                        <div class="col-lg-3  col-md-6 col-sm-12" *ngIf="AppType > 0">
+                            <label for="today"></label>
+                            <div>
+                              <button id="add" name="add" [ngClass]="{'h1btn': true, 'selected-t': todaySelected == 1}"
+                              (click)="onClickToday()" style="width: 100%;">Today <i class="fa fa-calendar" aria-hidden="true"></i></button>
+                            </div>                            
+                      </div>
+                      <div class="col-lg-3 col-md-6 col-sm-12" *ngIf="AppType > 0">
+                        <label><b>Search</b></label>
+                        <input id="search_filter" name="search_filter" class="form-control" [(ngModel)]="Keyword" (change)="onChangeKeyword()"
+                            placeholder="Search By OrderId,Mobile,Skcode">
+                    </div>
+                        <div class="col-lg-2 col-md-12 col-sm-12" *ngIf="AppType > 0">
+                            <label></label><!--*ngIf="AppType ==2 && isSearch && selectedHubList.length > 0 && selectedDBoy.length > 0"-->
+                            <div style="margin-top: .5em;">
+                            <button id="add" name="add" type="button" class="btn btn-raised btn-primary bt"
+                                (click)="onSearch(userRatingForm)" style="width: 100%;"><i class="pi pi-search">  </i> Search</button>
+                            </div>
+                        </div>
+                        <!-- <div class="col-lg-2 col-md-12 col-sm-12" *ngIf="AppType ==3 && isSearch && selectedHubList.length > 0">
+                            <label></label>
+                            <div style="margin-top: .5em;">
+                            <button id="add" name="add" type="button" class="btn btn-raised btn-primary bt"
+                                (click)="onSearch()" style="width: 100%;"><i class="pi pi-search">  </i> Search</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-12 col-sm-12" *ngIf="AppType ==1 && isSearch && selectedHubList.length > 0 && selectedCluster.length > 0 && selectedSales.length > 0">
+                            <label></label>
+                            <div style="margin-top: .5em;">
+                            <button id="add" name="add" type="button" class="btn btn-raised btn-primary bt"
+                                (click)="onSearch()" style="width: 100%;"><i class="pi pi-search">  </i> Search</button>
+                            </div>
+                        </div> -->
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card shadow" *ngIf="ratingList">                
+                <div class="card-content p-0 text-center" *ngIf="AppType ==3 ">
+                    <p-table #dt [value]="ratingList" [totalRecords]="totalcount" (onLazyLoad)="load($event)" [lazy]="true"
+                     [paginator]="true" [rows]="20" [scrollable]="true" [(first)]="first"
+                     scrollHeight="130vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <!-- <th pSortableColumn="OrderID">Order Id<p-sortIcon field="OrderID"></p-sortIcon></th> -->
+                                <th>Order Id</th>
+                                <th>Order Date</th>
+                                <th>SKCode</th>
+                                <th>Customer Name</th>
+                                <th>Hub</th>
+                                <th>Mobile</th>
+                                <th>Rating Date</th>
+                                <th>Rating</th>
+                                <th>Review</th>
+                                <th>Delivery Boy</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                            <tr>
+                                <td>{{ir.OrderID}}</td>
+                                <td>{{ir.OrderDate | date : 'dd/MM/yyyy'}}</td>
+                                <td>{{ir.Skcode}}</td>
+                                <td>{{ir.CustomerName}}</td>
+                                <td>{{ir.Warehouse}}</td>
+                                <td>{{ir.MobileNo}}</td>
+                                <td>{{ir.RatingDate | date : 'dd/MM/yyyy'}}</td>
+                                <td>{{ir.Rating}}</td>
+                                <!-- <td>{{ir.Review ? ir.Review : '-'}}</td> -->
+                                <td>
+                                    <div *ngIf="ir.UserRatingDetailDcs.length == 0">-</div>
+                                    <div *ngFor="let ur of ir.UserRatingDetailDcs; let i = index">
+                                        <div>{{i+1}}.{{ur.Review}}</div>
+                                    </div>
+                                </td>
+                                <td>{{ir.DeliveryBoy}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <h5>* Data Not Found</h5>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="card-content p-0 text-center" *ngIf="AppType ==2 ">
+
+                    <p-table #dt [value]="ratingList" [totalRecords]="totalcount" (onLazyLoad)="load($event)" [lazy]="true"
+                     [paginator]="true" [rows]="20" [scrollable]="true" [(first)]="first" sortField="{{selectedLabel}}" [sortOrder]="-1"
+                     scrollHeight="130vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Order Id</th>
+                                <th>Order Date</th>
+                                <th>Delivery Boy</th>
+                                <th>Hub</th>
+                                <th>Rating Date</th>
+                                <th>Rating</th>
+                                <th>Review</th>
+                                <th>SKCode</th>
+                                <th>Customer Name</th>                               
+                                <th>Mobile</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                            <tr>
+                                <td>{{ir.OrderID}}</td>
+                                <td>{{ir.OrderDate | date : 'dd/MM/yyyy'}}</td>
+                                <td>{{ir.DeliveryBoy}}</td>
+                                <td>{{ir.Warehouse}}</td>
+                                <td>{{ir.RatingDate | date : 'dd/MM/yyyy'}}</td>
+                                <td>{{ir.Rating}}</td>
+                                <!-- <td>{{ir.Review ? ir.Review : '-'}}</td> -->
+                                <td>
+                                    <div *ngIf="ir.UserRatingDetailDcs.length == 0">-</div>
+                                    <div *ngFor="let ur of ir.UserRatingDetailDcs; let i = index">
+                                        <div>{{i+1}}.{{ur.Review}}</div>
+                                    </div>
+                                </td>
+                                <td>{{ir.Skcode}}</td>
+                                <td>{{ir.CustomerName}}</td>
+                                <td>{{ir.MobileNo}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <h5>* Data Not Found</h5>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="card-content p-0 text-center" *ngIf="AppType ==1 ">
+                    <p-table #dt [columns]="cols" [value]="ratingList" [totalRecords]="totalcount" (onLazyLoad)="load($event)" [lazy]="true"
+                     [paginator]="true" [rows]="20" [scrollable]="true" [(first)]="first"
+                     scrollHeight="130vh" text-align: center>
+                     <ng-template pTemplate="header" >
+                        <tr>
+                          <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="text-align: initial">
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-rowData let-columns="columns">
+                        <tr>
+                          <td *ngFor="let col of columns" style="text-align: initial">
+                            {{rowData[col.field]}}
+                          </td>
+                        </tr>
+                      </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <!-- <th [pSortableColumn]="OrderID">Order Id<p-sortIcon [field]="OrderID"></p-sortIcon></th> -->
+                                <th>Order Id</th>
+                                <th>Order Date</th>
+                                <th>Sales Person</th>
+                                <th>Hub</th>
+                                <th>Cluster</th>
+                                <th>Rating Date</th>
+                                <th>Rating</th>
+                                <th>Review</th>
+                                <th>Frequency</th>                                
+                                <th>SKCode</th>
+                                <th>Customer Name</th>                               
+                                <th>Mobile</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                            <tr>
+                                <td>{{ir.OrderID}}</td>
+                                <td>{{ir.OrderDate | date : 'dd/MM/yyyy'}}</td>
+                                <td>{{ir.SalesPerson}}</td>
+                                <td>{{ir.Warehouse}}</td>
+                                <td>{{ir.Cluster}}</td>
+                                <td>{{ir.RatingDate | date : 'dd/MM/yyyy'}}</td>
+                                <td>{{ir.Rating}}</td>
+                                <!-- <td>{{ir.Review ? ir.Review : '-'}}</td> -->
+                                <td>
+                                    <div *ngIf="ir.UserRatingDetailDcs.length == 0">-</div>
+                                    <div *ngFor="let ur of ir.UserRatingDetailDcs; let i = index">
+                                        <div>{{i+1}}.{{ur.Review}}</div>
+                                    </div>
+                                </td>
+                                <td>{{ir.Frequency ? ir.Frequency : '-'}}</td>                                
+                                <td>{{ir.Skcode}}</td>
+                                <td>{{ir.CustomerName}}</td>
+                                <td>{{ir.MobileNo}}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <h5>* Data Not Found</h5>
+                        </ng-template>
+                    </p-table>
+                    <!-- <table id="myTable2">
+                        <thead>
+                                <tr>
+                                    <th (click)="sortTable(0)">Order Id</th>
+                                    <th  (click)="sortTable(1)">Order Date</th>
+                                    <th (click)="sortTable(5)">Sales Person</th>
+                                    <th>Hub</th>
+                                    <th>Cluster</th>
+                                    <th  (click)="sortTable(3)">Rating Date</th>
+                                    <th  (click)="sortTable(2)">Rating</th>
+                                    <th>Review</th>
+                                    <th>Frequency</th>                                
+                                    <th>SKCode</th>
+                                    <th  (click)="sortTable(4)">Customer Name</th>                               
+                                    <th>Mobile</th>
+                                </tr>
+                        </thead>
+                        <tbody>
+                                <tr *ngFor="let ir of ratingList; let j = index">
+                                    <td>{{ir.OrderID}}</td>
+                                    <td>{{ir.OrderDate | date : 'dd/MM/yyyy'}}</td>
+                                    <td>{{ir.SalesPerson}}</td>
+                                    <td>{{ir.Warehouse}}</td>
+                                    <td>{{ir.Cluster}}</td>
+                                    <td>{{ir.RatingDate | date : 'dd/MM/yyyy'}}</td>
+                                    <td>{{ir.Rating}}</td>
+                                    <td>{{ir.Review}}</td>
+                                    <td>{{ir.Frequency}}</td>                                
+                                    <td>{{ir.Skcode}}</td>
+                                    <td>{{ir.CustomerName}}</td>
+                                    <td>{{ir.MobileNo}}</td>
+                                </tr>
+                        </tbody>
+                    </table> -->
+                </div>
+                <div class="card-content p-0 text-center" *ngIf="noDataFound && ratingList.length == 0">
+                    <p-table #dt [value]="ratingList" scrollHeight="130vh" text-align: center>
+                        
+                        <ng-template pTemplate="emptymessage">
+                            <h5>* Data Not Found</h5>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

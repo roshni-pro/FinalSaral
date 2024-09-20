@@ -1,0 +1,144 @@
+<!-- <p-toast [style]="{marginTop: '80px'}"></p-toast> -->
+
+<div class="ui-fluid">
+  <section id="basic-form-layouts"></section>
+  <div class="row text-left">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header pb-2">
+        </div>
+        <div class="card-content">
+          <div class="px-3">
+            <!-- <form class="form" name="ladgerform" #lform="ngForm" *ngIf="ladger"> -->
+            <form class="form" name="form" #ladgerform="ngForm">
+              <div class="form-body">
+                <h4 class="form-section"><i class="ft-user"></i> Basic Info</h4>
+                <div class="row col-md-12" *ngIf="ladger">
+                  <div class="col-sm-3">
+                    <div class="form-group">
+                      <label for="fname"> Name*</label>
+                      <input type="text" id="name" class="form-control" name="name" [(ngModel)]="ladger.Name"
+                        placeholder="Enter the Name" required="1" minlength="3" maxlength="30" #name="ngModel" />
+                      <div *ngIf="isInvalid && !name.valid && name.errors.required">
+                        <!-- <div *ngIf="isInvalid || !firstName.valid && firstName.errors.required"> -->
+                        <code>Name is required</code>
+                      </div>
+                      <div *ngIf="isInvalid && !name.valid && name.errors.minlength">
+                        <!-- <div *ngIf="isInvalid || !firstName.valid && firstName.errors.minlength"> -->
+                        <code>Minlength 3</code>
+                      </div>
+                      <div *ngIf="isInvalid && !name.valid && name.errors.maxlength">
+                        <!-- <div *ngIf="isInvalid || !firstName.valid && firstName.errors.maxlength"> -->
+                        <code> Maxlength 30</code>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="form-group">
+                      <label for="aname"> Alias</label>
+                      <input type="text" id="alias" class="form-control" name="alias" [(ngModel)]="ladger.Alias"
+                        placeholder="Enter the Alias">
+                    </div>
+                  </div>
+                  <!-- <div class="col-sm-2">
+                    <div class="form-group">
+                      <label for="group">Group</label>-->
+                  <!-- <input type="text" id="group" name="group"> -->
+                  <!-- <select *ngIf="accountGroupList && accountGroupList.length > 0" id="group" name="group"
+                        class="form-control" [(ngModel)]="ladger.GroupID">
+                        <option *ngFor="let accountGroup of accountGroupList" [ngValue]="accountGroup.ID">
+                          {{ accountGroup.Name }}
+                        </option>
+                      </select>
+                    </div>
+                  </div> -->
+                  <div class="col-sm-3">
+                    <div class="form-group">
+                      <label for="pan"> PAN</label>
+                      <input type="text" id="pan" class="form-control" name="pan" [(ngModel)]="ladger.PAN"
+                        placeholder="Enter the PAN">
+                    </div>
+                  </div>
+                  <div class="col-sm-3">
+                    <div class="form-group">
+                      <label for="gst"> GST Number</label>
+                      <input type="text" id="gst" class="form-control" name="gst" [(ngModel)]="ladger.GSTno"
+                        placeholder="Enter the GST Number">
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group">
+                      <label for="fname"> Registration Type</label>
+                      <input type="text" id="RegistrationType" class="form-control" name="RegistrationType"
+                        [(ngModel)]="ladger.RegistrationType" placeholder="Enter the Registration Type">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="projectinput4">Ledger Type</label>
+                      <br>
+                      <select *ngIf="ledgerTypeList && ledgerTypeList.length >0" id="type" name="status" class="form-control" data-toggle="tooltip" data-trigger="hover"
+                        data-placement="top" data-title="type" placeholder="Select Type"
+                        [(ngModel)]="ladger.LadgertypeID">
+                        <option value="">Select</option>
+                        <option *ngFor="let type of ledgerTypeList" [value]="type.ID">{{type.Name}}</option>
+        
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-5 chk-tp mt-4">
+                    <p-checkbox binary="true" id="providedBankDetails" name="providedBankDetails"
+                      [(ngModel)]="ladger.ProvidedBankDetails" label="Provided Bank Details"></p-checkbox>
+
+                  </div>
+                  <div class="col-md-3 col-sm-5 chk-tp mt-4">
+                    <p-checkbox binary="true" id="InventoryValuesAreAffected" name="InventoryValuesAreAffected"
+                      [(ngModel)]="ladger.InventoryValuesAreAffected" label="Inventory Values Are Affected">
+                    </p-checkbox>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-body">
+                <h4 class="form-section"><i class="ft-user"></i> Address</h4>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label for="fname" class="col-sm-4"> Address</label>
+                      <input type="text" id="address" class="form-control" name="address" [(ngModel)]="ladger.Address"
+                        placeholder="Enter the Address">
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label for="fname"> Country</label>
+                      <input type="text" id="country" class="form-control" name="country" [(ngModel)]="ladger.Country"
+                        placeholder="Enter the Address">
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="form-group">
+                      <label for="fname"> Pin Code</label>
+                      <input type="number" id="pinCode" class="form-control" name="pinCode" [(ngModel)]="ladger.PinCode"
+                        placeholder="Enter the Pin Code">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions  right col-sm-12 p-3">
+                <button type="button" class="btn btn-raised btn-warning mr-1" (click)="cancel()">
+                  Cancel
+                </button>
+                <button type="button" class="btn btn-raised btn-primary" (click)="save(ladgerform)">
+                  Save
+                </button>
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

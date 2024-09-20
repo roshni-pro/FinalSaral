@@ -1,0 +1,711 @@
+<div class="row">
+    <div class="col-sm-12">
+        <form class="form" #accountConfigurationForm="ngForm">
+            <div class="form-body" *ngIf="ledgerConfigurationMaster">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="Name">Entity Name</label>
+                            <input class="form-control" id="EntityName" name="EntityName"
+                                [(ngModel)]="ledgerConfigurationMaster.EntityName"
+                                pTooltip="Enter Entity Name not Table Name" tooltipPosition="top" >
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <br>
+                        <label for="Name"></label>
+                        <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24 ip3"
+                            (click)="updateEntity()">
+                            Update
+                        </button>
+
+                        <p-confirmDialog #cd appendTo="body" header="Confirmation">
+                            <p-footer>
+                              <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+                              <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+                            </p-footer>
+                          </p-confirmDialog>
+                    </div>
+                    <div class="col-md-4">
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<p-accordion>
+    <p-accordionTab header="Ledger Configuration Details" >
+        <div class="row" *ngIf="ledgerConfigurationMaster && ledgerConfigurationMaster.ledgerConfigurationDetails">
+            <div class="col-sm-12">
+                <p-dataView #dv [value]="ledgerConfigurationMaster.ledgerConfigurationDetails" filterBy="brand"
+                    [sortField]="sortField" [sortOrder]="sortOrder">
+                    <p-header>
+        
+                    </p-header>
+                    <ng-template let-detail pTemplate="listItem">
+                        <div class="ss">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Credit Ledger Type:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.CreditLedgerTypeString}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Debit Ledger Type:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.DebitLedgerTypeString}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Is Fixed Credit Ledger:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.IsFixedCreditLedger? 'YES': 'NO'}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Is Fixed Debit Ledger:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.IsFixedDebitLedger? 'YES': 'NO'}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Credit Ledger:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.IsFixedCreditLedger? detail.CreditLedgerName: 'N/A'}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Debit Ledger:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.IsFixedDebitLedger? detail.DebitLedgerName: 'N/A'}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Object Type:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.ObjectType}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Object ID Property Name:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.ObjectIDPropertyName}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Is SP Used:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.IsSPUsed? 'YES': 'NO'}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            SP Name
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{detail.SPName}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 bld">
+                                    Voucher Type:
+                                </div>
+                                <div class="col-sm-3">
+                                    {{detail.VoucherTypeName}}
+                                </div>
+                                <div class="col-sm-3 bld">
+                                   Is Published:
+                                </div>
+                                <div class="col-sm-3">
+                                    {{detail.IsPublished}}
+                                </div>
+                            </div>
+                            <div class="row">
+        
+                                <div class="col-sm-2 bld">
+                                    Query:
+                                </div>
+                                <div class="col-sm-10">
+                                    {{detail.Query}}
+                                </div>
+        
+                            </div>
+                            <hr>
+                            <div *ngIf="detail.ledgerConfigurationParameters">
+                                <div *ngFor="let param of detail.ledgerConfigurationParameters; let i=index;">
+                                    <div class="row">
+                                        <div class="col-sm-1 bld">
+                                            {{i+1}}.
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <div class="row">
+                                                <div class="col-sm-6 bld">
+                                                    ParameterName:
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    {{param.ParameterName}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="row">
+                                                <div class="col-sm-6 bld">
+                                                    PropertyName:
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    {{param.PropertyName}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button class="pull-right" (click)="edit(detail)">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+        
+                </p-dataView>
+            </div>
+        </div>
+        
+       
+        <div *ngIf="isEditDeveloperConfiguration">
+            <p-dialog [(visible)]="isEditDeveloperConfiguration" [resizable]="false" [modal]="true" appendTo="body"
+                positionTop="100" [style]="{width: '70%', overflow: 'auto', background: 'white'}">
+                <p-header>
+                    Edit Details
+                </p-header>
+                <div class="ui-fluid">
+                    <form #detailForm="ngForm">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Object Type<span class="red"> *</span>:</label>
+                                    <select class="form-control" name="objectTypeInput" id="objectTypeInput" [(ngModel)]="editableLedgerConfigurationDetail.ObjectType" 
+                                    pTooltip="Ledger Entry Table, ObjectType field. To Identify IR, Order, Assignment" tooltipPosition="bottom" 
+                                    #ObjectType="ngModel" minlength="2"  >
+                                        <option value="">Select</option>
+                                        <option value="Order">Order</option>
+                                        <option value="IR">IR</option>
+                                        <option value="Assignment">Assignment</option>
+                                        
+                                      </select>
+                                    <!-- <input class="form-control" name="objectTypeInput" id="objectTypeInput"
+                                        [(ngModel)]="editableLedgerConfigurationDetail.ObjectType" required="1"
+                                        pTooltip="Ledger Entry Table, ObjectType field. To Identify IR, Order, Assignment" tooltipPosition="bottom" 
+                                        #ObjectType="ngModel" minlength="2"> -->
+                                        <div class="col-md-6"></div>
+                                        <div *ngIf="isInvalid && !ObjectType.valid && ObjectType.errors.required">
+                                            <code> ObjectType is required</code>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Object Property Name<span class="red"> *</span>:</label>
+                                    <input class="form-control" name="objectIDPropertyNameInput" id="objectIDPropertyNameInput"
+                                        [(ngModel)]="editableLedgerConfigurationDetail.ObjectIDPropertyName" required="1"
+                                        pTooltip="Ledger Entry Table, ObjectID field. i.e. OrderId, IRID, DeliveryIssuranceId" tooltipPosition="bottom" 
+                                        #ObjectIDPropertyName="ngModel" minlength="2">
+                                        <div class="col-md-6"></div>
+                                        <div *ngIf="isInvalid && !ObjectIDPropertyName.valid && ObjectIDPropertyName.errors.required">
+                                            <code> Object Property Name is required</code>
+                                        </div>
+                                </div>
+                            </div>
+                            <!-- <div class="ui-g-12 ui-md-4">
+                                <div class="form-group">
+                                    <label for="Name">Is Fixed Debit Account </label><br>
+                                    <p-inputSwitch id="isdactype{{detail.ID?detail.ID:0}}"
+                                        name="isdactype{{detail.ID?detail.ID:0}}" [(ngModel)]="detail.IsFixedDebitLedger">
+                                    </p-inputSwitch>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="form-group" *ngIf="detail.IsFixedDebitLedger">
+                                    <label for="Name">Debit Account </label><br>
+                                    <p-autoComplete id="debitLedgerID{{detail.ID?detail.ID:0}}"
+                                        name="isdactype{{detail.ID?detail.ID:0}}" [(ngModel)]="selectedCreditLedger"
+                                        [suggestions]="ledgerList" field="Name" [dataKey]="ID"
+                                        (completeMethod)="searchLedger(detail.DebitLedgerTypeId, $event)"
+                                        (onSelect)="onSelectCredit($event, detail)"></p-autoComplete>
+                                </div>
+                            </div> -->
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Debit PropertyName:</label>
+                                    <input class="form-control" name="DebitPropertyNameInput" id="DebitPropertyNameInput"
+                                    [(ngModel)]="editableLedgerConfigurationDetail.DebitPropertyName" 
+                                    pTooltip="Enter Property Id which is not fixed accordingly(credit or debit) else retuen in SP" tooltipPosition="bottom"
+                                    minlength="2">
+                                    
+                                    </div>
+                             </div>
+                             <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Credit Property Name:</label>
+                                    <input class="form-control" name="CreditPropertyNameInput" id="CreditPropertyNameInput"
+                                        [(ngModel)]="editableLedgerConfigurationDetail.CreditPropertyName" 
+                                        pTooltip="Enter Property Id which is not fixed accordingly(credit or debit) else retuen in SP" tooltipPosition="bottom"
+                                        minlength="2">
+        
+                                </div>
+        
+                            </div>
+                        </div>
+                        <!-- <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Debit PropertyName</label> Type:</label>
+                                    <input class="form-control" name="DebitPropertyNameInput" id="DebitPropertyNameInput"
+                                        [(ngModel)]="editableLedgerConfigurationDetail.DebitPropertyName" 
+                                        minlength="2">
+                                        <div class="col-md-6"></div>
+                                       
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Credit Property Name:</label>
+                                    <input class="form-control" name="CreditPropertyNameInput" id="CreditPropertyNameInput"
+                                        [(ngModel)]="editableLedgerConfigurationDetail.CreditPropertyName" 
+                                        minlength="2">
+                                        <div class="col-md-6"></div>
+                                       
+                                </div>
+                            </div>
+                          
+                        </div> -->
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Is Stored Procedure Used:</label><br>
+                                    <p-inputSwitch id="isSPUsedInput" name="isSPUsedInp"
+                                        [(ngModel)]="editableLedgerConfigurationDetail.IsSPUsed">
+                                        
+                                    </p-inputSwitch>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="Name">Is Published</label><br>
+                                    <p-inputSwitch id="IsPublished" name="IsPublished"
+                                        [(ngModel)]="editableLedgerConfigurationDetail.IsPublished">
+                                    </p-inputSwitch>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Stored Procedure Name:</label>
+                                    <input class="form-control" name="spNameInput" id="spNameInput"
+                                        [(ngModel)]="editableLedgerConfigurationDetail.SPName" 
+                                        pTooltip  ="Enter StoredProcedure name if used" tooltipPosition="bottom" >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-12">
+                                <div class="form-group">
+                                    <label for="Name">Query<span class="red"> </span>:</label><br>
+                                    <textarea pInputTextarea class="form-control" name="queryInput" id="queryInput"
+                                        [(ngModel)]="editableLedgerConfigurationDetail.Query" 
+                                        #Query="ngModel" minlength="2" ></textarea>
+                                        <div class="col-md-6"></div>
+                                        
+                                </div>
+                            </div>
+        
+                        </div>
+                        <hr>
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <button type="button" class="btn btn-raised btn-primary pull-right e6"
+                                    (click)="addNNewParam()">Add Parameters</button>
+                            </div>
+
+                           
+                        </div>
+                      
+                           
+                   
+                        <hr>
+                        <div *ngIf="editableLedgerConfigurationDetail.ledgerConfigurationParameters">
+                            <div
+                                *ngFor="let param of editableLedgerConfigurationDetail.ledgerConfigurationParameters; let i=index;">
+                                <div class="ui-g">
+        
+                                    <div class="ui-g-1">
+                                        <div class="ui-g-1 bld">
+                                            {{i+1}}.
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-5">
+                                        <div class="row">
+                                            <div class="ui-g-6 bld">
+                                                ParameterName<span class="red"> *</span>:
+                                            </div>
+                                            <div *ngIf="param.IsShowAdd">
+                                                <input class="form-control " name="ParameterName" id="ParameterName"
+                                                    [(ngModel)]="param.ParameterName" required="1" minlength="2">
+        
+        
+                                            </div>
+                                            <div class="ui-g-6" *ngIf="!param.IsShowAdd">
+                                                {{param.ParameterName}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g-5">
+                                        <div class="row">
+                                            <div class="ui-g-6 bld ">
+                                                PropertyName<span class="red"> *</span>:
+                                            </div>
+                                            <div *ngIf="param.IsShowAdd">
+                                                <input class="form-control " name="PropertyName" id="PropertyName"
+                                                    [(ngModel)]="param.PropertyName" required="1" minlength="2">
+        
+        
+                                            </div>
+                                            <div class="ui-g-6" *ngIf="!param.IsShowAdd">
+                                                {{param.PropertyName}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <i ></i>
+                                    <div class="ui-g-1">
+                                        <div class="row">
+                                            <div class="ui-g-12" *ngIf="param.IsShowAdd">
+                                                <button type="button"   (click)="addparam(param)" class="btn btn-raised btn-primary ">  <i
+                                                    class="fa fa-save"></i></button>
+                                                 
+                                            </div>
+                                            <!-- <div class="ui-g-12" *ngIf="!param.IsShowAdd">
+                                                <button type="button" class="btn btn-raised btn-primary pull-right"
+                                                    (click)="editMode(param)">Edit</button>
+                                            </div> -->
+                                            <div class="ui-g-8">
+                                                <div class="row">
+                                                    <div class="ui-g-2 bld ">
+                                                        <button type="button" (click)="editMode(param)" class="btn btn-raised btn-primary"  > <i
+                                                            class="fa fa-edit"></i></button>
+                                                    </div>
+                                                
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="ui-g-2">
+                                                <div class="row">
+                                                    <div class="ui-g-2 bld ">
+                                                    <div class>
+                                                        <button type="button" (click)="DeleteParam(param)"  class="btn btn-raised btn-primary "  > <i
+                                                            class="pi pi-trash"></i></button>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+
+
+                                            <!-- <div class="ui-g-5">
+                                                <div class="row">
+                                                    <div class="ui-g-6 bld ">
+                                                        <button type="button" class="btn btn-raised btn-primary float-right align-self-end v1"  > <i
+                                                            ></i></button>
+                                                    </div>
+                                                
+                                                </div>
+                                            </div> -->
+
+                                            <!-- <div class="ui-g-12">
+                                                <button type="button" class="btn btn-raised btn-primary pull-right e6"
+                                                    (click)="DeleteParam(param)">Delete</button>
+                                            </div> -->
+                                           
+                                         
+                                        </div>
+                                    </div>
+        
+                                </div>
+                            </div>
+                        </div>
+        
+                        <hr>
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <button type="button" class="btn btn-raised btn-primary pull-right"
+                                    (click)="save(detailForm)">Save</button>
+                            </div>
+                        </div>
+        
+                    </form>
+                </div>
+            </p-dialog>
+        </div>
+    </p-accordionTab>
+    <p-accordionTab header="Ledger Configuration Condition">
+        <div class="row" *ngIf="ledgerConfigurationMaster && ledgerConfigurationMaster.ledgerConfigurationMasterConditions">
+            <div class="col-sm-12">
+                <p-dataView #dv [value]="ledgerConfigurationMaster.ledgerConfigurationMasterConditions" filterBy="brand"
+                    [sortField]="sortField" [sortOrder]="sortOrder">
+                    <p-header>
+                        <div class="ui-helper-clearfix">
+                            <div class="ui-g">
+        
+                                <div class="ui-g-12 ui-md-12" style="text-align:right">
+                                    <button (click)="addCondition()" *ngIf="ledgerConfigurationMaster.Id">Add New Condition
+                                        </button>
+                                </div>
+        
+                            </div>
+                        </div>
+                    </p-header>
+                    <ng-template let-condition pTemplate="listItem">
+                        <div class="ss">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Property Name:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{condition.PropertyName}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Property Type:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{condition.PropertyType}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Other Value
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{condition.OtherValue}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Operator:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{condition.Operator}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Is Other Value:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{condition.IsOtherValue? 'YES': 'NO'}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="row">
+                                        <div class="col-sm-6 bld">
+                                            Is Old Value Anything:
+                                        </div>
+                                        <div class="col-sm-6">
+                                            {{condition.IsOldValueAnything? 'YES': 'NO'}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                            <hr>
+                           
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button class="pull-right" (click)="editcondition(condition.Id)">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+        
+                </p-dataView>
+            </div>
+        </div>
+        
+        
+        <div *ngIf="isEditConditionDeveloperConfiguration">
+            <p-dialog [(visible)]="isEditConditionDeveloperConfiguration" [resizable]="false" [modal]="true" appendTo="body"
+                positionTop="100" [style]="{width: '70%', overflow: 'auto', background: 'white'}">
+               
+                <div class="ui-fluid">
+                    <form #conditionForm="ngForm">
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Property Name<span class="red"> *</span>:</label>
+                                    <input class="form-control" name="propertynameInput" id="propertynameInput"
+                                        [(ngModel)]="ledgerConfigurationMasterConditions.PropertyName" required="1"
+                                        #PropertyName="ngModel" minlength="2">
+                                        <div class="col-md-6"></div>
+                                        <div *ngIf="isInvalid && !PropertyName.valid && PropertyName.errors.required">
+                                            <code> PropertyName is required</code>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Property Type:</label>
+                                    <input class="form-control" name="PropertyType" id="PropertyType"
+                                        [(ngModel)]="ledgerConfigurationMasterConditions.PropertyType" 
+                                       >
+                                        
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Other Value<span class="red"> *</span>:</label>
+                                    <input class="form-control" name="othervalueinput" id="othervalueinput"
+                                        [(ngModel)]="ledgerConfigurationMasterConditions.OtherValue" required="1"
+                                        #OtherValue="ngModel" minlength="1">
+                                        <div class="col-md-6"></div>
+                                        <div *ngIf="isInvalid && !OtherValue.valid && OtherValue.errors.required">
+                                            <code> Other Value is required</code>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Operator">Operator<span class="red"> *</span>:</label>
+                                    <!-- <input class="form-control" name="operatorinput" id="operatorinput"
+                                        [(ngModel)]="ledgerConfigurationMasterConditions.Operator" required="1"
+                                        #Operator="ngModel" minlength="2"> -->
+                                      
+                        <!-- <div class="col-md-6"> -->
+                          <select class="form-control" id="Operator" class="form-control col-md-6" name="Operator" [(ngModel)]="ledgerConfigurationMasterConditions.Operator" #Operator="ngModel"  >
+                            <option value="">Select</option>
+                            <option value="EqualTo">EqualTo</option>
+                            <option value="LessThanEqualTo">LessThanEqualTo</option>
+                            <option value="GreaterThanEqualTo">GreaterThanEqualTo</option>
+                            <option value="LessThan">LessThan</option>
+                            <option value="GreaterThan">GreaterThan</option>
+                          </select>
+                                        <div class="col-md-6"></div>
+                                        <div *ngIf="isInvalid && !Operator.valid && Operator.errors.required">
+                                            <code>Operator is required</code>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                   
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Is Other Value:</label><br>
+                                    <p-inputSwitch id="isOtherValue" name="isOtherValue"
+                                        [(ngModel)]="ledgerConfigurationMasterConditions.IsOtherValue">
+                                    </p-inputSwitch>
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">Is Old Value Anything:</label><br>
+                                    <p-inputSwitch id="isOldValueAnything" name="isOldValueAnything"
+                                        [(ngModel)]="ledgerConfigurationMasterConditions.IsOldValueAnything">
+                                    </p-inputSwitch>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12 ui-md-6">
+                                <div class="form-group">
+                                    <label for="Name">IsActive:</label><br>
+                                    <p-inputSwitch id="isActive" name="isActive"
+                                        [(ngModel)]="ledgerConfigurationMasterConditions.IsActive">
+                                    </p-inputSwitch>
+                                </div>
+
+
+                            </div>
+                        </div>
+                       
+                        <hr>
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <button type="button" class="btn btn-raised btn-primary pull-right"
+                                    (click)="saveCondition(conditionForm)">Save</button>
+                            </div>
+                        </div>
+        
+                    </form>
+                </div>
+            </p-dialog>
+        </div>
+    </p-accordionTab>
+    
+</p-accordion>

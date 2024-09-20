@@ -1,0 +1,232 @@
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<section id="supplier-details">
+  <div class="email-app-mail-content py-0 h-100 border-left border-left-2">
+    <div class="email-app-mail-content-detail h-100 overflow-hidden">
+      <div class="info-header">
+          <button type="button" class="close mr-3 mt-2" aria-label="Close" (click)="closeDetails(false)">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="float-right mx-4">
+              <button class="btn btn-sm bg-danger text-white m-2" *ngIf="details.active && this.storeType != '1'" (click)="open(activationModal)">Deactivate</button>
+              <button class="btn btn-sm bg-success text-white m-2" *ngIf="!details.active && this.storeType != '1'" (click)="open(activationModal)">Activate</button>
+              <!-- Activation Modal Start -->
+              <ng-template #activationModal let-modal>
+                  <div class="modal-header">
+                  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                  </div>
+                  <div class="modal-body d-flex flex-column align-items-center">
+                  <h2>Are You Sure?</h2>
+                  <p class="m-2" style="text-align: center"><strong>Note:</strong> This will <strong><span *ngIf="details.active">Deactivate</span><span *ngIf="!details.active">Activate</span></strong> the supplier in the database.</p>
+                  </div>
+                  <div class="modal-footer d-flex p-0 justify-content-center">
+                  <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0" (click)="modal.close('No click')">Cancel</button>
+                  <!-- <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0" (click)="ToggleActivation(details)"><span *ngIf="details.active">Deactivate</span><span *ngIf="!details.Active">Activate</span></button> -->
+                  <button *ngIf="!details.active" type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0" (click)="ToggleActivation(details)">Activate</button>
+                  <button *ngIf="details.active" type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0" (click)="ToggleActivation(details)">Deactivate</button>
+                    <!-- <span *ngIf="details.active">Deactivate</span><span *ngIf="!details.Active">Activate</span> -->
+                  </div>
+              </ng-template>
+
+              
+              <!-- Activation Modal End -->
+              <!-- <button class="btn btn-sm bg-danger text-white m-2" (click)="open(removeModal)">Remove</button> -->
+              <!-- Remove Modal Start -->
+              <ng-template #removeModal let-modal>
+                  <div class="modal-header">
+                      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                      <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body d-flex flex-column align-items-center">
+                      <h2>Are You Sure?</h2>
+                      <p class="m-2" style="text-align: center"><strong>Note:</strong> This will permanently delete the supplier from the records.</p>
+                      <!-- <form class="col-12">
+                          <div class="form-group col-12">
+                              <label for="DeleteComment">Add Comments</label>
+                              <textarea class="form-control" id="DeleteComment" rows="3"  name="DeleteComment" [(ngModel)] = "rowData.DeleteComment" ></textarea>
+                          </div>
+                      </form> -->
+                  </div>
+                  <div class="modal-footer d-flex p-0 justify-content-center">
+                      <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0" (click)="modal.close('No click')">Cancel</button>
+                      <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0" (click)="onDelete(details)">Delete</button>
+                  </div>
+              </ng-template>
+              <!-- Remove Modal End -->
+            </div>
+          <h3 class="m-2">{{details[activeFields[0].field]}}</h3>
+          
+          <ul class="nav border-bottom">
+              <li class="nav-item" (click)="overviewDisplay($event)">
+                <a [ngClass]="activeTabClass[0].isActive==true? 'nav-link active' : 'nav-link' " id="overview-btn">Overview</a>
+              </li>
+              <li class="nav-item" (click)="editFormDisplay($event)" *ngIf="this.storeType != '1'">
+                <a [ngClass]="activeTabClass[1].isActive==true? 'nav-link active' : 'nav-link' ">Edit</a>
+              </li>
+              <li class="nav-item" (click)="addDisplay($event)" *ngIf="!isWarehouse">
+                <a [ngClass]="activeTabClass[2].isActive==true? 'nav-link active' : 'nav-link' ">AddMRP</a>
+              </li>
+              <li class="nav-item" (click)="itemLimit($event)" *ngIf="isWarehouse && this.storeType != '1'">
+                <a [ngClass]="activeTabClass[3].isActive==true? 'nav-link active' : 'nav-link' ">Item Limit</a>
+              </li>
+              <li class="nav-item" (click)="imageUpload($event)" *ngIf="!isWarehouse">
+                <a [ngClass]="activeTabClass[4].isActive==true? 'nav-link active' : 'nav-link' ">Image Upload</a>
+              </li>
+              <li class="nav-item" (click)="historyDisplay($event)">
+                <a [ngClass]="activeTabClass[5].isActive==true? 'nav-link active' : 'nav-link' ">History</a>
+              </li>
+              <li class="nav-item" (click)="itemLimitHistoryDisplay($event)"*ngIf="isWarehouse && this.storeType != '1'">
+                <a [ngClass]="activeTabClass[6].isActive==true? 'nav-link active' : 'nav-link' ">Item Limit History</a>
+              </li>
+              <li class="nav-item" (click)="ItemBillLimitQty($event)" *ngIf="isWarehouse && this.storeType != '1'">
+                <a [ngClass]="activeTabClass[7].isActive==true? 'nav-link active' : 'nav-link' ">Item Bill Limit Qty</a>
+              </li>
+              <li class="nav-item" (click)="BOM($event)" *ngIf="type == 1 && details.SubcategoryName == 'Kisan Kirana'">
+                <a [ngClass]="activeTabClass[8].isActive==true? 'nav-link active' : 'nav-link' ">BOM</a>
+              </li>
+              <li class="nav-item" (click)="rawmaterialDetails($event)"*ngIf="isWarehouse && type == 2 && this.storeType != '1'">
+                <a [ngClass]="activeTabClass[9].isActive==true? 'nav-link active' : 'nav-link' ">Raw Material Details</a>
+              </li>
+              <li class="nav-item" (click)="addBatchCodeDisplay($event)">
+                <a [ngClass]="activeTabClass[10].isActive==true? 'nav-link active' : 'nav-link' ">Add Barcode</a>
+              </li>
+              <li class="nav-item" (click)="MrpMediaDisplay($event)" *ngIf="this.storeType == '1'">
+                <a [ngClass]="activeTabClass[11].isActive==true? 'nav-link active' : 'nav-link' ">Mrp Media</a>
+              </li>
+          </ul>
+      </div>
+      <div id="editForm" *ngIf="displayTabs[1].bool" class="info-div m-2">
+          <div >
+              <app-itemForm [itemDetails]="details" [disabledEdit]="true" [isWarehouse]="isWarehouse" (refreshParent)="RefreshParent()" (isdetailsclose)="closeDetails($event)" ></app-itemForm>
+          </div>
+      </div>
+      
+      <div id="adMRP" *ngIf="displayTabs[2].bool" class="info-div m-2">
+        <app-add-multi-mrp [details]="details" (refreshParent)="RefreshParent()" (isdetailsclose)="closeDetails($event)">
+        </app-add-multi-mrp>
+      </div>
+
+      <div id="Bom" *ngIf="displayTabs[8].bool" class="info-div m-2">
+        <app-add-material-item-master [itemnumber]="details.Number" [bomId]="details.BomId"></app-add-material-item-master>
+      </div>
+
+      <div id="raw" *ngIf="displayTabs[9].bool" class="info-div m-2">
+        <!-- <app-add-material-item-master ></app-add-material-item-master> -->
+      </div>
+     
+      <!-- Depo Start -->
+      <div id="itemLimit" *ngIf="displayTabs[3].bool" class="info-div m-2">
+        <div class="row">
+        <div class="form-group col-md-3">
+          <label for="site-name">Item limitQty</label><br />
+          <input id="ItemlimitQty" name="ItemlimitQty" type="number" class="form-control" placeholder="Enter Item Price "
+            [(ngModel)]="ILimit.ItemlimitQty" />
+        </div>
+        <div class="col-md-3"></div>
+        <div class="form-group col-md-3">
+          <label for="site-name">Is limit Limit</label><br />
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input class="custom-control-input " id="customCheckboxInline1" name="customCheckboxInline1"
+              type="checkbox" [(ngModel)]="ILimit.IsItemLimit" >
+            <label class="custom-control-label" for="customCheckboxInline1"></label>
+          </div>
+        </div>
+      </div>
+        <div class="row" style="float: right; margin-right: 20px;">
+          <button class="btn btn-raised btn-warning" style="margin-right: 5px;" (click)="onCancel()">cancel</button>
+          <button class="btn btn-raised btn-primary"  (click)="onSave(ILimit)">save</button>
+      </div>
+        <!-- <div class="form-group">
+          <label for="site-name">Item limitQty</label><br />
+          <input id="site-name" type="number" class="form-control" min="0" placeholder="Enter Limit" ng-model="ItemAddLimitData.ItemlimitQty" />
+      </div> -->
+    
+      </div>
+      <!-- Depo End -->
+<!-- item Bill Limit Qty start -->
+<div id="itemBillLimitQty" *ngIf="displayTabs[7].bool" class="info-div m-2">
+  <div class="row">
+      <div class="form-group col-md-3">
+          <label for="site-name">Item Base Name</label><br />
+          <input id="ItemBaseName" name="ItemBaseName" type="text" class="form-control" readonly
+            [(ngModel)]="details.itemBaseName" />
+        </div>
+  <div class="form-group col-md-3">
+    <label for="site-name">Item Bill limit Qty</label><br />
+    <input id="itemBillLimitQty" name="itemBillLimitQty" type="number" class="form-control" placeholder="Enter Item Bill limit Qty"
+      [(ngModel)]="BillLimtQty.BillLimitQty" />
+  </div>
+  <div class="col-md-3"></div>
+  
+</div>
+  <div class="row" style="float: right; margin-right: 20px;">
+    <button class="btn btn-raised btn-warning" style="margin-right: 5px;" (click)="onCancel()">cancel</button>
+    <button class="btn btn-raised btn-primary"  (click)="saveItemBillLimtQty(BillLimtQty)">save</button>
+</div>
+</div>
+<!-- item Bill Limit Qty End -->
+
+      <div *ngIf="!isWarehouse">
+      <div id="uploadForm" *ngIf="displayTabs[4].bool " class="info-div m-2">
+          <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                  <label for="uploadAdvertisements">Upload Image:</label><br />
+                  <input #myInput2 class="btn btn-raised btn-info" id="file" type="file" accept="image/*"
+                    (change)="upload($event.target.files)" />
+                  <br />
+                  <button type="button" class="btn btn-raised btn-primary " (click)="uploadItemImage()">
+                    Upload
+                  </button>
+                </div>
+            </div>
+            <div class="col-md-6"></div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <img alt="" [src]="details.LogoUrl" class="img-square">
+                  </div>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div >
+    <div id="history"  *ngIf="displayTabs[5].bool == true" class="info-div m-2">
+        <app-history [entity]="entity" [id]="entityID"></app-history>
+      </div>
+    </div>
+    <div id="itemhistory"  *ngIf="displayTabs[6].bool == true" class="info-div m-2">
+      <app-history [entity]="itemEntity" [id]="details.ItemLimitId"></app-history>
+    </div>
+    <div id="batchCode"  *ngIf="displayTabs[10].bool == true" class="info-div m-2">
+      <app-add-batch-code [details]="details" (refreshParent)="RefreshParent()" (isdetailsclose)="closeDetails($event)"></app-add-batch-code>
+    </div>
+        <div id="overview" *ngIf="displayTabs[0].bool" class="info-div">
+          <!-- <div class="info-heading text-bold-600 m-3"><h4>Supplier Info</h4></div> -->
+          <div class="info-content">
+              <div class="w-25 d-flex float-right">
+                  <img [src]="logo" width="150px">
+                </div>
+            <div class="row m-2 mx-4">
+              <div class="w-75 d-flex" *ngFor="let activeField of activeFields">
+                <div class="info-label font-weight-bold m-2">{{activeField.label}}</div>
+                <div class="info-value m-2">{{details[activeField.field]}}</div>
+              </div>
+              
+            </div>
+        </div>
+        <div></div>
+      </div>
+      <div id="MrpMedia" *ngIf="displayTabs[11].bool && this.storeType == '1'" class="info-div m-2">
+        <app-mrp-media [details]="details" [itemnumber]="details.Number" [warehouseId]="details.WarehouseId"></app-mrp-media>
+      </div>
+    
+    </div>
+  </div>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+</section>

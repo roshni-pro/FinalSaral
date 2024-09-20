@@ -1,0 +1,157 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="row m-0">
+  <div class="col-12">
+    <div id="kick-start" class="card">
+      <div class="card-header">
+        <div class="row">
+
+          <div class="col-md-4">
+            <legend>Select City</legend>
+            <select id="subcategory" name="subcategory" class="form-control" [(ngModel)]="selectcity"
+              placeholder="Select subcategory" #subcategory="ngModel" >
+              <option *ngFor="let c of city" [ngValue]="c.Cityid">
+                {{c.CityName}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <legend>Select SubCategory (onlyfor seller Purpose)</legend>
+            <select id="subcategory" name="subcategory" class="form-control" [(ngModel)]="subcateid"
+              placeholder="Select subcategory" #subcategory="ngModel">
+              <option *ngFor="let subcategory of subcatList" [ngValue]="subcategory.SubCategoryId">
+                {{subcategory.SubcategoryName}}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <button class="btn btn-primary mt-3" (click)="getCfrData()">Search</button>
+            <button class="btn btn-primary mt-3 ml-2" (click)="addDisplay()">Add new article</button>
+          </div>
+          <!-- <div class="col-md-8 hdr">
+            <h3 class="card-title">Upload Cfr Article (only ItemNumber : 1st Column)</h3>
+          </div> -->
+        </div>
+        <br>
+        <!-- <div class="row" *ngIf="selectcity > 0">
+          <div class="col-md-8">
+            <div class="col-md-8">
+              <div class="row">
+                <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                  (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+                  <code>*</code>
+                </p-fileUpload>
+              </div>
+            </div>
+          </div>
+
+        <div class="col-md-4">
+          <br>
+          <div class="ui-helper-clearfix" style="text-align: left;">
+            <button style="cursor: pointer;" type="button" class="btn btn-raised btn-raised btn-primary"
+              (click)="downloadSampleFile()">
+              Download Sample File
+            </button>
+          </div>
+        </div>
+      </div> -->
+        <br>
+        <br>
+      </div>
+      <p-dialog header="Add new article" [(visible)]="visible"   [resizable]="false" positionTop="50" [modal]="true"
+      appendTo="body" [draggable]="false" [style]="{width: '60%', top: '30px'}">
+      <div class="row">
+        <div class="col-md-4">
+          <legend>Select City</legend>
+          <select id="addsubcategory" name="addsubcategory" class="form-control" [(ngModel)]="selectAddcity" (change)="getAdditemList();clear()"
+          placeholder="Select subcategory" #addsubcategory="ngModel" >
+            <option *ngFor="let c of city" [ngValue]="c.Cityid">
+              {{c.CityName}}
+            </option>
+          </select>
+        </div>
+        <!-- <div class="col-md-4">
+          <legend>Add items</legend>
+          <p-dropdown [options]="Items" [(ngModel)]="selectedItem" [filter]="true" optionLabel="itemBaseName" placeholder="select item"></p-dropdown>
+        </div> -->
+        <!-- <div class="col-md-4">
+          <button class="btn btn-primary mt-3" (click)="AddItems(selectedItem)">Add</button>
+        </div> -->
+    </div>
+    <div *ngIf="Items && Items.length>0 ">
+      <p-table  [value]="Items"  [(selection)]="selectedList"  dataKey="ItemNumber" [tableStyle]="{ 'min-width': '50rem' }"   [scrollable]="true" scrollHeight="400px">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>     <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                <!-- <th>CityName</th> -->
+                <th>SubcategoryName</th>
+                <th>ItemNumber</th>
+                <th>Itemname</th>
+                <!-- <th>Action</th> -->
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-Data let-index="rowIndex">
+            <tr>
+              <td colspan="1">
+                <p-tableCheckbox [value]="Data" id="isactive" name="isactive"></p-tableCheckbox>
+                  <!-- <input type="checkbox" id="isLive" name="isLive"  [value]="Data" [(ngModel)]="Data.IsCheck" > -->
+              </td>
+                <!-- <td>{{ Data.CityName }}</td> -->
+                <td>{{ Data.SubcategoryName }}</td>
+                <td>{{ Data.ItemNumber }}</td>
+                <td>{{ Data.itemname }}</td>
+                <!-- <td><button class="btn btn-danger" style="background-color:red;color: white;" (click)="Remove(index)">Remove</button>
+                 </td> -->
+                </tr>
+              </ng-template>
+
+    </p-table>
+    <br>
+    <div class="row" >
+      <div class="col-md-11"></div>
+      <div class="col-ml-1">
+        <button class="btn btn-raised btn-primary" (click)="addCfrArticles()" [disabled]="!selectedList || selectedList.length==0">Save</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+      </p-dialog>
+      <div class="card-body">
+        <p-table [value]="UploadedCfrData" [tableStyle]="{ 'min-width': '50rem' }">
+          <ng-template pTemplate="header">
+              <tr>
+                  <th>SubcategoryName</th>
+                  <th>Itemname</th>
+                  <th>ItemNumber</th>
+                  <th>CityName</th>
+                  <th>CreatedDate</th>
+                  <th>ModifiedDate</th>
+                  <th>Action</th>
+
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-Data>
+              <tr>
+                  <td>{{ Data.SubcategoryName }}</td>
+                  <td>{{ Data.itemname }}</td>
+                  <td>{{ Data.ItemNumber }}</td>
+                  <td>{{ Data.CityName }}</td>
+                  <td>{{ Data.CreatedDate |date}}</td>
+                  <td> <label *ngIf="Data.ModifiedDate==null">-</label> {{ Data.ModifiedDate|date }}</td>
+                  <td><button class="btn btn-danger" style="background-color:red;color: white;" (click)="confirm1(Data.articleId)">Remove</button>
+                   </td>
+                  </tr>
+                </ng-template>
+                <p-confirmDialog appendTo="body"></p-confirmDialog>
+      </p-table>
+      </div>
+    </div>
+  </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,244 @@
+<i class="pi pi-chevron-left mt-3 mb-2" (click)="CreateNew()" style="cursor: pointer;"><span>Back</span></i>
+<!-- <span>Back</span> -->
+<!-- <button  class="btn btn-success " >Back</button> -->
+
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-md-12 ">
+            <div class="d-flex">
+                <div class="col-md-2 mr-4">
+                    <label><b>Select City</b></label>
+                    <div *ngIf="du && el && CityIdUrl>0">
+                        <p-dropdown [options]="cityListt" placeholder="Select a city" [style]=" {'margin-right': '60px'}" [disabled]="ed"   [(ngModel)]="searchModel.selectedCity" (onChange)="GetCatalogConfigByCityId(63)" optionLabel="CityName" optionDisabled="IsShow">
+                        </p-dropdown>
+                    </div>
+                    <div *ngIf="!du && CityIdUrl>0">
+                        <p-dropdown [options]="cityList" [style]=" {'margin-right': '60px'}" [disabled]="ed"  [(ngModel)]="searchModel.selectedCity" (onChange)="GetCatalogConfigByCityId(63)" optionLabel="CityName" optionDisabled="IsShow">
+                        </p-dropdown>
+                    </div>
+                    <div *ngIf="!du && (el || CityIdUrl==0)">
+                        <p-dropdown [options]="cityListt" [disabled]="Gcity" [style]=" {'margin-right': '60px'}" placeholder="Select a city" [(ngModel)]="searchModel.selectedCity" (onChange)="GetCatalogConfigByCityId(63)" optionLabel="CityName" optionDisabled="IsShow">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<br>
+    <div class="row">
+        <div class="col-md-4 ">
+            <span style="font-weight:700;">Product Indexing Configuration</span>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+            <div class="col-md-4 d-flex">
+                <label><b>Frequency</b></label>&nbsp;&nbsp;&nbsp;
+                <input type="number"  required="1" name="Title" class="form-control" [(ngModel)]="searchModel.Frequency"  />
+            </div>
+            <div class="col-md-4 d-flex">
+                <label><b>Customer Reach</b></label>&nbsp;&nbsp;&nbsp;
+                <input type="number" (keyup)="validateNumber($event.target.value)"  maxlength="4" required="1" name="Title" class="form-control" [(ngModel)]="searchModel.CustomerReach" />
+            </div>
+            <div class="col-md-4 d-flex">
+                <label><b>Amount</b></label>&nbsp;&nbsp;&nbsp;
+                <input type="number"
+                required="1" name="Title" class="form-control" [(ngModel)]="searchModel.Amount"  />
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <div class="row d-flex justify-content-between ">
+        <div class="col-md-5" >
+            <div class="mt-4" >
+                <div  class="d-flex justify-content-between  " >
+                    <div >
+                        <label  style="font-weight: 550;font-size: medium;">Listing Configuration</label> 
+                    </div>
+                    <div class="d-flex justify-content-between" style="margin-right: 45px;" >
+                        <div>
+                            <p-checkbox [binary]="true" [(ngModel)]="searchModel.SelectedRepeat"></p-checkbox> 
+                        </div>&nbsp;&nbsp;
+                        <div style="font-size: medium; font-weight: 400;">
+                            Repeat
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <p-table [value]="products" [reorderableColumns]="true" responsiveLayout="scroll">
+                <ng-template pTemplate="body" let-rowdata let-index="rowIndex">
+                  <tr  [pReorderableRow]="index" class="border">
+                    <td >
+                        <span class="pi pi-bars" pReorderableRowHandle  (dragenter)="getIndex(index+1,rowdata.Name)"></span>
+                    </td>
+                    <td >{{rowdata.Name}}</td>
+                    <td>
+                        <ng-container>
+                            <div *ngIf="rowdata.Name=='SuggestedItems'">
+                                <td><p-inputSwitch  [(ngModel)]="searchModel.StatusSI" ></p-inputSwitch></td>
+                            </div>
+                            <div *ngIf="rowdata.Name=='PromotionalItems'">
+                                <td><p-inputSwitch [(ngModel)]="searchModel.StatusPI" ></p-inputSwitch></td>
+                            </div>
+                        </ng-container>
+                    </td>
+                    <td class="text-center"> 
+                        <ng-container>
+                            <div *ngIf="rowdata.Name=='BaseListing'">                            
+                                <td><i class="pi pi-angle-double-right" (click)="click1()"   ></i> </td>
+                            </div>
+                            <div *ngIf="rowdata.Name=='SuggestedItems'">
+                                <td><i class="pi pi-angle-double-right" (click)="click2()" ></i> </td>
+                            </div>
+                            <div *ngIf="rowdata.Name=='PromotionalItems'">
+                                <td><i class="pi pi-angle-double-right" (click)="click3()"  ></i> </td>
+                            </div>
+                        </ng-container>
+                    </td>               
+                  </tr>
+                </ng-template>
+              </p-table>
+        </div>
+        <div class="col-md-.5 lf-br align-center" >
+        </div>
+        <div class="col-md-5 border" *ngIf="BaseListing" >     
+            <div class="row">
+                <div class="col-md-12 mt-2 text-center">
+                    <label style="font-weight: 550;font-size: x-large;"> Base Listing</label>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-1" style=" margin-right: -13px;     margin-top: 1px;"><span class="dot"></span></div>
+                <div class="col-md-3"><label>Item Count</label></div>
+                <div class="col-md-3"> <input type="number"  style="width: 180.5%;" required="1" name="Title" class="form-control" [(ngModel)]="searchModel.ItemCountBL" /></div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-1 " style=" margin-right: -13px;     margin-top: 1px;"><span class="dot"></span></div>
+                <div class="col-md-3"><label>Sort</label></div>
+                <div class="col-md-5"> <p-dropdown  [options]="BaseListingSortItems" optionLabel="name" [(ngModel)]="searchModel.SortBL" ></p-dropdown></div>
+            </div>
+            <br>
+
+            <div class="row">
+                <div class="col-md-1" style=" margin-right: -13px;     margin-top: 1px;"><span class="dot"></span></div>
+                <div class="col-md-11"><label>Include</label></div>
+                <br>
+            </div>
+            <div class="row mt-2">  
+                <div class="col-md-1"></div>          
+                <div class="col-md-1"> <p-checkbox [binary]="true" [(ngModel)]="searchModel.UnbilledBL" ></p-checkbox>  </div>
+                <div class="col-md-4"><label>Unbilled(Last 6 Months)</label></div>  
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-1"></div>
+                <div class="col-md-1"><p-checkbox [disabled]="true" [(ngModel)]="searchModel.checkboxBL"  [binary]="false"></p-checkbox></div>
+                <div class="col-md-2"><label>Score</label></div>
+                <div class="col-md-2"><input type="text" [disabled]="true"  required="1" name="Title" class="form-control" [(ngModel)]="searchModel.ScoreFromBL" /></div>
+                <div style="text-align: center; margin-left: -21px;">to</div>
+                <div class="col-md-2"><input type="text" [disabled]="true" required="1" name="Title" class="form-control" [(ngModel)]="searchModel.ScoreToBL" /></div>                
+            </div>
+        </div>
+
+        <div class="col-md-5 border" *ngIf="SuggestedItems" >     
+            <!-- <div *ngIf="searchModel.StatusSI==false"> -->               
+            <div class="row">
+                <div class="col-md-12 mt-2 text-center">
+                    <label style="font-weight: 550;font-size: x-large;"  >Suggested Items</label>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-1 " style=" margin-right: -13px;     margin-top: 1px;"><span class="dot"></span></div>
+                <div class="col-md-3"><label>Item Count</label></div>
+                <div class="col-md-3"> <input [disabled]="searchModel.StatusSI==false" type="number" style="width: 180.5%;" required="1" name="Title" class="form-control" [(ngModel)]="searchModel.ItemCountSI" /></div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-1" style=" margin-right: -13px;     margin-top: 1px;"><span class="dot"></span></div>
+                <div class="col-md-3"><label>Sort</label></div>
+                <div class="col-md-5"><p-dropdown [disabled]="searchModel.StatusSI==false" id="Category" name="Category" [options]="SuggestedSortItems"  optionLabel="name" [(ngModel)]="searchModel.SortSI" ></p-dropdown></div>
+            </div><br>
+
+            <div class="row">
+                <div class="col-md-1" style=" margin-right: -13px;     margin-top: 1px;"><span class="dot"></span></div>
+                <div class="col-md-11"><label>Include</label></div><br>   
+            </div>
+                <div class="row mt-2"> 
+                    <div class="col-md-1"></div>          
+                    <div class="col-1"><p-checkbox [disabled]="searchModel.StatusSI==false" [binary]="true" [(ngModel)]="searchModel.UnbilledSI"></p-checkbox></div>
+                    <div class="col-4"> <label>Unbilled(Last 6 Months)</label></div>  
+                </div>
+            <div class="row mt-2">
+                <div class="col-md-1"></div>
+                <div class="col-md-1"><p-checkbox [disabled]="searchModel.StatusSI==false" [binary]="true" [(ngModel)]="searchModel.checkboxSI"></p-checkbox></div>
+                <div class="col-md-2"><label>Score</label></div>
+                <div class="col-md-2"><input [disabled]="searchModel.StatusSI==false" type="text"  required="1" name="Title" class="form-control" [(ngModel)]="searchModel.ScoreFromSI" /></div>
+                <div style="text-align: center; margin-left: -21px;">to</div>
+                <div class="col-md-2"><input [disabled]="searchModel.StatusSI==false" type="text"  required="1" name="Title" class="form-control" [(ngModel)]="searchModel.ScoreToSI" /></div>
+                
+            </div>
+        <!-- </div>  -->
+        </div>
+
+        <div class="col-md-5 border" *ngIf="PromotionalItems" >             
+
+            <div class="row">
+                <div class="col-md-12 mt-2 text-center">
+                    <label style="font-weight: 550;font-size: x-large;">Promotional Items</label>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-1" style=" margin-right: -13px;     margin-top: 1px;"><span class="dot"></span></div>
+                <div class="col-md-3"><label >Item Count</label></div>
+                <div class="col-md-3"> <input [disabled]="searchModel.StatusPI==false" type="number" style="width: 180.5%;" required="1" name="Title" class="form-control" [(ngModel)]="searchModel.ItemCountPI" /></div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="col-md-1" style=" margin-right: -13px;     margin-top: 1px;" ><span class="dot"></span></div>
+                <div class="col-md-3"><label>Sort</label></div>
+                <div class="col-md-5"><p-dropdown [disabled]="searchModel.StatusPI==false" [(ngModel)]="searchModel.SortPI"id="Category" name="Category" [options]="PromotionalSortItems" optionLabel="name" ></p-dropdown></div>
+        </div>
+            <br>
+            <div class="row">
+                <div class="col-1" style=" margin-right: -13px;     margin-top: 1px;"><span class="dot"></span></div>
+                <div class="col-11"><label>Include</label></div><br>     
+            </div>
+            <div class="row mt-2"> 
+                <div class="col-md-1"></div>           
+                <div class="col-md-1"><p-checkbox [disabled]="searchModel.StatusPI==false" [binary]="true" [(ngModel)]="searchModel.NewLaunchPI"></p-checkbox></div>
+                <div class="col-md-6"><label>New Launches</label></div>  
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-1"></div>
+                <div class="col-md-1"><p-checkbox [disabled]="searchModel.StatusPI==false" [binary]="true" [(ngModel)]="searchModel.PromotionalItemsPI"></p-checkbox></div>
+                <div class="col-md-6"><label>Promotional Items</label></div>
+            </div>
+    
+        </div>   
+        <div class="col-md-1"></div>
+</div>
+     
+<button  class="btn btn-success" style=" margin-left: 659px; margin-top: 50px;"(click)="Confirmationsave()" >Save</button>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<p-confirmDialog #cd [style]="{width: '45vw'}"  appendTo="body"	 >
+    <ng-template pTemplate="header">
+        <h3>Header Content</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="No" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Yes" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog>
+

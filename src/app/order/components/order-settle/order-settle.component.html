@@ -1,0 +1,230 @@
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-12 header mt-4">
+            <h3> ORDER DELIVERED MASTER | SETTLE </h3>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="row p-2 m-2 d-flex justify-content-between align-items-center ">
+                    <!-- <div class="col-lg-4 p-2 col-md-6 col-sm-12 order-md-1 order-lg-1">
+                        <label class="form-label" for="">Select Reports</label>
+                        <p-multiSelect [options]="spList" optionLabel="label">
+                        </p-multiSelect>
+                    </div> -->
+                    <div class="col-lg-3 p-2 col-md-6 col-sm-12 order-md-1 order-lg-1">
+                        <label class="form-label" for="">Select Warehouse</label>
+                        <p-dropdown [options]="allWarehouses" optionLabel="WarehouseName"
+                            [(ngModel)]="selectedWarehouseID" (onChange)="getDeliveryBoy()"></p-dropdown>
+                    </div>
+                    <div class="col-lg-3 p-2 col-md-6 col-sm-12 order-md-2 order-lg-2">
+                        <label class="form-label" for="">Select delivery Boy</label>
+
+
+                        <!-- <div class="col-lg-6 col-md-12 col-sm-12">
+                                <p-radioButton name="groupname" [value]=true label="For all Deleveryboy"
+                                    [(ngModel)]="checkedAllDboys">
+                                </p-radioButton><br>
+                                <p-radioButton name="groupname" [value]=false label="Select Specific Deleveryboy"
+                                    [(ngModel)]="checkedAllDboys">
+                                </p-radioButton>
+                            </div> -->
+
+
+
+                        <!-- <p-dropdown [options]="allDeliveryBoys" [disabled]="!isDeliveryBoyExists"
+                                    [(ngModel)]="DboyDetails" optionLabel="DisplayName">
+                                </p-dropdown> -->
+
+                        <select [(ngModel)]="DboyDetails" class="form-control" style="width: 100% !important;"
+                            [disabled]="!isDeliveryBoyExists"> // value is an object
+                            <option value="all">All</option>
+                            <option *ngFor="let obj of allDeliveryBoys" [ngValue]="obj">{{obj.DisplayName}}</option>
+                        </select>
+
+
+                        <!-- <p-toggleButton [(ngModel)]="checkedAllDboys" >For all Delivery Boys</p-toggleButton> -->
+                        <span *ngIf="!isDeliveryBoyExists">
+                            <p><strong>note: </strong>No delivery boy available</p>
+                        </span>
+
+
+                    </div>
+                    <div class="col-lg-3 p-2 col-md-6 col-sm-12 order-md-3 order-lg-3 ">
+                        <label class="form-label" for="">Enter Order ID</label>
+                        <input type="text" [(ngModel)]="OrderID" class="form-control">
+                    </div>
+                    <div class="col-lg-3 p-2 col-md-6 col-sm-12 order-md-4 order-lg-4">
+                        <label class="form-label" for="">Enter Assignment ID</label>
+                        <input type="text" class="form-control" [(ngModel)]="AssignmentID">
+                    </div>
+                    <div class="col-lg-3  p-2 col-md-3 col-sm-6 order-md-5 order-lg-5">
+                        <label class="form-label" for="">Start Date</label><br>
+                        <p-calendar [(ngModel)]="startDate" [showIcon]="true"></p-calendar>
+                    </div>
+                    <div class="col-lg-3 p-2 col-md-3 col-sm-6 order-md-6 order-lg-6">
+                        <label class="form-label" for="">End Date</label><br>
+                        <p-calendar [(ngModel)]="endDate" [showIcon]="true"></p-calendar>
+                    </div>
+
+                    <div class="col-lg-3 mt-4 p-4 col-md-3 col-sm-12 order-md-7 order-lg-7">
+                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1" label="Search"
+                            (click)="Search()" style="width: 100%;"></button>
+                    </div>
+                    <div class="col-lg-3 mt-4 p-4 col-md-3 col-sm-12 order-md-8 order-lg-8">
+                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1" label="Export"
+                            (click)="export()" [disabled]="!isResultListAvailable" style="width: 100%;"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class=" col-12">
+            <div class="card shadow">
+                <div class=" row">
+                    <div class="col-3 p-4">
+                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                            label="Click to Selected Settle" (click)="settleSelected()" style="width: 100%;"></button>
+                    </div>
+                    <div class="col-3 p-4">
+                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1" label="Reload"
+                            (click)="reload()" style="width: 100%;"></button>
+                    </div>
+                    <div class="col-12 " *ngIf="isResultListAvailable">
+                        <div class=" p-2 text-center">
+                            <p-table [paginator]="true" [value]="allOrderDispatchResults" [rows]="10"
+                                currentPageReportTemplate="select entries per page below " [scrollable]="false"
+                                scrollHeight="70vh">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="width:100px">Sno.</th>
+                                        <th style="width:100px">Select</th>
+                                        <th style="width:100px">Name</th>
+                                        <th style="width:100px">Assignment No.</th>
+                                        <th style="width:100px">Order Id</th>
+                                        <th style="width:100px">Order Amount</th>
+                                        <th style="width:100px">Discount Amount</th>
+                                        <th style="width:100px">Cash Amount</th>
+                                        <th style="width:100px">Cheque Number</th>
+                                        <th style="width:100px">Cheque Amount</th>
+                                        <th style="width:100px">Gullak Amount</th>
+                                        <th style="width:100px">Online Amount</th>
+                                        <th style="width:100px">eMpos Amount</th>
+                                        <th style="width:100px">EpayLater Amount</th>
+                                        <th style="width:100px">Settle</th>
+                                        <th style="width:100px">Delivery Boy</th>
+                                        <th style="width:110px">Settled payment & Reason</th>
+                                        <th style="width:100px">Order Date</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-trade let-rowIndex="rowIndex">
+                                    <tr>
+                                        <td style="width:100px">{{rowIndex + 1}}</td>
+                                        <td style="width:100px">
+
+                                            <span
+                                                *ngIf="!(trade.DeliveryIssuanceStatus== 'Payment' ||trade.DeliveryIssuanceStatus== 'Pending'||trade.DeliveryIssuanceStatus== 'Submitted')">
+                                                <!-- <input value="{{trade.check}}" class="form-control" type="checkbox"
+                                                    [disabled]="((trade.RecivedAmount ==(trade.CashAmount+trade.CheckAmount+trade.EpayLater+trade.Online+trade.GullakAmount+trade.Empos)-trade.DiscountAmount)&& trade.Status =='Delivered')" /> -->
+                                                <p-checkbox name="groupname" id="cst{{trade.OrderId}}"
+                                                    [(ngModel)]="trade.check" class="checkBoxStyle"
+                                                    (onChange)="addSelected(trade, $event)" binary="true"
+                                                    [disabled]="!((trade.RecivedAmount ==(trade.CashAmount+trade.CheckAmount+trade.EpayLater+trade.Online+trade.GullakAmount+trade.Empos)-trade.DiscountAmount)&& trade.Status =='Delivered')">
+                                                </p-checkbox>
+                                            </span>
+
+                                            <span style="color:red;"
+                                                *ngIf="(trade.DeliveryIssuanceStatus== 'Submitted' || trade.DeliveryIssuanceStatus== 'Payment' || trade.DeliveryIssuanceStatus== 'Pending')">
+                                                Assignment Under {{trade.DeliveryIssuanceStatus}}
+                                            </span>
+
+
+                                        </td>
+                                        <td style="width:100px">{{trade.CustomerName}}</td>
+                                        <td style="width:100px">{{trade.DeliveryIssuanceIdOrderDeliveryMaster}}</td>
+                                        <td style="width:100px">{{trade.OrderId}}</td>
+                                        <td style="width:100px">
+                                            <!-- {{trade.GrossAmount}} -->
+                                            <span class="badge badge-primary m-2 p-1">
+                                                {{trade.GrossAmount}}</span><br />
+                                            <span class="badge badge-danger m-2 p-1" *ngIf="trade.Fine > 0">Fine:
+                                                {{trade.Fine}}</span><br />
+                                            <span class="badge badge-success m-2 p-1"
+                                                *ngIf="trade.ChangeFine > 0">NewFine:
+                                                {{trade.ChangeFine}}</span>
+                                        </td>
+                                        <td style="width:100px">
+                                            <!-- //discount amount -->
+                                            <!-- {{trade.DiscountAmount}} -->
+                                            <input type="number" value="{{trade.DiscountAmount}}"
+                                                [(ngModel)]="trade.DiscountAmount" min="0"
+                                                [disabled]="(trade.GrossAmount== trade.RecivedAmount)"
+                                                class="form-control" />
+
+                                        </td>
+                                        <td style="width:100px">
+                                            {{trade.CashAmount}}
+                                        </td>
+                                        <td style="width:100px">{{trade.TransRefNo}}</td>
+                                        <td style="width: 100px;">{{trade.CheckAmount}}</td>
+                                        <td style="width: 100px;">{{trade.GullakAmount}}</td>
+
+
+
+                                        <td style="width: 100px;">{{trade.Online}}<br>
+
+                                            Ref: <b>{{trade.BasicPaymentDetails[5].TransRefNo}}</b>
+                                        </td>
+
+                                        <td style="width: 100px;">
+                                            {{trade.Empos}} <br>
+                                            Ref: <b>{{trade.BasicPaymentDetails[4].TransRefNo}}</b>
+                                        </td>
+
+                                        <td style="width: 100px;">
+                                            {{trade.EpayLater}} <br>
+                                            Ref: <b>{{trade.BasicPaymentDetails[2].TransRefNo}}</b>
+
+                                        </td>
+                                        <!-- discountApplied -->
+                                        <td style="width: 100px;">
+                                            <!-- {{trade.CashAmount+
+                                            trade.CheckAmount+trade.EpayLater+trade.Online+trade.GullakAmount+trade.Empos-trade.DiscountAmount}} -->
+
+                                            <input type="text" style="width: 100%;" class="form-control" readonly
+                                                value="{{trade.CashAmount+trade.CheckAmount+trade.EpayLater+trade.Online+trade.GullakAmount+trade.Empos-trade.DiscountAmount}}"
+                                                [(ngModel)]="trade.RecivedAmount">
+                                        </td>
+                                        <td style="width: 100px;">{{trade.DboyName}}</td>
+                                        <td style="width: 110px;">
+
+                                            <div
+                                                *ngIf="!(trade.DeliveryIssuanceStatus == 'Payment Accepted' ||trade.DeliveryIssuanceStatus== 'Pending'||trade.DeliveryIssuanceStatus== 'Submitted')">
+
+                                                <span *ngIf="!isHQRoleExists">
+                                                    <button type="button" class="btn btn-primary"
+                                                        (click)="settle(trade)"
+                                                        [disabled]="!((trade.GrossAmount+trade.Fine) == ((trade.CashAmount+trade.CheckAmount+trade.EpayLater+trade.Online+trade.Empos+trade.GullakAmount)-(trade.DiscountAmount))&&trade.Status =='Delivered')">Settled</button>
+                                                </span>
+
+                                            </div>
+
+                                            <div style="color:red;"
+                                                *ngIf="(trade.DeliveryIssuanceStatus== 'Submitted' || trade.DeliveryIssuanceStatus== 'Payment Accepted' || trade.DeliveryIssuanceStatus== 'Pending')">
+                                                Assignment Under {{trade.DeliveryIssuanceStatus}}
+                                            </div>
+
+
+                                        </td>
+                                        <td style="width: 100px;">{{trade.CreatedDate | date:'medium'}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

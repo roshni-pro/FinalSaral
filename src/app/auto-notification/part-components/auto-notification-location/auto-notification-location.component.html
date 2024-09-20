@@ -1,0 +1,43 @@
+<form class="form" #locationForm="ngForm">
+    <div class="form-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group" *ngIf="cityList">
+                    <label for="projectinput1">City</label>
+                    <select class="form-control" [(ngModel)]="autoNotification.CityId" (ngModelChange)="onChangeCity()"
+                        name="cityInput" required>
+                        <option [value]=0> select</option>
+                        <option *ngFor="let city of cityList" [value]="city.Cityid">
+                            {{city.CityName}}
+                        </option>
+                    </select>
+
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="isShowWarehouse">
+                <div class="form-group" *ngIf="warehouseList">
+                    <label for="projectinput1">Wahrehouse</label>
+                    <select class="form-control" [(ngModel)]="autoNotification.WarehouseId" (ngModelChange)="onChangeWarehouse()"
+                        name="warehouseInput">
+                        <option [value]=0> select</option>
+                        <option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">
+                            {{warehouse.WarehouseName}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="isShowCluster">
+                <div class="form-group" *ngIf="clusterList">
+                    <label for="projectinput1">Cluster</label>
+                    <select class="form-control" [(ngModel)]="autoNotification.ClusterId" (ngModelChange)="onChangeCluster()"
+                        name="entityNameInput">
+                        <option [value]="null"> select</option>
+                        <option *ngFor="let cluster of clusterList" [value]="cluster.ClusterId">
+                            {{cluster.ClusterName}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

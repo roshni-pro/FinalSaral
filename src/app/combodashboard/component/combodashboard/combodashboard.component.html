@@ -1,0 +1,144 @@
+
+<!-- <div class="hg-40"> -->
+    <section id="Group" >
+        <div class="my-2 d-flex justify-content-between">
+            <div class="header">
+          <h4 class="m-2">
+              <b>!!COMBO DASHBOARD!!</b>
+          </h4>                   
+        </div>   
+       
+          <div >
+            <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: auto;"
+              (click)="addcombo()">
+              <i class="fa fa-plus-circle"></i> Add Combo     
+            </button>
+              <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24"
+                (click)="exportCSV() ">Export ComboDetails</button>
+          </div>
+        </div>      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="Warehouse"> SelectHub:</label>
+            <select id="Warehouse" name="WarehouseName" class="form-control" [(ngModel)]="group.WarehouseId">
+              <option *ngFor="let WareHouse of warehouses" [ngValue]="WareHouse.WarehouseId">
+                {{WareHouse.WarehouseName}}
+              </option>
+            </select>            
+          </div>
+        </div>
+        <div >
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end a1" style="margin-top: auto;"
+        (click)="Search(group.WarehouseId)">
+        <i class="fa fa-plus-circle"></i> Search
+      </button>
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+          <label for="ComboName"> Search By Name:</label>
+          <input class="form-control incDicInput"  id="ComboName" name="ComboName"  [(ngModel)]="ComboName" (ngModelChange)="SearchByName(ComboName)"/>
+        </div>
+        </div>
+      </div>
+
+        <div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover">
+          <div class="position-relative">
+            <div class="position-absolute country-details" *ngIf="isDetails">
+              <app-combodetails [details]="selectedRowDetails" [activeFields]="activeFields" (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)"
+              class="d-flex justify-content-end"></app-combodetails >
+            </div>          
+            <p-table  #dt [globalFilterFields]="cols"  [value]="list" [paginator]="true" [rows]="5" dataKey="GroupID"  [scrollable]="true" scrollHeight="70vh"  class="center">
+              <ng-template pTemplate="header" >
+                  <tr>
+                    <!-- <th>Id:</th> -->
+                    <th>
+                     ComboImage
+                    </th>                               
+                    <th>
+                     Combo Name
+                    </th>                   
+                    <th>
+                     Warehouse Name
+                  </th>                   
+                  <th>
+                  Discount price
+                  </th>
+                  <th>
+                    Total price
+                    </th>
+                    <th>
+                      Total Order
+                      </th>
+                      <th>
+                        Total Order Qty
+                        </th>
+                        <th>
+                      Total Sell Qty
+                          </th>
+                          <th>Date</th>
+                   <th>
+                  Action
+                  </th>
+                 <th>
+                  Publish
+                   </th>           
+                   <th>
+                    Edit
+                     </th>       
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData  let-columns="columns"   let-expanded="expanded"  >             
+                  <!-- <tr (click)="openDetails(rowData,$event)"> -->
+                    <tr>
+                      <!-- <td>{{rowData.Id}}</td> -->
+                    <td style="padding:50px;">
+                      <img src="{{rowData.ComboImage}}"style="width:100%;"/>
+                    </td>                    
+                    <td>
+                      <br>{{rowData.ComboName}}
+                    </td>
+                    
+                    <td>
+                      {{rowData.WarehouseName}}
+                    </td>
+                   
+                    <td>
+                      {{rowData.ComboPrice |number:'1.0-1'}}
+                    </td>
+                    <td>
+                      {{rowData.TotalComboPrice |number:'1.0-1'}}
+                    </td>
+                    <td>
+                      {{rowData.TotalOrder}}
+                    </td>
+                    <td>
+                      {{rowData.TotalQty}}
+                    </td>
+                    <td>
+                      {{rowData.SellQty}}
+                    </td>
+                    <td>
+                      {{rowData.CreatedDate| date}}
+                    </td>
+                      <td><p-inputSwitch name="IsActive" [(ngModel)]="rowData.IsActive" (ngModelChange)="GetActive(rowData.Id,rowData.IsActive)" ></p-inputSwitch>                        
+                    </td>
+                    <td> <p-inputSwitch name="IsPublish" [(ngModel)]="rowData.IsPublish" (ngModelChange)="GetPublish(rowData.Id,rowData.IsPublish)"
+                      [disabled]="rowData.IsPublish">{{rowData.IsPublish}}</p-inputSwitch>
+                      <!-- <button name="IsPublish"  (click)="GetPublish(rowData.Id,rowData.IsPublish)" class="btn btn-raised btn-danger">IsPublish</button>{{rowData.IsPublish}}</td>                                                       -->
+                    </td>
+                      <td>
+                    <!-- <a href="javascript:void(0);" (click)="Editcombo(rowData.ComboName,rowData.Id,rowData)" *ngIf="!rowData.IsPublish">Edit</a> -->
+                    <button (click)="Editcombo(rowData.ComboName,rowData.Id,rowData)" class="btn btn-raised btn-danger" *ngIf="!rowData.IsPublish">Edit</button>
+                  </td>                                                      
+                           
+                  </tr >
+                </ng-template>
+          </p-table>     
+            </div>           
+            </div>
+        </section>
+        
+        
+        

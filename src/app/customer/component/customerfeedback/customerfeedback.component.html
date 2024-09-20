@@ -1,0 +1,158 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="Region" >
+  <div class="my-2 d-flex justify-content-between">
+      <div class="header">
+          <h3 class="m-2"><b>Customer CSI Rating</b></h3>
+      </div>
+
+</div>
+<div class="row ">
+    <div class="col-sm-12">
+        <form class="form" #ledgerForm="ngForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="ware">Choose Warehous</label>
+                            <br>
+                            <select id="ware" name="ware" class="form-control" [(ngModel)]="searchModel.Warehouseid"
+                                (change)="search(searchModel)">
+                                <option value="" disabled>--Select--</option>
+                                <option *ngFor="let w of warehouseList" [ngValue]="w.WarehouseId">
+                                    {{ w.WarehouseName }} {{w.CityName}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="orderType">Search</label>
+                            <input type="text" id="orderType" name="orderType" class="form-control"
+                                [(ngModel)]="searchModel.Search">
+                                <label for="ware">(Skcode,Mobile,OrderId)<span style="color:red"> *</span></label>                               
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="projectinput3">From Date</label>
+                            <br>
+                            <p-calendar name="startDateInput" [(ngModel)]="searchModel.FromDate" [showIcon]="true"
+                                name="fromDate"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="projectinput4">To Date</label>
+                            <br>
+                            <p-calendar name="endDateInput" [(ngModel)]="searchModel.ToDate" [showIcon]="true"
+                                name="toDate"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-2" style="padding-top: 30px">
+                      <div class="form-group">
+                        <button type="button" class="btn btn-raised btn-raised btn-primary  " (click)="search(searchModel)">
+                          Search
+                        </button>
+                        <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px" (click)="clear()">
+                          Clear
+                        </button>
+                        <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px"
+                          (click)="AlldataExport()">
+                          Export
+                        </button>                                  
+                      </div>
+                    </div>            
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-12">                  
+        <div style="text-align: left" class="float-right">        
+          <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+          <input type="text" pInputText size="40" placeholder="Search" class="float-right" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+      </div>
+</div>
+</div>
+<br>
+<div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <div class="position-relative">
+        <div class="position-relative">
+            <p-table #dt [columns]="cols" [value]="Alldata" [paginator]="true" [rows]="9" [scrollable]="true"
+                scrollHeight="70vh" text-align: initial>
+
+                <ng-template pTemplate="header">
+                    <tr>
+                      <th style="text-align: center">
+                        Skcode
+                      </th>
+                      <th style="text-align: center">
+                        Name
+                      </th>
+                      <th style="text-align: center">
+                        Mobile
+                      </th>
+                      <th style="text-align: center">
+                        Warehouse Name
+                      </th>
+                      <th style="text-align: center">
+                        Rating
+                      </th>
+                      <th style="text-align: center">
+                        Comments
+                      </th>
+                      <th style="text-align: center">
+                        OrderId
+                      </th>
+                      <th style="text-align: center">
+                        Order Date                    
+                      </th>
+                      <th style="text-align: center">
+                        Question
+                      </th>
+                      <th style="text-align: center">
+                        RatingDate
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                      <td style="text-align: center">
+                        {{rowData.Skcode}}
+                      </td>
+                      <td style="text-align: center">
+                        {{rowData.Name}}
+                      </td>
+                      <td style="text-align: center">
+                        {{rowData.Mobile}}
+                      </td>
+                      <td style="text-align: center">
+                        {{rowData.WarehouseName}}{{rowData.CityName}}
+                      </td>
+                      <td style="text-align: center">
+                        {{rowData.Rating}}
+                      </td>
+                      <td style="text-align: center">
+                        {{rowData.Comments}}
+                      </td>
+                      <td style="text-align: center">
+                        {{rowData.OrderId}}
+                      </td>
+                      <td style="text-align: center">
+                        {{rowData.OrderDate |  date:'medium'}}
+                      </td>
+                      <td style="text-align: center">
+                        {{rowData.Question}}
+                      </td>
+                      <td style="text-align: center">
+                        {{rowData.RatingDate  |  date:'medium'}}
+                      </td>
+                    </tr>
+                  </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

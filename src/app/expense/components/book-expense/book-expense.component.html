@@ -1,0 +1,290 @@
+<div class="ui-fluid">
+    <div class="row m-0">
+        <div class="col-12">
+            <!-- Kick start -->
+            <div id="kick-start" class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Book Expenses</h4>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <div class="px-3">
+                            <form class="form" #bookExpenseForm="ngForm">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group" *ngIf="expenseList && expenseList.length >0 ">
+                                                <label for="basicInput">Select expense </label>
+                                                <select class="form-control" id="expenseTypeInput" required
+                                                    [(ngModel)]="bookExpense.ExpenseId" (ngModelChange)="getExpense()"
+                                                    name="expenseTypeInput" #expenseTypeInput="ngModel">
+                                                    <option [ngValue]="null">select</option>
+                                                    <option [ngValue]="exp.Id" *ngFor="let exp of expenseList;">
+                                                        {{exp.Name}}</option>
+                                                </select>
+                                                <code *ngIf="!expenseTypeInput.valid && formSubmitted">Required!</code>
+                                            </fieldset>
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group">
+                                                <label for="helpInputTop">Select party</label>
+                                                <p-autoComplete id="partyid" name="partyid" [(ngModel)]="selectedParty"
+                                                    [suggestions]="partyList" field="Name"
+                                                    (completeMethod)="partySearchLedger($event)"
+                                                    (onSelect)="onSelectParty($event)" required #partyid="ngModel">
+                                                </p-autoComplete>
+
+                                                <code
+                                                    *ngIf="(  !partyid.valid || !selectedParty || !selectedParty.ID )&& formSubmitted">Required!</code>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group"
+                                                *ngIf="departmentList && departmentList.length >0 ">
+                                                <label for="edate">Expense date </label><br>
+                                                <p-calendar name="edate" [(ngModel)]="bookExpense.ExpenseDate" required
+                                                    [showIcon]="true" #edate="ngModel"></p-calendar>
+                                                <code *ngIf="!edate.valid && formSubmitted">Required!</code>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group">
+                                                <label for="edate">Total Amount </label><br>
+                                                <input type="number" name="totalAmt" class="form-control"
+                                                    [(ngModel)]="bookExpense.TotalAmount"
+                                                    (ngModelChange)="onUpdateTotalAmount()" required #totalAmt="ngModel">
+                                                <code *ngIf="!totalAmt.valid && formSubmitted">Required!</code>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group">
+                                                <label for="edate">TDS </label><br>
+                                                <select class="form-control" id="tds" name="tds"
+                                                    [(ngModel)]="selectedTdsID" (ngModelChange)="onTDSChange()">
+                                                    <option [value]="null">select</option>
+                                                    <option [value]="tds.Id" *ngFor="let tds of tdsList;">
+                                                        {{tds.SectionCode}}</option>
+                                                </select>
+                                            </fieldset>
+                                        </div>
+
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group" *ngIf="selectedTds">
+                                                <label for="edate">TDS Amount </label><br>
+                                                <input class="form-control" name="tdsAmount"
+                                                    [disabled]="selectedTds.RateOfTDS"
+                                                    [(ngModel)]="bookExpense.TDSAmount"
+                                                    (ngModelChange)="onUpdateTotalAmount()">
+                                            </fieldset>
+                                        </div>
+
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group">
+                                                <label for="edate">GST Amount </label><br>
+                                                <input type="number" name="gstAmout" class="form-control"
+                                                    [(ngModel)]="bookExpense.GSTAmount"
+                                                    (ngModelChange)="onUpdateTotalAmount()">
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group"
+                                                *ngIf="departmentList && departmentList.length >0 ">
+                                                <label for="basicInput">Select department </label>
+                                                <select class="form-control" id="deptID" name="deptID"
+                                                    [(ngModel)]="bookExpense.DepartmentId"  
+                                                    required #deptID="ngModel">
+                                                    <option [value]="null">select</option>
+                                                    <option [value]="dept.ID" *ngFor="let dept of departmentList;">
+                                                        {{dept.Label}}</option>
+                                                </select>
+                                                <code *ngIf="!deptID.valid && formSubmitted">Required!</code>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group"
+                                                *ngIf="workingCompanyList && workingCompanyList.length >0 ">
+                                                <label for="basicInput">Select company </label>
+                                                <select class="form-control" id="compID" name="compID"
+                                                    [(ngModel)]="bookExpense.WorkingCompanyId"
+                                                    required #compID="ngModel">
+                                                    <option [value]="null">select</option>
+                                                    <option [value]="comp.ID" *ngFor="let comp of workingCompanyList;">
+                                                        {{comp.Label}}</option>
+                                                </select>
+                                                <code *ngIf="!compID.valid && formSubmitted">Required!</code>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                                            <fieldset class="form-group"
+                                                *ngIf="workingLocationList && workingLocationList.length >0 ">
+                                                <label for="basicInput">Select location </label>
+                                                <select class="form-control" id="locID" name="locID"
+                                                    [(ngModel)]="bookExpense.WorkingLocationId"
+                                                    required #locID="ngModel">
+                                                    <option [value]="null">select</option>
+                                                    <option [value]="loc.ID" *ngFor="let loc of workingLocationList;">
+                                                        {{loc.Label}}</option>
+                                                </select>
+                                                <code *ngIf="!locID.valid && formSubmitted">Required!</code>
+                                            </fieldset>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row" *ngIf="expense && bookExpense">
+                                        <table class="table">
+                                            <tr>
+                                                <th>
+                                                    Party
+                                                </th>
+                                                <th>
+
+                                                </th>
+                                                <th>
+
+                                                </th>
+                                                <th>
+                                                    Total Amount
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="1">
+                                                    {{masterExpenseDetail.CreditLedgerTypeName}}
+
+                                                </td>
+                                                <td colspan="2">
+                                                    {{masterExpenseDetail.CreditLedgerName}}
+                                                </td>
+                                                <td>
+
+                                                    <div class="input-group">
+                                                        <input type="number" name="masterCreditID" class="form-control"
+                                                            [(ngModel)]="this.masterExpenseDetail.CreditLedgerAmount"
+                                                            [disabled]="true">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">Cr.</span>
+                                                        </div>
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="selectedTds">
+                                                <td colspan="1">
+                                                    TDS
+
+                                                </td>
+                                                <td colspan="2">
+                                                    {{selectedTds.Name}}
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input type="number" name="tdnAmountLedger" class="form-control"
+                                                            [(ngModel)]="bookExpense.TDSAmount" [disabled]="true">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">Cr.</span>
+                                                        </div>
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="bookExpense && bookExpense.GSTAmount">
+                                                <td colspan="1">
+                                                    GST
+
+                                                </td>
+                                                <td colspan="2">
+
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+
+                                                        <input type="number" name="gstAmountLedger" class="form-control"
+                                                            [(ngModel)]="bookExpense.GSTAmount" [disabled]="true">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">Cr.</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            <tr class="ttl-tr"
+                                                *ngFor="let detail of bookExpense.BookExpenseDetailList; let j=index">
+                                                <td>
+                                                    {{detail.CreditLedgerTypeName}}
+                                                </td>
+                                                <td colspan="2">
+                                                    {{detail.CreditLedgerName}}
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+
+                                                        <input type="number" name="totl_amt_{{j}}" class="form-control"
+                                                            [(ngModel)]="detail.CreditLedgerAmount"
+                                                            (ngModelChange)="onOtherCreditLedgerChange(detail)">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">Cr.</span>
+                                                        </div>
+                                                    </div>
+
+
+                                                </td>
+                                            </tr>
+
+
+                                            <tr class="ttl-tr" *ngIf="expense && bookExpense.TotalAmount">
+                                                <td colspan="1">
+                                                    {{expense.Name}}
+
+                                                </td>
+                                                <td colspan="2">
+                                                    {{expense.DebitLedgerName}}
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+
+                                                        <input type="number" name="totalAmountLedger"
+                                                            class="form-control" [(ngModel)]="bookExpense.TotalAmount"
+                                                            [disabled]="true">
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text">Dr.</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </table>
+
+                                    </div>
+
+
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="text-right">
+                                                <button type="button" (click)="onSaveBookExpense(bookExpenseForm)"
+                                                    class="btn btn-raised btn-primary">Book</button>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

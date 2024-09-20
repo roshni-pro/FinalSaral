@@ -1,0 +1,299 @@
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">Last Mile Dashboard</h4>
+    </div>
+    <div class="col-xl-12 col-lg-12">
+        <div class="card">
+            <div class="card-content">
+                <div class="card-body">
+                    <form class="form" #filterForm="ngForm">
+                        <div class="ui-fluid">
+                            <div class="ui-g">
+                                <!-- <div class="ui-g-3">
+                                    <div class="form-group">
+                                        <label for="projectinput1">City</label>
+                                        <p-dropdown [options]="cityList" name="cityList" optionLabel="label" 
+                                            (onChange)="onCityChange()"  [(ngModel)]="input.selectedCityId" [filter]="true" placeholder="select city">
+                                        </p-dropdown>
+                                    </div>
+                                </div> -->
+                                <div class="ui-g-2">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Warehouse</label>
+                                        <p-multiSelect id="selectedWarehouse" name="selectedWarehouse" [options]="warehouseList"  [filter]="true" (onChange)="onChangeWarehouse()"
+                                        [(ngModel)]="selectedWarehouse" optionLabel="WarehouseName" placeholder="Select WareHouse"
+                                        #warehouseInputModel="ngModel" required>
+                                       </p-multiSelect >
+                                        <code *ngIf="!warehouseInputModel.valid">
+                                                Required!!
+                                        </code>
+                                    </div>
+                                </div>
+                                    <div class="ui-g-2">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Transporter</label>
+                                        <p-multiSelect id="Transporter" name="Transporter" [options]="transporterList"  [filter]="true"
+                                        [(ngModel)]="selectedTransporter" optionLabel="Name" placeholder="Select Transporter">
+                                       </p-multiSelect >
+                                    </div>
+                                    </div>
+
+                                <div class="ui-g-2">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Date</label>
+                                        <select name="dateInput" class="form-control" required
+                                            [(ngModel)]="input.selectedDateOption"
+                                            (ngModelChange)="onChangeDateOption()">
+                                            <option *ngFor="let opt of dateOptionList" [value]="opt.value">
+                                                {{opt.label}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                        
+                                <div class="ui-g-3" *ngIf="input.rangeDates && input.rangeDates.length>0">
+                                    <div class="form-group">
+                                        <label for="projectinput1">Range</label>
+                                        <p-calendar name="dateCalenderInput" [(ngModel)]="input.rangeDates"
+                                            selectionMode="range" [readonlyInput]="true" (onClose)="setDate()">
+                                        </p-calendar>
+                                    </div>
+                                </div>
+
+                                <div class="ui-g">
+                                    <div class="ui-g-12">
+                                        <button type="button" class="btn-r btn btn-primary sp" (click)="onExportOrder(filterForm)"
+                                        label="ExportOrder">
+                                        <i class="fa fa-search"></i> Export Order
+                                         </button>
+
+                                        <button type="button" class="btn-r btn btn-primary sp" (click)="onExportSummary(filterForm)"
+                                            label="ExportSummary">
+                                            <i class="fa fa-search"></i> Export Summary
+                                        </button>
+                                        <button type="button" class="btn-r btn btn-primary sp" (click)="onExport(filterForm)"
+                                            label="Export">
+                                            <i class="fa fa-search"></i> Export
+                                        </button>
+                                        <button type="button" class="btn-r btn btn-primary" (click)="onSearch(filterForm)"
+                                        label="Search">
+                                        <i class="fa fa-search"></i> Search
+                                    </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- sd -->
+                            <div *ngIf="input.showData">
+                                <div class="row mr-b-10">
+                                    <div class="col-6" *ngIf="summary">
+                                        <div class="row dt-rwww">
+                                            <div class="col-4">
+                                                <div class="tt">
+                                                    <div class="tp">Planned KM</div>
+                                                    <p>{{summary.PlannedKm}}</p>                                                   
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="pr">
+                                                    <div class="tp">Total Trips</div>
+                                                    <p>{{summary.TotalTrips | number: '1.0-0'}}</p>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="tt">
+                                                    <div class="tp">Distance/Trip</div>
+                                                    <p>{{summary.DistancePerTrip | number: '1.2-2'}}</p>                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="pr">
+                                                    <div class="tp">Actual Km</div>
+                                                    <p>{{summary.ActualKm | number: '1.2-2'}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="tt">
+                                                    <div class="tp">Utlized Vehicles</div>
+                                                    <p>{{summary.AvgServiceTimeInMin | number: '1.0-0'}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="pr">
+                                                    <div class="tp"> <span class="bb">A</span> Order/Day</div>
+                                                    <p>{{summary.OrderPerDay | number: '1.2-2'}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="pr">
+                                                    <div class="tp">Delivered Amount</div>
+                                                    <p>{{summary.DeliveredAmount | number: '1.2-2'}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row dt-rwww ml">
+                                            <div class="col-12">
+                                                <div class="row tt sp-rgt">
+                                                    <div class="col-6">
+                                                        <!-- <div class="tt"> -->
+                                                            <div class="tp">System Sugested Vehicle</div>
+                                                            <p>{{(vehicleCountDC && vehicleCountDC.VehicleCountRequired > 0) ?vehicleCountDC.VehicleCountRequired : 0}}</p>                                                   
+                                                        <!-- </div> -->
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <!-- <div class="tt"> -->
+                                                            <div class="tp">Present Vehicle</div>
+                                                            <p>{{(vehicleCountDC && vehicleCountDC.VehicleCountAvailable > 0) ? (vehicleCountDC.VehicleCountAvailable | number: '1.2-2') : 0}}</p>                                                    
+                                                        <!-- </div> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                      
+                                            <div class="col-12"  style="margin-top: -.5em;">
+                                                <div class="row pr sp-rgt">
+                                                    <div class="col-6">
+                                                        <!-- <div class="tt"> -->
+                                                            <div class="tp">Vehicle Utilization %</div>
+                                                            <p>Touch Point {{(utilizationDC && utilizationDC.UtilizedPercentageByTouchPoints > 0) ? (utilizationDC.UtilizedPercentageByTouchPoints | number: '1.2-2') : 0}} %</p>                                                   
+                                                        <!-- </div> -->
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <!-- <div class="tt"> -->
+                                                            <!-- <div class="tp mr"></div> -->
+                                                            <div class="tp">Vehicle Utilization %</div>
+                                                            <!-- <div > -->
+                                                                <p>Value {{(utilizationDC && utilizationDC.UtilizedPercentageByAmount > 0) ? (utilizationDC.UtilizedPercentageByAmount | number: '1.2-2') : 0}} %</p>                                                    
+                                                            <!-- </div> -->
+                                                        <!-- </div> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="tt">
+                                                    <div class="tp">Executed Amount</div>
+                                                    <p>{{summary.ExecutedAmount | number: '1.2-2'}}</p>
+                                                </div>
+                                            </div>
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mr-b-10">
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-6" *ngIf="pieOrderChart">
+                                                <div class="inr-dv" *ngIf="pieOrderChart">
+                                                    <h3>Total Orders</h3>
+                                                    <app-trip-summary-chart [inputData]="pieOrderChart" [pieOrderChart]="pieOrderChart">
+                                                    </app-trip-summary-chart>
+                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="inr-dv" *ngIf="utilizationDC">
+                                                    <h3>Vehicle Utilization</h3>
+                                                    <div class="row btm" *ngIf="utilizationDC">
+                                                        <div class="col-6">
+                                                            <div class="chart-header"><b>TouchPoint</b></div>
+                                                            <p-chart type="doughnut" [data]="touchPointUtilizationChart"></p-chart>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <div class="chart-header"><b>Value</b></div>
+                                                            <p-chart type="doughnut" [data]="valueUtilizationChart"></p-chart>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- <div class="col-6">
+                                                <div class="inr-dv" *ngIf="pieOrderChart">
+                                                    <h3>Delayed Trips</h3>
+                                                    <app-trip-summary-chart [inputData]="pieTripData" [pieOrderChart]="pieTripData">
+                                                    </app-trip-summary-chart>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+
+
+    
+                                <div class="row">
+                                    <div class="col-12" *ngIf="cost">
+                                        <div class="row dt-rwww tt-hv">
+                                            <div class="col-2">
+                                                <div [ngClass]="{'tt': true, 'bgl' : input.selectedChartOption=='Cost/Km'}"
+                                                    (click)="showData('Cost/Km')">
+                                                    <div class="tp">Cost/Km</div>
+                                                    <p>{{cost.CostPerKm | number: '1.2-2'}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div [ngClass]="{'pr': true, 'bgl' : input.selectedChartOption=='D Amount/V Cost'}"
+                                                    (click)="showData('D Amount/V Cost')">
+                                                    <div class="tp"><span class="bb">D</span> Amount/ <span class="bb">V</span> Cost %</div>
+                                                    <p>{{cost.CostPerKg | number: '1.2-2'}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div [ngClass]="{'tt': true, 'bgl' : input.selectedChartOption=='Vehicles Cost'}"
+                                                    (click)="showData('Vehicles Cost')">
+                                                    <div class="tp">Vehicle's Cost</div>
+                                                    <p>{{cost.CostPerVehicle | number: '1.2-2'}}</p>
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="col-2">
+                                                <div [ngClass]="{'pr': true, 'bgl' : input.selectedChartOption=='Cost/D Order'}"
+                                                    (click)="showData('Cost/D Order')">
+                                                    <div class="tp">Cost/<span class="bb">D </span>Order</div>
+                                                    <p>{{cost.CostPerOrder | number: '1.2-2'}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div [ngClass]="{'tt': true, 'bgl' : input.selectedChartOption=='Cost/Trip'}"
+                                                    (click)="showData('Cost/Trip')">
+                                                    <div class="tp">Cost/Trip</div>
+                                                    <p>{{cost.CostPerTrip | number: '1.2-2'}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div [ngClass]="{'pr': true, 'bgl' : input.selectedChartOption=='Dboy Cost'}" 
+                                                (click)="showData('Dboy Cost')">
+                                                    <div class="tp">DboyCost</div>
+                                                    <p>{{cost.DboyCost | number: '1.2-2'}}</p>
+                                                </div>
+                                                <span [ngClass]="{'pr': true, 'bgl' : input.selectedChartOption=='Dboy Cost'}">
+                                                    <i class="fa fa-caret-down" class="ctr"></i>
+                                                    <i class="fa-solid fa-triangle"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row" *ngIf="lineChartSelectedData && isLineChart">
+                                            <div class="col-12">
+                                                <p-chart type="line" [data]="lineChartSelectedData"></p-chart>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- sd -->
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+ 

@@ -1,0 +1,86 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<br />
+<div class="container">
+    <h1>Add Agent Commission Payment <button type="button" class="btn btn-raised btn-raised btn-primary"
+            style="float: right;" (click)="goToPaymentList()">
+            View Payment List
+        </button></h1>
+    <br />
+    <br />
+    <form #agentCommissionForm="ngForm">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label for="agentId">Select Agent Ledger </label>
+                    <br />
+                    <p-autoComplete [suggestions]="ledgerList" (completeMethod)="getLedgerList($event, 17)" field="Name"
+                        [size]="30" placeholder="enter at least 3 chars" [minLength]="3" #agentLeger
+                        (onBlur)="checkValid(agentCommissionForm, 'agent')" (onClear)="clearBankAgentVal('agent')"	 required
+                        (onSelect)="onSelectLedger($event, 'agent')" name="agentid" id="agentId">
+                    </p-autoComplete>
+                    <div *ngIf="invalidagent">
+                        Agent is Required
+                    </div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="agentId">Select Bank</label>
+                    <br />
+                    <p-autoComplete [suggestions]="ledgerList" (completeMethod)="getLedgerList($event, 7)" field="Name"
+                        [size]="30" placeholder="enter at least 3 chars" [minLength]="3" (onClear)="clearBankAgentVal('bank')"
+                        (onBlur)="checkValid(agentCommissionForm, 'bank')" #bankLeger required
+                        (onSelect)="onSelectLedger($event, 'bank')" id="BnkLedgerId" name="bankleger">
+                    </p-autoComplete>
+                    <div *ngIf="invalidbank">
+                        Bank is Required
+                    </div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="amount">Enter Amount </label>
+                    <input class="form-control" id="amount" name="amountToPay" type="number" [(ngModel)]="agentCommissionPayment.Amount"
+                        required #amt="ngModel">
+                    <div *ngIf="amt.errors?.required && amt.touched" class="error">
+                        Amount is required
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label for="paymentDate">Payment Date</label>
+                    <br />
+                    <p-calendar name="PaymentDate" appendTo="body" [(ngModel)]="agentCommissionPayment.PaymentDate" [maxDate]="dateTime"
+                        id="paymentDate" #paymentsDate="ngModel" [showIcon]="true"></p-calendar>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label for="refNum">Reference Number </label>
+                    <input class="form-control" id="refNum" name="refNumbr"
+                        [(ngModel)]="agentCommissionPayment.RefNumber" required #RefNum="ngModel" maxlength="500">
+                    <div *ngIf="RefNum.errors?.required && RefNum.touched" class="error">
+                        Reference Number is required
+                    </div>
+
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="Narratn">Narration</label>
+                    <input class="form-control" id="Narratn" name="Narrations" maxlength="30"
+                        [(ngModel)]="agentCommissionPayment.Narration" required #Nrration="ngModel">
+                    <div *ngIf="Nrration.errors?.required && Nrration.touched" class="error">
+                        Narration is required
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                    (click)="AddNewPayment()">
+                    Add Payment
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

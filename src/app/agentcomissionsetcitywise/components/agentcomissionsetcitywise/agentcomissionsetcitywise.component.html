@@ -1,0 +1,110 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+  <div class="header">
+    <h3 class="m-2"><b>Agentcomission set citywise</b>
+      <p-confirmDialog #cd appendTo="body" header="Confirmation">
+        <p-footer>
+          <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+          <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+        </p-footer>
+      </p-confirmDialog>
+    </h3>
+  </div>
+  <div>
+    <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-bottom: 0;"
+      (click)="addcomission()">
+      <i class="fa fa-plus-circle"></i> Add Agentcomissioncitywise
+    </button>
+  </div>
+</div>
+<section id="agentcomissionsetcitywise">
+  <div class="card" style="padding:15px;">
+    <form class="form" name="form" #agentcommissionForm="ngForm">
+      <div class="form-group">
+        <div class="row" *ngIf="searchModel">
+          <div class="col-md-3">
+            <label for="name">Select City<span style="color:red"> *</span></label>
+            <select id="city" class="form-control" name="city" [(ngModel)]="searchModel.Cityid" #city="ngModel">
+              <option value="">--Select--</option>
+              <option *ngFor="let city of cityList" [ngValue]="city.Cityid"> {{ city.CityName }} </option>
+              <div *ngIf="isInvalid && !CommissionType.valid && CommissionType.errors.minlength">
+                <code>City is required</code>
+              </div>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="projectinput3">From Date</label><br>
+              <p-calendar name="startDateInput" [(ngModel)]="searchModel.FromDate" [showIcon]="true" name="fromDate" ></p-calendar>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="projectinput4">To Date</label><br>
+              <p-calendar name="endDateInput" [(ngModel)]="searchModel.ToDate" [showIcon]="true" name="toDate"
+                ></p-calendar>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group text-center">
+              <label class="col-12">&nbsp;</label>
+              <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="search(searchModel)" style="margin-right:4px;">Search</button>
+              <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="export()"> Export </button>
+            </div>       
+          </div>
+          
+  
+          <!-- <div class="col-md-2 p1">
+          <div class="form-group">
+            <label></label>
+            <br>
+                <button type="button" class="btn btn-raised btn-raised btn-primary  "
+                  (click)="search(searchModel)">
+                  Search
+                </button>
+              </div> -->
+          <!-- <button class="btn btn-raised btn-raised btn-primary a1">Search</button> -->
+
+        </div>
+      </div>
+
+      <div class="card-content rght-inv">
+        <table class="table table-responsive-sm text-center">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Comission Type</th>
+              <th>Comission Amount</th>
+              <th>CityName</th>
+              <th>Date</th>
+              <th>Active</th>
+              <th>Delete</th>
+                
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of agentcomissionlist; let i = index;">
+              <td>{{i+1}}</td>
+              <td>{{data.CommissionType}}</td>
+              <td>{{data.CommissionAmount}}</td>
+              <td>{{data.CityName}}</td>
+              <td>{{data.CreatedDate | date:'medium'}}</td>
+              <!-- <td><button type="button" (click)="Active(data)" class="btn btn-raised btn-primary float-right align-self-end v1"  > <i
+                class="fa fa-check-square-o"></i></button></td> -->
+              <td style="text-align: center"><p-inputSwitch name="IsActive{{i+1}}" [(ngModel)]="data.IsActive" (ngModelChange)="Active(data)">                
+                </p-inputSwitch>
+              </td>
+              <td>
+                <button type="button" (click)="Remove(data)" class="btn btn-raised btn-primary float-right align-self-end v1"  > <i
+                class="pi pi-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+  </div>
+</section>

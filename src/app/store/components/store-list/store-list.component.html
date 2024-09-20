@@ -1,0 +1,81 @@
+<div class="card" style="width: 100%;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-9">
+                <h5 class="card-title">Store List</h5>
+
+            </div>
+            <div class="col-3">
+                <button class="btn btn-primary pull-right" (click)="addNewStore()">Add new store</button>
+            </div>
+
+            <div class="col-12">
+                <hr>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-3 br-r">
+                <div *ngFor="let store of storeList" class="brd hf" (click)="onSelectStore(store)">
+
+                    {{store.Name}}
+
+                    <div class="brr" *ngIf="selectedStore && (store.Id == selectedStore.Id)"><i
+                            class="pi pi-arrow-right"></i></div>
+                    <a class="cc" (click)="editStore(store)"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <div class="col-9">
+                <p-table #dt [columns]="columnList" [value]="selectedStoreBrandList" [paginator]="true" [rows]="10"
+                    [showCurrentPageReport]="true">
+                    <!-- currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" -->
+                    <ng-template pTemplate="caption">
+                        <div style="text-align: right">
+                            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                            <input type="text" pInputText size="50" placeholder="Global Filter"
+                                (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <!-- <th></th> -->
+                            <!-- <th>#</th> -->
+                            <th *ngFor="let col of columns">
+                                {{col.header}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-brand let-columns="columns">
+                        <tr>
+                            <!-- <td>{{i+1}}.</td> -->
+                            <td *ngFor="let col of columns">
+                                {{brand[col.field]}}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+
+
+                <!-- <table class="table table-bordered">
+                    <tr>
+                        <th>#</th>
+                        <th>Category</th>
+                        <th>Sub-Category</th>
+                        <th>Brand</th>
+                    </tr>
+                    <tr *ngFor="let brand of selectedStoreBrandList; let i=index;">
+                     
+                        <td>{{i+1}}.</td>
+                        <td>{{brand.CategoryName}}</td>
+                        <td>{{brand.SubCategoryName}}</td>
+                        <td>{{brand.SubsubcategoryName}}</td>
+                    </tr>
+                </table> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isEditing">
+    <app-manage-store [storeId]="storeId" (onCloseEvent)="onClosePopup()" (onSave)="onUpdateStore()"></app-manage-store>
+</div>

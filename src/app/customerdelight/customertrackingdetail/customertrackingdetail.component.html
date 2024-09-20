@@ -1,0 +1,398 @@
+<div class="header">
+    <div class="row">
+        <div class="col-md-11 float-left">
+            <h3 class="ml-3"><b>Basic Customer Details</b></h3>
+        </div>
+        <div class="col-md-1 float-right"> <button type="button" class="btn btn-primary ml-4"
+                (click)="Back()">Back</button></div>
+
+    </div>
+</div>
+
+<div class="container-fluid" *ngIf="customer!= null">
+    <div class="ui-fluid shadow ">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <table class="my-tbl">
+                            <tr>
+                                <td class="hdd-1">SKCode: </td>
+                                <td class="">{{customer.Skcode}}</td>
+                                <td class="hdd-1">Shop Name: </td>
+                                <td class="">{{customer.ShopName}}</td>
+                                <td class="hdd-1">Customer Name: </td>
+                                <td class="">{{customer.Name}}</td>
+                            </tr>
+                            <tr>
+                                <td class="hdd-1">Mobile: </td>
+                                <td class="">{{customer.Mobile}}</td>
+                                <td class="hdd-1">Status: </td>
+                                <td class="">{{customer.CustomerStatus}}</td>
+                                <td class="hdd-1">Warehouse: </td>
+                                <td class="">{{customer.WarehouseName}}</td>
+                            </tr>
+                            <tr>
+                                <td class="hdd-1">Cluster: </td>
+                                <td class="">{{customer.ClusterName}}</td>
+                                <td class="hdd-1">Shipping City: </td>
+                                <td class="">{{customer.ShippingCity}}</td>
+                                <td class="hdd-1">GST Number: </td>
+                                <td class="">{{customer.GSTno}}</td>
+                            </tr>
+                            <tr>
+                                <td class="hdd-1">CRMTag: </td>
+                                <td class="">{{customer.CRMTag}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-body">
+                <div class="ui-g">
+                    <!-- city -->
+                    <div class="ui-g-4">
+                        <span class="hdd">Shipping Address: </span>
+                    </div>
+                    <div class="ui-g-8">
+                        <span class="add">{{customer.ShippingAddress}}</span>
+                        <p>
+                            Location: {{customer.lat}} , {{customer.lg}}
+                        </p>
+                        <p class="lnk" *ngIf="customer.CustomerDocumentStatus != 1">
+
+                            <a (click)="changeAddress()">Change</a>
+                        </p>
+                        <p class="nte" *ngIf="customer.CustomerDocumentStatus == 1">
+                            <span>Shipping address is not editable because document is verified</span>
+                        </p>
+                    </div>
+                    <button class="btn btn-primary" style="float:right;" (click)="showModalDialog()">History</button>
+                    <div *ngIf="showChangeAddress">
+                        <app-shiiping-address-entry [customerId]="CustomerId" [customer]="customer"
+                            (onCancel)="showChangeAddress =false" (onUpdate)="getUpdatedShippingAddress($event)">
+                        </app-shiiping-address-entry>
+
+                    </div>
+
+
+                </div>
+
+                <div class="row">
+
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+
+        <div *ngIf="CustomerId">
+            <app-customer-document [customerId]="CustomerId" [customerDetail]="customer"
+                (onVerifyDocument)="onVerifyDocument($event)"></app-customer-document>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="hdr-sub">
+                            <p>- Updating lat, lng using shop image makes a cutomer address
+                                <i><b>VirtuallyVerified</b></i>
+                            </p>
+
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <span>Distance from Shipping address: </span>
+                        <span>{{(customer.Shoplat && customer.Shoplg) ? (customer.DistanceFromShipping +' KM')
+                            : 'Not Found'}}</span>
+                    </div>
+                    <div class="col-12">
+                        <span>Shop Location: </span>
+                        <span>{{(customer.Shoplat && customer.Shoplg) ? customer.Shoplat + ', ' + customer.Shoplg : 'Not
+                            Found'}}</span>
+                    </div>
+                    <div class="col-6">
+                        <span>Shop Image: </span>
+                    </div>
+                    <div class="col-6 pull-rt">
+                        <img alt="NoImageFound" (click)="openImage(customer.Shopimage)" src="{{customer.Shopimage}}"
+                            class="img-square" *ngIf="customer.Shopimage">
+                        <img alt="" src="assets/img/no-image.png" class="img-square" *ngIf="!customer.Shopimage ">
+                    </div>
+                    <div class="col-12">
+                        <p style="text-align: right;"
+                            *ngIf="customer.Shoplat && customer.Shoplg && customer.CustomerDocumentStatus && customer.CustomerVerify != 'Full Verified' && customer.IsDistanceCanUpdate && customer.ShippingAddressStatus != 2">
+                            <a class="pull-right lnk" (click)="onUpdateLatLong()">Update Location Lat, Lng</a>
+                        </p>
+                        <p style="text-align: right;" *ngIf="!(customer.Shoplat && customer.Shoplg)">
+                            <span class="wrn">Can't update Lat, Lng because shop image not captured yet or lat, lng not
+                                found</span>
+                        </p>
+
+                    </div>
+                </div>
+                <div class="mr" *ngIf="requestList && requestList.length>0">
+                    <p-dataView [value]="requestList">
+                        <p-header>
+                            <div class="hdr">List of Requests</div>
+                            <div class="hdr-sub">
+                                <p>- Verifing a request will makes a cutomer address <i><b>Physically Verified</b></i>
+                                </p>
+                                <p *ngIf="customer.CustomerDocumentStatus != 1" class="wrn">-Please verify document
+                                    first</p>
+                            </div>
+                        </p-header>
+                        <p-footer>
+                            <div class="row">
+                                <div class="col-6">
+
+                                </div>
+                                <div class="col-6">
+                                    <a class="pull-right lnk rd" *ngIf="isRejectPossible()"
+                                        (click)="rejectAllRequest()">Reject All</a>
+                                    <a class="pull-right lnk"
+                                        *ngIf="selectedRequest && customer.CustomerVerify != 'Full Verified'"
+                                        (click)="verifyDocument()">Verify</a>
+                                </div>
+                            </div>
+
+
+                        </p-footer>
+                        <ng-template let-req pTemplate="listItem">
+                            <div
+                                [ngClass]="{'crd': true, 'crd-sel': req.Id == selectedRequest, 'crd-blr': isRequestCantProcess(req)}">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <p-radioButton [disabled]="isRequestCantProcess(req)" name="requestList"
+                                                    [value]="req.Id" [label]="req.Id" [(ngModel)]="selectedRequest">
+                                                </p-radioButton>
+                                            </div>
+                                            <div class="col-md-7">
+                                                <span class="bld">Location: </span><span>{{req.Newlat}},
+                                                    {{req.Newlg}}</span>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <span class="bld">Status: </span>
+                                                <span [ngClass]="{'err': req.Status != 1}">{{req.CustomerStatus}}</span>
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="offset-2 col-10">
+                                                <span class="bld">Executive Name:
+                                                </span><span>{{req.ExecutiveName}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="offset-2 col-10">
+                                                <span class="bld">New address for reference: </span>
+                                                <span>{{req.NewShippingAddress}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="offset-2 col-5">
+                                                <span class="bld">Shop Status: </span>
+                                                <span>{{req.ShopStatus}}</span>
+                                            </div>
+                                            <!-- <div class="col-5">
+                                                <span class="bld">Is Document Uploaded: </span>
+                                                <span>{{req.Nodocument? 'Yes': 'No'}}</span>
+                                            </div> -->
+                                        </div>
+                                        <div class="row">
+                                            <div class="offset-2 col-5">
+                                                <span class="bld"> Distance: </span><span>{{req.Distance| number :
+                                                    '1.2-2'}}KM</span>
+                                                <p *ngIf=" (customer.IsGSTCustomer && req.Distance >.700 )
+                                                    || (!customer.IsGSTCustomer && req.Distance >2.0 )">
+                                                    <span class="bld err">Note:</span>
+                                                    <span class="err">Due to distance rule this request can't be
+                                                        process</span>
+                                                </p>
+                                            </div>
+                                            <div class="col-5">
+                                                <span class="bld"> From App: </span>
+                                                <span *ngIf="req.AppType==1">Retailer</span>
+                                                <span *ngIf="req.AppType==3">Sales App</span>
+                                                <span *ngIf="req.AppType==4">Sarthi</span>
+                                                <span
+                                                    *ngIf="req.AppType!=1 && req.AppType!=3 && req.AppType!=4">Unknown</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3 pull-rt">
+                                        <img (click)="openImage(req.CaptureImagePath)" class="img-square"
+                                            [src]="req.CaptureImagePath">
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+                        </ng-template>
+
+                    </p-dataView>
+                </div>
+                <div class="mr" *ngIf="!requestList ||  requestList.length<=0">
+                    <span>Tracking request not found</span>
+                </div>
+                <!-- <table >
+                    <tr *ngFor="let req of requestList">
+                        <td>{{req.Id}}</td>
+                        <td>{{req.Newlat}}, {{req.Newlg}}</td>
+                        <td>{{req.CustomerStatus}}</td>
+
+                    </tr>
+                </table> -->
+            </div>
+        </div>
+
+
+
+
+        <div class="card">
+            <div class="card-body">
+                <form class="form" name="form" #customerStatusForm="ngForm">
+                    <div class="row">
+                        <div class="col-md">
+                            <label>Shop Name</label>
+                            <input class="form-control" required="1" [(ngModel)]="customer.ShopName" id="shopNameInput"
+                                name="shopNameInput" #shopNameInput="ngModel"
+                                [disabled]="customerCopy.CustomerDocumentStatus">
+                            <div *ngIf="isInvalid && !shopNameInput.valid && shopNameInput.errors.required">
+                                <code>Shop Name is required</code>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <label>Customer Type</label>
+                            <select class="custom-select" [(ngModel)]="customer.CustomerType"
+                                [disabled]="isFullOrPartiallyVerified()" name="custtype" id="custtype" required="1"
+                                #custtype="ngModel">
+
+                                <option value="Retailer">Retailer</option>
+                                <option value="Super Stockist">Super Stockist</option>
+                                <option value="Distributor">Distributor</option>
+                                <option value="Agent">Agent</option>
+                                <option value="Wholesaler">Wholesaler</option>
+                                <option value="Trader">Trader</option>
+                            </select>
+                            <div *ngIf="isInvalid && !custtype.valid && custtype.errors.required">
+                                <code>Customer Type is required</code>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md">
+                            <label>Channel:</label> -->
+                            <!-- <select id="StoreType" name="StoreType" class="form-control"
+                                
+                                [(ngModel)]="customer.TypeOfBuissness" required="1" #StoreType="ngModel">
+                                <option value="" disabled>--Select--</option>
+                                <option value="Kirana Store">Kirana Store</option>
+                                <option value="Beauty Store">Beauty Store</option>
+                                <option value="Pharma Store">Pharma Store</option>
+                                <option value="General Store">General Store</option>
+                                <option value="Supermarket">Supermarket</option>
+                              </select> -->
+                              <!-- <select id="Channel" name="Channel" class="form-control" [(ngModel)]="customer.ChannelMasterId"
+                              required="1" #ChannelMasterId="ngModel" [disabled]="isFullOrPartiallyVerified()">
+                              <option [value]="null">--- Select Channel --- </option>
+                              <option *ngFor="let chan of ChannelTypeList" [ngValue]="chan.ChannelMasterId">
+                                {{chan.ChannelType}}
+                                </option>
+                            </select>
+                            <div *ngIf="isInvalid && !ChannelMasterId.valid && ChannelMasterId.errors.required">
+                                <code>Store Type is required</code>
+                            </div>
+                        </div> -->
+                        <div class="col-md">
+                            <label>Document Status</label>
+                            <select disabled="1" class="custom-select" [(ngModel)]="customer.CustomerDocumentStatus"
+                                [disabled]="isFullOrPartiallyVerified()" name="docStatus" id="docStatus">
+
+                                <option [ngValue]="1">Verified</option>
+                                <option [ngValue]="0">Not Verified</option>
+                            </select>
+                        </div>
+                        <div class="col-md">
+                            <label>Address Status</label>
+                            <!-- [(ngModel)]="customer.Active" -->
+                            <select class="custom-select" [(ngModel)]="customer.ShippingAddressStatus"
+                                [disabled]="isFullOrPartiallyVerified()" name="shippingAddressStatus"
+                                id="shippingAddressStatus" required="1" #shippingAddressStatus="ngModel">
+
+                                <option [ngValue]="0"
+                                    [disabled]="customerCopy.ShippingAddressStatus ==1 || customerCopy.ShippingAddressStatus ==2">
+                                    Not Verified</option>
+                                <option [ngValue]="1">Virtual Verified</option>
+                                <option [ngValue]="2" disabled="disabled">Physically Verified</option>
+                            </select>
+                            <div
+                                *ngIf="isInvalid && !shippingAddressStatus.valid && shippingAddressStatus.errors.required">
+                                <code>Address Status is required</code>
+                            </div>
+                        </div>
+
+                        <div class="col-md" *ngIf="customerStatusList">
+                            <label>Customer Status</label>
+                            <select class="custom-select" [(ngModel)]="customer.CustomerVerify"
+                                (ngModelChange)="onCustomerStatusChange()"
+                                [disabled]="customerCopy.CustomerVerify == 'Full Verified'" name="customerStatus"
+                                id="customerStatus" required="1" #customerStatus="ngModel">
+                                <option *ngFor="let cus of customerStatusList" [ngValue]="cus.value"> {{cus.value}}
+                                </option>
+
+                            </select>
+                            <div *ngIf="isInvalid && !customerStatus.valid && customerStatus.errors.required">
+                                <code>Customer Status is required</code>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <label>Active</label>
+                            <select class="custom-select" [(ngModel)]="customer.Active" name="activeCust"
+                                id="activeCust" required="1" #activeCust="ngModel">
+                                <!-- <option selected>Active</option> -->
+                                <option [ngValue]="true">Yes</option>
+                                <option [ngValue]="false">No</option>
+                            </select>
+                            <div *ngIf="isInvalid && !activeCust.valid && activeCust.errors.required">
+                                <code>Active is required</code>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div>
+                        <a class="pull-right lnk" (click)="onUpdateCustomer(customerStatusForm)">Update</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br><br><br>
+    </div>
+</div>
+
+
+
+<!-- <p-dialog header="Details" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="displayModal"
+    [style]="{width: '70vw', left: '440px', height: '70%'}" [draggable]="false">
+    <app-customer-address-audit [CustomerId]="CustomerId" [EntityName]='entity'></app-customer-address-audit>
+</p-dialog> -->
+
+<div id="history" *ngIf="displayModal">
+    <p-dialog [(visible)]="displayModal" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '70%'}">
+        <p-header>
+            History
+        </p-header>
+        <app-customer-address-audit [CustomerAddressId]="customer.AddressId" [EntityName]='entity'>
+        </app-customer-address-audit>
+    </p-dialog>
+</div>

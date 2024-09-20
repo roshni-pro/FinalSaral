@@ -1,0 +1,180 @@
+<section id="Supplier">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2">Supplier Master</h3>
+        </div>
+        <div>
+            <button pButton type="button" label="New Supplier" (click)="goToAddSupplier()"
+                class="ui-button-raised m-2 shadow"></button>
+            <button pButton type="button" label="Update Suppliers" class="ui-button-raised m-2 shadow"></button>
+            <button pButton type="button" label="Export Full Supplier List"
+                class="ui-button-raised ui-button-success m-2 shadow"></button>
+            <button pButton type="button" label="Export Supplier List"
+                class="ui-button-raised ui-button-success m-2 shadow"></button>
+        </div>
+
+    </div>
+    <div class="row text-left">
+        <div class="col-sm-12">
+            <div class="px-3">
+                <form class="form">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="projectinput3">Select City</label>
+                                    <br>
+                                    <select id="city" name="city" class="form-control col-md-6"
+                                        [(ngModel)]="searchdata.Cityid">
+                                        <option disabled>--Select City--</option>
+                                        <option *ngFor="let city of cities" [ngValue]="city.Cityid">{{city.CityName}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="projectinput3">Select Brand</label>
+                                    <br>
+                                    <select id="B" name="B" class="form-control col-md-6"
+                                        [(ngModel)]="searchdata.SubCategoryId">
+                                        <option disabled>--Select Brand--</option>
+                                        <option *ngFor="let B of Brands" [ngValue]="B.SubCategoryId">
+                                            {{B.SubcategoryName}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3" style="padding-top: 30px">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-raised btn-warning mr-1"
+                                        (click)="onsearch(searchdata)"> Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="supplier-table" class="ui-fluid shadow p-3 mb-2 bg-white rounded">
+        <div class="position-relative">
+            <div #dt>
+                <ng-template pTemplate="caption">
+                    <div class="container h-100">
+                        <div class="d-flex justify-content-right ">
+                            <div class="searchbar">
+                                <input class="search_input" type="text" pInputText size="50" placeholder=""
+                                    (input)="dt.filterGlobal($event.target.value, 'contains')">
+                                <a href="#" class="search_icon"><i class="fa fa-search"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="position-absolute supplier-details" *ngIf="isDetails">
+                <app-supplier-details [details]="selectedSupplierDetails" [activeFields]="activeFields"
+                    (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()"
+                    (activeStatus)="ToggleActivation($event)" (deleteSupplier)="onDelete($event)"
+                    class="d-flex justify-content-end"></app-supplier-details>
+            </div>
+
+
+            <div class="position-relative ">
+                <p-table [value]="supplierList" [paginator]="true" [rows]="20" [scrollable]="true" scrollHeight="70vh">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th *ngFor="let col of cols" style="text-align: center" [pSortableColumn]="col.field">
+                                {{col.header}}
+                                <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
+                                    ariaLabelDesc="Activate to sort in descending order"
+                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr class="classForHoverEffect">
+                            <td *ngFor="let col of cols" style="text-align: center" class="ui-resizable-column"
+                                (click)="openDetails(rowData,$event)">
+                                {{rowData[col.field]}}
+                                <div class="d-flex flex-column align-items-center" *ngIf="col.bool">
+                                    <!-- <div style="height:16px!important"></div> -->
+                                    <div class="d-flex">
+                                        <i class="btn text-warning m-1 fa fa-chain-broken" *ngIf="rowData.Active"
+                                            (click)="open(activationModal)" (mouseover)="nameOfActionButton($event)"
+                                            (mouseleave)="removeName($event)" name="Deactivate"></i>
+                                        <i class="btn text-warning m-1 fa fa-link" *ngIf="!rowData.Active"
+                                            (click)="open(activationModal)" (mouseover)="nameOfActionButton($event)"
+                                            (mouseleave)="removeName($event)" name="Activate"></i>
+                                        <!-- Activation Modal Start -->
+                                        <ng-template #activationModal let-modal>
+                                            <div class="modal-header">
+                                                <button type="button" class="close" aria-label="Close"
+                                                    (click)="modal.dismiss('Cross click')">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body d-flex flex-column align-items-center">
+                                                <h2>Are You Sure?</h2>
+                                                <p class="m-2" style="text-align: center"><strong>Note:</strong> This
+                                                    will <strong><span *ngIf="rowData.Active">Deactivate</span><span
+                                                            *ngIf="!rowData.Active">Activate</span></strong> the
+                                                    supplier in the database.</p>
+                                            </div>
+                                            <div class="modal-footer d-flex p-0 justify-content-center">
+                                                <button type="button"
+                                                    class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0"
+                                                    (click)="modal.close('No click')">Cancel</button>
+                                                <button type="button"
+                                                    class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+                                                    (click)="ToggleActivation(rowData)"><span
+                                                        *ngIf="rowData.Active">Deactivate</span><span
+                                                        *ngIf="!rowData.Active">Activate</span></button>
+                                            </div>
+                                        </ng-template>
+                                        <!-- Activation Modal End -->
+                                        <i class="btn text-danger m-1 fa fa-trash" (click)="open(removeModal)"
+                                            (mouseover)="nameOfActionButton($event)" (mouseleave)="removeName($event)"
+                                            name="Remove"></i>
+                                        <!-- Remove Modal Start -->
+                                        <ng-template #removeModal let-modal>
+                                            <div class="modal-header">
+                                                <button type="button" class="close" aria-label="Close"
+                                                    (click)="modal.dismiss('Cross click')">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body d-flex flex-column align-items-center">
+                                                <h2>Are You Sure?</h2>
+                                                <p class="m-2" style="text-align: center"><strong>Note:</strong> This
+                                                    will permanently delete the supplier from the records.</p>
+                                                <!-- <form class="col-12">
+                                                        <div class="form-group col-12">
+                                                            <label for="DeleteComment">Add Comments</label>
+                                                            <textarea class="form-control" id="DeleteComment" rows="3"  name="DeleteComment" [(ngModel)] = "rowData.DeleteComment" ></textarea>
+                                                        </div>
+                                                    </form> -->
+                                            </div>
+                                            <div class="modal-footer d-flex p-0 justify-content-center">
+                                                <button type="button"
+                                                    class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0"
+                                                    (click)="modal.close('No click')">Cancel</button>
+                                                <button type="button"
+                                                    class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+                                                    (click)="onDelete(rowData.SupplierId)">Delete</button>
+                                            </div>
+                                        </ng-template>
+                                        <!-- Remove Modal End -->
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- <tr class="edit"><td colspan="5"><app-addSupplier></app-addSupplier></td></tr>-->
+                    </ng-template>
+                    <!-- <ng-template  *ngIf="isDetails" > -->
+                    <!-- </ng-template> -->
+                </p-table>
+            </div>
+        </div>
+    </div>
+</section>

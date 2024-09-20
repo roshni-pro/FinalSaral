@@ -1,0 +1,173 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+    <section id="basic-form-layouts">
+  
+      <div class="row text-left">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header pb-2">
+            </div>
+            <div class="card-content">
+              <div class="px-3">
+                <form class="form form-inline" name="form"  #stateEditForm="ngForm">
+                  <div class="form-body">
+                    <h4 class="form-section"><i class="ft-user"></i> <b>State</b></h4>
+                    <div class="row col-md-12" *ngIf="vm">
+                      
+                      <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label for="StateName" class="col-md-6"><b>State Name:</b><span  style="color:red"> *</span></label>
+                          <!-- <div class="col-md-6"> -->
+                          <!-- <input type="text" id="StateName" class="form-control col-md-6" name="name" [(ngModel)]="state.StateName" (input)="inputValidator($event)"
+                            placeholder="State Name" required="1" maxlength="50" minlength="2" 
+                            #firstName="ngModel" /> -->
+
+                            <select id="StateName" name="StateName" class="form-control col-md-6" [(ngModel)]="vm.StateName" #statemanager="ngModel" 
+                            placeholder="Select State " required="1"  (ngModelChange)="dataChanged(vm.StateName)" >
+                            <option *ngFor="let state of states" [ngValue]="state.StateName">
+                              {{ state.StateName }}
+                            </option>
+                          </select>
+                            <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !StateName.valid && StateName.errors.required">
+                            <code>State Name is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !StateName.valid && StateName.errors.minlength">
+                              <code>minlength 2</code>
+                            </div>
+                        <!-- </div> -->
+                        </div>
+                      </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="aname" class="col-md-6"><b>Alias Name:</b></label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="AliasName" class="form-control col-md-6" name="AliasName" placeholder="Alias Name" (input)="inputValidator($event)" [(ngModel)]="vm.AliasName" readonly>
+                      <!-- </div> -->
+                      </div>
+                    </div> 
+
+
+                      <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label for="aname" class="col-md-6"><b>GSTNo:</b></label>
+                          <!-- <div class="col-md-6"> -->
+                          <input type="text" id="GSTNo" class="form-control col-md-6" name="GSTNo" placeholder="GSTNo Name" (input)="inputValidator($event)" [(ngModel)]="vm.GSTNo" readonly>
+                        <!-- </div> -->
+                        </div>
+                      </div> 
+  
+                      <!-- <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label for="zone" class="col-md-6"> <b>Zone Name:</b></label>
+                          <div class="col-md-4">
+                          <select id="zone" name="zone" class="form-control col-md-12" [(ngModel)]="state.ZoneId"
+                            placeholder="Select Zone Manager Name">
+                            <option *ngFor="let zone of zoneList" [ngValue]="zone.ZoneId">
+                              {{ zone.ZoneName }}
+                            </option>
+                          </select>
+                          </div>
+                        </div>
+                      </div>-->
+                     
+                      <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label for="people" class="col-md-6"><b>State Manager Name<span  style="color:red"> *</span></b></label>
+                          <!-- <div class="col-md-4"> -->
+                          <select id="people" name="people" class="form-control col-md-6" [(ngModel)]="vm.StateManagerId" #statemanager="ngModel" 
+                            placeholder="Select State Manager Name" required="1">
+                            <option *ngFor="let people of peopleList" [ngValue]="people.PeopleID">
+                              {{ people.DisplayName }}
+                            </option>
+                          </select>
+                          <!-- </div> -->
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !statemanager.valid && statemanager.errors.required">
+                            <code>State Manager Name is required</code>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row" *ngIf="city">
+                          <div class="col-md-6">
+                              <div class="form-group m-2">
+                                <label for="active" class="col-md-8">Retailer is Active</label>
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                  <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1"
+                                    type="checkbox" [(ngModel)]="state.active">
+                                  <label class="custom-control-label" for="customCheckboxInline1"></label>
+                                </div>
+                              </div>
+                            </div>
+                     
+                            <div class="col-md-6">
+                                <div class="form-group m-2">
+                                  <label for="Createactive" class="col-md-6"> Supplier is Active</label>
+                                  <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input class="custom-control-input" id="customCheckboxInline2" name="customCheckboxInline2"
+                                      type="checkbox" [(ngModel)]="state.IsSupplier">
+                                    <label class="custom-control-label" for="customCheckboxInline2"></label>
+                                  </div>
+                                </div>
+                              </div>
+                
+                
+                            </div>
+
+                    </div>
+                    <!-- (keypress)="keyPressfilter($event)"  -->
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label  class="col-md-6"><b>Interstate Ewaybill Amount</b></label>
+                          <!-- <div class="col-md-6"> -->
+                            <input type="number"  id="InterstateAmount" name="InterstateAmount" 
+                            placeholder="Enter Interstate Amount" class="form-control col-md-6" [(ngModel)]="vm.InterstateAmount">
+                        <!-- </div> -->
+                        </div>
+                      </div> 
+                      <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label  class="col-md-6"><b>Intrastate Ewaybill Amount</b></label>
+                          <!-- <div class="col-md-6"> -->
+                            <input type="number" [min]="0" id="IntrastateAmount"  
+                             placeholder="Enter Intrastate Amount" class="form-control col-md-6" name="IntrastateAmount" [(ngModel)]="vm.IntrastateAmount">
+                        <!-- </div> -->
+                        </div>
+                      </div> 
+                    </div>
+                    
+                  </div>
+                  
+                  <div class="form-actions right col-sm-12 p-3">
+                        <!-- <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                          <i class="ft-x"></i> Cancel
+                        </button> -->
+                        <!-- <button type="submit" class="btn btn-raised btn-primary" >
+                          <i class="fa fa-check-square-o"></i> Save
+                        </button> -->
+  
+                        <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                       Cancel
+                          </button>
+                        <button type="button" class="btn btn-raised btn-primary" (click)="update(stateEditForm)">
+                            Save
+                          </button>
+                      </div>
+  
+  
+  
+                  
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+  
+    </section>
+  
+  </div>

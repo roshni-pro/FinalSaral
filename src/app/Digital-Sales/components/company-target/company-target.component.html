@@ -1,0 +1,328 @@
+<div class="card border-dark mb-3 cartnew" >
+    <div class="card-body">
+<div class="col-md-3">
+    <p-multiSelect [options]="brandList"  [(ngModel)]="selectedBrand" optionLabel="SubsubcategoryName" (onChange)="onChangeBrand()"></p-multiSelect>
+    <!-- <div *ngIf="!selectedBrand.valid && (selectedBrand.dirty || selectedBrand.touched)">
+        <div *ngIf="selectedBrand.errors.required">
+            Brand is required.
+          </div>
+    </div> -->
+</div>
+<div class="clear">
+  
+</div>
+<div class="form-group col-md-12" >
+     <table width="100%" class="table">
+         <tr>
+             <th width="2%">SN#</th>
+             <th width="8%">
+                Lower Limit
+             </th>
+             <th width="8%">               
+                Upper Limit                  
+            </th>
+            <th width="5%">
+                Target Type          
+            </th>
+            <th width="10%">           
+                Target Value
+            </th>
+            <th width="10%">
+                Min Target Value               
+            </th>
+            <th width="5%">
+                No Of Line Item
+            </th>
+            <th width="2%">
+                Action
+            </th>
+         </tr>
+         <tr *ngFor="let SubCatTargetDetail Of subCatTargetBrand.SubCatTargetDetails;let indexOfelement=index;">
+             <td colspan="8">             
+             <table width="100%" class="table">
+                 <tr>
+                     <td width="2%"><b>{{indexOfelement+1}}</b></td>
+                    <td width="8%">                
+                        <input [(ngModel)]="SubCatTargetDetail.SlabLowerLimit" placeholder="Lower Limit" name="SlabLowerLimit" class="form-control" type="number" />  
+                        <!-- <div *ngIf="SlabLowerLimit.invalid && (SlabLowerLimit.dirty || SlabLowerLimit.touched)">
+                            <div *ngIf="SlabLowerLimit.errors.required">
+                                Lower Limit is required.
+                              </div>
+                        </div> -->
+                    </td>
+                 <td width="8%">
+                    <input [(ngModel)]="SubCatTargetDetail.SlabUpperLimit" placeholder="Lower Limit" class="form-control" type="number" />  
+                </td>
+                <td width="5%">
+                    <select style="width: 120px;"  class="form-control"  [(ngModel)]="SubCatTargetDetail.ValueBy" name="select" required >       
+                        <option value="percent">Percent</option>
+                        <option value="value">Value</option>        
+                      </select>    
+                </td>
+                <td width="10%">
+                    <input [(ngModel)]="SubCatTargetDetail.TargetbyValue"  class="form-control" type="number" />
+                </td>
+                <td width="10%">
+                    <input [(ngModel)]="SubCatTargetDetail.MinTargetValue"  class="form-control" type="number" />  
+                </td>
+                <td width="5%">
+                    <input [(ngModel)]="SubCatTargetDetail.NoOfLineItem"  class="form-control" type="number" /> 
+                </td>
+                <td width="2%">
+                    <button (click)="OnRemoveLevel(indexOfelement)">Remove</button>
+                </td>
+                 </tr>
+                 <tr>
+                     <td colspan="4">
+                          <table width="100%" class="table">
+                              <tr>
+                                  <th colspan="4" class="text-center">
+                                      Require Brand Detail
+                     </th>
+                 </tr>
+                  <tr>
+                                  <td  width="30%">
+                                    <select name="brand" class="form-control" [(ngModel)]="requiredBrand" [disabled]="disablefield" >
+                                        <option value="0">--Select Brand--</option>
+                                        <option *ngFor="let brand of selectedBrand" [ngValue]="brand">{{brand.SubsubcategoryName}}
+                                        </option>
+                                     </select>
+                                  </td>
+                                  <td  width="20%">
+                                    <select style="width: 120px;"  class="form-control"  [(ngModel)]="brandValueType" name="select" >       
+                                        <option value="percent">Percent</option>
+                                        <option value="value">Value</option>        
+                                    </select>
+                                </td>
+                                <td  width="20%">
+                                    <input [(ngModel)]="brandValue" placeholder="Value" class="form-control" type="number" /> 
+                                </td>
+                                <td  width="30%">
+                                    <button (click)="onAddRequireBrand(SubCatTargetDetail,requiredBrand,brandValueType,brandValue)">Add Require Brand</button>
+                                </td>
+                              </tr>
+                              <tr>
+                                  <th >Brand Name</th>
+                                  <th>Type</th>
+                                  <th>Value</th>
+                                  <th>Action</th>
+                              </tr>
+                              <tr *ngFor="let LevelBrand Of SubCatTargetDetail.SubCatTargetLevelBrands;let brandindex=index;">
+                                  <td>{{LevelBrand.BrandName}}</td>
+                                  <td>
+                                    {{LevelBrand.ValueType}}
+                                  </td>
+                                  <td>
+                                      {{LevelBrand.Value}}
+                                  </td>
+                                  <td>
+                                    <button (click)="OnRemoveBrand(SubCatTargetDetail.SubCatTargetLevelBrands,brandindex)">Remove</button>
+                                </td>                                 
+                              </tr>
+                          </table>
+                       
+                     </td>
+                     <td colspan="4">
+                        <table width="100%" class="table">
+                            <tr>
+                                <th colspan="4" class="text-center">
+                                    Require Item Detail
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width="30%">
+                                  <select name="brand" class="form-control" [(ngModel)]="requiredItem" [disabled]="disablefield" >
+                                      <option value="0">--Select Item--</option>
+                                      <option *ngFor="let item of ItemList" [ngValue]="item">{{item.ItemName}}
+                                      </option>
+                                   </select>
+                                </td>
+                                <td width="20%">
+                                  <select style="width: 120px;"  class="form-control"  [(ngModel)]="ItemValueType" name="select" >       
+                                      <option value="percent">Percent</option>
+                                      <option value="value">Value</option>        
+                                  </select>
+                              </td>
+                              <td width="20%">
+                                  <input [(ngModel)]="ItemValue" placeholder="Value" class="form-control" type="number" /> 
+                              </td>
+                              <td width="30%">
+                                  <button (click)="onAddRequireItem(SubCatTargetDetail,requiredItem,ItemValueType,ItemValue)">Add Require Item</button>
+                              </td>
+                            </tr>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr *ngFor="let LevelItem Of SubCatTargetDetail.SubCatTargetLevelItems;let itemindex=index;">
+                                <td>{{LevelItem.ItemName}}</td>
+                                <td>
+                                  {{LevelItem.ValueType}}
+                                </td>
+                                <td>
+                                  {{LevelItem.Value}}
+                                </td>
+                                <td>
+                                    <button (click)="OnRemoveItem(SubCatTargetDetail.SubCatTargetLevelItems,itemindex)">Remove</button>
+                                </td>                                
+                            </tr>
+                        </table>
+
+                     </td>
+                 </tr>
+                 <tr>
+                     <td colspan="8">
+                        <div class="row">
+
+                         <div class="col-md-2">
+                            <div class="form-group">
+                               <label for="projectinput1" >Select Gift Type<span  style="color:red"> *</span></label>
+                               <select style="width: 120px;"  class="form-control"  [(ngModel)]="SubCatTargetDetail.Type" (ngModelChange)="onChangeGiftType(SubCatTargetDetail,SubCatTargetDetail.Type)" name="select" >       
+                                <option value="WalletPoint">WalletPoint</option>
+                                <!-- <option value="FreeItem">FreeItem</option>     -->
+                                <option value="DreamItem">DreamItem</option>        
+                               </select>
+                            </div>  
+                         </div>
+                         <div class="col-md-2" *ngIf="SubCatTargetDetail.Type=='WalletPoint'">
+                             <div  class="form-group">
+                                <label for="projectinput1" >Wallet Point</label>
+                                <input [(ngModel)]="SubCatTargetDetail.WalletValue" placeholder="Value" class="form-control" type="number" /> 
+                             </div>
+                         </div>
+
+                         </div>
+                         <div *ngIf="SubCatTargetDetail.Type!='WalletPoint'">
+                         <div class="row" >
+                           <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="projectinput1" >Gift Item<span  style="color:red"> *</span></label>
+                                <select style="width: 120px;"  class="form-control"  [(ngModel)]="FreeItem" name="select" >       
+                                    <option value="0">--Select Item--</option>
+                                    <option *ngFor="let freeitem of FreeItemList" [ngValue]="freeitem">{{freeitem.ItemName}}
+                                    </option>       
+                                </select>
+                             </div> 
+                           </div>
+                           <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="projectinput1" >Gift Qty<span  style="color:red"> *</span></label>
+                                <input [(ngModel)]="FreeQty" placeholder="Qty" class="form-control" type="number" />
+                             </div> 
+                           </div>
+                           <div class="col-md-2">
+                            <div class="form-group">
+                                <br/>
+                                <button (click)="onAddGiftItem(SubCatTargetDetail,FreeItem,FreeQty)">Add Gift Item</button>
+                                
+                             </div> 
+                           </div>
+                         </div>
+                         <div class="row">
+                             <div class="col-md-6">
+                                 <table width="100%" class="table">
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Quantity</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    <tr *ngFor="let item Of SubCatTargetDetail.SubCatTargetLevelFreeItems;let freeitemindex=index;">
+                                        <td>{{item.ItemName}}</td>
+                                        <td>
+                                          {{item.Qty}}
+                                        </td>  
+                                        <td><button (click)="OnRemoveFreeItem(SubCatTargetDetail.SubCatTargetLevelFreeItems,freeitemindex)">Remove</button></td>                                                                  
+                                    </tr>
+                                </table>
+                             </div>
+                         </div>
+                        </div>
+                     </td>
+                 </tr>
+             </table>
+            </td>
+         </tr>
+     </table>
+</div>
+<!-- <div class="row" *ngIf="subCatTargetBrand.SubCatTargetDetails.lenght>0">
+   <div class="form-group col-md-2">
+        Lower Limit
+   </div>
+   <div class="form-group col-md-2">
+    Upper Limit
+   </div>
+   <div class="form-group col-md-2">
+     Target Type
+   </div>
+   <div class="form-group col-md-2">
+    Target Value
+   </div>
+   <div class="form-group col-md-2">
+     Min Target Value
+   </div>
+   <div class="form-group col-md-2">
+    No Of Line Item
+   </div>
+</div>
+<div class="row" *ngFor="let SubCatTargetDetail Of subCatTargetBrand.SubCatTargetDetails">
+    <div class="form-group col-md-2">
+        <input [(ngModel)]="SubCatTargetDetail.SlabLowerLimit" placeholder="Lower Limit" class="form-control" type="number" />  
+   </div>
+   <div class="form-group col-md-2">
+    <input [(ngModel)]="SubCatTargetDetail.SlabUpperLimit" placeholder="Lower Limit" class="form-control" type="number" />  
+   </div>
+   <div class="form-group col-md-2">
+      <select style="width: 120px;"  class="form-control"  [(ngModel)]="SubCatTargetDetail.ValueBy" name="select" required >       
+        <option value="percent">Percent</option>
+        <option value="value">Value</option>        
+      </select>     
+   </div>
+   <div class="form-group col-md-2">
+    <input [(ngModel)]="SubCatTargetDetail.TargetbyValue" placeholder="Lower Limit" class="form-control" type="number" />  
+   </div>
+   <div class="form-group col-md-2">
+    <input [(ngModel)]="SubCatTargetDetail.MinTargetValue" placeholder="Lower Limit" class="form-control" type="number" />  
+   </div>
+   <div class="form-group col-md-2">
+    <input [(ngModel)]="SubCatTargetDetail.NoOfLineItem" placeholder="Lower Limit" class="form-control" type="number" />  
+   </div>
+   <div class="form-group col-md-7">
+       <div class="form-group col-md-2">
+          <select name="brand" class="form-control" [(ngModel)]="requiredBrand" [disabled]="disablefield" >
+            <option value="0">--Select Brand--</option>
+            <option *ngFor="let brand of selectedBrand" [ngValue]="brand.SubsubCategoryid">{{brand.SubsubcategoryName}}
+            </option>
+         </select>
+        </div> 
+        <div class="form-group col-md-2">
+            <select style="width: 120px;"  class="form-control"  [(ngModel)]="brandValueType" name="select" >       
+                <option value="percent">Percent</option>
+                <option value="value">Value</option>        
+            </select> 
+        </div>   
+        <div class="form-group col-md-2">
+            <input [(ngModel)]="brandValue" placeholder="Value" class="form-control" type="number" />             
+        </div> 
+        <div class="form-group col-md-1">
+            <button (click)="onAddRequireBrand(SubCatTargetDetail,requiredBrand,brandValueType,brandValue)">Add Require Brand</button>
+        </div>       
+   </div>
+   <div class="form-group col-md-7" *ngFor="let LevelBrand Of SubCatTargetDetail.SubCatTargetLevelBrands">
+    <div class="col-md-3">LevelBrand.BrandName</div>
+    <div class="col-md-2">LevelBrand.ValueType</div>
+    <div class="col-md-2">LevelBrand.Value</div>
+   </div>
+   <div class="form-group col-md-5">
+       
+    </div>
+ </div> -->
+ <div class="form-group col-md-3 text-left">
+    <button (click)="onAddLevel()">Add Level</button>
+ </div>
+</div>
+</div>
+
+<!-- <input [(ngModel)]="subCatTargetBrand.SlabLowerLimit" class="form-control" type="number" /> -->
+<!-- <button (click)="onButtonClick()">change</button> -->

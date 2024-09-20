@@ -1,0 +1,48 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Account MIS Template Upload</h3>
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row d-flex">
+                <div class="col-sm-3  mt-2 ">
+                    <label><b style="font-weight: 800; font-size: large;"> Select Date</b></label>
+                    <!-- <p-calendar [showIcon]="true"  [(ngModel)]="selectDate" [readonlyInput]="true" ></p-calendar> -->
+                    <p-calendar  [(ngModel)]="selectDate" view="month" dateFormat="mm/yy" [showIcon]="true" ></p-calendar>
+                </div>
+                <div class="col-md-3 mt-2">
+                    <button type="button" class="btn btn-success" (click)="emp();Export()" style="margin-top: 27px; ">
+                        Export
+                    </button> &nbsp;
+                    <button type="button" class="btn btn-primary" (click)="clear()" style="margin-top: 27px; ">
+                        Clear
+                    </button> &nbsp;
+                <button class=" btn mt-2" type="submit" (click)="DownLoadSampleFile()" style=" background-color: #119150;color: white;">Download Sample</button>
+                </div>
+                <div class="col-md-2" ></div>
+                <div class="col-md-4 text-center" >
+                    <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                    (uploadHandler)="onUpload($event,selectDate)" #uploadCustom>
+                    <code>*</code>
+                    </p-fileUpload>
+                </div>
+            </div>    
+        </div>
+    </div>
+    <div class="row" > 
+        <div class="col-sm-6 col-lg-4 mt-2">
+           
+        </div>
+    </div>
+</div>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

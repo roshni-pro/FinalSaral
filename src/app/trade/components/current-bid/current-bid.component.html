@@ -1,0 +1,108 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+
+<div class="row">
+  <div class="col-12">
+    <div class="header"><br>
+      <h3 class="card-title">Bid List</h3>
+    </div>
+    <!-- Kick start -->
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+
+            <div class="row">
+              <div class="col-xl-3">
+                <fieldset class="form-group">
+                  <label for="basicInput">Search By Keyword</label>
+                  <input class="form-control" [(ngModel)]="paginatorViewModel.Keyword" (ngModelChange)="search()"
+                    id="basicInput" type="text">
+                </fieldset>
+              </div>
+            </div>
+            <p-table [value]="bidList" [paginator]="true" [rows]="rows" [lazy]="true" (onLazyLoad)="loadBids($event)"
+              [totalRecords]="totalRecords" [loading]="isLoading" [scrollable]="true" >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Name</th>
+                  <th>ItemName</th>
+                  <th>Bid Type</th>
+                  <th>MRP</th>
+                  <th>Bid Price</th>
+                  <th>Quantity</th>
+                  <th>Amount</th>
+                  <th>Time</th>
+                  <th>Edit</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-bid>
+                <tr>
+                  <td>{{bid.Customer.Name}}</td>
+                  <td>{{bid.ItemName}}</td>
+                  <td>{{bid.BidType}}</td>
+                  <td>{{bid.MRP}}</td>
+                  <td>{{bid.Price}}</td>
+                  <td>{{bid.Qty}}</td>
+                  <td>{{bid.Price * bid.Qty}}</td>
+                  <td>{{bid.CreatedDate | date:'short'}}</td>
+                  <td> <button style="color: #fc5d44" class="btn" (click)="Edit(bid)">Edit</button>
+                    &nbsp;|&nbsp;
+                    <button style="color: #fc5d44" class="btn" (click)="Delete(bid)">Delete</button></td>
+                </tr>
+              </ng-template>
+            </p-table>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/ Kick start -->
+  </div>
+</div>
+
+<div *ngIf="isOpenPopup">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '30%',height: '30%', overflow: 'auto'}">
+    <p-header>
+      BID - [{{popUpData.ItemName}}] , BidType - [{{popUpData.BidType}}] , MRP - [{{popUpData.MRP}}],
+    </p-header>
+
+    <div class="ui-g ui-fluid" *ngIf="isOpenPopup">
+      <div class="ui-g-12">
+        <div class="ui-g-4">
+          <label for="vin">Price</label>
+        </div>
+        <div class="ui-g-8">
+          <input pInputText id="vin" [(ngModel)]="popUpData.Price" />
+        </div>
+      </div>
+      <div class="ui-g-12">
+        <div class="ui-g-4">
+          <label for="year">Qty</label>
+        </div>
+        <div class="ui-g-8">
+          <input pInputText id="year" [(ngModel)]="popUpData.Qty" />
+        </div>
+      </div>
+      <div class="ui-g-12">
+        <div class="ui-g-4">
+          <label for="brand">Amount</label>
+        </div>
+        <div class="ui-g-8">
+          {{popUpData.Price * popUpData.Qty}}
+        </div>
+      </div>
+    </div>
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix">
+        <button type="button" pButton icon="fa fa-check" (click)="save(popUpData)" label="Save"></button>
+      </div>
+    </p-footer>
+  </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration="2s"></p-progressSpinner>

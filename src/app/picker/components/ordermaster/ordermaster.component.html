@@ -1,0 +1,863 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+
+<div class="ui-fluid">
+    <section id="basic-form-layouts">
+        <html>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <script src="https://www.w3schools.com/lib/w3.js"></script>
+
+        <body>
+            <div class="w3-container w3-center w3-animate-left">
+                <h1><b>Order Picker Master</b></h1>
+            </div>
+            <div class="ui-fluid shadow mb-2 bg-white rounded">
+                <form class="ovelFieldForm form" name="form" #whclForm="ngForm" style="padding:0px 15px;">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="projectinput3"><b>&nbsp;&nbsp;&nbsp;&nbsp;Warehouse<span style="color:red">
+                                        *</span></b></label>
+                            <!-- <select id="wh" name="warehouse" [(ngModel)]="searchdata.WarehouseId" class="form-control"
+                                (change)="getClusterlist(searchdata.WarehouseId)" #warehouse="ngModel" required="1"> -->
+                                <!-- <option value="">Select Warehouse </option> -->
+                                <!-- <option *ngFor="let wh of warehouseList;" [value]="wh.WarehouseId">
+                                    {{wh.WarehouseName}}-{{wh.CityName}}</option>
+                            </select> -->
+                            <!-- <div *ngIf="isInvalid && !warehouse.valid && warehouse.errors.required">
+                                <code>Warehouse Name is required</code>
+                            </div> -->
+                            <p-dropdown [options]="warehouseList" name="warehouse" optionLabel="label" 
+                            (onChange)="getClusterlist(searchdata.WarehouseId.value)" [(ngModel)]="searchdata.WarehouseId" [filter]="true" placeholder="Select warehouse Name">
+                            </p-dropdown>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label for="projectinput3"><b>&nbsp;&nbsp;&nbsp;&nbsp;Cluster<span style="color:red">
+                                        *</span></b></label>
+                            <select id="des" name="cluster" [(ngModel)]="searchdata.ClusterId" class="form-control"
+                                #cluster="ngModel" >
+                                <option value="">Select Cluster </option>
+                                <option value="0">All</option>
+                                <option *ngFor="let cl of clusterList;" [value]="cl.ClusterId">{{cl.ClusterName}}
+                                </option>
+                            </select>
+                            <div class="ui-g"></div>
+                            <!-- <div *ngIf="isInvalid && !cluster.valid && cluster.errors.required">
+                                <code>Cluster Name is required</code>
+                            </div> -->
+                        </div>
+                        <div class="col-md-2">
+                            <label for="projectinput3"><b>&nbsp;&nbsp;&nbsp;&nbsp;Status</b></label>
+                            <select id="comp" name="comp" [(ngModel)]="searchdata.IsComplted" class="form-control" (ngModelChange)="notMapped = false;isMapped=false;">
+                                <option value="null">Select Satus</option>
+                                <option value="-1">All</option>
+                                <option value="0">New</option>
+                                <option value="2">Submitted</option>
+                                <option value="1">InProgress</option>
+                                <option value="4">Rejected</option>
+                                <option value="3">Approved</option>
+                                <option value="6">Assignment Created</option>
+                                <option value="5">RePicked</option>
+                            </select>
+                        </div>
+                      
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="orderType">Global Search</label>
+                                <input type="text" id="Search" [(ngModel)]="searchdata.term"
+                                 placeholder="Enter PickerNumber or Current Status"
+                                    name="search" class="form-control" (ngModelChange)="notMapped = false;isMapped=false;">
+                                    <!-- (keyup)="OrderIdfilter($event)" -->
+                            </div>
+                        </div>
+                        <div class="col-md-1 text-right">
+                            <button class="btn btn-raised btn-raised btn-primary" style="margin-top: 27px;"
+                                (click)="filter(searchdata,1,20,true)">Search </button>
+                        </div>
+                    </div>                  
+                </form>
+            </div>
+            <!-- <div class="ui-fluid shadow mb-2 bg-white rounded">
+                <div class="search-head rounded d-flex p-2 px-4 justify-content-between align-items-center"
+                    (click)="toggleSearch()">
+                    <h5 class="m-0">Filters</h5>
+                    <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+                </div>
+                <div id="search-content p-2" *ngIf="isSearch">
+                    <form class="form" #ConsumerForm="ngForm">
+                        <div class="form-body container">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="projectinput3"><b>&nbsp;&nbsp;&nbsp;&nbsp;Status</b></label>
+                                    <select id="comp" name="comp" [(ngModel)]="IsComplted" class="form-control" >
+                                        <option value="null">All</option>
+                                        <option value="New Request">New</option>
+                                        <option value="Submitted">Submitted</option>
+                                        <option value="InProgress">InProgress</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="Dispatched">Dispatched</option>
+                                        <option value="RePicked">RePicked</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3" style="margin-top: 28px;">
+                                    <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                            (click)="statusfilter(IsComplted)">
+                                            Search
+                                        </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="orderType">Global Search</label>
+                                        <input type="text" id="Search" [(ngModel)]="term"
+                                         placeholder="Enter PickerNumber or Current Status"
+                                            name="search" class="form-control">
+                                            (keyup)="OrderIdfilter($event)"
+                                    </div>
+                                </div>
+                                <div class="col-md-3" style="margin-top: 28px;">
+                                    <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                            (click)="OrderIdfilter(term)">
+                                            Search
+                                        </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div> -->
+            <div class="ui-fluid shadow mb-2 bg-white rounded">
+                <div class="form-group col-md-12">
+                    <div class="row">
+                        <div class="input-color" style="margin-right: 10px;">
+                            <input type="text" value="N: New" readonly="">
+                            <div class="color-box" style="background-color:#f1adf1;"></div>
+                        </div>
+                        <div class="input-color" style="margin-right: 10px;">
+                            <input type="text" value="I: InProgress" readonly="">
+                            <div class="color-box" style="background-color:#b1dfee;"></div>
+                        </div>
+                        <div class="input-color" style="margin-right: 10px;">
+                            <input type="text" value="S: Submitted" readonly="">
+                            <div class="color-box" style="background-color:#a7f5a7;"></div>
+                        </div> 
+                        <div class="input-color" style="margin-right: 10px;">
+                            <!-- <input type="text" value="D:Dispatched" readonly=""> -->
+                            <input type="text" value="A:Approved(Checker)" readonly="">
+                            <div class="color-box" style="background-color:#03af1d;"></div>
+                        </div> 
+                        
+                        <div class="input-color" style="margin-right: 10px;">
+                            <input type="text" value="C: Rejected" readonly="">
+                            <div class="color-box" style="background-color:#e28888;"></div>
+                        </div>
+                        <div class="input-color" style="margin-right: 10px;">
+                            <input type="text" value="RE:RePicked" readonly="">
+                            <div class="color-box" style="background-color:#f8cf78;"></div>
+                        </div>
+                        <div class="input-color" style="margin-right: 10px;">
+                            <!-- <input type="text" value="D:Dispatched" readonly=""> -->
+                            <input type="text" value="A:Assignment Created" readonly="">
+                            <div class="color-box" style="background-color:#a0c2a5;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-fluid shadow mb-2 bg-white rounded">
+                <div class="row text-left" >
+                    <div class="col-md-12">
+                        <div class="card noneHoverRow">
+                            <p-table #dt [value]="pickerList" [paginator]="true" [rows]="20" [scrollable]="true"
+                            [lazy]="true"  [totalRecords]="totalcount" (onLazyLoad)="load($event)" 
+                                scrollHeight="130vh" text-align: center [(first)]="first">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Picker Number</th>
+                                        <th>Picker Person Name</th>
+                                        <th>DBoy</th>
+                                        <th>Inventory Supervisor Name</th>
+                                        <th>No. Of Orders</th>
+                                        <th>Line-item Quantity</th>
+                                        <th>Status</th>
+                                        <th>Created Date</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-ir>
+                                    <!-- (ir.CurrentStatus == 'Dispatched')?{'background-color': '#a0c2a5'}:{'background-color':'white'} -->
+                                    <tr (click)="openitem(ir,$event,WarehouseId)" [ngStyle]="
+                                        (ir.CurrentStatus == 'Assignment Created')?{'background-color': '#a0c2a5'}:{'background-color':'white'}
+                                         && 
+                                        (ir.CurrentStatus == 'Rejected')?{'background-color': '#e28888'}:{'background-color':'white'} 
+                                        && 
+                                        (ir.CurrentStatus == 'New Request')?{'background-color': '#f1adf1'}:{'background-color':'white'} 
+                                        && 
+                                        (ir.CurrentStatus == 'InProgress')?{'background-color': '#b1dfee'}:{'background-color':'white'} 
+                                        && 
+                                        (ir.CurrentStatus == 'RePicked')?{'background-color': '#f8cf78'}:{'background-color':'white'} 
+                                        && 
+                                        (ir.CurrentStatus == 'Submitted')?{'background-color': '#a7f5a7'}:{'background-color':'white'} 
+                                        ">
+                                        <td>
+                                            <div *ngIf="ir.DeliveryIssuanceId == null && ir.MultiDeliveryIssuanceIds == null" >{{ir.Id}}</div>
+                                            <div *ngIf="(ir.DeliveryIssuanceId != null || ir.MultiDeliveryIssuanceIds != null)" >
+                                                <span  *ngIf="ir.DeliveryIssuanceId != null"> {{ir.Id}} (AssignmentNo: {{ir.DeliveryIssuanceId}})</span>
+                                                <span *ngIf="ir.MultiDeliveryIssuanceIds != null"> {{ir.Id}} (AssignmentNo: {{ir.MultiDeliveryIssuanceIds}})</span>
+
+                                            </div>
+                                        </td>
+                                  
+
+                                        <td>{{ir.PickerPersonName}}</td>
+                                        <td>{{ir.DBoyName}}</td>
+                                        <td>{{ir.InventorySupervisorName}}</td>
+                                        <td>{{ir.orderpickercount}}</td>
+                                        <td>{{ir.orderpickercountitem}}</td>
+                                        <td>{{ir.CurrentStatus}}</td>
+                                        <td>{{ir.CreatedDate |  date:'medium'}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p-blockUI [blocked]="blocked"></p-blockUI>
+            <p-progressSpinner *ngIf="blocked"
+                [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+                fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+        </body>
+
+        </html>
+    </section>
+</div>
+
+<p-dialog [(visible)]="isOpenPopupPayments" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+    [style]="{width: '83%',height: '90%', overflow: 'auto', top: '30px'}">
+    <p-header>
+        <div>
+            <h2
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                Generated Picker List</h2>
+        </div>
+    </p-header>
+
+    <div class="position-relative" style="padding:0px 15px;">
+        <div *ngIf="IsSelectOrder.IsCanceled == true" class="text-center cs">
+            <h5><b>Cancelled By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+        </div>
+        <div *ngIf="IsSelectOrder.Status == 5" class="text-center cs">
+            <h5><b>Repicked By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+        </div>
+        <div *ngIf="IsSelectOrder.Status == 3" class="text-center cs">            
+            <h5><b>Assignment Created By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+            <!-- <h5><b>Dispatched By : {{selectedRowDetails.ModifiedBy}}</b></h5> -->
+        </div>
+        <p-toast [style]="{marginTop: '80px'}"></p-toast>
+        <form class="ovelFieldForm form" name="form" #deliveryboy="ngForm">
+            <div class="row">
+                <div class="col-md-12 text-right" style="font-weight: bold;font-size: 165%;">
+                    <a class="view" (click)="print()" href="javascript:void(0)" style="margin-right: 70px;">
+                        <b><u>Print View</u></b>
+                        <!-- <i aria-hidden="true"><u>Print</u></i> -->
+                      </a>
+                    <!-- <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;" (click)="print()"
+                        printSectionId="print-section" *ngIf="Data == true" ngxPrint>Print</button> -->
+                </div>
+            </div>
+        </form>
+        <form class="ovelFieldForm form form-inline" name="form" #orderForm="ngForm"
+            style="position: relative;z-index: 9;">
+            <div  style="padding:10px 15px; position: relative;z-index: 9;">
+                <!-- <div class="waterMark"
+                    style="width: 50%;position: absolute;top: 50%;left: 45%;transform: skew(23deg, -36deg);height: 390px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;"> -->
+                    <div class="waterMark"
+                    style="width: 50%;position: absolute;top: 25%;left: 45%;transform: skew(23deg, -36deg);height: 313px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+                    <!-- style="width: 50%;position: absolute;top: 41%;left: 45%;transform: skew(23deg, -36deg);height: 390px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;"> -->
+                    <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+                </div>
+                <div style="position: absolute; right: 15px; margin-top: 40px;">
+                    <img src="assets/img/logo/Logo.png" width="200px">
+                </div>
+                <div class="row" style="border-bottom: 1px solid #eee;">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div style="display: inline-block;width: 20%;vertical-align: top; font-weight: 600;">
+                                <b>Picker Number</b><br>
+                                <b>Picker Name</b><br>
+                                <b>Warehouse </b><br>
+                                <b>CreatedDate</b><br>
+                                <b>CreatedBy</b><br>
+                                <b>Assignment Id</b><br>
+                                <b>Assignment Amount</b><br>
+                                <b>Agent Name</b><br> 
+                                <b>Cluster Name</b><br>
+                                <b>DBoy Name</b><br>
+                            </div>
+                            <div style="display: inline-block;width:10%;vertical-align: top; font-weight: 600;">
+                                <b> :</b><br>
+                                <b>:</b><br>
+                                <b>: </b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                                <b>:</b><br> 
+                                <b>:</b><br> 
+                                <b>:</b><br>
+                                <b>:</b><br>
+                            </div>
+                            <div style="display: inline-block;width: 25%;vertical-align: top;">
+                                {{Id}} <br />
+                                <!-- {{selectedRowDetails.PickerPersonName}}<br/> -->
+                                {{DisplayName}} <br />
+                                {{whname}} <br />
+                                {{CreatedDate | date:'shortDate'}} <br />
+                                {{CreatedName}} <br />
+                                {{DeliveryIssuanceId}} <br/>
+                                {{TotalAssignmentAmount}}/- <br/>
+                                {{AgentName}} <br/>
+                                
+                                <span *ngIf="ClusterName">{{ClusterName}}</span>
+                                
+                                <br/>
+                                {{DboyName}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h2 style="text-align: center;">Generated Picker List </h2>
+                <div class="borderTable" *ngIf="Data">
+                    <!-- <h2 style="text-align: center;">Generated Picker List </h2> -->
+                    <!-- <p-table #dt [value]="datalist" width="100%" border="0" cellspacing="0" cellpadding="0" > -->
+                        <p-table #dt [value]="datalist" [scrollable]="true" scrollHeight="37vh" text-align: center  width="100%" border="0"  cellspacing="0" cellpadding="0" >
+                        <ng-template pTemplate="header" style="width:100%;">
+                            <tr>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Order Id</th>
+                                <th
+                                    style="padding:5px 16px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important">
+                                      Item  Name  </th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                    ItemMultiMRPId</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                    MRP</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Qty</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Boxes and Piece</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Status</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Comment</th>
+                                <th
+                                  style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important " >
+                                  History
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir>
+                            <tr [ngStyle]="(ir.IsFreeItem == 'Free')?{'background-color': 'lightgreen'}:{'background-color':'white'} && (ir.IsFreeItem == true)?{'background-color': 'lightgreen'}:{'background-color':'white'}">
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Orderids}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    <span *ngIf="ir.IsFreeItem == 'Free'" style="color:red"> * </span>{{ir.ItemName}}
+                                    <span *ngIf="ir.IsFreeItem == 'Free'" style="color:red"> (Free)</span>
+                                    <!-- {{ir.ItemName}} -->
+                                </td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                    {{ir.ItemMultiMrpId}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                    {{ir.MRP}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Qty}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Boxes}} : Boxes 
+                                <span *ngIf="ir.piece > 0">& {{ir.piece}} : piece </span></td>
+                                
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Status}}
+                                </td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Comment}}
+                                </td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >
+                                <a class="view" (click)="openHistory(ir,$event)" href="javascript:void(0)">
+                                    <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                                  </a>
+                                </td>                                
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+                    <!-- <div class="col-md-4"
+                        *ngIf="selectedRowDetails.CurrentStatus == 'New Request' && selectedRowDetails.Status == 0 && selectedRowDetails.IsCanceled == 0">
+                        <div class="row">
+                            <div class="col-sm-2" *ngIf="cancelHide == false && CancelBtn == true">
+                                <div class="form-group">
+                                    <label class="col-sm-12"><b>&nbsp;</b></label>
+                                    <button class="btn btn-raised btn-raised btn-primary"
+                                        (click)="updatecancelorder()">PickerOrderCancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                   
+                </div>
+                <h2 style="text-align: center; margin-top: -66px;"><b><u>Picker Timer Summary</u></b> </h2>
+                <div >
+                    <h4 style="text-align: center;"><b><u>Picker Timer Summary By Maker</u></b></h4>
+                   
+                <p-table #dt [value]="makerTimerList" width="100%" border="0" cellspacing="0" cellpadding="0" [scrollable]="true" scrollHeight="37vh" >
+                    <ng-template pTemplate="header" style="width:100%;">
+                        <tr>
+                            <!-- <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                               Id</th> -->
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Start Date</th>
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                End Date</th>
+                                <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Start Time</th>
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                End Time</th>
+                                <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Difference Hrs
+                            </th>                                
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Created By</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ir>
+                        <tr>
+                            <!-- <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.Id}}</td> -->
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.StartTime | date : 'shortDate'}}</td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.EndTime | date : 'shortDate'}}</td>
+                                <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.StartTime | date : 'mediumTime'}}</td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.EndTime | date : 'mediumTime'}}</td>
+                                <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                <!-- {{[ir.differenceHrs.hours(), ir.differenceHrs.minutes(), ir.differenceHrs.seconds()].join(':')}} -->
+                                {{ir.differenceHrs.hours()}}hr:{{ir.differenceHrs.minutes()}}min:{{ir.differenceHrs.seconds()}}sec
+                            </td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.CreatedBy}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>  
+            </div>   
+            <div >
+                <h4 style="text-align: center;"><b><u>Picker Timer Summary By Checker</u></b></h4>
+                <p-table #dt [value]="checkerTimerList  " width="100%" border="0" cellspacing="0" cellpadding="0" [scrollable]="true" scrollHeight="37vh" >
+                    <ng-template pTemplate="header" style="width:100%;">
+                        <tr>
+                            <!-- <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                               Id</th> -->
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Start Date</th>
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                End Date</th>
+                                <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Start Time</th>
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                End Time</th>
+                                <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Difference Hrs
+                            </th>                                
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Created By</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ir>
+                        <tr>
+                            <!-- <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.Id}}</td> -->
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.StartTime | date : 'shortDate'}}</td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.EndTime | date : 'shortDate'}}</td>
+                                <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.StartTime | date : 'mediumTime'}}</td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.EndTime | date : 'mediumTime'}}</td>
+                                <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                <!-- {{[ir.differenceHrs.hours(), ir.differenceHrs.minutes(), ir.differenceHrs.seconds()].join(':')}} -->
+                                {{ir.differenceHrs.hours()}}hr:{{ir.differenceHrs.minutes()}}min:{{ir.differenceHrs.seconds()}}sec
+                            </td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.CreatedBy}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>  
+            </div>  
+        <!-- </div>         -->
+            </div>
+        </form>
+    </div>
+    <p-footer></p-footer>
+</p-dialog>
+
+<p-dialog [(visible)]="historyHide" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+    [style]="{width: '83%',height: '90%', overflow: 'auto', top: '30px'}">
+    <p-header>
+        <div>
+            <h2
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                Generated Picker List</h2>
+        </div>
+    </p-header>
+
+    <div class="position-relative" style="padding:0px 15px;">
+        <div *ngIf="IsSelectOrder.IsCanceled == true" class="text-center cs">
+            <h5><b>Cancelled By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+        </div>
+        <div *ngIf="IsSelectOrder.Status == 5" class="text-center cs">
+            <h5><b>Repicked By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+        </div>
+        <div *ngIf="IsSelectOrder.Status == 3" class="text-center cs">
+            <h5><b>Assignment Created By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+            <!-- <h5><b>Dispatched By : {{selectedRowDetails.ModifiedBy}}</b></h5> -->
+        </div>
+        <p-toast [style]="{marginTop: '80px'}"></p-toast>
+        <form class="ovelFieldForm form" name="form" #deliveryboy="ngForm">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;" 
+                        printSectionId="print-section" *ngIf="Data == true" ngxPrint>Print</button>
+                </div>
+            </div>
+        </form>
+        <form class="ovelFieldForm form form-inline" name="form" #orderForm="ngForm"
+            style="position: relative;z-index: 9;">
+            <div id="print-section" style="padding:10px 15px; position: relative;z-index: 9;">
+                <div class="waterMark"
+                    style="width: 50%;position: absolute;top: 41%;left: 45%;transform: skew(23deg, -36deg);height: 390px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+                    <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+                </div>
+                <div style="position: absolute; right: 15px; margin-top: 40px;">
+                    <img src="assets/img/logo/Logo.png" width="200px">
+                </div>
+                <div class="row" style="border-bottom: 1px solid #eee;">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div style="display: inline-block;width: 20%;vertical-align: top; font-weight: 600;">
+                                <b>Picker Number</b><br>
+                                <b>Picker Name</b><br>
+                                <b>Warehouse </b><br>
+                                <b>CreatedDate</b><br>
+                                <b>CreatedBy</b><br>
+                                <b>Assignment Id</b><br>
+                                <b>Assignment Amount</b><br>
+                                <b>Agent Name</b><br> 
+                                <b>Cluster Name</b><br>
+                                <b>DBoy Name</b><br>
+                            </div>
+                            <div style="display: inline-block;width:10%;vertical-align: top; font-weight: 600;">
+                                <b> :</b><br>
+                                <b>:</b><br>
+                                <b>: </b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                            </div>
+                            <div style="display: inline-block;width: 25%;vertical-align: top;">
+                                {{Id}} <br />
+                                <!-- {{selectedRowDetails.PickerPersonName}}<br/> -->
+                                {{DisplayName}} <br />
+                                {{whname}} <br />
+                                {{CreatedDate | date:'shortDate'}} <br />
+                                {{CreatedName}} <br />
+                                {{DeliveryIssuanceId}} <br />
+                                {{TotalAssignmentAmount}}/- <br/>
+                                {{AgentName}} <br/>
+                                {{ClusterName}}<br/>
+                                {{DboyName}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h2 style="text-align: center;"><b><u>Generated Picker List </u></b></h2>
+                <div class="borderTable" *ngIf="Data">
+                    <!-- <h2 style="text-align: center;">Generated Picker List </h2> -->
+                    <p-table #dt [value]="datalist" width="100%" border="0" cellspacing="0" cellpadding="0" >
+                        <!-- <p-table #dt [value]="datalist" [scrollable]="true" scrollHeight="37vh" text-align: center  width="100%" border="0" cellspacing="0" cellpadding="0" > -->
+                        <ng-template pTemplate="header" style="width:100%;">
+                            <tr>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Order Id</th>
+                                <th
+                                    style="padding:5px 28px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important">
+                                      Item  Name  </th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                    ItemMultiMRPId</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                    MRP</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Qty</th>
+                                <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Boxes and Piece</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Status</th>
+                                <!-- <th
+                                  style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important " >
+                                  History
+                                </th> -->
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir >
+                            <tr  *ngIf="ir.Status != 'Picker Reject'"  [ngStyle]="(ir.IsFreeItem == 'Free')?{'background-color': 'lightgreen'}:{'background-color':'white'} && (ir.IsFreeItem == true)?{'background-color': 'lightgreen'}:{'background-color':'white'}">
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Orderids}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    <span *ngIf="ir.IsFreeItem == 'Free'" style="color:red"> * </span>{{ir.ItemName}}
+                                    <span *ngIf="ir.IsFreeItem == 'Free'" style="color:red"> (Free)</span>
+                                    <!-- {{ir.ItemName}} -->
+                                </td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                    {{ir.ItemMultiMrpId}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                    {{ir.MRP}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Qty}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                        {{ir.Boxes}} : Boxes 
+                                    <span *ngIf="ir.piece > 0">& {{ir.piece}} : piece </span></td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Status}}
+                                </td>
+                                <!-- <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important" >
+                                <a class="view" (click)="openHistory(ir,$event)" href="javascript:void(0)">
+                                    <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                                  </a>
+                                </td> -->
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>    
+                
+                <div class="borderTable" style="margin-top: 65px;">
+                <h2 style="text-align: center;"><b><u>Picker Timer Summary</u></b> </h2>
+                <div >
+                    <h4 style="text-align: center;"><b><u>Picker Timer Summary By Maker</u></b></h4>
+                   
+                <p-table #dt [value]="makerTimerList" width="100%" border="0" cellspacing="0" cellpadding="0" [scrollable]="true" scrollHeight="37vh" >
+                    <ng-template pTemplate="header" style="width:100%;">
+                        <tr>
+                            <!-- <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                               Id</th> -->
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Start Date</th>
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                End Date</th>
+                                <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Start Time</th>
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                End Time</th>
+                                <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Difference Hrs
+                            </th>                                
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Created By</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ir>
+                        <tr>
+                            <!-- <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.Id}}</td> -->
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.StartTime | date : 'shortDate'}}</td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.EndTime | date : 'shortDate'}}</td>
+                                <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.StartTime | date : 'mediumTime'}}</td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.EndTime | date : 'mediumTime'}}</td>
+                                <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.differenceHrs.hours()}}hr:{{ir.differenceHrs.minutes()}}min:{{ir.differenceHrs.seconds()}}sec
+                            </td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.CreatedBy}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>  
+            </div>   
+            <div >
+                <h4 style="text-align: center;"><b><u>Picker Timer Summary By Checker</u></b></h4>
+                <p-table #dt [value]="checkerTimerList  " width="100%" border="0" cellspacing="0" cellpadding="0" [scrollable]="true" scrollHeight="37vh" >
+                    <ng-template pTemplate="header" style="width:100%;">
+                        <tr>
+                            <!-- <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                               Id</th> -->
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Start Date</th>
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                End Date</th>
+                                <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Start Time</th>
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                End Time</th>
+                                <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Difference Hrs
+                            </th>                                
+                            <th
+                                style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                Created By</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ir>
+                        <tr>
+                            <!-- <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.Id}}</td> -->
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.StartTime | date : 'shortDate'}}</td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.EndTime | date : 'shortDate'}}</td>
+                                <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.StartTime | date : 'mediumTime'}}</td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.EndTime | date : 'mediumTime'}}</td>
+                                <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                <!-- {{[ir.differenceHrs.hours(), ir.differenceHrs.minutes(), ir.differenceHrs.seconds()].join(':')}} -->
+                                {{ir.differenceHrs.hours()}}hr:{{ir.differenceHrs.minutes()}}min:{{ir.differenceHrs.seconds()}}sec
+                            </td>
+                            <td
+                                style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                {{ir.CreatedBy}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>  
+            </div>      
+            </div>         
+            </div>
+        </form>
+    </div>
+    <p-footer></p-footer>
+</p-dialog>
+
+<div *ngIf="HistoryView">
+    <p-dialog [(visible)]="HistoryView" [resizable]="false" [modal]="true" appendTo="body" positionTop="50" 
+      [style]="{width: '83%',height: '90%', left : '11px', overflow: 'auto'}">
+      <p-header>
+        <h4
+          style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+          <b>History </b>
+        </h4>
+      </p-header>
+       
+      <app-history [entity]="entity" [id]="historyDetail.id"></app-history> 
+      <p-footer></p-footer>
+    </p-dialog>
+  </div>
+<!-- <p-dialog [(visible)]="pickerCancelOrder" [resizable]="false" positionTop="100" [modal]="true" appendTo="body"
+    [style]="{width: '50%',height: '50%', overflow: 'auto'}">
+    <p-header>
+        <div class="hideCloseHeader">
+            <h2
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                Cancel Picker Order</h2>
+        </div>
+    </p-header>
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="orderType" class="font">Comments</label>
+                    <input type="comments" id="comments" name="comments" class="form-control"
+                        placeholder="Enter your comments" [(ngModel)]="comments">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label class="col-sm-12"><b>&nbsp;</b></label>
+                    <button class="btn btn-raised btn-raised btn-primary"
+                        (click)="updatecomments(comments)">PickerOrderCancel</button>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label class="col-sm-12"><b>&nbsp;</b></label>
+                    <button class="btn btn-raised btn-raised btn-primary" style=" margin-left: 75px;"
+                        (click)="cancel()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog> -->

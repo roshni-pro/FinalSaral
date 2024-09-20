@@ -1,0 +1,132 @@
+<p-toast></p-toast>
+<h3 class=" heading mt-4 abb" >Streak Level Configuration</h3>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-3 mt-2">
+                    <label><b>Bucket Number From:</b></label>
+                    <input type="number" class="form-control"  [(ngModel)]="selFromBucket" >
+                    <!-- <p-dropdown [filter]="true" placeholder="Select From Bucket No" [options]="bucketNoList" optionLabel="BucketNo" [(ngModel)]="selFromBucket" ></p-dropdown> -->
+                </div>    
+                <div class="col-sm-3 mt-2">
+                    <label><b>Bucket Number To:</b></label>
+                    <input type="number" class="form-control"  [(ngModel)]="selToBucket" >
+                    <!-- <p-dropdown [filter]="true" placeholder="Select To Bucket No" [options]="bucketNoList" optionLabel="BucketNo"  [(ngModel)]="selToBucket" ></p-dropdown> -->
+                </div>  
+                <div class="col-sm-3 mt-2">
+                    <label><b>Active/InActive</b></label>
+                    <p-dropdown  placeholder="Select" [options]="filterActive" optionLabel="name"  [(ngModel)]="isActiveState" ></p-dropdown>
+                </div>
+                <div class="col-sm-1 mt-2">
+                    <button type="button" class="btn btn-primary mt-3" style="padding-top: 7px" (click)="OnSearch(selFromBucket,selToBucket,isActiveState)"> 
+                      Search
+                    </button>
+                </div>
+                <div class="col-sm-2 mt-3 text-right">
+                    <button type="button" class="btn btn mt-1" style="margin-bottom: 0;background-color:darkgreen;color: white;" (click)="AddLevalConfig()"> 
+                        <i class="fa fa-plus-circle mr-1"></i>Create New
+                    </button>
+                </div>
+            </div>    
+        </div>
+    </div>
+</div>
+<div class="row card mt-2" *ngIf="levelConfigMainData.length!=0">
+    <p-table [value]="levelConfigMainData" [paginator]="true" [rows]="10"  [first]="first">
+        <ng-template pTemplate="header">
+            <tr >
+                <th style="width:13rem"></th>
+                <th>Bucket No From</th>
+                <th>Bucket No To</th>
+                <th>Created Date</th>
+                <th>Is Active</th>
+                <th>Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td style="width:13rem"></td>
+                <td>{{item.BucketNoFrom}}</td>
+                <td>{{item.BucketNoTo}}</td>
+                <td>{{item.CreatedDate | date}}</td>
+               <td><p-inputSwitch [(ngModel)]="item.IsActiveCurrent" (onChange)="Configconfirm(item)"></p-inputSwitch></td>
+                <td><button type="button" class="btn btn"  style="background-color: #008000c7;color: white;" (click)="DetailData(item)"> 
+                    Details
+                  </button>&nbsp;
+                  <!-- <button type="button" class="btn btn" style="background-color:#ff4500c2;color: white;" (click)="confirm1(item)"> 
+                    Delete
+                  </button> -->
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5">
+                <br>
+                <h3 style="text-align: center;color: blue;">No Data Found.</h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    </div>
+    <p-dialog header="Detail" [(visible)]="showDetailPop" [resizable]="false" positionTop="50" [modal]="true"
+    appendTo="body" [draggable]="false" [style]="{width: '70%', top: '70px'}">
+    <div class="row">
+        <div class="col-6">
+            <h5 style="color: brown;
+            font-weight: 700">Bucket From : {{fromBucketNo}} &nbsp; Bucket To : {{toBucketNo}}</h5>
+        </div>
+        <div class="col-6 text-right">
+            <h5 style="color: black;
+            font-weight: 700">Streak Duration : {{streakDurationOutOf}}</h5>
+        </div>
+    </div>
+    <p-table [value]="detailsData" [paginator]="true" [rows]="10">
+      <ng-template pTemplate="header">
+          <tr>
+              <th style="width:1rem"></th>
+              <th> Type</th>
+              <th>Condition</th>
+              <th>Reward</th>
+              <th >Reward Type</th> 
+              <!-- <th >Reward Value</th> 
+              <th>Streak_Choose Reward</th>
+              <th>Streak Count </th>
+              <th>Out-Of Bucket </th>
+              <th>Out-Of TotalBucket </th>
+              <th>Level No</th>
+              <th>Level Value</th> -->
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+          <tr>
+            <td style="width:1rem"></td>
+            <td>{{item.Type}}</td>
+            <td>{{item.Condition}}</td>
+            <td>{{item.Reward}}</td>
+            <td>{{item.RewardTypeName}}</td>
+            <!-- <td>{{item.RewardValue}}</td>
+            <td>{{item.Streak_ChooseRewardName}}</td>
+            <td>{{item.Streak_StreakCount}}</td>
+            <td>{{item.OutOf_OutOfBucket}}</td>
+            <td>{{item.OutOf_TotalBucket}}</td>
+            <td>{{item.LevelNo}}</td>
+            <td>{{item.LevelValue}}</td> -->
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" >
+              <br>
+              <h3 style="text-align: center;color: blue;margin-left: 36%">No Data Found.</h3>
+            </td>
+          </tr>
+      </ng-template>
+  </p-table>
+</p-dialog>
+<p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}"
+    strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

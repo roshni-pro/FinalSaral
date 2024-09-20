@@ -1,0 +1,407 @@
+<section id="tax-details">
+  <div class="email-app-mail-content py-0 h-100 border-left border-left-2">
+    <div class="email-app-mail-content-detail h-100 overflow-hidden">
+      <div class="info-header">
+        <button type="button" class="close m-2" aria-label="Close" (click)="closeDetails(false)">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <div class="float-right mx-4">
+          <!-- <button class="btn btn-sm bg-warning text-white m-2" *ngIf="details.Active" (click)="open(activationModal)">Deactivate</button>
+              <button class="btn btn-sm bg-warning text-white m-2" *ngIf="!details.Active" (click)="open(activationModal)">Activate</button> -->
+          <!-- Activation Modal Start -->
+          <ng-template #activationModal let-modal>
+            <div class="modal-header">
+              <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body d-flex flex-column align-items-center">
+              <h2>Are You Sure?</h2>
+              <p class="m-2" style="text-align: center"><strong>Note:</strong> This will <strong><span
+                    *ngIf="details.Active">Deactivate</span><span *ngIf="!details.Active">Activate</span></strong> the
+                supplier in the database.</p>
+            </div>
+            <div class="modal-footer d-flex p-0 justify-content-center">
+              <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0"
+                (click)="modal.close('No click')">Cancel</button>
+              <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+                (click)="ToggleActivation(details)"><span *ngIf="details.Active">Deactivate</span><span
+                  *ngIf="!details.Active">Activate</span></button>
+            </div>
+          </ng-template>
+          <!-- Activation Modal End -->
+          <button class="btn btn-sm bg-danger text-white m-2" (click)="customerlink(details)"
+            *ngIf="details.CustomerVerify == 'Not Verified'|| !details.CustomerVerify">Send Customer Call </button>
+          <button class="btn btn-sm bg-danger text-white m-2" (click)="sandUploadlink(details)"
+            *ngIf="details.CustomerVerify == 'Not Verified'|| !details.CustomerVerify"> Send Upload Document Link
+          </button>
+          <button class="btn btn-sm bg-danger text-white m-2" (click)="getOTP(details)">Customer last OTP</button>
+          <button class="btn btn-sm bg-danger text-white m-2" (click)="onDelete(details)">Remove</button>
+          <button class="btn btn-sm bg-danger text-white m-2" (click)="clearOtp(details)">Clear OTP</button>
+
+          <div style="margin-left: 62px;font-size: 14px;">
+            <label>{{Otp}}</label>
+          </div>
+        </div>
+
+        <h3 class="m-2" style="color: seagreen" *ngIf="details.CustomerVerify == 'Full Verified'">
+          {{details[activeFields[0].field]}}-{{details.Skcode}}</h3>
+        <h3 class="m-2" style="color: red" *ngIf="details.CustomerVerify == 'Not Verified' || !details.CustomerVerify ">
+          {{details[activeFields[0].field]}}-{{details.Skcode}}</h3>
+
+        <ul class="nav border-bottom">
+          <li class="nav-item" (click)="overviewDisplay($event)">
+            <a [ngClass]="activeTabClass[0].isActive==true? 'nav-link active' : 'nav-link' " id="overview-btn">Overview</a>
+          </li>
+          <li class="nav-item" (click)="editFormDisplay($event)">
+            <a [ngClass]="activeTabClass[1].isActive==true? 'nav-link active' : 'nav-link' ">Edit</a>
+          </li>
+          <li class="nav-item" (click)="historyDisplay($event)">
+            <a [ngClass]="activeTabClass[2].isActive==true? 'nav-link active' : 'nav-link' ">History</a>
+          </li>
+          <li class="nav-item" (click)="hubTransfere($event)">
+            <a [ngClass]="activeTabClass[3].isActive==true? 'nav-link active' : 'nav-link' ">Hub Transfer</a>
+          </li>
+          <li class="nav-item" (click)="CustSMSDoc($event)">
+            <a [ngClass]="activeTabClass[4].isActive==true? 'nav-link active' : 'nav-link' ">Customer SMS Document History</a>
+          </li>
+          <li class="nav-item" (click)="CustDistSys($event)">
+            <a [ngClass]="activeTabClass[5].isActive==true? 'nav-link active' : 'nav-link' ">Customer Distribution System</a>
+          </li>
+          <li class="nav-item" (click)="DisplayPrimeCustomer($event)">
+            <a [ngClass]="activeTabClass[6].isActive==true? 'nav-link active' : 'nav-link' ">Fayda</a>
+          </li>
+          <li class="nav-item" (click)="CodLimitDisplay($event)">
+            <a [ngClass]="activeTabClass[7].isActive==true? 'nav-link active' : 'nav-link' ">COD Limit</a>
+          </li>
+          <!-- <li class="nav-item" (click)="ledgerDisplay($event)">
+                <a class="nav-link">Ledger</a>indianTime
+              </li>
+              <li class="nav-item" (click)="chatsDisplay($event)">
+                <a class="nav-link">Chats</a>
+              </li>
+              <li class="nav-item" (click)="commentsDisplay($event)">
+                <a class="nav-link">Comments</a> -->
+          <!-- </li> -->
+
+        </ul>
+      </div>
+      <div id="editForm" *ngIf="displayTabs[1].bool" class="info-div m-2">
+        <div class="scale-small">
+          <app-customer-edit [details]="details" [isFirstChange]="true" (isdetailsclose)="closeDetails($event)"
+            (refreshParent)="RefreshParent()"></app-customer-edit>
+        </div>
+      </div>
+
+      <div id="history" *ngIf="displayTabs[4].bool" class="info-div m-2">
+        <app-history [entity]="entity" [id]="details.CustomerId"></app-history>
+      </div>
+      <div id="hubTransfer" *ngIf="displayTabs[5].bool" class="info-div m-2">
+        <app-hub-transfer [cityID]="details.Cityid" [customerid]="details.CustomerId"
+          [Warehouseid]="details.Warehouseid" (isdetailsclose)="closeDetails($event)" (refreshParent)="RefreshParent()">
+        </app-hub-transfer>
+      </div>
+      <div id="CustSMSDocs" *ngIf="displayTabs[6].bool" class="info-div m-2">
+        <app-customer-document-history [customerid]="details.CustomerId" (isdetailsclose)="closeDetails($event)"
+          (refreshParent)="RefreshParent()"></app-customer-document-history>
+      </div>
+      <div id="overview" *ngIf="displayTabs[0].bool" class="info-div h-100 text-sm">
+        <!-- <div class="info-heading text-bold-600 m-3"><h4>Supplier Info</h4></div> -->
+        <div class="d-flex info-content h-100 overflow-hidden">
+          <div class="flex-column p-2 px-4 w-50 h-100 border-right border-right-1 overflow-scroll" id="overview-left">
+            <div class="d-flex w-100" *ngFor="let activeField of activeFields">
+              <div class=" col-md-6 info-label w-50 font-weight-bold m-2">{{activeField.label}}</div>
+              <div class=" col-md-6 info-value w-50 m-2">
+                {{activeField.field == 'VerifiedDate' ? (details[activeField.field] | date) : details[activeField.field]}}
+              </div>
+            </div>
+          </div>
+          <div class="d-flex flex-column align-items-center w-50 h-100" id="overview-right">
+
+            <div class="w-100 d-flex justify-content-center p-2">
+              <a title="details-images" class="text-white bg-primary px-3 py-2 m-1 border-radius-20 shadow"
+                (click)="switchActive2openOverviewLeft($event)">
+                Images
+              </a>
+              <a title="details-trends" class="text-primary bg-grey100 px-3 py-2 m-1 border-radius-20 border-primary"
+                (click)="switchActive2closeOverviewLeft($event)">
+                Purchase Trends
+              </a>
+              <a title="details-map" class="text-primary bg-grey100 px-3 py-2 m-1 border-radius-20 border-primary"
+                (click)="switchActive2openOverviewLeft($event)">
+                Map Location
+              </a>
+            </div>
+            <!-- Images -->
+            <div id="details-images"
+              class="w-100 h-75 justify-content-center overview-tab-content overflow-scroll bg-grey100">
+              <app-customer-images [details]="details"></app-customer-images>
+            </div>
+            <!-- Trends -->
+            <div id="details-trends" class="w-100 overview-tab-content overflow-scroll">
+              <app-customer-trends [details]="details" [ngStyle]="{'width':'100%'}"></app-customer-trends>
+            </div>
+            <!-- Map -->
+            <div id="details-map" class="w-100 h-75 overview-tab-content">
+              <div class="w-100 h-100 m-3 overflow-hidden rounded shadow">
+                <agm-map [latitude]="details.lat" [longitude]="details.lg">
+                  <agm-marker [latitude]="details.lat" [longitude]="details.lg"></agm-marker>
+                  <agm-circle [latitude]="lat" [longitude]="lng" [radius]="5000" [fillColor]="'red'"
+                    [circleDraggable]="true" [editable]="true">
+                  </agm-circle>
+                </agm-map>
+              </div>
+            </div>
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+
+      <div id="purchase-trends" *ngIf="displayTabs[2].bool" class="info-div m-2">
+        <div class="row text-left">
+          <div class="col-sm-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Line Chart</h4>
+              </div>
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="height-400">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="custDistribution" *ngIf="isdistribution" class="info-div h-100 text-sm">
+        <h4 style="text-align: center;margin-top: 40px;">No Distributor Verification found for given Customer.</h4>
+      </div>
+      <div id="custDistribution" *ngIf="displayTabs[7].bool" class="info-div h-100 text-sm">
+        <div class="d-flex info-content h-100 overflow-hidden">
+          <div class="flex-column p-2 px-4 w-50 h-100 border-right border-right-1 overflow-scroll" id="overview-left">
+            <div class="d-flex w-100" style="border-bottom: 1px solid #eee;"
+              *ngFor="let activeField of distributionFields">
+              <div class=" col-md-3 info-label w-50 font-weight-bold m-2 text-left">{{activeField.label}}</div>
+              <div class=" col-md-3 info-value w-50 m-2">{{distributiondt[activeField.field]}}</div>
+            </div>
+            <div class="row" *ngIf="!distributiondt.IsVerified">
+              <div class="col-md-2 info-label w-50 font-weight-bold">
+                <label for="IsVerified">isVerify Distributor:</label>
+              </div>
+              <div class="col-md-3 info-label w-50 font-weight-bold" *ngIf="distributiondt.IsVerified==false">
+                <p-checkbox [(ngModel)]="IsVerified" binary="true"></p-checkbox>
+              </div>
+            </div>
+            <div>
+              <div>
+                <a href="#" (click)="download()">
+                  Click here to Download Pdf file
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex flex-column align-items-center w-50 h-100" id="overview-right">
+
+            <div class="w-100 d-flex justify-content-center p-2">
+              <a title="details-images" class="text-white bg-primary px-3 py-2 m-1 border-radius-20 shadow"
+                (click)="switchActive2openOverviewLeft($event)">
+                Images
+              </a>
+            </div>
+            <!-- Images -->
+            <div id="details-images"
+              class="w-100 h-75 justify-content-center overview-tab-content overflow-scroll bg-grey100">
+              <app-distributorverification-images [distributiondt]="distributiondt">
+              </app-distributorverification-images>
+            </div>
+            <div style="padding-left: 480px;margin-top: 90px;">
+              <button class="btn btn-sm bg-danger text-white m-2" (click)="updatedistribution(IsVerified)"
+                *ngIf="IsVerified">Verified Distributor</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="displayTabs[8].bool" class="info-div h-100 text-sm">
+        <button class="btn btn-sm bg-danger text-white" style="float: right;margin-top: 9px;"
+          (click)="getRegDetails()">Payment Details</button>
+        <div class="col-md-6" style="margin-top:50px">
+          <div class="panel panel-info" *ngIf="PrimeCustomer.IsPrimeCustomer && !isPrimeRenew">
+            <div class="panel-heading">
+              <div class="panel-title">Fayda Detail</div>
+              <div style="float:right; font-size: 85%; position: relative; top:-27px">
+                <button class="btn btn-raised btn-raised btn-primary" *ngIf="isPrimeButton"
+                  (click)="RevokMemberShip(PrimeCustomer.CustomerId)">Revok Fayda</button>&nbsp;&nbsp;
+                <button class="btn btn-raised btn-raised btn-primary" *ngIf="isPrimeButton"
+                  (click)="RenewMemberShip(PrimeCustomer.CustomerId)">Renew Fayda</button>
+              </div>
+
+            </div>
+
+            <div class="panel-body">
+              <div class="form-group">
+                <div class=" col-md-6 ">Fayda</div>
+                <div class=" col-md-6">
+                  {{PrimeCustomer.MemberShipName}}
+                </div>
+              </div>
+              <div class="form-group">
+                <div class=" col-md-6 ">Registration Date</div>
+                <div class=" col-md-6">
+                  {{PrimeCustomer.StartDate| date : "dd/MM/yyyy h:mm a" }}
+                </div>
+              </div>
+              <div class="form-group">
+                <div class=" col-md-6 ">End Date</div>
+                <div class=" col-md-6 ">
+                  {{PrimeCustomer.EndDate| date : "dd/MM/yyyy h:mm a" }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel panel-info" *ngIf="!PrimeCustomer.IsPrimeCustomer">
+            <div class="panel-heading">
+              <div class="panel-title">Prime Customer Detail</div>
+
+            </div>
+            <div style="padding-top:30px" class="panel-body">
+              <div class="form-group">
+                <label for="membership" class="col-md-6">Fayda</label>
+                <select id="state" name="membership" class="form-control col-md-6" [(ngModel)]="PrimeCustomer.list"
+                  (change)="changeMembership(PrimeCustomer)" placeholder="Select Membership">
+                  <!-- <option value="">--Select Membership---</option> -->
+                  <option *ngFor="let PrimeCust of PrimeCustomer.MinMemberShipDcs" [ngValue]="PrimeCust">
+                    {{PrimeCust.MemberShipName}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <div class="col-md-6">Fayda Fee</div>
+                <div class="col-md-6">
+                  <input [(ngModel)]="PrimeCustomer.FeeAmount" class="form-control" type="number" />
+                </div>
+              </div>
+              <div class="form-group">
+                <div class=" col-md-6 ">Payment From</div>
+                <div class="col-md-6 ">
+                  <input [(ngModel)]="PrimeCustomer.PaymentFrom" class="form-control" type="text" value="Offline"
+                    readonly />
+                </div>
+              </div>
+              <div class="form-group">
+                <div class=" col-md-6 ">TransId</div>
+                <div class=" col-md-6">
+                  <input [(ngModel)]="PrimeCustomer.GatewayTransId" class="form-control" type="text" value="" />
+                </div>
+              </div>
+              <div class="form-group">
+                <div class=" col-md-6"></div>
+                <div class=" col-md-6 text-right">
+                  <button class="btn btn-raised btn-raised btn-primary" *ngIf="isPrimeButton"
+                    (click)="AddMemberShip(PrimeCustomer)">Add Fayda</button>
+                </div>
+
+
+
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-info" *ngIf="isPrimeRenew">
+            <div class="panel-heading">
+              <div class="panel-title">Prime Customer Detail</div>
+
+            </div>
+            <div style="padding-top:30px" class="panel-body">
+              <div class="form-group" *ngIf="isDropdowActive">
+                <label for="membership" class="col-md-6">Fayda</label>
+                <select id="state" name="membership" class="form-control col-md-6" [(ngModel)]="PrimeCustomer.list"
+                  (change)="changeMembership(PrimeCustomer)" placeholder="Select Membership">
+                  <!-- <option value="">--Select Membership---</option> -->
+                  <option *ngFor="let PrimeCust of PrimeCustomer.MinMemberShipDcs" [ngValue]="PrimeCust">
+                    {{PrimeCust.MemberShipName}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group" *ngIf="!isDropdowActive">
+                <label for="membership" class="col-md-6">Fayda</label>
+                <input [(ngModel)]="PrimeCustomer.MemberShipName" class="form-control col-md-6" type="text"
+                  (click)="changeinputBox()" />
+              </div>
+              <div class="form-group">
+                <div class="col-md-6">Fayda Fee</div>
+                <div class="col-md-6">
+                  <input [(ngModel)]="PrimeCustomer.FeeAmount" class="form-control" type="number" />
+                </div>
+              </div>
+              <div class="form-group">
+                <div class=" col-md-6 ">Payment From</div>
+                <div class="col-md-6 ">
+                  <input [(ngModel)]="PrimeCustomer.PaymentFrom" class="form-control" type="text" value="Offline"
+                    readonly />
+                </div>
+              </div>
+              <div class="form-group">
+                <div class=" col-md-6 ">TransId</div>
+                <div class=" col-md-6">
+                  <input [(ngModel)]="PrimeCustomer.GatewayTransId" class="form-control" type="text" value="" />
+                </div>
+              </div>
+              <div class="form-group">
+                <div class=" col-md-6"></div>
+                <div class=" col-md-6 text-right">
+                  <button class="btn btn-raised btn-raised btn-primary"
+                    (click)="AddMemberShip(PrimeCustomer)">Renew</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div *ngIf="isdetails">
+          <p-table [columns]="cols" [value]="customerRegList" [lazy]="false" 
+            [paginator]="true" [rows]="20" dataKey="CustomerId" [scrollable]="true" scrollHeight="65vh" text-align:
+            center>
+            <ng-template pTemplate="header">
+              <tr>
+                <th *ngFor="let col of cols" style="text-align: center">
+                  {{col.header}}
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+              <tr>
+                <td *ngFor="let col of columns" style="text-align: center">
+                  {{rowData[col.field]}}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+        <div *ngIf="!isdetails">
+          <h5>No Record Found..</h5>
+        </div>
+      </div>
+
+       <!-- COD limit by Customer Id Start -->
+      <div *ngIf="displayTabs[9].bool" class="info-div h-100 text-sm">
+        <div class="col-md-12" style="margin-top:50px">
+          <div class="panel panel-info" *ngIf="codlimitBool">
+            <app-history [entity]="entityCOD" [id]="codhistroyId.Id"></app-history>
+          </div>
+        </div>
+      </div>
+      <!-- COD limit by Customer Id End -->
+    </div>
+  </div>
+
+</section>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,72 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="customer-master">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">send CALLS-SMS to Customer</h3>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-sm-12">
+            <form class="form" #ledgerForm="ngForm">
+                <div class="form-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="projectinput3">City :<span style="color:red"> *</span></label>
+                                <br>
+                                <select id="desg" name="desg" class="form-control" [(ngModel)]="searchModel.Cityid" (change)="getcityWarehouse(searchModel.Cityid)">
+                                    <option value="" disabled>--select--</option>
+                                    <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                                        {{ city.CityName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                              <label for="ware">Choose Warehouse:<span style="color:red"> *</span></label>
+                              <br>
+                              <select id="ware" name="ware" class="form-control" [(ngModel)]="searchModel.Warehouseid">
+                                <option value="" disabled>--Select--</option>
+                                <option *ngFor="let w of warehouseList" [ngValue]="w.WareHouseId">
+                                  {{ w.WareHouseName }} {{w.CityName}}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                        <div class="col-md-2" style="padding-top: 30px">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary"  (click)="search(searchModel)">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="ui-fluid shadow p-3 bg-white rounded table table-hover">
+
+        <p-table [columns]="cols" [value]="PageList" [lazy]="true" [totalRecords]="totalRecords"
+        [loading]="loading" (onLazyLoad)="load($event)" [paginator]="true" [rows]="12" dataKey="Mobile" [scrollable]="true"
+            scrollHeight="65vh" text-align: center>
+
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th *ngFor="let col of cols" style="text-align: center">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                <tr (click)="openDetails(rowData,$event)">
+                    <td *ngFor="let col of columns" style="text-align: center">
+                        {{rowData[col.field]}}
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</section>

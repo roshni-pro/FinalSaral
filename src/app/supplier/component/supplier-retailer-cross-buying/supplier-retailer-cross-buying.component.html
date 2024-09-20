@@ -1,0 +1,288 @@
+<p-toast></p-toast>
+<h3 class=" heading mt-4 ">Group Supplier/Retailer</h3>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-3 mt-3">
+                    <label><b>Select Type:</b></label>
+                    <p-dropdown  placeholder="Select Type" [options]="typeList" optionLabel="Name"  [(ngModel)]="selectedType"></p-dropdown>
+                    <!-- <p-dropdown [filter]="true" placeholder="Select From Bucket No" [options]="bucketNoList" optionLabel="BucketNo" [(ngModel)]="selFromBucket" ></p-dropdown> -->
+                </div>    
+                
+                <div class="col-2 mt-3">
+                    <label><b>Enter Skcode</b></label>
+                    <input  type="text" [(ngModel)]="SupplierCode" placeholder="Enter SKCode" class="form-control" class="" pInputText />
+                </div>
+                <div class="col-2 mt-3">
+                    <label><b></b></label>
+                    <button type="button" class="btn btn-primary mt-4"  (click)="OnSearch()"> 
+                      Search
+                    </button>
+                </div>
+                <!-- <div class="col-sm-2 mt-4">
+                    <label></label>
+                    <button class="btn btn-primary" (click)="OnSpecificSearch()"> Search </button>
+                </div> -->
+                <div class="col-4 mt-3 text-right">
+                    <label></label>
+                    <button type="button" class="btn btn mt-4" style="margin-bottom: 0;background-color:darkgreen;color: white;" (click)="AddNewSupplier()"> 
+                        <i class="fa fa-plus-circle mr-1" (click)="AddNewSupplier()"></i>Add Group
+                    </button>
+                </div>
+            </div>    
+        </div>
+    </div>
+</div>
+<div class="row card mt-2">
+    <p-table [value]="supplierCustomerData" (onLazyLoad)="load($event)" [lazy]="true" [rows]="10" [paginator]="true" [totalRecords]="totalRecords" >
+        <ng-template pTemplate="header">
+            <tr >
+                <th>S No.</th>
+                <th>Supplier/Retailer Code</th>
+                <th>Supplier Name/Shop Name</th>  
+                <th>Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item  let-rowIndex="rowIndex">
+            <tr>
+                <td style="text-align: left">{{rowIndex+1}}</td>
+                <td>{{item.SkCode}}</td>
+                <td>{{item.Name}}</td>
+                <td>
+               <i class="fa fa-eye"  style="font-size: 2rem;" (click)="edit(item.MasterId)"></i>
+               <i class="ml-2 pi pi-trash" style="font-size: 2rem;" (click)="confirm1(item.MasterId)"></i>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="4" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    </div>
+    <p-dialog header="Add New Supplier/Retailer" [(visible)]="showAdd" [resizable]="false" positionTop="50" [modal]="true"
+    appendTo="body" [draggable]="false" [style]="{width: '70%', top: '70px'}">
+    <div class="row p-3 pt-0 ml-2 ">
+    <label style="font-weight: bold;" class="formText">Select Type<b style="color: red; margin-left: 10px;">*</b></label><br>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="name"></label>
+            <p-radioButton name="Supplier" value=1 label="Supplier" [(ngModel)]="addSelectedType">
+            </p-radioButton>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="name"></label>
+            <p-radioButton name="Retailer" value=2 label="Retailer"  [(ngModel)]="addSelectedType">
+            </p-radioButton>
+        </div>
+    </div>
+</div>
+<div class="container border" *ngIf="addSelectedType==1">
+<div class="row p-2">
+    <div class="col-4">
+        <label  style="font-weight: bold;">Enter Primary SupplierCode/Supplier Name:</label>
+        <input type="text" class="form-control" [(ngModel)]="supplierPrimaryKey">
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary mt-3" (click)="GetPrimarySupplierListByKey()">Search</button>
+        </div>
+        <div class="col-3 mt-3" >
+       <p-dropdown [disabled]="issupplierdisable" placeholder="Select Primary SuplierName"  [(ngModel)]="selectedPrimary" [options]="supplierPrimaryKeyArr" [filter]="true" optionLabel="SupplierName"></p-dropdown>
+            </div>
+</div>
+<div class="row">
+    <div class="col-4">
+        <label  style="font-weight: bold;">Enter SupplierCode/Supplier Name To Be Mapped:</label>
+        <input type="text" class="form-control" [(ngModel)]="supplierMappedKey">
+    </div>
+    <div class="col-2">
+        <button class="btn btn-primary mt-3" (click)="GetMappedSupplierListByKey()">Search</button>
+        </div>
+        <div class="col-3 mt-3">
+       <p-dropdown [options]="supplierMappedKeyArr" [(ngModel)]="selectedMapped" optionLabel="SupplierName" [filter]="true" placeholder="Select Mapped SuplierName" ></p-dropdown>
+            </div>
+            <div class="col-3 mt-3">
+                <button class="btn btn-primary mt-3" (click)="AddSupplier()"> Add</button>
+            </div>
+</div>
+</div>
+<div class="container border" *ngIf="addSelectedType==2">
+    <div class="row p-2">
+        <div class="col-4">
+            <label  style="font-weight: bold;">Enter Primary SkCode/ShopName:</label>
+            <input type="text" class="form-control" [(ngModel)]="customerPrimaryKey" >
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary mt-3" (click)="GetPrimaryCustomerListByKey()">Search</button>
+            </div>
+            <div class="col-3 mt-3">
+           <p-dropdown [disabled]="iscustomerdisable" placeholder="Select Primary CustomerName" [(ngModel)]="CustomerPrimary" [options]="customerPrimaryKeyArr" [filter]="true" optionLabel="ShopName"></p-dropdown>
+                </div>
+                 
+    </div>
+    <div class="row" >
+        <div class="col-4">
+            <label  style="font-weight: bold;">Enter Primary SkCode/ShopName To Be Mapped:</label>
+            <input type="text" class="form-control" [(ngModel)]="customerMappedKey">
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary mt-3" (click)="GetMappedCustomerListByKey()">Search</button>
+            </div>
+            <div class="col-3 mt-3">
+           <p-dropdown [options]="customerMappedKeyArr" [(ngModel)]="CustomerMapped" optionLabel="ShopName" [filter]="true" placeholder="Select Mapped SuplierName"> </p-dropdown>
+                </div>
+                <div class="col-3 mt-3">
+                    <button class="btn btn-primary mt-3" (click)="AddCustomer()"> Add</button>
+                </div>
+    </div>
+    </div>
+    <div class="row card" *ngIf="addSelectedType==1">
+        <p-table [value]="showSupplierData" >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Primary SupplierName</th>
+                    <th>Mapped SupplierName</th>  
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item  let-rowIndex="rowIndex">
+                <tr>
+                   <td>{{item.PrimaryName}}</td>
+                   <td>{{item.MappedName}}</td>
+                   <td>
+                    <i class="pi pi-trash" style="font-size: 2rem; color: red;" (click)="DeleteMappedSupplier(item.MappedName)"></i>
+                   </td>
+                </tr>
+            </ng-template>
+            </p-table>
+        </div>
+        <div class="row card" *ngIf="addSelectedType==2">
+            <p-table [value]="showCustomerData" >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Primary ShopName</th>
+                        <th>Mapped ShopName</th>  
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item  let-rowIndex="rowIndex">
+                    <tr>
+                       <td>{{item.PrimaryName}}</td>
+                       <td>{{item.MappedName}}</td>
+                       <td>
+                        <i class="pi pi-trash" style="font-size: 2rem; color: red;" (click)="DeleteMappedCustomer(item.MappedName)"></i>
+                       </td>
+                    </tr>
+                </ng-template>
+                </p-table>
+            </div>
+        <div class="row">
+            <div class="col-md-11"></div>
+
+            <button class="btn btn-primary" (click)="OnSubmit(addSelectedType)">Submit</button>
+        </div>
+    </p-dialog>
+
+    <p-dialog header="Edit Supplier/Customer" [(visible)]="EditAdd" [resizable]="false" positionTop="50" [modal]="true"
+    appendTo="body" [draggable]="false" [style]="{width: '70%', top: '70px'}">
+    <div class="row">
+        <button class="btn btn-primary ml-3" (click)="Add()"  > Add New</button>
+    </div>
+    <p-table [value]="EditsupplierCustomerData" >
+        <ng-template pTemplate="header">
+            <tr >
+                <th>S No.</th>
+                <th>Primary Name</th>
+                <th>Mapped Name</th>  
+                <th>Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item  let-rowIndex="rowIndex">
+            <tr>
+                <td style="text-align: left">{{rowIndex+1}}</td>
+                <td>{{item.PrimaryName}}</td>
+                <td>{{item.MappedName}}</td>
+                <td>
+               <!-- <button class="btn btn-primary" (click)="edit2(item)">Edit</button> -->
+               
+               <!-- <i class="fa fa-history" style="font-size: 2rem; color: red;" (click)="history(item.Id)"></i>  -->
+               <i class="pi pi-trash ml-2" style="font-size: 2rem; color: red;" (click)="confirm2(item.Id,item.MasterId)"></i>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+              <td>
+                <br>
+                <h3 style="text-align: center;color: blue;">No Data Found.</h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    
+    </p-dialog>
+
+
+    <p-dialog header="Add New Supplier Mapping" [(visible)]="addnewmappingsupplier" [resizable]="false" positionTop="50" [modal]="true"
+    appendTo="body" [draggable]="false" [style]="{width: '70%', top: '70px'}">
+    <div class="row">
+        <div class="col-4">
+            <label  style="font-weight: bold;">Primary Supplier Name:</label>{{suppliercustomername}}
+            <!-- <input type="text" class="form-control" [(ngModel)]="supplierMappedKey"> -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <label  style="font-weight: bold;">Enter SupplierCode/Supplier Name To Be Mapped:</label>
+            <input type="text" class="form-control" [(ngModel)]="supplierMappedKey">
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary mt-3" (click)="GetMappedSupplierListByKey()">Search</button>
+        </div>
+        <div class="col-3 mt-3 ">
+            <p-dropdown [options]="supplierMappedKeyArr" [(ngModel)]="selectedMapped" optionLabel="SupplierName" [filter]="true" placeholder="Select Mapped SuplierName" ></p-dropdown>
+        </div>
+    </div>
+    <div class="row">
+        <button class="btn btn-primary ss" (click)="onSaveSupplier()">Save</button>
+    </div>
+    </p-dialog>
+
+
+    <p-dialog header="Add New Customer Mapping" [(visible)]="addnewmappingcustomer" [resizable]="false" positionTop="50" [modal]="true"
+    appendTo="body" [draggable]="false" [style]="{width: '70%', top: '70px'}">
+    <div class="row">
+        <div class="col-4">
+            <label  style="font-weight: bold;">Primary Customer Name:</label>{{suppliercustomername}}
+            <!-- <input type="text" class="form-control" [(ngModel)]="supplierMappedKey"> -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <label  style="font-weight: bold;">Enter SupplierCode/Shop Name To Be Mapped:</label>
+            <input type="text" class="form-control" [(ngModel)]="customerMappedKey">
+        </div>
+        <div class="col-2">
+            <button class="btn btn-primary mt-3" (click)="GetMappedCustomerListByKey()">Search</button>
+        </div>
+        <div class="col-3 mt-3 ">
+            <p-dropdown [options]="customerMappedKeyArr" [(ngModel)]="CustomerMapped" optionLabel="ShopName" [filter]="true" placeholder="Select Mapped CustomerName" ></p-dropdown>
+        </div>
+    </div>
+    <div class="row">
+        <button class="btn btn-primary ss" (click)="onSaveCustomer()">Save</button>
+    </div>
+    </p-dialog>
+
+
+
+    
+
+    <p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>

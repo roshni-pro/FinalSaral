@@ -1,0 +1,189 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div>
+    <p-header>
+        <br>
+        <h1 style="margin-left: 50px;">Allocate Brands for {{whouseName}}</h1>
+    </p-header>
+</div>
+<div class="row m-0">
+    <div class="col-12">
+      
+        <div id="kick-start" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-2">
+                        <h1 class="card-title">Brand List </h1>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <div>
+                                <input type="text" class="form-control" placeholder="search  brand / buyer"
+                                    (keyup)="searchMenuItems($event.target.value)" [(ngModel)]="searchVal">
+                             
+                            </div>
+                        </div>
+                    </div>
+                  
+                    <div class="col-md-3" *ngIf="brandBuyerDetailsList.length">
+
+                      
+                        <button type="button" style="margin-left: 10px;" class="btn btn-raised  btn-primary"
+                            (click)="viewbrandbuyer()">
+                            View Allocated Items
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-raised  btn-primary text-right" (click)="navToGraph()">
+                            View Graph
+                        </button>
+                    </div>
+                    <div class="col-md-1" *ngIf="brandBuyerDetailsList.length">
+                        <button type="button" style="margin-left: 10px;" class="btn btn-raised  btn-primary"
+                            (click)="saveBrandBuyerDetails()">
+                            Save
+                        </button>
+                    </div>
+
+
+                </div>
+                <div class="row">
+
+
+                    <h4 style=" margin-left: 20px ; margin-top: 30px;">
+                        Allocated Percentage : {{consumedcapacity  | number: '1.2-2'}} % (of Total Warehouse Capacity)
+
+                    </h4>
+                </div>
+
+            </div>
+            <div class="card-content">
+
+
+                <div class="card-body">
+                    <div class="row">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+</div>
+
+
+
+
+<p-table #table [paginator]="false" [rows]="totalbrandcount" [value]="BrandsList" [totalRecords]="totalbrandcount"
+    [scrollable]="false" scrollHeight="70vh" text-align: center>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>
+                S.no
+            </th>
+            <th *ngFor="let col of brandsCols" [pSortableColumn]="col.field" style="text-align: center">
+                {{col.header}}
+            </th>
+            <th style="text-align: center">
+                Enter Allocation Percent
+            </th>
+
+
+
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded" let-i="rowIndex">
+        <tr>
+            <td>
+                {{i+1}}
+            </td>
+
+            <td *ngFor="let col of brandsCols" style="text-align: center">
+                {{rowData[col.field]}}
+
+            </td>
+
+            <td style="text-align: center">
+               
+                <input type="text" [(ngModel)]="rowData.allocationPercentage"
+                    (change)="addAllocationPercentage($event, rowData)"
+                    (keyup)="addAllocationPercentage($event, rowData)" placeholder="Allocate Percent" />
+            </td>
+
+      
+
+
+
+
+        </tr>
+    </ng-template>
+</p-table>
+
+
+
+
+<br />
+
+
+
+<p-dialog *ngIf="viewBrandBuyerList" [(visible)]="viewBrandBuyerList" appendTo="body">
+    <div class="card-content">
+        <div class="col-md-6">
+            <h4 class="card-title" id="basic-layout-colored-form-control" style="padding-bottom: 20px;">
+                Allocated Items
+            </h4>
+        </div>
+        <input type="text" class="form-control" placeholder="search brand /  buyer "
+        (keyup)="globalsearch($event.target.value)" [(ngModel)]="globalsearchval">
+        <br>
+        <p-toast [style]="{marginTop: '20px'}"></p-toast>
+
+        <div class="col-md-6">
+          
+        </div>
+        <p-table #table [value]="brandBuyerDetailsList" [scrollable]="true" scrollHeight="70vh" text-align: center>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>
+                        S.no
+                    </th>
+                    <th *ngFor="let col of brandBuyerDetailsCols" [pSortableColumn]="col.field"
+                        style="text-align: center">
+                        {{col.header}}
+                    </th>
+
+
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded" let-i="rowIndex">
+                <tr>
+                    <td>
+                        {{i+1}}
+                    </td>
+                    <td style="text-align: center">
+                        {{rowData.WareHouseName}}
+                        
+                    </td>
+                    <td style="text-align: center">
+                        {{rowData.BrandName}}
+                    </td>
+                    <td style="text-align: center">
+                        {{rowData.BuyerName ? rowData.BuyerName : ''}}
+                    </td>
+                    <td style="text-align: center">
+                        {{rowData.AllocatePercent}} %
+                    </td>
+
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,48 @@
+
+<p-toast class="toast"></p-toast><p-toast class="toast"></p-toast>
+
+<!-- <div class="header">
+  <h3 class="m-2"><b>Supplier Payemnt Details</b></h3>
+</div> -->
+<div class="header">
+  <h3 class="m-2"><b>Redispatch Order Approval</b></h3>
+</div>
+<div class="ui-fluid shadow p-3 m-2 mt-4 bg-white rounded table table-hover min-height-80">
+
+  
+  <div class="position-relative"> 
+      <div class="position-relative ">
+          <p-table  #dt [globalFilterFields]="cols"  [value]="redispatchorderapproved" [paginator]="true" [rows]="20" dataKey="paymentRequestid" [scrollable]="true" scrollHeight="70vh" class="center">
+              
+            <ng-template pTemplate="header" >
+              <tr class="searchBar">
+                <td colspan="5">
+                  <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                </td>
+              </tr>
+
+              <tr>
+                <th>Id</th>
+                <th>OrderId</th>
+                <th>CreateDate</th>
+                <th>IsApproved</th>
+                <th>Approved</th>
+                
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData  let-columns="columns" let-expanded="expanded" >
+              <tr >
+                <td>{{rowData.Id}}</td>
+                <td>{{rowData.OrderId}}</td>
+                <td>{{rowData.CreatedDate}}</td>
+                <td>{{rowData.IsApproved}}</td>
+                <td>
+                  <button class="btn btn-raised btn-primary center" *ngIf="rowData.showbuttan2"  (click)="approved(rowData)"> Approved</button>               
+                </td>
+               </tr>
+            </ng-template>
+          </p-table>
+
+      </div>
+  </div>
+</div>

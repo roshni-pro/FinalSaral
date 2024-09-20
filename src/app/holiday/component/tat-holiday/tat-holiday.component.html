@@ -1,0 +1,299 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+	<p-footer>
+
+		<button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+		<button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+	</p-footer>
+</p-confirmDialog>
+
+<div class="ui-fluid">
+	<section id="calendar">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="content-header">TAT HOLIDAY</div>
+			</div>
+		</div>
+		<div *ngIf="isOpenPopup">
+			<form #holidayForm="ngForm">
+				<p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+					[style]="{width: '50%', height: '80%', overflow: 'auto'}">
+					<p-header>
+						Manage Holiday
+					</p-header>
+					<div class="ui-g">
+						<div class="ui-md-4 ui-g-12">
+							<div class="form-group">
+								<label for="published">Title<span style="color:red"> *</span></label><br>
+								<input class="form-control" [(ngModel)]="newEvent.title" required="1" maxlength="50"
+									minlength="2" name="titleInput" #title="ngModel" />
+
+								<div *ngIf="isInvalid && !title.valid && title.errors.required">
+									<code>Title is required</code>
+								</div>
+								<div *ngIf="isInvalid && !title.valid && title.errors.minlength">
+									<code>Minlength 2</code>
+								</div>
+							</div>
+						</div>
+						<!-- <div class="ui-md-4 ui-g-12">
+						<div class="form-group">
+							<label for="published">City<span style="color:red"> *</span></label><br>
+							<select class="form-control" [(ngModel)]="newEvent.CityID" name="cityInput"
+								(ngModelChange)="getWarehouse()" #cityInput="ngModel" required>
+								<option [value]="null">Select</option>
+								<option *ngFor="let city of cityList" [value]="city.Cityid">{{city.CityName}}</option>
+							</select>
+
+							<div *ngIf="isInvalid && !cityInput.valid && cityInput.errors.required">
+								<code>City is required</code>
+							</div>
+						
+						</div>
+					</div>
+					<div class="ui-md-4 ui-g-12">
+						<div class="form-group" *ngIf="warehouseList">
+							<label for="published">Warehouse<span style="color:red"> *</span></label><br>
+						
+							<select class="form-control" [(ngModel)]="newEvent.WarehouseID" name="warehouseInput"
+								(ngModelChange)="getWarehouse()" #warehouseInput="ngModel" required>
+								<option [value]="null">Select</option>
+								<option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">{{warehouse.WarehouseName}}</option>
+							</select>
+
+							<div *ngIf="isInvalid && !warehouseInput.valid && warehouseInput.errors.required">
+								<code>Warehouse is required</code>
+							</div>
+							
+						</div>
+					</div> -->
+						<div class="ui-md-4 ui-g-12">
+							<div class="form-group" *ngIf="!isEdit">
+								<label for="published"><b>City:</b><span style="color:red"> *</span></label><br>
+								<p-multiSelect appendTo="body" [options]="cityList" name="cityInput"
+									[(ngModel)]="selectedCityList" [panelStyle]="{minWidth:'35em'}"
+									optionLabel="CityName" (ngModelChange)="getWarehouse()"  #cityInput="ngModel" required>
+								</p-multiSelect>
+								<div *ngIf="isInvalid && !cityInput.valid && cityInput.errors.required">
+										<code>City is required</code>
+								</div>
+							</div>
+
+							<div class="form-group" *ngIf="isEdit">
+								<label for="published">City<span style="color:red"> *</span></label><br>
+								<select class="form-control" [(ngModel)]="newEvent.CityID" name="cityInput"
+									(ngModelChange)="getWarehouseOnEdit(true)" #cityInput="ngModel" required>
+									<option value="">Select</option>
+									<option *ngFor="let city of cityList" [value]="city.Cityid">{{city.CityName}}
+									</option>
+								</select>
+
+								<div *ngIf="isInvalid && !cityInput.valid && cityInput.errors.required">
+									<code>City is required</code>
+								</div>
+
+							</div>
+						</div>
+
+						<div class="ui-md-4 ui-g-12">
+
+							<div class="form-group" *ngIf="isEdit && warehouseList">
+								<label for="published">Warehouse<span style="color:red"> *</span></label><br>
+
+								<select class="form-control" [(ngModel)]="newEvent.WarehouseID" name="warehouseInput"
+									 #warehouseInput="ngModel" required>
+									<option [value]="null">Select</option>
+									<option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">
+										{{warehouse.WarehouseName}}</option>
+								</select>
+
+								<div *ngIf="isInvalid && !warehouseInput.valid && warehouseInput.errors.required">
+									<code>Warehouse is required</code>
+								</div>
+
+							</div>
+							<div class="form-group" *ngIf="!isEdit && warehouseList">
+								<label for="published"><b>Warehouse:</b><span style="color:red"> *</span></label><br>
+								<p-multiSelect appendTo="body" [options]="warehouseList" name="warehouseInput"
+									[(ngModel)]="selectedWarehouseList" [panelStyle]="{minWidth:'35em'}"
+									optionLabel="WarehouseName" #warehouseInput="ngModel" required>
+								</p-multiSelect>
+								<div *ngIf="isInvalid && !warehouseInput.valid && warehouseInput.errors.required">
+										<code>Warehouse is required</code>
+									</div>
+							</div>
+						</div>
+					</div>
+					<div class="ui-g">
+						<div class="ui-g-6">
+							<div class="form-group">
+								<label for="published">Date<span style="color:red"> *</span></label><br>
+								<p-calendar name="startInput" appendTo="body" [(ngModel)]="newEvent.start"
+									[showIcon]="true" required="1" #start="ngModel"></p-calendar>
+								<div *ngIf="isInvalid && !start.valid && start.errors.required">
+									<code>Date is required</code>
+								</div>
+							</div>
+						</div>
+					</div>
+					<p-footer>
+						<div class="ui-g">
+							<div class="ui-g-12">
+								<button class="btn btn-primary pull-right" (click)="save(newEvent, holidayForm)">
+									Save</button>
+							</div>
+						</div>
+					</p-footer>
+				</p-dialog>
+			</form>
+		</div>
+		<!-- <div class="ui-fluid">
+		<div class="ui-g">
+			<ng-template #modalContent let-close="close">
+				<div class="modal-header">
+					<h5 class="modal-title">{{ modalData?.action }}</h5>
+					<button type="button" class="close" (click)="close()">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form action="#" class="form form-horizontal">
+						<div class="form-body">
+							<div class="form-group">
+								<label>Event Title:</label>
+								<input type="text" name="event-title" class="form-control"
+									[(ngModel)]="modalData?.event.HolidayName" (keyup)="refresh.next()">
+							</div>
+							<div class="ui-g">
+								<div class="ui-g-6">
+
+									<div class="form-group">
+										<label for="ware"><b>Starts At:</b></label>
+										<br>
+										<p-calendar name="starts-at" [(ngModel)]="modalData?.event.start"
+											(ngModelChange)="refresh.next()" placeholder="Not set" [showIcon]="true">
+										</p-calendar>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-outline-secondary"
+						(click)="save(modalData?.event)">Save</button>
+				</div>
+			</ng-template>
+		</div>
+	</div> -->
+		<div class="card" style="margin-bottom: 50px;">
+			<div class="card-content">
+				<div class="card-body">
+					<div class="d-flex flex-wrap justify-content-md-between mb-3 no-gutters">
+						<div class="col">
+							<div class="btn-group d-none d-sm-none d-md-none d-lg-block">
+								<a class="btn btn-raised btn-primary" mwlCalendarPreviousView [view]="view"
+									[(viewDate)]="viewDate">
+									Previous
+								</a>
+								<a class="btn btn-raised btn-danger" mwlCalendarToday [(viewDate)]="viewDate">
+									Today
+								</a>
+								<a class="btn btn-raised btn-primary" mwlCalendarNextView [view]="view"
+									[(viewDate)]="viewDate">
+									Next
+								</a>
+							</div>
+
+							<div class="btn-group d-block d-sm-block d-md-block d-lg-none">
+								<a class="btn btn-raised btn-primary ft-chevron-left" mwlCalendarPreviousView
+									[view]="view" [(viewDate)]="viewDate">
+									<i class="icon icon-arrows-left"></i>
+								</a>
+								<a class="btn btn-raised btn-danger ft-bookmark" mwlCalendarToday
+									[(viewDate)]="viewDate">
+									<i class="icon icon-arrows-sign-down"></i>
+								</a>
+								<a class="btn btn-raised btn-primary ft-chevron-right" mwlCalendarNextView [view]="view"
+									[(viewDate)]="viewDate">
+									<i class="icon icon-arrows-right"></i>
+								</a>
+							</div>
+						</div>
+						<div class="col text-center align-self-center">
+							<h6 class="text-uppercase mb-0">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h6>
+						</div>
+						<div class="col text-right">
+							<button class="btn btn-raised btn-primary float-right" (click)="addEvent()">
+								Add Event
+							</button>
+						</div>
+					</div>
+					<div [ngSwitch]="view">
+						<mwl-calendar-month-view *ngSwitchCase="'month'" [viewDate]="viewDate" [events]="events"
+							[refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen"
+							(dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)"
+							(eventTimesChanged)="eventTimesChanged($event)">
+						</mwl-calendar-month-view>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- List -->
+
+		<div class="card" style="margin-bottom: 50px;">
+			<div class="card-content">
+				<div class="card-body">
+					<div class="content-header">HOLIDAY LIST</div>
+					<p-table #dt [value]="HolidayList" [paginator]="true" [rows]="10" dataKey="ID" [scrollable]="true"
+						scrollHeight="70vh" text-align: initial>
+
+						<ng-template pTemplate="header">
+							<tr>
+								<th style="text-align: initial">
+									Name
+								</th>
+								<th style="text-align: initial">
+									Date
+								</th>
+								<th style="text-align: initial">
+										City Name
+								</th>
+								<th style="text-align: initial">
+										Warehouse Name
+								</th>
+									
+							</tr>
+						</ng-template>
+						<ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+							<tr>
+								<td style="text-align: initial">
+									{{rowData.HolidayName}}
+								</td>
+								<td style="text-align: initial">
+									{{rowData.start | date}}
+								</td>
+								<td style="text-align: initial">
+										{{rowData.CityName}}
+								</td>
+								<td style="text-align: initial">
+										{{rowData.WarehouseName}}
+								</td>								
+							</tr>
+						</ng-template>
+					</p-table>
+				</div>
+			</div>
+		</div>
+
+
+
+	</section>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+	[style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+	fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

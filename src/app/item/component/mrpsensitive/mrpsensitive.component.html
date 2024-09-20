@@ -1,0 +1,147 @@
+<p-toast [style]="{marginTop: '10px'}"></p-toast>
+
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-sm-5">
+        <div class="content-header">Remove MRP From Item and Make as Sensitive</div>
+        <div class="content-header" style="color: red;">*Merge Stock Of highlighted with red colour items</div>
+      </div>
+    </div>
+
+    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+      <p-footer>
+  
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+      </p-footer>
+    </p-confirmDialog>
+    <hr>
+   <div class="row">
+
+    <div class="col-md-3">
+
+      <div class="form-group">
+        <label for="name"><h4>Item Name</h4></label>
+        <fieldset >
+            <div class="input-group">
+        <span class="ui-fluid">
+          <p-autoComplete  [suggestions]="itemList" [(ngModel)]="itemSelected"
+            (completeMethod)="getitem($event)" field="itemname" [size]="30" placeholder="Enter at least 3 chars"
+            [minLength]="3" name="item"  name="itemname" (onSelect)="onSelect()" >
+          </p-autoComplete>
+        </span>
+       
+      
+    </div>
+   
+        </fieldset>
+      
+      </div>
+    </div> 
+    <div class="col-md-1" style="margin-top: 45px;" >
+      <div class="input-group-append">
+        <!-- <button               
+            type="button" (click)="onSelectItem(selectedItem.Number)"> -->
+            
+            <button class="btn btn-raised btn-raised btn-primary float-right " type="button" (click)="onSelectItem()">Search</button>  
+            <!-- <i  
+                class="fa fa-check" aria-hidden="true"></i>-->
+              
+            <!-- <i 
+                class="fa fa-times" aria-hidden="true"></i> -->
+       
+      
+        <!-- <input type="radio" name="" value="true" class="r1" (click)="groupselectitem(O)" [(ngModel)]="O.SelectedMRP"> -->
+    </div>
+
+    </div>
+    <div class="col-md-8" style="margin-top: 45px;" >
+      <div class="float-right">
+        <button class="btn btn-raised btn-raised btn-primary float-right " (click)="Save(groupitemList)"> Save
+        </button>
+      </div>
+      <div class="float-right">
+        <button class="btn btn-raised btn-raised btn-warning float-right" style="margin-right: 10px;" (click)="clear()"> Clear
+        </button>
+      </div>
+    </div>
+    <!-- <div class="col-sm-7" *ngIf="itemList">
+      <div class="form-group">
+        <label for="name"><h4></h4></label>
+          <input type="radio" name="" value="true" (click)="groupselectitem(O)" [(ngModel)]="O.SelectedMRP">
+      </div>
+    </div>  -->
+
+   
+  </div>
+
+<div class="position-relative" *ngIf="groupitemList && groupitemList.length > 1">
+    <div class="Card">
+        <div style="max-height: 680px; overflow:scroll;">
+      <div *ngFor=" let O of groupitemList">
+        <div>
+          <div class="position-relative">
+            <p-table #dt [columns]="cols" [value]="O.Sensitiveitemlist" [paginator]="false" [rows]="5" dataKey="Id"
+              [scrollable]="true" scrollHeight="70vh" text-align: center>
+              <ng-template pTemplate="caption">
+                <h3>{{O.WarehouseId}}. {{O.WarehouseName}}</h3>
+                  <!-- <h3><input type="checkbox" name="gender" value="male" (click)="groupselectitem(O)" [(ngModel)]="O.SelectedMRP" [disabled]="O.SelectedMRP"> {{O.WarehouseId}}. {{O.WarehouseName}}</h3> -->
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th *ngFor="let col of cols">
+                    {{col.header}}
+                  </th>
+                  <th> Select</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                <tr [pSelectableRow]="rowData">
+                  <td *ngFor="let col of columns" style="text-align: initial" [ngStyle]="(rowData.SelectedMRP)?{'background-color':'#86E4A4'}:{'background-color':'#F296A2'}">
+                    {{rowData[col.field]}}
+                  </td>
+                  <td>
+                      <!-- <div class="ui-g" style="width:250px;margin-bottom:20px">
+                          <h6><div class="ui-g-12"><p-radioButton name="group1"  [(ngModel)]="rowData.SelectedMRP" inputId="opt1" value="" ng-checked='rowData.SelectedMRP === true' ></p-radioButton></div>{{rowData.SelectedMRP}}</h6>
+                      </div> -->
+                      <!-- <div class="pr-dv" *ngFor="let rowData of  O.Sensitiveitemlist; let pindex = index;"> -->
+                        <!-- <p-radioButton name="groupname" value="rowData.SelectedMRP"  [(ngModel)]="rowData.SelectedMRP"></p-radioButton> -->
+                        <!-- <p-radioButton name="pchk{{pindex}}" value="rowData.SelectedMRP"   [(ngModel)]="rowData.SelectedMRP" ></p-radioButton> -->
+                        <!-- <p-tableRadioButton [value]="rowData.SelectedMRP" [(ngModel)]="rowData.SelectedMRP"[disabled]="O.Sensitiveitemlist.length == 1"  binary="true"    ></p-tableRadioButton> -->
+                          <p-checkbox   name="group" [(ngModel)]="rowData.SelectedMRP"
+                              binary="true" (onChange)="onCheckBoxChange(O.Sensitiveitemlist , rowData)" [disabled]="O.Sensitiveitemlist.length == 1 && O.Sensitiveitemlist[0].SelectedMRP == true "  ></p-checkbox>
+
+                      <!-- </div> -->
+                      <!-- <div class="ui-g" style="width:250px;margin-bottom:10px">
+                          <div class="ui-g-12"><p-radioButton name="group2" value="true" label="Option 1" [(ngModel)]="rowData.SelectedMRP" inputId="preopt1"></p-radioButton></div>                        
+                      </div>
+                      Selected Value = {{rowData.SelectedMRP||'none'}} -->
+                      <!-- <h3><input type="radio" name="" value="true" (click)="groupselectitem(O)" [(ngModel)]="O.SelectedMRP" > {{O.SelectedMRP}}</h3> -->
+                    <!-- <input type="radio" name="" value="" [(ngModel)]="SelectedMRP" > -->
+                  </td>          
+                </tr>
+              </ng-template> 
+            </p-table>
+          </div><br />     
+        </div>
+     
+      </div>
+      <!-- <div class="col-sm-7">
+          <button class="btn btn-raised btn-raised btn-primary  pull-right pl" (click)="Save(groupitemList)"> Save
+          </button>
+        </div> -->
+     
+        </div>
+       
+    </div>
+  </div>
+
+
+  </section>
+  </div>
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

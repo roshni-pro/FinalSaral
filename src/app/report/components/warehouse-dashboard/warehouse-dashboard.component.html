@@ -1,0 +1,245 @@
+<div class="content-header">
+  Cancellation Dashboard
+</div>
+<div class="card">
+  <div class="row sp">
+    <div class="col-md-4">
+      <div class="form-group">
+        <!-- <label for="wh">Warehouse</label> -->
+        <select id="wh" name="warehouse" [(ngModel)]="wHdashboard.selectedWarehouse" class="form-control"
+          (change)="getData()">
+          <option value="null">Select Warehouse</option>
+          <option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">
+            {{ warehouse.WarehouseName }}</option>
+        </select>
+      </div>
+    </div>
+    <!-- <div class="col-md-4">
+            <div class="form-group">
+                <label for="custtype">Customer Type</label>
+                <select id="custtype" name="custtype" [(ngModel)]="wHdashboard.CustomerType"
+                  class="form-control">
+                  <option value="null">Select Customer Type</option>
+                  <option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">
+                    {{ warehouse.WarehouseName }}</option>
+                </select>
+              </div>
+        </div> -->
+    <div class="col-md-4" *ngIf="dashboardData">
+      <div class="form-group">
+        <!-- <br> -->
+        <!-- <label for="hubincharge">Hub Incharge</label> -->
+        <div class="brdr form-control">Hub Incharge : <span class="hub-charge">{{dashboardData?.HubIncharge}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="dashboardData">
+      <div class="form-group">
+        <!-- <label for="inboundcharge">InBound Incharge</label> -->
+        <div class="brdr form-control">InBound Incharge : <span
+            class="hub-charge">{{dashboardData?.InBoundIncharge}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="dashboardData">
+      <div class="form-group">
+        <!-- <label for="outbound   charge">OutBound Incharge</label> -->
+        <div class="brdr form-control">OutBound Incharge : <span
+            class="hub-charge">{{dashboardData?.OutBoundIncharge}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+
+    </div>
+    <div class="col-md-4" *ngIf="dashboardData">
+      <div class="form-group" style="float: right;">
+        <div class="brdr-st form-control">Warning Hit :
+          <span class="brdr-pd" *ngIf="dashboardData?.WarningCount == 0"
+            [ngStyle]="{'background-color': dashboardData?.Backgroundcolor}">YES
+            ({{dashboardData?.WarningCount}})</span>
+          <span class="brdr-pd1" *ngIf="dashboardData?.WarningCount > 0"
+            [ngStyle]="{'background-color': dashboardData?.Backgroundcolor,'color':white}">YES
+            ({{dashboardData?.WarningCount}})</span>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="col-md-2">
+            <div class="form-group">
+                <button name="data" id="data" class="btn btn-primary" (click)="getData()">GetData</button>
+            </div>
+        </div>  -->
+  </div>
+</div>
+<div class="card" *ngIf="dashboardData">
+  <div class="row sp">
+    <div class="col-3">
+      <div class="listDetails">
+        <span>{{dashboardData?.TotalCount | number : '1.0-2' }}</span>
+        <strong>
+          <!-- <i class="fa fa-arrow-up" aria-hidden="true"></i>  -->
+          <!-- <img *ngIf="dashboardData?.CompareTotalPercent < 0" src="assets/img/svg/down_arrow_green.svg">
+          <img *ngIf="dashboardData?.CompareTotalPercent >= 0" style="transform: rotate(180deg);"
+            src="assets/img/svg/down_arrow_red.svg"> -->
+          <!-- {{dashboardData?.CompareTotalPercent | number : '1.0-2' }} -->
+          ({{dashboardData?.TotalCountDiff | number : '1.0-2'}})
+        </strong>
+        <small>Total Orders</small>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="listDetails">
+        <span>{{dashboardData?.DeliveredTotalCount | number : '1.0-2' }}</span>
+        <strong>
+          <img *ngIf="dashboardData?.CompareDeliveredTotalPercent >= 0" src="assets/img/svg/down_arrow_green.svg">
+          <img *ngIf="dashboardData?.CompareDeliveredTotalPercent < 0" style="transform: rotate(180deg);"
+            src="assets/img/svg/down_arrow_red.svg">
+          {{dashboardData?.CompareDeliveredTotalPercent | number : '1.0-2' }}%({{dashboardData?.DeliveredTotalCountDiff
+          | number : '1.0-2' }})</strong>
+        <!-- <strong>₹ 767</strong> -->
+        <small>Delivered Orders</small>
+      </div>
+    </div>
+    <!-- <div class="col-3">
+      <div class="listDetails">
+        <span>{{dashboardData?.Tat | number : '1.2-2' }}</span>
+        <strong>
+          <img *ngIf="dashboardData?.CompareTatPercent < 0" src="assets/img/svg/down_arrow_green.svg">
+          <img *ngIf="dashboardData?.CompareTatPercent >= 0" style="transform: rotate(180deg);"
+            src="assets/img/svg/down_arrow_red.svg">
+          {{dashboardData?.CompareTatPercent | number : '1.2-2' }}%({{dashboardData?.TatDiffInHours | number : '1.2-2'
+          }}hrs)</strong>
+        <small>TAT(Avg)</small>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="listDetails">
+        <span>{{dashboardData?.HitPercent | number : '1.2-2' }}% </span>
+        <strong>
+          <img *ngIf="dashboardData?.CompareHitPercent < 0" src="assets/img/svg/down_arrow_green.svg">
+          <img *ngIf="dashboardData?.CompareHitPercent >= 0" style="transform: rotate(180deg);"
+            src="assets/img/svg/down_arrow_red.svg">
+          {{dashboardData?.CompareHitPercent | number : '1.2-2' }}%</strong>
+        <small>Hit %</small>
+      </div>
+    </div> -->
+    <div class="col-3">
+      <div class="listDetails">
+        <span>{{dashboardData?.CancellationPercant | number : '1.0-2' }}</span>
+        <strong>
+          <img *ngIf="dashboardData?.CompareCancellationPercant < 0" src="assets/img/svg/down_arrow_green.svg">
+          <img *ngIf="dashboardData?.CompareCancellationPercant >= 0" style="transform: rotate(180deg);"
+            src="assets/img/svg/down_arrow_red.svg">
+          {{dashboardData?.CompareCancellationPercant | number : '1.0-2' }}%</strong>
+        <small>Cancellation %</small>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="listDetails">
+        <span>{{dashboardData?.CancelCount | number : '1.0-2' }}</span>
+        <strong>
+          <img *ngIf="dashboardData?.CompareCancelCountPercent < 0" src="assets/img/svg/down_arrow_green.svg">
+          <img *ngIf="dashboardData?.CompareCancelCountPercent >= 0" style="transform: rotate(180deg);"
+            src="assets/img/svg/down_arrow_red.svg">
+          {{dashboardData?.CompareCancelCountPercent | number : '1.0-2' }}%({{dashboardData?.CancelCountDiff | number :
+          '1.0-2' }})</strong>
+        <small>Cancelled Orders</small>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="listDetails">
+        <span>₹ {{dashboardData?.CancelAmount | number : '1.0-2' }}</span>
+        <strong>
+          <img *ngIf="dashboardData?.CompareAmountPercent < 0" src="assets/img/svg/down_arrow_green.svg">
+          <img *ngIf="dashboardData?.CompareAmountPercent >= 0" style="transform: rotate(180deg);"
+            src="assets/img/svg/down_arrow_red.svg">
+          {{dashboardData?.CompareAmountPercent | number : '1.0-2' }}%({{dashboardData?.CancelAmountDiff | number :
+          '1.0-2' }})</strong>
+        <small>Cancelled Amount</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6" *ngIf="salesPersonList">
+    <span class="bl">Sales Person</span>
+    <div class="card brdr"><!--[paginator]="true" [rows]="10"-->
+      <p-table #dt [value]="salesPersonList" [globalFilterFields]="['SalesMan']"
+      sortField="CancellationPercant" [sortOrder]="-1">
+        <ng-template pTemplate="caption">
+          <div style="text-align: right">        
+             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+             <input type="text" pInputText size="50" placeholder="Search" 
+             (input)="dt.filterGlobal($event.target.value, 'contains')" >
+         </div>
+       </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>SalesPerson</th>
+            <th>Cancellation%</th>
+            <th>Cancel Orders</th>
+            <th>Cancellation Amount</th>
+            <th>Warning Hit</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+            <td>{{rowData.SalesMan}}</td>
+            <td>{{rowData.CancellationPercant}}%</td>
+            <td>{{rowData.CancelCount}}</td>
+            <td>₹ {{rowData.CancelAmount}}</td>
+            <td>
+              <div class="br-wthit" [ngStyle]="{'background-color': rowData.Backgroundcolor}"
+                >YES({{rowData.WarningCount}})</div>
+              <!-- <span class="br-wellowhit" [ngStyle]="{'background-color': rowData.Backgroundcolor}"
+                *ngIf="rowData.WarningHit > 5 && rowData.WarningHit <= 10">YES({{rowData.WarningHit}})</span>
+              <span class="br-redhit" [ngStyle]="{'background-color': rowData.Backgroundcolor}"
+                *ngIf="rowData.WarningHit > 10">YES({{rowData.WarningHit}})</span> -->
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+  <div class="col-md-6" *ngIf="dBoyPeronList">
+    <span class="bl">Delivery Person</span>
+    <div class="card brdr"><!--[paginator]="true" [rows]="10"-->
+      <p-table #dt [value]="dBoyPeronList" [globalFilterFields]="['Dboy']"
+      sortField="CancellationPercant" [sortOrder]="-1">
+        <ng-template pTemplate="caption">
+          <div style="text-align: right">        
+             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+             <input type="text" pInputText size="50" placeholder="Search" 
+             (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+         </div>
+       </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Dboy</th>
+            <th>Cancellation%</th>
+            <th>Cancel Orders</th>
+            <th>Cancellation Amount</th>
+            <th>Warning Hit</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+            <td>{{rowData.Dboy}}</td>
+            <td>{{rowData.CancellationPercant}}%</td>
+            <td>{{rowData.CancelCount}}</td>
+            <td>₹ {{rowData.CancelAmount}}</td>
+            <td>
+              <div class="br-wthit" [ngStyle]="{'background-color': rowData.Backgroundcolor}"
+                >YES({{rowData.WarningCount}})</div>
+              <!-- <span class="br-wellowhit" [ngStyle]="{'background-color': rowData.Backgroundcolor}"
+                *ngIf="rowData.WarningHit > 5 && rowData.WarningHit <= 10">YES({{rowData.WarningHit}})</span>
+              <span class="br-redhit" [ngStyle]="{'background-color': rowData.Backgroundcolor}"
+                *ngIf="rowData.WarningHit > 10">YES({{rowData.WarningHit}})</span> -->
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

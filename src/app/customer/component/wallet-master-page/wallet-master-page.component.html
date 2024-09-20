@@ -1,0 +1,220 @@
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h4><b>Wallet Master</b></h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text" name="srch" id="srch" [(ngModel)]="keyword" placeholder="Enter SkCode or CityName or ShopName"
+                        class="form-control pull-right">
+                </div>
+                <div class="col-md-2">
+                    <input type="button" value="Search" class="btn btn-raised btn-primary" style="background:  rgb(138, 33, 236);"
+                        (click)="SearchByKey(keyword)">&nbsp;
+                        <input type="button" value="Clear" class="btn btn-raised btn-primary"
+                        (click)="GlobalClear()">
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-md-2">
+                    <label>Warehouse</label>
+                    <select name="" value="" class="form-control" [(ngModel)]="selectedWarehouseId">
+                        <option value="0">--Select--</option>
+                        <option *ngFor="let w of warehouseList" [ngValue]="w.WarehouseId">{{w.WarehouseName}}
+                            {{w.CityName}}</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label>Start Date</label>
+                    <!-- <input type="datetime-local" id="startDate" name="startDate" class="form-control"
+                        [ngModel]="searchdata.startDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="searchdata.startDate = $event" /> -->
+                    <input type="date" id="startDate" name="startDate" class="form-control"
+                        [(ngModel)]="searchdata.startDate" />
+                </div>
+                <div class="col-md-2">
+                    <label>End Date</label>
+                    <!-- <input type="datetime-local" id="endDate" name="endDate" class="form-control"
+                        [ngModel]="searchdata.endDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="searchdata.endDate = $event" /> -->
+                    <input type="date" id="endDate" name="endDate" class="form-control"
+                        [(ngModel)]="searchdata.endDate" />
+                </div>
+                <div class="col-md-6">
+                    <input type="button" value="Search" (click)="search()" class="btn btn-raised btn-primary mt">&nbsp;
+                    <input type="button" value="Refresh" (click)="Clear()" class="btn btn-raised btn-danger mt">&nbsp;
+                    <input type="button" value="Export"  (click)="WalletExportData()" [disabled]="!isShow"
+                        class="btn btn-raised btn-success mt">&nbsp;
+                    <!-- <input type="button" value="Cash Conversion" (click)="CashConversion()"
+                        class="btn btn-raised btn-warning mt"> -->
+                </div>
+            </div>
+           
+            <div class="row">
+                <p-table #dt [value]="walletList" [columns]="columnList" [lazy]="true" [totalRecords]="totalRecords" [(first)]="first"
+                    (onLazyLoad)="load_wallet($event)" [paginator]="true" [rows]="10" text-align:center [scrollable]="true" scrollHeight="60vh">
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columnList">
+                                {{col.header}}
+                            </th>
+                            <th>CreatedDate</th>
+                            <th>Action</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-columns="columns">
+                        <tr>
+                            <td *ngFor="let col of columns">
+                                {{item[col.field]}}
+                                <!-- {{ col.data ? (rowData[col.field]| date : col.format) : item[col.field] }} -->
+                            </td>
+                            <td>
+                                {{item.CreatedDate | date:'medium'}}
+                            </td>
+                            <td>
+                                <button (click)="RowEdit(item)"
+                                    class="btn btn-raised btn-primary btnedit">Edit</button>&nbsp;
+                                <button (click)="History(item)" class="btn btn-raised btn-danger btnpadding">Stock
+                                    History</button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isOpenPopup">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '55%',height: '60%',left: '323px'}">
+
+        <p-header>
+            <h4>Add\Edit (Point To Rupee conversion)</h4>
+        </p-header>
+
+        <div class="card">
+            <div class="row">
+                <div class="col-md-12">
+                    <Label>Point</Label>
+                    <input type="number" name="point" id="point" class="form-control" [(ngModel)]="cash.point">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <Label>INR</Label>
+                    <input type="number" name="INR" id="INR" class="form-control" [(ngModel)]="cash.rupee">
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-raised btn-primary" (click)="cancel()">Cancel</button>
+                    <button type="button" class="btn btn-raised btn-success" (click)="AddcashData()">Save</button>
+                    <label>{{cash.point}} point equal to {{cash.rupee}} rupees</label>
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+
+</div>
+
+<div *ngIf="isEditWalletPopup">
+    <p-dialog [(visible)]="isEditWalletPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '55%',height: '60%',left: '323px'}">
+
+        <p-header>
+            <h4>Edit Wallet</h4>
+        </p-header>
+
+        <div class="card">
+            <div class="row">
+                <div class="col-md-12">
+                    <Label>Wallet Amount:</Label>
+                    <input type="number" name="TotalAmount" id="TotalAmount" class="form-control"
+                        [(ngModel)]="saveData.TotalAmount" readonly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <Label>Add Wallet Amount:</Label>
+                    <input type="number" name="CreditAmount" id="CreditAmount" class="form-control"
+                        [(ngModel)]="saveData.CreditAmount"  onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <Label>Select Wallet Name:</Label>
+                    <select class="form-control" id="site-name" [(ngModel)]="saveData.Through"
+                        (change)="onchange(saveData.Through)">
+                        <option value="{{Manualwalletdropdowns.Name}}"
+                            *ngFor="let Manualwalletdropdowns of Manualwalletdropdown">{{Manualwalletdropdowns.Name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="row"> 
+                <div class="col-md-12" *ngIf="IsComment">
+                    <label for="comment">Comment:</label>
+                    <input id="comment" class="form-control" [(ngModel)]="saveData.Comment" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-raised btn-primary" (click)="cancel_2()">Cancel</button>&nbsp;
+                    <button type="button" class="btn btn-raised btn-success" (click)="AddWallet()">Save</button>
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+
+<div *ngIf="IsHistoryPopup">
+    <p-dialog [(visible)]="IsHistoryPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="20"
+        [style]="{width: '70%',height: '55px',left: '323px'}">
+        <p-header>
+            <h4>Wallet History</h4>
+        </p-header>
+        <div class="row">
+            <p-table #dt [value]="OldStockData" [paginator]="true" [lazy]="true" [rows]="10" [scrollable]="true"
+                [totalRecords]="totalRecords" (onLazyLoad)="load($event)" scrollHeight="60vh" text-align: center>
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th>TotalWalletAmount</th>
+                        <th>IN WalletAmount</th>
+                        <th>OuT WalletAmount</th>
+                        <th>From</th>
+                        <th>OrderId</th>
+                        <th>EditBy</th>
+                        <th>Date</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-trade let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{trade.TotalWalletAmount}}</td>
+                        <td>+{{trade.NewAddedWAmount}}</td>
+                        <td>-{{trade.NewOutWAmount}}</td>
+                        <td>{{trade.Through}}</td>
+                        <td>{{trade.OrderId}}</td>
+                        <td>{{trade.PeopleName}}</td>
+                        <td>{{trade.CreatedDate| date:'medium'}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="col-md-12">
+                <button type="button" class="btn btn-raised btn-primary" (click)="HistoryExportData()">Export</button>
+                &nbsp;
+                <button type="button" class="btn btn-raised btn-warning" (click)="Close()">Close</button>
+            </div>
+        </div>
+    </p-dialog>
+
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

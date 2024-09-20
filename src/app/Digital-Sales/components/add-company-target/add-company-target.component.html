@@ -1,0 +1,90 @@
+
+<div class="card text-center ui-fluid">
+    <div class="card-header">
+      <h1> Add Company Target </h1>
+    </div>
+    <div class="card-body">
+        <div class="form-row">            
+             <div class="form-group col-md-2">
+               <div class="form-group">
+                 <label for="projectinput1" >City<span  style="color:red"> *</span></label>
+                 <!-- [disabled]="disablefield" -->
+                 <select id="city" name="city" class="form-control" [(ngModel)]="companyTarget.CityId" 
+                    #cityId="ngModel" required >
+                   <option value="0">--Select City--</option>
+                   <option *ngFor="let city of CityList" [ngValue]="city.Cityid">{{city.CityName}}
+                   </option>
+                 </select>
+                 <div *ngIf="isInvalid && !cityId.valid && cityId.errors.required">
+                   <code>City is required</code>
+                 </div>
+               </div>
+             </div>
+             <div class="form-group col-md-2"> 
+               <div class="form-group">
+                 <label for="projectinput2">SubCategory<span  style="color:red"> *</span></label>
+                 <!-- [disabled]="disablefield" -->
+                 <select id="sb" name="sb" class="form-control" [(ngModel)]="companyTarget.SubCatId" 
+                   placeholder="Select SubCategory" required="1" #SubCategoryId="ngModel" (ngModelChange)="GetBrand()">
+                   <div class="col-md-6"></div>
+                   <option value="0">--Select SubCategory--</option>
+                   <option *ngFor="let sb of SubCategoryList" [ngValue]="sb.SubCategoryId">
+                     {{sb.SubcategoryName}}
+                   </option>
+                 </select>
+                 <div *ngIf="isInvalid && !SubCategoryId.valid && SubCategoryId.errors.required">
+                   <code>SubCatgory is required</code>
+                 </div>
+               </div>
+             </div>
+             <div class="form-group col-md-2">
+               <div class="form-group">
+                 <label for="projectinput3">Start Date<span  style="color:red"> *</span></label>                   
+                 <!-- [disabled]="disablefield"   -->
+                 <p-calendar id="ssb" name="ssb" [minDate]="minimumDate" [(ngModel)]="companyTarget.StartDate" [showTime]="true" hourFormat="12" #StartDate="ngModel"></p-calendar>
+               <div *ngIf="isInvalid && !StartDate.valid && StartDate.errors.required">
+                 <code>StartDate is required</code>
+               </div>
+             </div>     
+             </div>
+             <div class="form-group col-md-2">
+               <div class="form-group">
+                 <label for="projectinput4">End Date<span  style="color:red"> *</span></label>
+                 <!-- [disabled]="disablefield"   -->
+                 <p-calendar  id="esb" name="esb" [minDate]="minimumDate" [(ngModel)]="companyTarget.EndDate" [showTime]="true" hourFormat="12" #EndDate="ngModel"></p-calendar>
+               <div *ngIf="isInvalid && !EndDate.valid && EndDate.errors.required">
+                 <code>EndDate is required</code>
+               </div>
+             </div>
+             </div>           
+<!-- for specific customer -->
+             <div class="form-group col-md-2">
+              <div class="form-group">
+                <label for="projectinput5">Is Customer Specific</label> <br>
+                <p-checkbox name="group1"  [binary]="true"  [(ngModel)]="companyTarget.IsCustomerSpacific" inputId="sf"></p-checkbox>
+            </div>
+            </div> 
+        </div>
+        <div *ngFor="let SubCatTargetBrand Of companyTarget.subCatTargetBrands">
+            <app-company-target [subCatTargetBrand]="SubCatTargetBrand"  [brandList]="BrandList" [cityId]="companyTarget.CityId" (onBranChange)="brandChangeEvent($event)"></app-company-target>            
+         </div>
+         <div class="row">
+           <button (click)="AddBrand()">Add Brand</button>
+         </div> 
+    </div>
+    <div class="card-footer text-right">
+        <div>
+          
+          <!-- <button type="button" class="btn btn-raised btn-warning mr-1" style="float:right;" (click)="WriteLog()">
+            WriteLog
+        </button> -->
+        <button type="button" class="btn btn-raised btn-warning mr-1" style="float:right;" (click)="SaveData()">
+            Post
+        </button>
+        <button type="button" class="btn btn-raised btn-warning mr-1" style="float:right;" (click)="back()">
+          Back
+      </button>
+      </div>
+    </div>
+  </div>
+

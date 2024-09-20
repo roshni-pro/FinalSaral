@@ -1,0 +1,271 @@
+<p-toast></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+<div class="header">
+    <h3 class="m-2">Add Trade Commission Master <i class="fa fa-plus-square" style="font-size:36px;"></i> </h3>
+</div>
+<div class="ui-fluid">
+    <div class="ui-g">
+        <div class="ui-g-12">
+            <section id="basic-form-layouts">
+                <div class="row text-left">
+                    <div class="col-md-6 mr-b-20">
+                        <div class="card">
+                            <div class="card-header pb-2">
+                                <h4 class="card-title" id="basic-layout-form">Basic Details</h4>
+                                <p class="mb-0">Please create a required Commission only. It is a way to directly
+                                    connecting
+                                    with End users. Creator is only responsible for this.</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="px-3  mr-b-20">
+                                    <form class="form" #masterForm="ngForm">
+                                        <div class="form-body">
+                                            <h4 class="form-section"><i class="fa fa-desktop"
+                                                    aria-hidden="true"></i>Master
+                                                Selection</h4>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="projectinput2">Trader Details</label>
+                                                    <form class="form" #masterForm="ngForm">
+                                                        <div class="form-body">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <label for="projectinput2">Trader Type*</label>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <p-radioButton name="groupname" value="true"
+                                                                        [(ngModel)]="tradeCommissionDc.IsSeller"
+                                                                        (ngModelChange)="onEventTypeChange(seletedData)"
+                                                                        [disabled]="radiodisabled" label="Seller">
+                                                                    </p-radioButton>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <p-radioButton name="groupname" value="true"
+                                                                        [(ngModel)]="tradeCommissionDc.IsBuyer"
+                                                                        (ngModelChange)="onEventTypeChange(seletedData)"
+                                                                        [disabled]="radiodisabled" label="Buyer">
+                                                                    </p-radioButton>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <br>
+
+
+                                            <div class="col-md-3" *ngIf="showcityandcategory">
+                                                <div class="form-group">
+                                                    <label for="city">city*</label>
+                                                    <select id="city" name="city" class="form-control"
+                                                        [(ngModel)]="tradeCommissionDc.City" required="1" maxlength="50"
+                                                        minlength="2" #city="ngModel" (ngModelChange)="onCategory()">
+
+                                                        <option *ngFor="let city of cityList" [ngValue]="city">
+                                                            {{ city }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-3" *ngIf="showcityandcategory">
+                                                <div class="form-group">
+                                                    <label for="Category">Category Name</label>
+                                                    <select id="Category" name="Category" class="form-control"
+                                                        [(ngModel)]="tradeCommissionDc.CategoryId">
+                                                        <option value="">Select</option>
+                                                        <option *ngFor="let cat of CategoryList"
+                                                            [ngValue]="cat.CategoryId">
+                                                            {{ cat.CategoryName }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+
+                                            </div>
+                                            <div *ngIf="showDateFilters">
+                                                <hr>
+                                                <label for="projectinput2">Date Selector* </label>
+                                                <form class="form" #masterForm="ngForm">
+                                                    <div class="form-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <label for="projectinput2">Date Type*</label>
+                                                            </div>
+                                                            <!-- <div class="col-md-4">
+                                                                <p-radioButton name="Date" value="true"
+                                                                    [(ngModel)]="seletedData.month"
+                                                                    (ngModelChange)="onDateSelect(seletedData)"
+                                                                    [disabled]="dateradiodisabled"
+                                                                    label="select a month">
+                                                                </p-radioButton>
+                                                            </div> -->
+                                                            <div class="col-md-4">
+                                                                <p-radioButton name="Date" value="true"
+                                                                    [(ngModel)]="seletedData.range"
+                                                                    (ngModelChange)="onDateSelect(seletedData)"
+                                                                    [disabled]="dateradiodisabled"
+                                                                    label="Custom Date range">
+                                                                </p-radioButton>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+
+
+
+                                            <div class="col-md-6" *ngIf="showrange">
+                                                <hr>
+                                                <div class="form-group">
+                                                    <h3>Range*</h3>
+                                                    <p-calendar (click)="onDate()" [minDate]="minDateValue"
+                                                        [(ngModel)]="rangeDates" name="dateRangeInput"
+                                                        selectionMode="range" [readonlyInput]="true" required
+                                                        #dateRangeListInput>
+                                                    </p-calendar>
+                                                    <div
+                                                        *ngIf="isInvalid && (!dateRangeListInput.value || dateRangeListInput.value.length < 1)">
+                                                        <code>Date is required!</code>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <!-- <div class="col-md-6" *ngIf="showmonth">
+                                                <div class="form-group">
+                                                    <h3>Month Picker*</h3>
+                                                    <p-calendar [(ngModel)]="datemonth" view="month" dateFormat="mm/yy"
+                                                        [yearNavigator]="true" yearRange="2019:2030"
+                                                        [minDate]="minDateValue" [readonlyInput]="true"
+                                                        (click)="onDate()"></p-calendar>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mr-b-20" *ngIf="showcommisionwindow">
+                        <div class="card">
+                            <div class="card-header pb-2">
+                            </div>
+                            <div class="card-content">
+                                <div class="px-3  mr-b-20">
+                                    <form class="form" #masterForm="ngForm">
+                                        <div class="form-body">
+                                            <h4 class="form-section"><i class="fa fa-desktop" aria-hidden="true"></i>Target
+                                                Selection*</h4>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <form class="form" #masterForm="ngForm">
+                                                        <div class="form-body">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <label for="projectinput2">Trader Type</label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="orderType">range start* </label>
+                                                                    <span class="ui-inputgroup-addon"> ₹</span>
+                                                                    <input type="number" id="Target" name="StartRange"
+                                                                        [(ngModel)]="tradeCommissionDc.StartRange"
+                                                                        placeholder="Enter start range in rupees"
+                                                                        class="form-control" required="1" maxlength="50"
+                                                                        minlength="2" #starttarget="ngModel">
+                                                                    <div
+                                                                        *ngIf="isInvalid && !target.valid && target.errors.required">
+                                                                        <code>Target is required</code>
+                                                                    </div>
+                                                                    <div
+                                                                        *ngIf="isInvalid && !target.valid && target.errors.minlength">
+                                                                        <code>Minlength 2</code>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="orderType">range End* </label>
+                                                                    <span class="ui-inputgroup-addon"> ₹</span>
+                                                                    <input type="number" id="Target" name="EndRange"
+                                                                        [(ngModel)]="tradeCommissionDc.EndRange"
+                                                                        placeholder="Enter End range in rupees"
+                                                                        class="form-control" required="1" maxlength="50"
+                                                                        minlength="2" #Endtarget="ngModel">
+                                                                    <div
+                                                                        *ngIf="isInvalid && !target.valid && target.errors.required">
+                                                                        <code>Target is required</code>
+                                                                    </div>
+                                                                    <div
+                                                                        *ngIf="isInvalid && !target.valid && target.errors.minlength">
+                                                                        <code>Minlength 2</code>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="orderType">commision in </label>
+                                                                    <span class="ui-inputgroup-addon"> %* </span>
+                                                                    <input type="number" id="Target"
+                                                                        name="CommissionPercent"
+                                                                        [(ngModel)]="tradeCommissionDc.CommissionPercent"
+                                                                        placeholder="Enter commision in %"
+                                                                        class="form-control" required="1" maxlength="50"
+                                                                        minlength="2" #commisionpercentage="ngModel">
+                                                                    <div
+                                                                        *ngIf="isInvalid && !target.valid && target.errors.required">
+                                                                        <code>Target is required</code>
+                                                                    </div>
+                                                                    <div
+                                                                        *ngIf="isInvalid && !target.valid && target.errors.minlength">
+                                                                        <code>Minlength 2</code>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="orderType">maximum commision amount
+                                                                    </label>
+                                                                    <span class="ui-inputgroup-addon"> </span>
+                                                                    <input type="number" id="Target"
+                                                                        name="MaxCommissionAmount"
+                                                                        [(ngModel)]="tradeCommissionDc.MaxCommissionAmount"
+                                                                        placeholder="maximum commision amount in rupees"
+                                                                        class="form-control">
+
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <button type="button"
+                                                                        class="btn btn-raised btn-raised btn-primary "
+                                                                        (click)="onSave(masterForm, tradeCommissionDc)">
+                                                                        Save
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

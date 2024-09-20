@@ -1,0 +1,118 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+
+
+
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2"><b>Fleet Master List</b></h3>
+    </div>
+     <div>
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: 10px;" (click)="addFleetmaster()">
+          <i class="fa fa-plus-circle"></i> Add Fleet Master
+        </button>
+      </div>
+</div>
+<div class="container">
+  <form class="form">
+    <div class="form-body">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="orderType">Search</label>
+            <input type="tel" id="orderType" name="orderType" class="form-control" placeholder="Search TransportName/TransportAgentName/FleetType"  [(ngModel)]="searchModel.searchall">
+          </div>
+        </div>
+<div class="col-md-3">
+  <div class="form-group">
+    <label for="projectinput3">From Date</label>
+    <br>
+    <p-calendar name="startDateInput" [(ngModel)]="searchModel.FromDate" [showIcon]="true" 
+      name="fromDate" ></p-calendar>
+  </div>
+</div>
+<div class="col-md-3">
+  <div class="form-group">
+    <label for="projectinput4">To Date</label>
+    <br>
+    <p-calendar name="endDateInput" [(ngModel)]="searchModel.ToDate" [showIcon]="true" name="toDate"
+      ></p-calendar>
+  </div>
+</div>
+<div class="col-md-3" style="padding-top: 30px">
+  <div class="form-group">
+    <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="search(searchModel)">Search</button>
+    <button type="button" class="btn btn-raised btn-raised btn-primary "style="margin-left:15px" (click)="clear()">
+       Clear
+    </button>  
+    <button type="button" class="btn btn-raised btn-raised btn-primary "style="margin-left:15px" (click)="export()">
+      Export
+   </button>  
+  </div>
+</div>
+      </div>
+    </div>
+  </form>
+</div> 
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <p-table #dt [value]="fleetMasterList" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" [lazy]="true" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>City Name</th> 
+            <th>Warehouse Name</th> 
+              <th>Channel</th>   
+              <th>Fleet Type</th>  
+              <th> Transport Name </th> 
+              <th>Transport Agent Name</th>   
+              <th>Freight Discount </th> 
+              <th>Operated By</th> 
+              <th>TollAmt</th> 
+              <th>Contract Start</th>   
+              <th>Contract End</th> 
+              <th>Edit</th>
+              <th>Active/Deactive</th> 
+              <th>IsBlocked</th> 
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr >
+            <td>{{rowData.CityName}}</td> 
+            <td>{{rowData.WarehouseName}}</td>  
+              <td>{{rowData.Channel}}</td>   
+              <td>{{rowData.FleetType}}</td>     
+              <td>{{rowData.TransportName}}</td>    
+              <td>{{rowData.TransportAgentName}}</td>               
+              <td>{{rowData.FreightDiscount}}</td>    
+              <td>{{rowData.OperatedBy}}</td>  
+              <td>{{rowData.TollAmt}}</td>     
+              <td>{{rowData.ContractStart | date:'medium'}}</td>
+              <td>{{rowData.ContractEnd | date:'medium'}}</td> 
+              <td>
+                <button class="btn btn-primary" (click)="openDetails(rowData)">Edit</button>
+              </td>
+              <td>
+                <p-inputSwitch name="IsActive"  [(ngModel)]="rowData.IsActive" (ngModelChange)="ActiveInactive(rowData,rowData.IsActive)">
+                </p-inputSwitch>&nbsp;&nbsp;
+              </td>  
+              <td>
+                <p-inputSwitch name="IsBlocked"  [(ngModel)]="rowData.IsBlocked" (ngModelChange)="isBlocked(rowData,rowData.IsBlocked)">
+                </p-inputSwitch>&nbsp;&nbsp;
+              </td>    
+          </tr>
+        </ng-template>
+      </p-table>
+
+  </div>
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+
+   
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>

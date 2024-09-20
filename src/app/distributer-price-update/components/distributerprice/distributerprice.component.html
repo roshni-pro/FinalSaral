@@ -1,0 +1,215 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="Group">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h4 class="m-2">
+        <b>!!DistributorPrice!!</b>
+      </h4>
+    </div>
+
+    <!-- <div>
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: auto;"
+          (click)="addgullak()">
+          <i class="fa fa-plus-circle"></i> Add DistributerPrice
+        </button>
+       
+      </div> -->
+  </div>
+  <form class="form " name="form" #groupForm="ngForm">
+    <div class="row" *ngIf="group">
+      <div class="col-md-2">
+        <div class="form-group">
+          <label for="Warehouse"> SelectHub:</label>
+          <select id="WarehouseId" name="WarehouseName" class="form-control" [(ngModel)]="group.WarehouseId"
+            (change)="onsearch(); group.Categoryid = ''; group.SubCategoryId = ''; group.SubsubCategoryid = ''; group.SearchItem = '';"
+            #WarehouseId="ngModel" required="1">
+            <option value="">select</option>
+            <option *ngFor="let WareHouse of warehouses" [ngValue]="WareHouse.WarehouseId">
+              {{WareHouse.WarehouseName}}
+            </option>
+          </select>
+          <div class="col-md-6"></div>
+          <br />
+          <div *ngIf="isInvalid && !WarehouseId.valid && WarehouseId.errors.required">
+            <code>Warehouse Name is required</code>
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+
+      <div class="col-md-2">
+        <div class="form-group">
+          <label for="Warehouse"> Select Category:</label>
+          <select id="Category" name="CategoryName" class="form-control" [(ngModel)]="group.Categoryid"
+            (change)="onsearchcat(group.Categoryid)">
+            <option value="">select</option>
+            <option *ngFor="let Category of categories" [ngValue]="Category.Categoryid">
+              {{Category.CategoryName}}
+            </option>
+          </select>
+
+
+        </div>
+      </div>
+
+
+
+
+
+
+      <div class="col-md-2">
+        <div class="form-group">
+          <label for="Warehouse"> Select SubCategory:</label>
+          <select id="SubCategory" name="SubcategoryName" class="form-control" [(ngModel)]="group.SubCategoryId"
+            (change)="onsearchSubcat(group.Categoryid,group.SubCategoryId)">
+            <option value="">select</option>
+            <option *ngFor="let SubCategory of Subcategories" [ngValue]="SubCategory.SubCategoryId">
+              {{SubCategory.SubcategoryName }}
+            </option>
+          </select>
+
+        </div>
+      </div>
+
+
+
+
+      <div class="col-md-2">
+        <div class="form-group">
+          <label for="Warehouse"> Select Brand:</label>
+          <select id="Warehouse" name="BrandName" class="form-control" [(ngModel)]="group.SubsubCategoryid">
+            <option value="">select</option>
+            <option *ngFor="let brands of Subsubcategories" [ngValue]="brands.SubsubCategoryid">
+              {{brands.SubsubcategoryName}}
+            </option>
+          </select>
+
+        </div>
+      </div>
+
+
+      <div class="col-md-2">
+        <div class="form-group">
+          <label for="projectinput1">Name<span style="color:red"> *</span></label>
+          <input type="text" id="fname" class="form-control" name="fname" [(ngModel)]="group.SearchItem">
+        </div>
+      </div>
+
+
+
+      <br /><br />
+      <div class="col-md-2">
+        <div class="form-group">
+          <br />
+          <button type="button" class="btn btn-raised btn-primary " (click)="search(group,groupForm)">
+            Search
+          </button>
+          <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" style="margin-left: 10px;"
+          *ngIf="sourcingSeniorExecutiveRole == true"  (click)="exportDistributerPrice() ">Export </button>
+
+        </div>
+      </div>
+
+
+
+
+    </div>
+  </form>
+
+
+
+
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header pb-4">
+        <h4 class="card-title" id="basic-layout-colored-form-control">DistributorPrice List</h4>
+
+      </div>
+      <div class="position-absolute country-details" *ngIf="isDetails">
+        <!-- <app-gullak-cash-back-details [details]="selectedRowDetails" [activeFields]="activeFields"
+            (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)"
+            class="d-flex justify-content-end"></app-gullak-cash-back-details> -->
+
+      </div>
+
+      <div class="card-content">
+        <div class="px-3">
+
+          <form class="form">
+
+            <p-table #dt [globalFilterFields]="cols" [value]="distributerList" [paginator]="true" [rows]="5"
+              [scrollable]="true" scrollHeight="130vh" text-align: center>
+
+              <ng-template pTemplate="caption">
+                <div style="text-align: right">
+                  <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                  <input type="text" pInputText size="50" placeholder="Search"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                </div>
+              </ng-template>
+
+
+              <ng-template pTemplate="header">
+
+                <tr>
+                  <th>ItemId</th>
+                  <th>Item Name </th>
+                  <th>Multi MRP ID</th>
+                  <th>Number</th>
+                  <th>MOQ:</th>
+                  <th>Price:</th>
+                  <th>check:</th>
+                  <th>DistributerPrice</th>
+                  <th>IsActive</th>
+
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData>
+                <tr>
+
+                  <td>{{rowData.ItemId}}</td>
+                  <td>{{rowData.ItemName}}</td>
+                  <td>{{rowData.MultiMRPID}}</td>
+                  <td>{{rowData.ItemNumber}}</td>
+                  <td>{{rowData.MOQ}}</td>
+                  <td>{{rowData.Price}}</td>
+                  <td>{{rowData.IsdistributorShow}}</td>
+                  <td>
+                    <div>
+                      <input type="number" (change)="setPriceVal(rowData.DistributionPrice, rowData.ItemId)" id="ip2"
+                        name="DistributionPrice" class="form-group ip2" class="form-control"
+                        [(ngModel)]="rowData.DistributionPrice" [ngModelOptions]="{standalone: true}"
+                        [disabled]="rowData.IsdistributorShow== false" /></div>
+                  </td>
+                  <td>
+                    <div><input id="saveUserNameCheckBox"
+                        (click)="checkBoxChange(rowData.IsdistributorShow, rowData.ItemId);"
+                        [checked]="rowData.IsdistributorShow" type="checkbox" [(ngModel)]="rowData.IsdistributorShow"
+                        [ngModelOptions]="{standalone: true}" /></div>
+                  </td>
+
+
+                </tr>
+              </ng-template>
+            </p-table>
+          </form>
+
+          <div class="form-actions right col-sm-12 p-3">
+            <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+              Cancel
+            </button>
+
+            <button type="button" class="btn btn-raised btn-primary" *ngIf="sourcingSeniorExecutiveRole == true" (click)="Save()" >
+              Save
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

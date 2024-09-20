@@ -1,0 +1,124 @@
+<div class="ui-fluid">
+    <section id="basic-form-layouts">
+  
+      <div class="row text-left">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header pb-2">
+            </div>
+            <div class="card-content">
+              <div class="px-3">
+                  <form class="form form-inline" name="form" (ngSubmit)="onclick()" #testForm="ngForm" autocomplete="off" ngNativeValidate>
+                    <input autocomplete="false" name="hidden" type="text" style="display:none;">
+                  <div class="form-body">
+                    <h4 class="form-section"><i class="ft-user"></i> Vehicle Master Info</h4>
+                    <div class="row">
+  
+  
+  
+                      <div class="col-md-6">
+                        <div class="form-group m-2">
+                          <label for="taxname" class="col-md-6"> Vehicle Name</label>
+                          <input type="text" id="taxname" class="form-control col-md-6" name="taxname" [(ngModel)]="vehicle.VehicleName" placeholder="Enter Name">
+                        </div>
+                      </div>
+                      <div class=" col-md-6">
+                        <div class="form-group m-2">
+                          <label for="alias" class="col-md-6"> Vehicle Number</label>
+                          <input type="text" id="alias" class="form-control  col-md-6" name="alias" [(ngModel)]="vehicle.VehicleNumber" placeholder="Enter Alias">
+                        </div>
+                      </div>
+                      <div class=" col-md-6">
+                        <div class="form-group m-2">
+                          <label for="pgroup" class="col-md-6"> VehicleCapacity</label>
+                          <input type="text" id="pgroup" class="form-control  col-md-6" name="pgroup"  [(ngModel)]="vehicle.Capacity" placeholder="Enter Capacity">
+                        </div>
+                      </div>
+                      <div class=" col-md-6">
+                          <div class="form-group m-2">
+                            <label for="pgroup" class="col-md-6"> Vehicle Owner</label>
+                            <input type="text" id="pgroup" class="form-control  col-md-6" name="pgroup"  [(ngModel)]="vehicle.OwnerName" placeholder="Enter Vehicle Owner">
+                          </div>
+                        </div>
+                        <div class=" col-md-6">
+                            <div class="form-group m-2">
+                              <label for="pgroup" class="col-md-6"> Vehicle Owner Address</label>
+                              <input type="text" id="pgroup" class="form-control  col-md-6" name="pgroup"  [(ngModel)]="vehicle.OwnerAddress" placeholder="Enter Vehicle Owner Address">
+                            </div>
+                          </div>
+                      <div class="col-md-6">
+                          <div class="form-group m-2">
+                            <label for="state"class="col-md-6">Select State:</label>
+                              <select id="state" name="state" class="form-control col-md-6" [(ngModel)]="vehicle.Stateid" (change)="onStateChange(vehicle.Stateid , 'state')"required
+                              placeholder="Select State">
+                              <option value="">--Select--</option>
+                              <option *ngFor="let s of stateList" [ngValue]="s.Stateid">
+                                {{ s.StateName }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group m-2">
+                            <label for="City"class="col-md-6"> Select City:</label>
+                              <select id="city" name="city" class="form-control col-md-6" [(ngModel)]="vehicle.Cityid"[disabled]="!vehicle.Stateid" (change)="onStateChange(vehicle.Cityid , 'city')"required
+                              placeholder="Select City">
+                              <option value="">--Select--</option>
+                              <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                                {{ city.CityName }}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group m-2">
+                              <label for="ware"class="col-md-6"> Warehouse:</label>
+                              <select id="ware" name="ware" class="form-control col-md-6" [disabled]="!vehicle.Cityid" [(ngModel)]="vehicle.WarehouseId" required>
+                                  <option value="">--Select--</option>
+                                  <option *ngFor="let w of warehouseList" [ngValue]="w.WareHouseId">
+                                    {{ w.WareHouseName }}
+                                  </option>
+                                </select>
+                            </div>
+                          </div>
+                      <div class=" col-md-6">
+                          <div class="form-group m-2">
+                            <label for="active" class="col-md-6"> Active</label>
+                            <div class="custom-control custom-checkbox custom-control-inline">
+                              <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1" type="checkbox" [(ngModel)]="vehicle.isActive">
+                              <label class="custom-control-label" for="customCheckboxInline1"></label>
+                            </div>
+                          </div>
+                        </div>
+                      <!-- <div class="col-sm-6">
+                        <div class="form-group">
+                          <label for="fname"> </label>
+                          <input type="text" id="fname" class="form-control" name="fname"
+                            [(ngModel)]="accountType.Name" placeholder="Enter Name">
+                        </div>
+                      </div> -->
+                      <!-- <div class=" col-md-12">
+                        <div class="form-group m-2">
+                          <label for="des" class="col-md-3">Description</label>
+                          <textarea type="text" id="des" class="form-control  col-md-9" name="des" [(ngModel)]="vehicle.TDiscription" placeholder="Enter Description"></textarea>
+                        </div>
+                      </div> -->
+                   
+    
+                    </div>
+                  </div>
+                  <div class="form-actions right col-sm-12 p-3">
+                    <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                      <i class="ft-x"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-raised btn-primary">
+                      <i class="fa fa-check-square-o"></i> Save</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>

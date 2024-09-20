@@ -1,0 +1,549 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" [baseZIndex]="201" appendTo="body" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>
+
+<div class="shadow bg-white py-2">
+    <section id="basic-form-layouts">
+        <h2 class="m-2">Purchase Request Payments</h2>
+        <div class="shadow bg-white py-2">
+            <div class="ui-g">
+                <div class="ui-g-2">
+                    <label for="projectinput3">Search option</label>
+                    <input placeholder="Supplier Name / PO ID" class="form-control" [(ngModel)]="paginator.Search">
+                </div>
+                <div class="ui-g-2">
+                    <label for="projectinput3">Warehouse</label>
+                    <select [(ngModel)]="paginator.WarehouseId" class="form-control">
+                        <option [value]="null">select </option>
+                        <option *ngFor="let wh of warehouseList;" [value]="wh.WarehouseId">{{wh.WarehouseName}}
+                            {{wh.CityName}}
+                        </option>
+                    </select>
+                </div>
+                <div class="ui-g-2">
+                    <label for="projectinput3">From Date</label>
+                    <p-calendar [(ngModel)]="paginator.StartDate" [showIcon]="true"></p-calendar>
+                </div>
+                <div class="ui-g-2">
+                    <label for="projectinput3">To Date</label>
+                    <p-calendar [(ngModel)]="paginator.EndDate" [showIcon]="true"></p-calendar>
+                </div>
+                <div class="ui-g-1">
+                    <button class="btn btn-raised btn-raised btn-primary a1" (click)="filter()">Search </button>
+                </div>
+                <!-- <div class="ui-g-1">
+                    <button class="btn btn-raised btn-raised btn-primary a1" (click)="resetfilter()">Reset Filter
+                    </button>
+                </div> -->
+                <div class="ui-g-1">
+                    <button class="btn btn-raised btn-raised  btn-success a1" (click)="export()">Export
+                    </button>
+                </div>
+                <div class="ui-g-2">
+                    <button class="btn btn-raised btn-raised btn-primary a1 b1"
+                        (click)="redirectpaymentsummary()">Payment
+                        Summary</button>
+                </div>
+                <div class="ui-g-12" *ngIf="paginator">
+                    <p-table [value]="PrPaymentsList" [paginator]="true" [rows]="paginator.Take" [lazy]="true"
+                        [totalRecords]="totalCount" (onLazyLoad)="loadLazy($event)">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Select</th>
+                                <th>SupplierName</th>
+                                <th>PurchaseOrderId</th>
+                                <th>Po Invoice No</th>
+                                <th>Advance Amount</th>
+                                <th>TDS Amount</th>
+                                <th>NetPayableAmount</th>
+                                <th>WarehouseName</th>
+                                <th>CreationDate</th>
+                                <th>PR Status</th>
+                                <th>Reject PR</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                            <tr (click)="onRowClick(ir)" [ngClass]="{'sel':ir.IsSelected}"
+                                style="cursor: pointer; pointer-events: all;">
+                                <td style="width:60px;">
+                                    <i *ngIf="!ir.IsSelected" class="fa fa-square-o fa-2x" aria-hidden="true"></i>
+                                    <i *ngIf="ir.IsSelected" class="fa fa-check-square-o fa-2x" aria-hidden="true"></i>
+                                </td>
+                                <td>{{ir.SupplierName}} </td>
+                                <td>{{ir.PurchaseOrderId}}</td>
+                                <td>{{ir.PoInvoiceNo}}</td>
+                                <td>
+                                    <i class="fa fa-inr" aria-hidden="true"></i>
+                                    {{ir.Advance_Amt | number: '1.2-2'}}
+                                </td>
+                                <!-- <td>{{ir.Advance_Amt * ir.TDSPercentage/100 | number: '1.2-2'}}</td> -->
+                                <td *ngIf="ir.TDSPercentage == 5">{{ir.Advance_Amt * ir.TDSPercentage/100 | number: '1.2-2'}}</td>
+                                <td *ngIf="ir.TDSPercentage == 0.1">{{((ir.PaymentTillDate)>5000000 ? ir.Advance_Amt * ir.TDSPercentage/100:(ir.Advance_Amt+ir.PaymentTillDate)<=5000000?0:((ir.Advance_Amt+ir.PaymentTillDate)-5000000) * ir.TDSPercentage/100) | number: '1.2-2'}}</td>
+                                <td *ngIf="ir.TDSPercentage == 5">{{ir.Advance_Amt - (ir.Advance_Amt * ir.TDSPercentage/100) | number: '1.2-2'}}</td>
+                                <td *ngIf="ir.TDSPercentage == 0.1">{{((ir.PaymentTillDate)>5000000 ? (ir.Advance_Amt- (ir.Advance_Amt * ir.TDSPercentage/100)):(ir.Advance_Amt+ir.PaymentTillDate)<=5000000?ir.Advance_Amt-0:ir.Advance_Amt-(((ir.Advance_Amt+ir.PaymentTillDate)-5000000) * ir.TDSPercentage/100)) | number: '1.2-2'}}</td>
+                                <td>{{ir.WarehouseName}}</td>
+                                <td>{{ir.CreationDate | date}}</td>
+                                <ng-container *ngIf="!ir.IsPaymentDone">
+                                    <td style="color: green;">Payment Pending</td>
+                                </ng-container>
+                                <ng-container *ngIf="ir.IsPaymentDone">
+                                    <td style="color: red;">Payment Already Done</td>
+                                </ng-container>
+                                <td style="text-align: center">
+                                    <button type="button" class="btn btn-raised btn-primary" style="margin-bottom: 0;"
+                                        (click)="Show(ir)" [ngClass]="{'sel':!ir.IsSelected}">
+                                        Reject
+                                    </button>
+                                </td>
+                            </tr>
+
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<div class="rght-windw" *ngIf="irSummaryObject">
+    <div class="row">
+        <div class="col-12 tt">
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Head</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>PR</td>
+                    <td>{{irSummaryObject.totalIr}}</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Supplier</td>
+                    <td>{{irSummaryObject.totalDistinctSuppliers}}</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Amount</td>
+                    <td>{{irSummaryObject.totalAmount | number: '1.2-2'}}</td>
+                </tr>
+
+            </table>
+        </div>
+        <div class="col-12">
+            <div class="bt-tb">
+                <div class="cntn" (click)="openPopup()">Click to confirm</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- <div class="ui-fluid" *ngIf="isOpenPopup">
+    <form #irOutstandingForm="ngForm">
+        <p-dialog [(visible)]="isOpenPopup" [modal]="true" appendTo="body" [responsive]="true" [style]="{width: '80vw'}"
+            [minY]="70" [baseZIndex]="199">
+            <p-header>
+                Selected PR List
+            </p-header>
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-7">
+                        <div class="form-group">
+                            <label for="SupplierName">Select Bank<code> *</code></label><br>
+                            <p-autoComplete [suggestions]="bankList" (completeMethod)="getLedgerList($event, 7)"
+                                (onClear)="clearData();" field="Name" [size]="30" placeholder="enter at least 3 chars"
+                                [minLength]="3" #bankInput required (onSelect)="onSelectAgent($event)" name="agentid"
+                                id="agentId">
+                            </p-autoComplete>
+                            <code *ngIf="isValidated && !bankInput.valid">
+                                Bank is required
+                            </code>
+                            <code *ngIf="isBankInfoCorrect">
+                                Please fill correct bank info 
+                            </code>
+                        </div>
+                        <div class="form-group">
+                            <label for="refinput">Ref No.</label>
+                            <input type="text" id="refinput" class="form-control" name="refinput" [minlength]="2"
+                                [maxlength]="40" pattern="^[^-\s][a-zA-Z0-9_\s-]+$" [(ngModel)]="PrPayment.RefNo"
+                                #refno="ngModel">
+                            <code *ngIf="isValidated && !refno.valid && refno.errors.minlength">
+                            Minlength 2
+                          </code>
+                            <code *ngIf="isValidated && !refno.valid && refno.errors.maxlength">
+                            Maxlength 40
+                          </code>
+                            <code *ngIf="isValidated && !refno.valid && refno.errors.pattern">
+                           Not start with space
+                          </code>
+                        </div>
+                        <div class="form-group" id="ir-out">
+                            <label for="projectinput15">Payment Date<code>*</code></label>
+                            <p-calendar name="toDateInput" [showIcon]="true" name="toDate" [required]="true"
+                                [(ngModel)]="PrPayment.PaymentDate" #paymentDate="ngModel" disabled>
+                            </p-calendar>
+                            <code *ngIf="isValidated && !paymentDate.valid">
+                                Payment Date is required
+                            </code>
+                        </div>
+                    </div>
+
+                    <div class="ui-g-5">
+                        <div class="form-group">
+                            <label for="projectinput3">Narration <code>*</code></label>
+                            <textarea type="text" id="projectinput3" class="form-control" name="remark" [rows]="9"
+                                [(ngModel)]="PrPayment.Remark" #remark="ngModel" required></textarea>
+                            <code *ngIf="isValidated && !remark.valid">
+                                    Narration is required
+                            </code>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <table class="table ">
+                            <tr>
+                                <th style="width:60px;">Select</th>
+                                <th>Sno.</th>
+                                <th>Supplier Name</th>
+                                <th>PurchaseOrderId</th>
+                                <th>InvoiceNumber</th>
+                                <th>InvoiceDate</th>
+                                <th>Supplier Advanc</th>
+                                <th>Advance_Amt</th>
+                                <th>Pay Amount</th>
+                            </tr>
+                            <tr *ngFor="let ir of selectedList; let i = index" [ngClass]="{'sel':ir.IsSelected} ">
+                                <td (click)="onDeselectIR(ir)" style="width:60px;">
+
+                                    <i *ngIf="!ir.IsSelected" class="fa fa-square-o fa-2x" aria-hidden="true"></i>
+                                    <i *ngIf="ir.IsSelected" class="fa fa-check-square-o fa-2x" aria-hidden="true"></i>
+
+                                </td>
+                                <td (click)="onDeselectIR(ir)">{{i+1}}</td>
+                                <td (click)="onDeselectIR(ir)">{{ir.SupplierName}} ({{ir.SupplierCode}})</td>
+                                <td (click)="onDeselectIR(ir)">{{ir.PurchaseOrderId}}</td>
+                                <td (click)="onDeselectIR(ir)">{{ir.PoInvoiceNo}}</td>
+                                <td (click)="onDeselectIR(ir)">{{ir.CreationDate | date:'medium'}}</td>
+                                <td>
+                                    Outstanding: {{ir.SupplierAdvanceOutstanding| number: '1.0-0'}}
+                                    <br>
+                                    Settled: {{ir.SettledAmount| number: '1.0-0'}}
+                                </td>
+                                <td (click)="onDeselectIR(ir)">{{ir.Advance_Amt| number: '1.0-0'}}</td>
+                                <td>
+                                    Bank Payment<br>
+                                    <input type="number" name="{{'PaidAmount' + i}}"
+                                        (keyup)="setPaidAmount($event.target.value, i)" [(ngModel)]="ir.PaidAmount"
+                                        (ngModelChange)="onChangeAmount(ir)">
+                                    Settled Payment<br>
+                                    <input type="number" name="{{'SettledAmount' + i}}"
+                                        (keyup)="setSettledAmountOnChange($event.target, i)"
+                                        [(ngModel)]="ir.SettledAmountNew">
+                                </td>
+                            </tr>
+                        </table>
+                        <b style="color: red;" *ngIf="invalidPaidAmt">Paid amt should be equal / less than advance
+                            amount</b>
+                    </div>
+                </div>
+            </div>
+            <p-footer>
+                <button type="button" pButton icon="pi pi-check" (click)="makePayment(irOutstandingForm)"
+                    [disabled]="invalidPaidAmt" label="Make Payment"></button>
+                <button type="button" pButton icon="pi pi-close" (click)="isOpenPopup=false" label="No"
+                    class="ui-button-secondary"></button>
+            </p-footer>
+        </p-dialog>
+    </form>
+</div> -->
+
+<p-dialog [(visible)]="isOpenPopupnew" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '50%',height: '40%'}">
+    <p-header>
+        Reject Purchase Request ?
+    </p-header>
+    <p *ngIf="checkvalue" style="color: red;">GR has been performed for selected PR.
+        PR will be converted as Credit PR.Do you want to Continue?"</p>
+    <div class="form-group">
+        <div>
+            <input type="text" id="Cash" name="Cash" class="form-control" [(ngModel)]="comment">
+        </div>
+        <br>
+        <div class="text-right">
+            <button [disabled]="comment == '' || comment == null " type="button"
+                class="btn btn-raised btn-raised btn-primary d1" (click)=" Save(popupdata,comment)">
+                Reject PR
+            </button>
+        </div>
+    </div>
+</p-dialog>
+
+
+<div class="ui-fluid" *ngIf="isOpenPopup">
+    <form #irOutstandingForm="ngForm">
+        <p-dialog [(visible)]="isOpenPopup" [modal]="true" appendTo="body" [responsive]="true" [blockScroll]="true"
+            position="top" [style]="{width: '99vw'}" [minY]="70" [baseZIndex]="199">
+            <p-header>
+                Selected PR List
+            </p-header>
+            <div class="ui-fluid">
+
+                <div *ngIf="stepNumber=='1'">
+                    <div class="ui-g grp" *ngFor="let paymentGroup Of paymentsGroupBySupplier; let j = index;">
+                        <div class="ui-g-6">
+                            Supplier : <label>{{paymentGroup.SupplierName}}</label>
+                        </div>
+                        <div class="ui-g-6">
+                            Payment Till Date : <label>{{paymentGroup.PaymentAmount}}</label>
+                        </div>
+                        <div class="ui-g-4">
+                            Closed Advance Outstanding : <label>{{paymentGroup.AdvanceOutstanding}}</label>
+                        </div>
+                        <!-- <div class="ui-g-4">
+                            Settled Outstanding :
+                            <label>{{paymentGroup.AdvanceOutstanding - paymentGroup.RemainingAdvanceOutstanding }}</label>
+                        </div> -->
+                        <div class="ui-g-8">
+                            Remaining Outstanding : <label>{{paymentGroup.RemainingAdvanceOutstanding }}</label>
+                            <div *ngIf="0 > paymentGroup.RemainingAdvanceOutstanding">
+                                <code>Remaining amount can't be less than zero(0)</code>
+                            </div>
+                        </div>
+                        <div class="ui-g-4">
+                            Total Advance Payment : <label>{{paymentGroup.TotalAdvancePayment }}</label>
+                        </div>
+                        <div class="ui-g-4">
+                            Total Settled Payment :
+                            <label>{{paymentGroup.AdvanceOutstanding - paymentGroup.RemainingAdvanceOutstanding }}</label>
+                        </div>
+                        <div class="ui-g-4">
+                            Total Bank Payment :
+                            <label>{{paymentGroup.BankAmount }}</label>
+                        </div>
+                        <div class="ui-g-4" *ngIf="paymentGroup.TDSPercentage == 0.1">
+                              TDS Percentage  :
+                            <label>{{(paymentGroup.PaymentAmount+paymentGroup.BankAmount)<=5000000?0: paymentGroup.TDSPercentage }}</label>
+                        </div>
+                        <div class="ui-g-4" *ngIf="paymentGroup.TDSPercentage == 5">
+                            TDS Percentage  :
+                          <label>{{paymentGroup.TDSPercentage}}</label>
+                      </div>
+                        <div class="ui-g-4">
+                            Total TDS Amount :
+                            <label *ngIf="paymentGroup.TDSPercentage == 5">{{(paymentGroup.BankAmount *paymentGroup.TDSPercentage/100 ) | number: '1.2-2' }}</label>
+                            <label *ngIf="paymentGroup.TDSPercentage == 0.1">{{(paymentGroup.PaymentAmount > 5000000?(paymentGroup.BankAmount *paymentGroup.TDSPercentage/100 ):(paymentGroup.PaymentAmount+paymentGroup.BankAmount)<=5000000?0:((paymentGroup.BankAmount+paymentGroup.PaymentAmount - 5000000) *paymentGroup.TDSPercentage/100 )) | number: '1.2-2' }}</label>
+                        </div>
+                        <div class="ui-g-4">
+                            Total NET Bank Payment :
+                            <label *ngIf="paymentGroup.TDSPercentage == 0.1">{{ ((paymentGroup.BankAmount)- (paymentGroup.PaymentAmount > 5000000?(paymentGroup.BankAmount *paymentGroup.TDSPercentage/100 ):(paymentGroup.PaymentAmount+paymentGroup.BankAmount)<=5000000?0:((paymentGroup.BankAmount+paymentGroup.PaymentAmount - 5000000) *paymentGroup.TDSPercentage/100 ))) | number: '1.2-2' }}</label>
+                            <label *ngIf="paymentGroup.TDSPercentage == 5">{{(paymentGroup.BankAmount - (paymentGroup.BankAmount *paymentGroup.TDSPercentage/100 )) | number: '1.2-2'}}</label>
+                        </div>
+                        <div class="ui-g-12">
+                            <table class="table">
+                                <tr>
+                                    <th>A</th>
+                                    <th>Sno.</th>
+                                    <th>PO Id</th>
+                                    <th>Invc Number</th>
+                                    <th>Invc Date</th>
+                                    <th>PR Amount</th>
+                                    <th>Paid + Settle </th>
+                                    <th>Settle PR Amount </th>
+                                    <th>Bank Amount</th>
+
+                                </tr>
+                                <tr *ngFor="let ir of paymentGroup.ListOfPayments; let i = index">
+                                    <td
+                                        [ngClass]="{'r': ir.invalidPaidAmt, 'b': ir.Advance_Amt > (ir.PaidAmount + ir.SettledAmountNew), 'g': ir.Advance_Amt == (ir.PaidAmount + ir.SettledAmountNew)  }">
+                                        <div>
+                                            <i *ngIf="ir.invalidPaidAmt" class="fa fa-chevron-up"
+                                                aria-hidden="true"></i>
+                                            <i *ngIf="ir.Advance_Amt > (ir.PaidAmount + ir.SettledAmountNew)"
+                                                class="fa fa-chevron-down" aria-hidden="true"></i>
+                                            <i *ngIf="ir.Advance_Amt == (ir.PaidAmount + ir.SettledAmountNew)"
+                                                class="fa fa-chevron-left" aria-hidden="true"></i>
+                                            <i *ngIf="ir.Advance_Amt == (ir.PaidAmount + ir.SettledAmountNew)"
+                                                class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{i+1}}
+                                    </td>
+                                    <td>{{ir.PurchaseOrderId}}</td>
+                                    <td>{{ir.PoInvoiceNo}}</td>
+                                    <td>{{ir.CreationDate | date:'medium'}}</td>
+                                    <td>{{ir.Advance_Amt| number: '1.0-0'}}</td>
+                                    <td
+                                        [ngClass]="{'r': ir.invalidPaidAmt, 'b': ir.Advance_Amt > (ir.PaidAmount + ir.SettledAmountNew), 'g': ir.Advance_Amt == (ir.PaidAmount + ir.SettledAmountNew)  }">
+                                        <span>
+                                            {{(ir.PaidAmount + ir.SettledAmountNew | number: '1.0-0')}}
+                                        </span>
+
+                                    </td>
+                                    <td>
+                                        <!-- (keyup)="setPaidAmount($event.target.value, ir)" -->
+
+                                        <input type="number" name="{{'SettledAmount' + i + j}}"
+                                            (keyup)="setPaidAmount(paymentGroup, ir, false)"
+                                            [(ngModel)]="ir.SettledAmountNew"
+                                            (ngModelChange)="setSettledAmountOnChange(ir, paymentGroup)">
+                                        <code *ngIf="ir.invalidPaidAmt"><br>
+                                            Invalid Amount     
+                                        </code>
+                                    </td>
+                                    <td>
+                                        <!-- (keyup)="setPaidAmount($event.target.value, i)" -->
+                                        <input type="number" name="{{'PaidAmount' + i + j}}"
+                                            (keyup)="setPaidAmount(paymentGroup, ir, true)" [(ngModel)]="ir.PaidAmount"
+                                            (ngModelChange)="onChangeAmount(ir, paymentGroup)">
+                                        <code *ngIf="ir.invalidPaidAmt">
+                                            <br>
+                                            Invalid Amount     
+                                        </code>
+                                    </td>
+
+                                </tr>
+                            </table>
+                        </div>
+
+
+                    </div>
+                </div>
+                <div *ngIf="stepNumber=='2'">
+                    <div class="grp">
+                        <div class="ui-g" *ngFor="let paymentGroup Of paymentsGroupBySupplier; let j = index;">
+                            <div class="ui-g-12">
+                                Supplierr : <label>{{paymentGroup.SupplierName}}</label>
+                            </div>
+                            <div class="ui-g-4">
+                                Closed Advance Outstanding : <label>{{paymentGroup.AdvanceOutstanding}}</label>
+                            </div>
+                           
+                            <!-- <div class="ui-g-4">
+                                Settled Outstanding :
+                                <label>{{paymentGroup.AdvanceOutstanding - paymentGroup.RemainingAdvanceOutstanding }}</label>
+                            </div> -->
+                            <div class="ui-g-8">
+                                Remaining Outstanding : <label>{{paymentGroup.RemainingAdvanceOutstanding }}</label>
+                            </div>
+                            <div class="ui-g-4">
+                                Total Advance Payment : <label>{{paymentGroup.TotalAdvancePayment }}</label>
+                            </div>
+                            <div class="ui-g-4">
+                                Total Settled Payment :
+                                <label>{{paymentGroup.AdvanceOutstanding - paymentGroup.RemainingAdvanceOutstanding }}</label>
+                            </div>
+                            <div class="ui-g-4">
+                                Total Bank Payment :
+                                <label>{{paymentGroup.BankAmount }}</label>
+                            </div>
+                            <div class="ui-g-4" *ngIf="paymentGroup.TDSPercentage == 0.1">
+                                TDS Percentage  :
+                              <label>{{(paymentGroup.PaymentAmount+paymentGroup.BankAmount)<=5000000?0: paymentGroup.TDSPercentage }}</label>
+                          </div>
+                          <div class="ui-g-4" *ngIf="paymentGroup.TDSPercentage == 5">
+                              TDS Percentage  :
+                            <label>{{paymentGroup.TDSPercentage}}</label>
+                        </div>
+                            <div class="ui-g-4">
+                                TDS Payment :
+                              <!-- <label>{{(paymentGroup.BankAmount * paymentGroup.TDSPercentage/100) | number: '1.2-2'  }}</label> -->
+                              <label *ngIf="paymentGroup.TDSPercentage == 5">{{(paymentGroup.BankAmount *paymentGroup.TDSPercentage/100 ) | number: '1.2-2' }}</label>
+                              <label *ngIf="paymentGroup.TDSPercentage == 0.1">{{(paymentGroup.PaymentAmount > 5000000?(paymentGroup.BankAmount *paymentGroup.TDSPercentage/100 ):(paymentGroup.PaymentAmount+paymentGroup.BankAmount)<=5000000?0:((paymentGroup.BankAmount+paymentGroup.PaymentAmount - 5000000) *paymentGroup.TDSPercentage/100 )) | number: '1.2-2' }}</label>
+                          </div>
+                          <div class="ui-g-4">
+                            Net Pay Bank Payment :
+                          <!-- <label>{{(paymentGroup.BankAmount - (paymentGroup.BankAmount * paymentGroup.TDSPercentage/100)) | number: '1.2-2' }}</label> -->
+                          <label *ngIf="paymentGroup.TDSPercentage == 0.1">{{ (paymentGroup.BankAmount)- (paymentGroup.PaymentAmount > 5000000?(paymentGroup.BankAmount *paymentGroup.TDSPercentage/100 ):(paymentGroup.PaymentAmount+paymentGroup.BankAmount)<=5000000?0:((paymentGroup.BankAmount+paymentGroup.PaymentAmount - 5000000) *paymentGroup.TDSPercentage/100 )) | number: '1.2-2' }}</label>
+                            <label *ngIf="paymentGroup.TDSPercentage == 5">{{(paymentGroup.BankAmount - (paymentGroup.BankAmount *paymentGroup.TDSPercentage/100 )) | number: '1.2-2'}}</label>
+                      </div>
+                        </div>
+                    </div>
+
+                    <div *ngIf="isBankPaymentRequired" class="ui-g">
+                        <div class="ui-g-7">
+                            <div class="form-group">
+                                <label for="SupplierName">Select Bank<code> *</code></label><br>
+                                <p-autoComplete [suggestions]="bankList" (completeMethod)="getLedgerList($event, 7)"
+                                    (onClear)="clearData();" field="Name" [size]="30"
+                                    placeholder="enter at least 3 chars" [minLength]="3" #bankInput required
+                                    (onSelect)="onSelectAgent($event)" name="agentid" id="agentId">
+                                </p-autoComplete>
+                                <code *ngIf="isValidated && !bankInput.valid">
+                                    Bank is required
+                                </code>
+                                <code *ngIf="isBankInfoCorrect">
+                                    Please fill correct bank info 
+                                </code>
+                            </div>
+                            <div class="form-group">
+                                <label for="refinput">Ref No.</label>
+                                <input type="text" id="refinput" class="form-control" name="refinput" [minlength]="2"
+                                    [maxlength]="40" pattern="^[^-\s][a-zA-Z0-9_\s-]+$" [(ngModel)]="PrPayment.RefNo"
+                                    #refno="ngModel">
+                                <code *ngIf="isValidated && !refno.valid && refno.errors.minlength">
+                                Minlength 2
+                              </code>
+                                <code *ngIf="isValidated && !refno.valid && refno.errors.maxlength">
+                                Maxlength 40
+                              </code>
+                                <code *ngIf="isValidated && !refno.valid && refno.errors.pattern">
+                               Not start with space
+                              </code>
+                            </div>
+                            <div class="form-group" id="ir-out">
+                                <label for="projectinput15">Payment Date<code>*</code></label>
+                                <p-calendar name="toDateInput" [showIcon]="true" name="toDate" [required]="true"
+                                    [(ngModel)]="PrPayment.PaymentDate" #paymentDate="ngModel" disabled>
+                                </p-calendar>
+                                <code *ngIf="isValidated && !paymentDate.valid">
+                                    Payment Date is required
+                                </code>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-5">
+                            <div class="form-group">
+                                <label for="projectinput3">Narration <code>*</code></label>
+                                <textarea type="text" id="projectinput3" class="form-control" name="remark" [rows]="9"
+                                    [(ngModel)]="PrPayment.Remark" #remark="ngModel" required></textarea>
+                                <code *ngIf="isValidated && !remark.valid">
+                                        Narration is required
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <p-footer>
+                <div class="row">
+                    <div class="col-9">
+                        <b style="color: red;" *ngIf="invalidPaidAmt">Paid amt should be equal to advance
+                            amount</b>
+                    </div>
+                    <div [ngClass]="{'col-12': !invalidPaidAmt, 'col-3': invalidPaidAmt}">
+                        <button type="button" *ngIf="stepNumber=='1'" pButton (click)="next()"
+                            [disabled]="invalidPaidAmt" label="Next" icon="pi pi-angle-double-right"></button>
+                        <button type="button" *ngIf="stepNumber=='2'" pButton icon="pi pi-angle-double-left"
+                            (click)="prev()" label="Prev"></button>
+                        <button type="button" *ngIf="stepNumber=='2'" pButton icon="pi pi-check"
+                            (click)="makePayment(irOutstandingForm)" [disabled]="invalidPaidAmt"
+                            label="Make Payment"></button>
+                        <button type="button" pButton icon="pi pi-close" (click)="isOpenPopup=false" label="No"
+                            class="ui-button-secondary"></button>
+                    </div>
+                </div>
+
+            </p-footer>
+        </p-dialog>
+    </form>
+</div>

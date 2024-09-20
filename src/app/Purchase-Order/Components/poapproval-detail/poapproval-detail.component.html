@@ -1,0 +1,162 @@
+
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">PO Approval Detail</h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+            <div class="d-flex">
+                <div class="mr-4">
+                    <label><b>Select Warehouses</b></label>
+                    <p-dropdown id="Category" name="Category" [options]="WarehouseList" [(ngModel)]="selectedWareHouse" optionLabel="WarehouseName" placeholder="Select WareHouse" (onChange)="GetPOApproval()" > 
+                    </p-dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+        <p-table [scrollable]="true" [value]="tableListData" scrollHeight="70vh" text-align: center  [paginator]="true" [rows]="10"  >
+            <ng-template pTemplate="header">
+                <tr >
+                    <th style="width: 20%;">Sr. No</th>
+                    <th style="width: 20%;">Level</th>
+                    <th style="width: 20%;">WarehouseName</th>
+                    <th style="width: 20%;">Approver</th>
+                    <th style="width: 20%;">Reviewer</th>
+                    <th style="width: 20%;">Amount lmt.</th>
+                    <th style="width: 20%;">Edit</th>
+                    <th style="width: 20%;">History</th>
+                </tr>         
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                <tr>
+                    <td>{{rowIndex+1}}</td> 
+                    <td>{{item.Level}}</td>  
+                    <td>{{item.WarehouseName}}</td>
+                    <td>{{item.ApprovalName1}},&nbsp;{{item.ApprovalName2}},&nbsp;{{item.ApprovalNam3}},&nbsp;{{item.ApprovalName4}},&nbsp;{{item.ApprovalName5}}</td>
+                    <td>{{item.ReviewerName1}},&nbsp;{{item.ReviewerName2}},&nbsp;{{item.ReviewerName3}},&nbsp;{{item.ReviewerName4}},&nbsp;{{item.ReviewerName5}}</td>
+                    <td>{{item.AmountlmtMin}} To {{item.AmountlmtMax}} </td>
+                    <td><button type="button"  class="btn btn-danger" (click)="Editopen(item)" >Edit</button></td>
+                    <td><button class="btn-sm btn-primary" (click)="PoApprovalHistroy(item)">History</button></td>
+                    <!-- ng-show="(UserRole.rolenames.indexOf('HQ Master login')>-1  || UserRole.rolenames.indexOf('HQ Purchase Lead')>-1)" -->
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                  <td colspan="10" style="text-align: center;">
+                    <br>
+                    <h3><b>No Data Found.</b></h3>
+                  </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div> 
+</div>
+
+<p-dialog  [modal]="true" appendTo="body" header=" PO APPROVAL REPORT" [(visible)]="editopen" [style]="{ width: '75%',height:'75%'  }" >
+    <p-table [scrollable]="true" [value]="tableListData" scrollHeight="70vh"  text-align: center  [paginator]="true" [rows]="10"  >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 20%;">Approver1</th>
+                <th style="width: 20%;">Approver2</th>
+                <th style="width: 20%;">Approver3</th>
+                <th style="width: 20%;">Approver4</th>
+                <th style="width: 20%;">Approver5</th>
+                <th style="width: 20%;">Reviewer1</th>
+                <th style="width: 20%;">Reviewer2</th>
+                <th style="width: 20%;">Reviewer3</th>
+                <th style="width: 20%;">Reviewer4</th>
+                <th style="width: 20%;">Reviewer5</th>
+                <!-- <th style="width: 20%;">Amount lmt </th>
+                <th style="width: 20%;">To </th>
+                <th style="width: 20%;">Update</th> -->
+            </tr>         
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr>
+                <!-- <td>{{item.WarehouseName}}</td> -->
+                <td> <p-dropdown id="Category" name="Category" [options]="ap1List" [(ngModel)]="item.ApprovalName1"  optionLabel="ApprovalName1" > 
+                </p-dropdown>{{item.ApprovalName1}}
+                </td>
+                <td>{{item.ApprovalName2}}</td>
+                <td>{{item.ApprovalNam3}}</td>
+                <td>{{item.ApprovalName4}}</td>
+                <td>{{item.ApprovalName5}}</td>
+                <td>{{item.ReviewerName1}}</td>
+                <td>{{item.ReviewerName2}}</td>
+                <td>{{item.ReviewerName3}}</td>
+                <td>{{item.ReviewerName4}}</td>
+                <td>{{item.ReviewerName5}}</td>
+        </ng-template>            
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>
+
+<p-dialog  [modal]="true" appendTo="body" header="PO APPROVAL HISTORY" [(visible)]="historyOpen" [style]="{ width: '75%',height:'75%'  }" >
+    <p-table [scrollable]="true" [value]="historyData" scrollHeight="70vh"  text-align: center  [paginator]="true" [rows]="10"  >
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 20%;">Id</th>
+                <th style="width: 20%;">Poapprovelid</th>
+                <th style="width: 20%;">Level</th>
+                <th style="width: 20%;">WarehouseName</th>
+                <th style="width: 20%;">ApprovalName1</th>
+                <th style="width: 20%;">ApprovalName2</th>
+                <th style="width: 20%;">ApprovalName3</th>
+                <th style="width: 20%;">ApprovalName4</th>
+                <th style="width: 20%;">ApprovalName5</th>
+                <th style="width: 20%;">ReviewerName1</th>
+                <th style="width: 20%;">ReviewerName2</th>
+                <th style="width: 20%;">ReviewerName3</th>
+                <th style="width: 20%;">ReviewerName4</th>
+                <th style="width: 20%;">ReviewerName5</th>
+                <th style="width: 20%;">AmountlmtMin</th>
+                <th style="width: 20%;">AmountlmtMax</th>
+                <th style="width: 20%;">CreatedDate</th>
+                <th style="width: 20%;">UpdatedTime</th>
+                <th style="width: 20%;">Updated By</th>
+                <!-- <th style="width: 20%;">Amount lmt </th>
+                <th style="width: 20%;">To </th>
+                <th style="width: 20%;">Update</th> -->
+            </tr>         
+        </ng-template>
+        <ng-template pTemplate="body" let-trade let-rowIndex="rowIndex">
+            <tr>
+                <td>{{rowIndex+1}}</td>
+                <td>{{trade.Poapprovelid}}</td>
+                <td>{{trade.Level}}</td>
+                <td>{{trade.WarehouseName}}</td>
+                <td>{{trade.ApprovalName1}}</td>
+                <td>{{trade.ApprovalName2}}</td>
+                <td>{{trade.ApprovalName3}}</td>
+                <td>{{trade.ApprovalName4}}</td>
+                <td>{{trade.ApprovalName5}}</td>
+                <td>{{trade.ReviewerName1}}</td>
+                <td>{{trade.ReviewerName2}}</td>
+                <td>{{trade.ReviewerName3}}</td>
+                <td>{{trade.ReviewerName4}}</td>
+                <td>{{trade.ReviewerName5}}</td>
+                <td>{{trade.AmountlmtMin}}</td>
+                <td>{{trade.AmountlmtMax}}</td>
+                <td>{{trade.CreatedDate | date:'medium'}}</td>
+                <td>{{trade.UpdatedTime | date:'medium'}}</td>
+                <td>{{trade.UserName}}</td>
+        </ng-template>            
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>

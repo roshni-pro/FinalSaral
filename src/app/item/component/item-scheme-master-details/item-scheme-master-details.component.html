@@ -1,0 +1,181 @@
+<p-toast [style]="{marginTop: '10px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+	<p-footer class="ovelFieldForm">
+		<button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+		<button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+	</p-footer>
+</p-confirmDialog>
+<section id="i-master">
+	<div class="my-2 d-flex justify-content-between align-items-center">
+		<div class="header">
+			<h3 class="m-2"> Scheme Master Details</h3>
+		</div>
+		<div>
+			<button type="button" class="btn btn-raised btn-primary float-left align-self-end back" (click)="back()">
+				Back </button>
+		</div>
+	</div>
+	<div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+		<div class="position-relative">
+			<div class="row" *ngIf="BrandName">
+				<div class="col-md-10">
+					<span class="card-title"> Brand Name : {{BrandName}}</span>
+					<div *ngIf="ItemSchemeMasterDc">
+						<span>
+							Start Date : {{ItemSchemeMasterDc.StartDate | date : "dd/MM/yyyy h:mm a"}}
+						</span>
+						<span >
+							End Date : {{ItemSchemeMasterDc.EndDate | date : "dd/MM/yyyy h:mm a"}}
+						</span>
+					</div>
+
+				</div>
+				<div class="col-md-2">
+					<button type="button" class="btn btn-raised btn-raised btn-danger" pButton
+						(click)="DeactiveItemSchemMaster();" label="Deactivate"
+						[disabled]="ItemschemMaster.IsActive==false"></button>
+				</div>
+			</div>
+			<!-- <div class="card-header" *ngIf="ItemschemMaster && ItemschemMaster.UploadedSheetUrl">
+				<a href="{{ItemschemMaster.UploadedSheetUrl}}" target="_blank" rel="noopener noreferrer">Link</a>
+			</div> -->
+			<p-table [value]="ItemschemMasterDetails" [columns]="ItemschemMasterDetailscols"
+				[(selection)]="selectedRows">
+				<ng-template pTemplate="header" let-columns>
+					<tr>
+						<th *ngIf="ItemschemMaster.IsApproved==false">
+							<p-checkbox (click)="selectRow(e.checked)" #e></p-checkbox>
+						</th>
+						<th *ngFor="let col of columns">
+							{{col.header}}
+						</th>
+						<th>
+							Freebies
+						</th>
+						<th>
+							Slab
+						</th>
+
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-rowData let-columns="columns">
+					<tr [pSelectableRow]="rowData">
+						<td *ngIf="IsApproved==false">
+							<p-tableCheckbox [value]="rowData">
+							</p-tableCheckbox>
+						</td>
+						<td *ngFor="let col of columns">
+							<span *ngIf="(col.field=='IsActive')">
+								<button type="button" class="btn btn-raised btn-raised btn-danger" pButton
+									(click)="DeactiveItemSchem(rowData);" label="{{rowData[col.field]}}"
+									[disabled]="rowData[col.field]==false"></button>
+							</span>
+
+							<span *ngIf="(col.field!='IsActive')">
+								{{rowData[col.field]}}
+							</span>
+						</td>
+						<td>
+							<span>
+								<button type="button" class="btn btn-raised btn-raised btn-sucess" pButton
+									(click)="opendisplayFreeBies(rowData);" label="FreeBies"></button>
+							</span>
+						</td>
+						<td>
+							<span>
+								<button type="button" class="btn btn-raised btn-raised btn-default" pButton
+									(click)="opendisplaySlab(rowData);" label="Slab"></button>
+							</span>
+						</td>
+
+					</tr>
+				</ng-template>
+			</p-table>
+		</div>
+		<div class="form-actions right col-sm-12 p-3" *ngIf="IsActive==false && IsApproved==false">
+			<button type="button" class="btn btn-raised btn-warning mr-1" (click)="Reset()">
+				cancel
+			</button>
+			<button type="button" class="btn btn-raised btn-primary mr-1" (click)="Approve()">
+				Approve
+			</button>
+
+		</div>
+		<div class="form-actions right col-sm-12 p-3" *ngIf="IsApproved==true">
+			<h4 class="card-title" style="color: green;">
+				<label>
+					* This scheme is already approved </label>
+			</h4>
+		</div>
+	</div>
+</section>
+
+<p-dialog header="Slab" [(visible)]="displaySlab" appendTo="body" [style]="{width: '1040px', height: '300px'}">
+	<div class="panel panel-info" *ngIf="ItemschemSlab">
+		<div class="row">
+			<p-table [value]="ItemschemSlab" [columns]="ItemschemSlabcols">
+				<ng-template pTemplate="header" let-columns>
+					<tr>
+
+						<th *ngFor="let col of columns">
+							{{col.header}}
+						</th>
+
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-rowData let-columns="columns">
+					<tr [pSelectableRow]="rowData">
+						<td *ngFor="let col of columns">
+							{{rowData[col.field]}}
+						</td>
+					</tr>
+				</ng-template>
+			</p-table>
+		</div>
+	</div>
+</p-dialog>
+
+<p-dialog header="Item schem Freebies" [(visible)]="displayFreeBies" appendTo="body"
+	[style]="{width: '1040px', height: '300px'}">
+	<div class="panel panel-info" *ngIf="ItemschemFreebies">
+		<div class="row">
+			<p-table [value]="ItemschemFreebies" [columns]="ItemschemFreebiescols">
+				<ng-template pTemplate="header" let-columns>
+					<tr>
+
+						<th *ngFor="let col of columns">
+							{{col.header}}
+						</th>
+						
+						<th>Action</th>
+			
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-rowData let-columns="columns">
+					<tr [pSelectableRow]="rowData">
+						<td *ngFor="let col of columns">
+							{{rowData[col.field]}}
+						</td>
+						<th>
+							<button type="button" class="btn btn-raised btn-raised btn-danger" pButton
+								(click)="DeActivateFreebiesByDetailId(rowData);" label="Action"
+								[disabled]="OfferIds==null"></button>
+
+						</th>
+
+						
+					</tr>
+				</ng-template>
+			</p-table>
+			<div>
+				<span *ngIf="OfferIds!=null"> Offer Created :  {{OfferIds}}</span>
+				<span  *ngIf="OfferIds==null" style="color: red;"> *No Offer Created</span>
+			</div>
+		</div>
+	</div>
+</p-dialog>
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

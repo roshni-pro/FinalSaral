@@ -1,0 +1,83 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="card">
+    <!-- <div class="card-header">
+        <div class="header">CRM List Page</div>
+    </div> -->
+    <div class="row mr_left">
+        <div class="col-md-12 text-right">
+            <button id="addplatform" name="addplatform" class="btn btn-primary" (click)="onAddPlatform()">Add Platform</button>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <p-table #dt [value]="platformList" [paginator]="true" [rows]="20" [scrollable]="true"
+            scrollHeight="130vh" text-align: center>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Name</th>
+                    <th>CreatedDate</th>
+                    <!-- <th>IsActive</th> -->
+                    <th>Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-platform>
+                <tr>
+                    <td>{{platform.Name}}</td>
+                    <td>{{platform.CreatedDate | date:'medium'}}</td>
+                    <!-- <td>
+                        <p-inputSwitch name="platform" [(ngModel)]="platform.IsActive" (ngModelChange)="onActive(platform)">
+                        </p-inputSwitch>
+                    </td> -->
+                    <td>
+                        <a (click)="onEditPlatformRow(platform)" href="javascript:void(0)" style="margin-right: 70px;">
+                            Edit
+                        </a>
+                        <a (click)="onDelete(platform)" href="javascript:void(0)" style="margin-right: 70px;">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+
+
+
+<div *ngIf="isAddEditPlatform">
+    <p-dialog [(visible)]="isAddEditPlatform" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '50%',height: '50%'}">
+    <p-header>
+      {{title}}
+    </p-header>
+    <form class="form" name="form" #platformConfig="ngForm">   
+    <div class="row">
+        <div class="col-md-6">
+            <label>Name</label>
+            <input id="nme" name="nme" class="form-control" [(ngModel)]="platform.Name"
+            #nme="ngModel" required="1" #nme="ngModel">
+            <div *ngIf="isInvalid && !nme.valid && nme.errors.required">
+                <code>Name is required</code>
+              </div>
+        </div>
+        <div class="col-md-6 tp">
+            <button class="btn btn-primary" id="submit" name="submit" (click)="onSubmit(platformConfig)">Submit</button>
+        </div>
+    </div>
+    </form>
+    </p-dialog>
+</div>
+
+<!-- <p-confirmDialog #cd appendTo="body" header="Confirmation" *ngIf="isOpenPopup">
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog> -->
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  

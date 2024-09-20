@@ -1,0 +1,117 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="Tat">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2"><b>Assignment TAT Report</b></h3>
+    </div>
+  </div>
+
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <div class="container">
+          <form class="form">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label for="warehouse"><b>Select Warehouse:</b></label>
+                    <!-- <select id="city" name="city" class="form-control" [(ngModel)]="WarehouseId"
+                      (ngModelChange)="onsearch(WarehouseId)">
+                      <option value="">--Select Warehouse--</option>
+                      <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+                        {{ wh.WarehouseName }}
+                      </option>
+                    </select> -->
+                    <p-dropdown [options]="warehouseList" name="warehouseList" optionLabel="label"
+                        (onChange)="onsearch(WarehouseId.value)"  [(ngModel)]="WarehouseId" [filter]="true" placeholder="Select Warehouse">
+                    </p-dropdown>
+                  </div>
+                </div>
+
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label for="ware"><b>Select Reports:</b></label>
+                    <p-multiSelect [options]="reports" name="label" [(ngModel)]="selectedReportList"
+                      [panelStyle]="{minWidth:'25em'}" optionLabel="label">
+                    </p-multiSelect>
+                  </div>
+                </div>
+
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label for="startdate"><b>Start Date: </b></label>
+                    <p-calendar id="sdate" name="sdate" [(ngModel)]="StartDate" [monthNavigator]="true"
+                      [yearNavigator]="true" yearRange="1900:2030" placeholder="Start Date"></p-calendar>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label for="enddate"><b>End Date: </b></label>
+                    <p-calendar id="edate" name="edate" [(ngModel)]="EndDate" placeholder="End Date"
+                      [monthNavigator]="true" [yearNavigator]="true" yearRange="1900:2030"></p-calendar>
+                  </div>
+                </div>
+
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label for="dboy"><b>Select Delivery Boy:</b></label>
+                    <select id="dboy" name="dboy" class="form-control" [(ngModel)]="DeliveryboyId">
+                      <option value="">--Select Delivery Boy--</option>
+                      <option *ngFor="let dboy of dboyList" [ngValue]="dboy.PeopleID">
+                        {{ dboy.DisplayName }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-sm-3">
+                  <br>
+                  <button type="button" (click)="addSearch()"
+                    class="btn btn-raised btn-warning mr-1 shadow mr-24">Generate Report</button>
+                </div>
+                <div class="col-sm-3">
+                  <br>
+                  <button type="button" class="btn btn-raised btn-raised btn-primary c1" style="margin-left:10px"
+                    (click)="exportTAT()">
+                    ExportList
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+    </div>
+
+    <div class="position-relative">
+      <div class="position-absolute tat-details">
+      </div>
+
+      <div class="position-relative ">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>AssignmentId </th>
+              <th>AssignmentDate </th>
+              <th>DeliveryBoyName </th>
+
+              <th *ngFor="let col of selectedReportList" style="text-align: center">
+                {{col.label}}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let rowData of tatList |  paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+              <td> {{rowData.DeliveryIssuanceId}}</td>
+              <td> {{rowData.SavedAsDraft | date:'medium'}}</td>
+              <td> {{rowData.DeliveryBoyName}}</td>
+              <td *ngFor="let col of selectedReportList" style="text-align: center">
+                {{rowData[col.value]}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <pagination-controls (pageChange)="p = $event" class="sk_pagination"></pagination-controls>
+      </div>
+    </div>
+
+
+  </div>

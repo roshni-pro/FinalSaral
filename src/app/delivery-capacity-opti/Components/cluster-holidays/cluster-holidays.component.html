@@ -1,0 +1,88 @@
+
+
+<h3 class="heading">!!!Cluster Schedule </h3>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+            <div class="d-flex">
+                <div class="mr-4">
+                    <label><b>Select Warehouses<span class="required">*</span></b></label>
+                    <p-dropdown id="Category" name="Category" [options]="WareHouseList"  (onChange)="getCluster(selectedWareHouse)" [filter]="true" 
+                        [(ngModel)]="selectedWareHouse" optionLabel="label" placeholder="Select WareHouse"  > 
+                    </p-dropdown>
+                </div>
+                <div class="mr-4">
+                    <label><b>Select Clusters<span class="required">*</span></b></label>
+                    <p-dropdown id="Category" name="Category" [options]="clusterList"  (onChange)="getHolidayWorkingList(selectedCluster)" [filter]="true" 
+                        [(ngModel)]="selectedCluster" optionLabel="ClusterName" placeholder="Select Cluster"  > 
+                    </p-dropdown>
+                </div>
+                <div class="mr-4">
+                    <label><b>Select Weekend<span class="required">*</span></b></label>
+                    <p-multiSelect [options]="Weekends" [(ngModel)]="SelectedWeekend" defaultLabel="Select Weekend"  
+                        optionLabel="name" (onChange)="holidayChangeEffect($event,SelectedWeekend)">
+                    </p-multiSelect>
+                </div>                    
+            </div>
+            <div style="margin-top:28px;">                            
+                <button  class="btn btn-primary mr-2 " (click)="postClusterData()" >Submit</button>   
+                <button class="btn btn-primary mr-2" (click)="Clear()" >Clear</button> 
+                <button class="btn btn-primary" (click)="GetHistroyData()" >History</button>  
+            </div>
+        </div>
+    </div>
+</div>
+<p-dialog header="Detail" [(visible)]="showHistoryData" [resizable]="false" positionTop="50" [modal]="true"
+appendTo="body" [draggable]="false" [style]="{width: '70%', top: '70px'}">
+<p-table [value]="ClusterList" [paginator]="true" [rows]="5" [(first)]="first">
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width:1rem"></th>
+            <th>Id</th>
+            <th>WarehouseName</th>
+            <th>ClusterName</th>
+            <th>Holidays</th>
+            <th>Year</th>
+            <th>CreatedDate</th>
+            <th>ModifiedDate</th>
+            <th>IsActive</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+        <tr>
+          <td style="width:1rem"></td>
+          <td>{{item.Id}}</td>
+          <td>{{item.WarehouseName}}</td>
+          <td>{{item.ClusterName}}</td>
+          <td>{{item.Holiday}}</td>
+          <td>{{item.Year}}</td>
+          <td>{{item.CreatedDate |date:'d/M/yy, h:mm a'}}</td>
+          <td>{{item.ModifiedDate |date:'d/M/yy, h:mm a'}}</td>
+          <td>{{item.IsActive}}</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" >
+            <br>
+            <h3 style="text-align: center;color: blue;margin-left: 36%">No Data Found.</h3>
+          </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+</p-dialog>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+<yc-year-calendar (eventDayClicked)="eventDayClickHandler($event)" (click)="YearClick($event)"> 
+    [(selectedDate)]="currentDate" 
+</yc-year-calendar>
+
+
+
+
+
+
+
+

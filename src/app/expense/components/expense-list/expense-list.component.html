@@ -1,0 +1,70 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+    <div class="row text-left">
+        <div class="col-md-6">
+          <div class="content-header">Expense List</div>
+        </div>
+        <div class="col-md-6">
+          <button type="button" class="btn btn-raised btn-raised btn-primary c-1" (click)="redirectExpense()">
+            Add Expense
+          </button>
+          <p-confirmDialog #cd appendTo="body" header="Confirmation">
+            <p-footer>
+              <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+              <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+            </p-footer>
+          </p-confirmDialog>
+        </div>
+      </div>
+
+
+<!-- For show the List data  -->
+
+<div class="position-relative">
+    <div class="position-relative">
+      <p-table #dt  [value]="expenseList" [paginator]="true" [rows]="rowSize"
+      dataKey="Id" [scrollable]="true" scrollHeight="70vh" class="center" 
+       [totalRecords]="totalRecordCount" >
+        <ng-template pTemplate="header">
+          <tr >
+            <th >
+              Id
+            </th>
+            <th >
+              Name
+            </th>
+            <th >
+                Debit Ledger Name
+            </th>
+            <th >
+                Debit LedgerType Name
+            </th>
+            <th>Action</th>
+           </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr >
+            <td >
+              {{rowData.Id}}
+            </td>
+            <td >
+              {{rowData.Name}}
+            </td>
+            <td >
+              {{rowData.DebitLedgerName}}
+            </td>
+            <td >
+              {{rowData.DebitLedgerTypeName}}
+            </td>
+            <td>
+                <button type="button" (click)="removeVendor(rowData.Id)" class="btn mr-1 btn-raised btn-primary"  > <i
+                    class="pi pi-trash"></i></button>
+                <button type="button" (click)="redirectAndUpdateWithId(rowData.Id)" class="btn mr-1 btn-raised btn-primary"  > <i
+                        class="fa fa-edit"></i></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <br><br>
+    </div>
+  </div>

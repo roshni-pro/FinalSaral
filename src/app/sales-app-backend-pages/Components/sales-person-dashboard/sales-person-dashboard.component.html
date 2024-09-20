@@ -1,0 +1,152 @@
+<div class="ui-fluid">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+      <div class="header">
+        <h3 class="m-2">Sales Person Dashboard</h3>
+      </div>
+    </div>
+    <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded ">
+      <div class="card-content">
+        <div class="mr-12">
+          <div class="row">
+            <div class="col-9">
+            </div>
+            <div class="col-3 pl-5">
+              <a  (click)="DownloadSample()" style="text-decoration: underline;color: rgb(0, 166, 255)">Download Sample File</a>
+            </div>
+          </div>
+          <div class="row">                
+              <div class="col-sm-2">
+                <div class="form-group mt-1">
+                  <label for="city"><b>City:</b></label>
+                  <p-dropdown [options]="CityList" placeholder="--Select a City--" optionLabel="CityName" [(ngModel)]="CityObj" (ngModelChange)="onsearch(CityObj.Cityid)"></p-dropdown>
+                </div>
+              </div>         
+              <div class="col-sm-2">
+                <div class="form-group mt-1">
+                  <label for="warehouse"><b>Warehouse:</b></label>
+                  <p-dropdown [options]="WarehouseList" placeholder="--Select a Warehouse--" optionLabel="WareHouseName" [(ngModel)]="WareHouse" (ngModelChange)="onsearchWareHouseId(WareHouse.WareHouseId)"></p-dropdown>
+                </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="form-group mt-1">
+                  <label for="Agent"><b>Store:</b></label>
+                  <p-dropdown [options]="StoreList" placeholder="--Select a Store--" optionLabel="Name" [(ngModel)]="Store" (ngModelChange)="onStoreSearch(Store.Id)"></p-dropdown>
+                </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="form-group mt-1 mr-4">
+                  <label for="Agent"><b>Month:</b></label>
+                  <p-dropdown [options]="months" placeholder="--Select a Month--" optionLabel="month" [(ngModel)]="month" (ngModelChange)="onMonthSearch(month.code)"></p-dropdown>
+                </div>
+              </div>
+              <div class=" col-sm-4 mt-4">
+                <div class="row">
+                  <p-toast *ngIf="!display1 && !display" position="top-center"></p-toast>
+                  <button class="btn btn-primary" (click)="onSearchButton()">Search</button>
+                  <div >
+                    <!-- <button class="btn btn-primary mr-4" (click)="DailyTargetBtn()">Add Daily Target</button> -->
+                    <button class="btn editbtn ml-1" (click)="MonthlyTargetBtn()">Upload Targets</button>
+                  </div>
+               
+                </div>
+              </div>
+          </div> 
+        </div>          
+      </div>
+    </div>
+</div>
+<!-- *ngIf="OnSearchInternalTransfer"  -->
+<div *ngIf="show" class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded ">
+    <!-- <p-table [value]="MetricList" [scrollable]="true"  [style]="{overflow: 'auto'}" 
+      [paginator]="true" [rows]="10"  [lazy]="true" (onLazyLoad)="load($event)" [totalRecords]="TotalRecord"
+    scrollWidth="100px"
+    scrollDirection="both" text-align: center>
+      <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th style="width:250px"><span style="font-size: larger;">Metric</span></th>
+              <th *ngFor="let col of columns" >
+                <span>{{col.Cluster}}</span> <br> -->
+                <!-- <span *ngIf="col.ExecutiveName != null" style="font-size: larger;">{{col.ExecutiveName}}</span> -->
+              <!-- </th>
+          </tr>
+      </ng-template>         
+      <ng-template pTemplate="body" let-rowData let-columns>
+          <tr>
+              <td style="width:250px"><b>{{rowData.HeadName}}</b> </td>
+              <td *ngFor="let c of rowData.TargetListData" style="text-align:left;">{{c.NumPer}}</td>         
+          </tr>
+      </ng-template>
+    </p-table>  -->
+
+    <p-table [columns]="cols" [value]="MetricList" [tableStyle]="{'min-width': '50rem'}"  [lazy]="true" (onLazyLoad)="load($event)"   [paginator]="true" [rows]="10">
+      <ng-template pTemplate="header" let-columns>
+          <tr>
+              <th *ngFor="let col of columns">
+                  {{col.header}}
+              </th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+              <td *ngFor="let col of columns">
+                  {{rowData[col.field]}}
+              </td>
+          </tr>
+      </ng-template>
+  </p-table>
+  
+</div>
+
+<p-dialog header="Add Daily Targets" [(visible)]="display" appendTo="body" positionTop="50vh" [style]="{width: '30vw'}" modal="true">
+    <div class="row" >
+      <div class="col mt-2">
+          <label for="monthpicker" style="font-weight: 600;">Date</label>&nbsp;&nbsp;
+          <p-calendar [(ngModel)]="date1" appendTo="body" dateFormat="dd/mm/yy" inputId="monthpicker" (ngModelChange)="ondailyDateChange(date1)"
+          [yearNavigator]="false"></p-calendar>
+          <button class="btn btn-primary mt-2" style="margin-left: 6rem ; " (click)="downloadDailyTargetFile()">Download Daily Target</button>      
+      </div>
+    </div> 
+    <div class="row mt-4" style="text-align:center">
+      <div *ngIf="showDailyUpload" class="col ">    
+        <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+            (uploadHandler)="onUploadDailyTargets($event)" #uploadCustom>
+            <code>*</code>
+        </p-fileUpload>
+      </div>
+    </div> 
+    <div class="row mt-4" style="text-align:center">
+      <div class="col ">
+      </div>
+    </div>
+    <p-toast position="top-center"></p-toast>
+</p-dialog>
+
+<p-dialog header="Upload Targets" [(visible)]="display1" appendTo="body" positionTop="50vh" [style]="{width: '30vw' }" modal="true">
+  <div class="row" >
+    <div class="col mt-2">
+      <p-toast position="top-center"></p-toast>
+        <label for="basic" style="font-weight: 600;">Month</label>&nbsp;&nbsp;
+        <p-calendar [(ngModel)]="date2" appendTo="body" view="month" dateFormat="mm/yy" inputId="monthpicker" 
+        [yearNavigator]="false" (ngModelChange)="onmonthChange(date2)"></p-calendar>
+        <button class="btn btn-primary mt-2" style="margin-left: 5rem ; " (click)="downloadMonthFile()">Download Targets</button>      
+    </div>
+  </div> 
+  <div class="row mt-4" style="text-align:center">
+    <div *ngIf="showUpload" class="col " >   
+      <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+          (uploadHandler)="onUploadMonthTarget($event)">
+      </p-fileUpload> 
+    </div>
+  </div> 
+  <div class="row mt-4" >
+    <div class="col ">
+    </div>
+  </div>
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+

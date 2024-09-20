@@ -1,0 +1,166 @@
+  <section id="shoppinglist">
+    <div class="header">
+      <h3 class="m-2"><b>Shopping Cart </b></h3>
+    </div>
+ 
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    
+    <form #holidayForm="ngForm">
+      <div class="row">
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="name">Select Warehouse</label>
+            <p-multiSelect class="form-control" [options]="warehouseList" name="WarehouseName1" [(ngModel)]="selectedwarehouses" [panelStyle]="{minWidth:'100%'}" optionLabel="WarehouseName" (onPanelHide)="selectedWarehouses()">
+            </p-multiSelect>
+          </div>
+        </div>
+  
+        <div class="col-md-2">
+          <label for="search">SK Code</label>
+          <input id="search" class="form-control" type="text" pInputText size="20" name="searchwh" [(ngModel)]="searchwh" placeholder="Search">
+        </div>
+                
+                    <div class="col-sm-2">  
+                      <h3>Order not placed</h3>  
+<p-checkbox name="groupname" value="true" [(ngModel)]="status"  (change)="onStatusChange(status)" binary="true"></p-checkbox>
+                    </div>
+        <div class="col-md-2" style="margin-top:1.7%;">
+          <button type="submit" class="btn btn-raised btn-primary" name="search" (click)="OnClick()">
+            Search
+          </button>
+        </div>
+  
+        <div class="col-md-2" style="margin-top:1.7%;">
+          <button type="button" class="btn btn-raised btn-raised btn-primary" name="Export" (click)="export()">
+            Export
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="position-relative">
+      <p-table [value]="shoppinglist" [paginator]="true" [lazy]="lazyvalue" (onLazyLoad)="load($event)" [rows]="15"
+      [totalRecords]="totalRecords" dataKey="OrderId" [scrollable]="true" scrollHeight="130vh" text-align: center>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th>
+              Order Id
+            </th>
+            <th>
+              Sk Code
+            </th>
+            <th>
+              Shop Name
+            </th>
+            <th>
+              Mobile No.
+            </th>
+            <th>
+              Date
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr (click)="openDetails(rowData,$event)">
+            <td>
+              {{rowData.OrderId}}
+            </td>
+            <td>
+              {{rowData.SkCode}}
+            </td>
+            <td>
+              {{rowData.ShopName}}
+            </td>
+            <td>
+              {{rowData.Mobile}}
+            </td>
+            <td>
+              {{rowData.CreatedDate | date: 'M/d/yy, h:mm a'}}
+           </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</section>
+
+
+<div *ngIf="isOpenPopup">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+    <p-header>
+    Item-List Details
+    </p-header>
+    <div class="ui-fluid">
+      <form #storyForm="ngForm">
+        <div class="ui-g">
+          <div class="ui-g-12">
+           
+              <div class="ui-g" >
+                <div class="ui-g-12">
+                  <p-table [value]="selectedRowDetails" [paginator]="true" [rows]="5"
+                  [scrollable]="true" scrollHeight="130vh" text-align: center>
+
+                    <ng-template pTemplate="header">
+                      <tr (click)="openDetails(rowData,$event)">
+                        <th>
+                          Item Number
+                        </th>
+                        <th>
+                          Item Name
+                        </th>
+                       <th>
+                         ABC Classification
+                       </th>
+                        <th>
+                          Quantity
+                        </th>         
+                        <th>
+                          Unit Price
+                        </th>
+                        <th>
+                        Active
+                        </th>
+                      </tr>
+                    </ng-template>
+                 
+                    <ng-template pTemplate="body" let-rowData>
+                     <tr>
+                        <td>
+                          {{rowData.ItemNumber}}
+                        </td>
+          
+                        <td>
+                          {{rowData.ItemName}}
+                        </td>
+                      <td>
+                        {{rowData.ABCClassification}}
+                      </td>
+                        <td>
+                          {{rowData.qty}}
+                        </td>
+                        <td >
+                          {{rowData.UnitPrice}}
+                        </td>
+                        <td >
+                          {{rowData.IsActive}}
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </p-dialog>
+</div>
+
+
+
+
+
+
+
+

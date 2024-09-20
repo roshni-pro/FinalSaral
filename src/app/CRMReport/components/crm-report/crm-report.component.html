@@ -1,0 +1,170 @@
+<section >
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header">
+        <h3 class="m-2"><b>CRM Level</b></h3>
+      </div>       
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="filterBar">
+                <form class="row">
+                    <!-- <div class=" col-sm-3">
+                        <div class="form-group">
+                            <label for="name"><b>Month</b></label>
+                            <select class="form-control" id="Month" name="Month" [(ngModel)]="FinalData.Month">
+                                 <option value="">Select</option>
+                                <option [ngValue]="1">January</option>
+                                <option [ngValue]="2">February</option>
+                                <option [ngValue]="3">March</option>
+                                <option [ngValue]="4">April</option>
+                                <option [ngValue]="5">May</option>
+                                <option [ngValue]="6">June</option>
+                                <option [ngValue]="7">July</option>
+                                <option [ngValue]="8">August</option>
+                                <option [ngValue]="9">September</option>
+                                <option [ngValue]="10">October</option>
+                                <option [ngValue]="11">November</option>
+                                <option [ngValue]="12">December</option>
+                            </select>
+                        </div>
+                    </div> -->
+                    <div class=" col-sm-3">
+                        <div class="form-group">
+                            <label for="Year"><b>Year</b></label>
+                            <select id="years" name="years"  class="form-control" [(ngModel)]="FinalData.Year">
+                                <option *ngFor="let year of years" >
+                                    {{year}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class=" col-sm-4">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-raised btn-primary align-self-end" (click)="Search(FinalData)">Search</button>
+                        </div>
+                    </div>
+                    <div class=" col-sm-3">
+                    </div>
+                    <div class=" col-sm-2">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-raised btn-primary align-self-end" (click)="dataget()">CurrentMonthCRMDashboard</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-8 col-sm-7">
+            <div class="card inv-rght">
+                <div class="card-header">
+                    <h4 class="card-title">CRM Levels </h4>
+                </div>
+                <div class="card-content rght-inv">
+                    <table class="table table-responsive-sm text-center">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Month</th>
+                                <th>Level 0</th>
+                                <th>Level 1</th>
+                                <th>Level 2</th>
+                                <th>Level 3</th>
+                                <th>Level 4</th>
+                                <th>Level 5</th>
+                                <th>Export</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let level of CRMlevelDataList; let i = index;">
+                                <td>{{i+1}}</td>
+                                <td>{{level.Month}}</td>
+                                <td>{{level.L0}}</td>
+                                <td>{{level.L1}}</td>
+                                <td>{{level.L2}}</td>
+                                <td>{{level.L3}}</td>
+                                <td>{{level.L4}}</td>
+                                <td>{{level.L5}}</td>
+                                <td>
+                                    <button type="button" (click)="export(level,$event)">Export</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-5 rideCardSection">
+            <div class="card redCard">
+                <h5>Total Customer No</h5>
+                <h2>{{allcutomerdata}}</h2>
+            </div>
+            <div class="card orgCard">
+                <h5>Total Active Customer</h5>
+                <h2>{{ActiveCustomer}}</h2>
+            </div>
+            <div class="card yellowCard">
+                <h5>Customer Active by Order</h5>
+                <h2>{{todayOrderCount}}</h2>
+            </div>
+        </div>
+    </div>
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> 
+</section>
+
+
+<div *ngIf="showpopup">
+    <p-dialog [(visible)]="showpopup" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '60%',height: '50%', overflow: 'auto'}">
+      <p-header class="center">
+        Current Month CRM Dashboard
+      </p-header>
+        <div class="card inv-rght">
+            <div class="card-header">
+                <!-- <h4 class="card-title">Current Month CRM Dashboard </h4> -->
+            </div>
+            <div class="card-content rght-inv">
+                <table class="table table-responsive-sm text-center">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Month</th>
+                            <th>Year</th>
+                            <th>Level 0</th>
+                            <th>Level 1</th>
+                            <th>Level 2</th>
+                            <th>Level 3</th>
+                            <th>Level 4</th>
+                            <th>Level 5</th>
+                            <th>Export</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr  let i = index;>
+                            <td>1</td>
+                            <td>{{getdatamonth.Month}}</td>
+                            <td>{{getdatamonth.Year}}</td>
+                            <td>{{getdatamonth.L0}}</td>
+                            <td>{{getdatamonth.L1}}</td>
+                            <td>{{getdatamonth.L2}}</td>
+                            <td>{{getdatamonth.L3}}</td>
+                            <td>{{getdatamonth.L4}}</td>
+                            <td>{{getdatamonth.L5}}</td>
+                            <td>
+                                <button type="button" (click)="exports(getdatamonth)">Export</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+    </div>
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> 
+    </p-dialog>
+  
+  </div>

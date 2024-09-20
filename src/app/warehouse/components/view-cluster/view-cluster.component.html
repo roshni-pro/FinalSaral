@@ -1,0 +1,186 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="Cluster">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2"><b>Cluster</b></h3>
+    </div>
+  </div>
+
+  <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+
+
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <div class="row">
+      <div class="col-md-4 col-12">
+        <div class="card bg-primary">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                  <h4>Total Active Customers</h4>
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{activecount}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <div class="card bg-warning">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                  <h4>Total Sign-up</h4>
+                </div>
+                <div class="media-right white text-right">
+                  <div >
+                    <h2><b>{{customerCount}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-4 col-12">
+        <div class="card bg-success">
+          <div class="card-content cr-cn">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left c-1">
+                  <h4>Total Agent Count</h4>
+                </div>
+                <div class="media-right white text-right">
+                  <div>
+                    <h2><b>{{activeagent}}</b></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="px-3">
+          <form class="form">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput3">Select City</label>
+                    <select id="city" name="city" class="form-control" [(ngModel)]="CityId"
+                      (ngModelChange)="onsearch(CityId,Active)">
+                      <option value="">Select City</option>
+                      <option *ngFor="let city of cities" [ngValue]="city.Cityid">{{city.CityName}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="name">Status</label>
+                      <select class="form-control" id="status" name="status" [(ngModel)]="Active"  #status="ngModel" (ngModelChange)="onsearch(CityId,Active)">
+                        <option  value="">Select</option>
+                        <option  value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <br>
+                  <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="map(CityId)">
+                     View Map 
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24"
+                    (click)="dt.exportCSV() ">Export Cluster</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-relative">
+      <div class="position-absolute cluster-details" *ngIf="isDetails">
+        <app-view-cluster-detail [details]="selectedRowDetails" [activeFields]="activeFields"
+          (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()"
+          class="d-flex justify-content-end"></app-view-cluster-detail>
+      </div>
+
+      <div class="position-relative">
+        <p-table #dt [columns]="cols" [value]="clusterList" [paginator]="true" [rows]="20" dataKey="ClusterId">
+          <ng-template pTemplate="header">
+            <tr>
+
+              <th *ngFor="let col of cols" style="text-align: center">
+                {{col.header}}
+              </th>
+              <th>Detail</th>
+              <th>Action</th>
+              <th>Export</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td *ngFor="let col of columns" style="text-align: center">
+                <ng-container *ngIf="col.field == 'ExecutiveName'">
+                  <!-- <div> {{rowData.primeExecutive ? (rowData.primeExecutive + ',') : ''}}</div> -->
+
+                  <!-- <b>{{getExecutiveName(rowData) ? (getExecutiveName(rowData) + ',') : ''}}</b></b>> -->
+                  <!-- <ng-container *ngIf="rowData.primeExecutive != rowData.ExecutiveName">
+                    {{rowData[col.field]}}
+                  </ng-container> -->
+                  <ng-container>
+                    {{rowData[col.field]}}
+                  </ng-container>
+                </ng-container>
+
+                <ng-container *ngIf="col.field != 'ExecutiveName'">
+                  {{rowData[col.field]}}
+                </ng-container>
+              </td>
+              <td>
+              <a   *ngIf="Active==0" disabled>Active</a>
+             
+              <a  *ngIf="Active == 1" disabled>Inactive</a>
+              </td>
+              <!-- &nbsp;| &nbsp; -->
+              <td>
+              <a href="javascript:void(0);" (click)="openDetails(rowData,$event)">View</a>
+            </td>
+            <td>
+              <a href="javascript:void(0);" (click)="ExportDataCluster(rowData)">Export</a>
+
+            </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <br><br>
+      </div>
+    </div>
+
+  </div>
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

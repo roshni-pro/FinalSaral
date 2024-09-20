@@ -1,0 +1,325 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+
+<br>
+<br>
+<div class="ui-fluid">
+    <section id="customer-master">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Agent Payment Settlement</h3>
+                </div>
+                <div class="text-right">
+                    <button type="button" style="margin-left: 10px;" class="btn btn-raised  btn-primary"
+                        (click)="navToPaymentList(); ">
+                        View Payment List
+                    </button>
+                </div>
+                <div class="text-right">
+                    <button type="button" style="margin-left: 10px;" class="btn btn-raised  btn-primary"
+                        (click)="navToSettlementList(); ">
+                        View Settlement List
+                    </button>
+                </div>
+                <div class="text-right">
+                    <button type="button" style="margin-left: 10px;" class="btn btn-raised  btn-primary"
+                        (click)="navToNewPayment();">
+                        Add New Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <form class="form" name="settleMentForm" #settleMentForm="ngForm">
+        <div class="row text-left" style="margin-bottom: 50px !important;">
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-header pb-2">
+                        <h4 class="card-title" id="basic-layout-form"><b>User Input</b></h4>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group card-header pb-2">
+                                <label for="SupplierName">Agent Name<code> *</code></label><br>
+                                <p-autoComplete [suggestions]="agentList" (completeMethod)="getAgentList($event, 17)"
+                                    (onClear)="clearData();" field="Name" [size]="30"
+                                    (onBlur)="checkValid(settleMentForm, 'agent')" placeholder="enter at least 3 chars"
+                                    [minLength]="3" #agentLeger required (onSelect)="onSelectAgent($event)"
+                                    name="agentid" id="agentId">
+                                </p-autoComplete>
+                                <div *ngIf="invalidagent">
+                                    Agent is Required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group card-header pb-2">
+                                <label for="projectinput5">Select Commission Payment
+                                    <code>*</code></label>
+                                <select id="desg" name="desg" class="form-control"
+                                    (change)="setAgentCommission($event.target.value)"
+                                    [(ngModel)]="agentPaymentSettlement.AgentCommissionPaymentId"
+                                    #commissionPayment="ngModel" required>
+                                    <option [selected]="true" default [value]="null">--select--
+                                    </option>
+                                    <ng-container *ngFor="let agentCommissionItem of agentCommissionPaymentList">
+                                        <option [value]="agentCommissionItem.Id"
+                                            *ngIf="agentCommissionItem.Status != 'Cancelled'">
+                                            <i class="fa fa-inr" aria-hidden="true"></i>
+                                            <h1> {{ (agentCommissionItem.Amount - agentCommissionItem.SettledAmount) | number: '1.0-0' }}
+                                            </h1>
+                                            (
+                                            For Pmt -
+                                            <i class="fa fa-inr" aria-hidden="true"></i>
+                                            {{agentCommissionItem.Amount}} |
+                                            {{ agentCommissionItem.PaymentDate | date }} )
+                                        </option>
+                                    </ng-container>
+                                </select>
+                                <div *ngIf="commissionPayment.errors?.required && commissionPayment.touched && agentName != ''"
+                                    class="error">
+                                    Select Commission Payment
+                                </div>
+                                <div *ngIf="commissionPayment.errors?.required && commissionPayment.touched && agentName == ''"
+                                    class="error">
+                                    Select agent name first
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="px-3">
+
+                            <div class="form-body">
+
+
+                                <div class="mt-2 ">
+
+                                    <h4 class="form-section"><i class="ft-file-text"></i> Information</h4>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="projectinput4">Amount<code>*</code></label>
+                                                <div class="form-control" style="background-color :gainsboro;">
+                                                    {{netAmount | number: '1.0-0'}}
+                                                    <i class="fa fa-inr" aria-hidden="true"></i>
+                                                </div>
+                                                <!-- <input type="number" id="projectinput4" class="form-control"
+                                                    name="amount" [(ngModel)]="netAmount" #amt="ngModel"
+                                                    [disabled]="true"> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h4 class="form-section"><i class="ft-file-text"></i> Calculations</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="projectinput15">Total Remaining Amount</label>
+                                            <div class="form-control" style="background-color :gainsboro;">
+                                                {{totalremainingamount | number: '1.0-0'}}
+                                                <i class="fa fa-inr" aria-hidden="true"></i>
+                                            </div>
+                                            <!-- <input type="text" id="projectinput15" class="form-control"
+                                                name="TotalAmountRemaining" [(ngModel)]="totalremainingamount"
+                                                disabled> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="position-relative ">
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- <div class="row">
+                <div *ngFor="let ir of selectIRList; let i = index;">
+                  
+                </div>
+              </div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h4 class="card-title" id="basic-layout-colored-form-control"
+                            style="padding-bottom: 20px; margin-left: 30px;">Payment Settlement List</h4>
+                        <br>
+                        <div class="px-3">
+
+                            <p-table #settlementTable [paginator]="false" [rows]="10"
+                                [value]="agentPaymentSettlementList" [lazy]="true" [totalRecords]="totalRecords"
+                                [paginator]="false" [scrollable]="true" scrollHeight="70vh" text-align: center>
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>SNo.</th>
+                                        <th>Amount</th>
+                                        <th>SettleDate</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                    <tr>
+                                        <td>{{i+1}}</td>
+                                        <td>{{rowData.Amount | number: '1.0-0'}} <i class="fa fa-inr"
+                                                aria-hidden="true"></i></td>
+                                        <td>{{rowData.SettleDate | date}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                        <div class="form-actions" style="padding-bottom: 20px; margin-left: 30px;">
+                            <button type="button" class="btn btn-raised btn-raised btn-warning mr-1">
+                                <i class="ft-x"></i> Cancel
+                            </button>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="save()">
+                                <i class="fa fa-check-square-o"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-header pb-2">
+                        <h4 class="card-title" id="basic-layout-colored-form-control">Assignment Commissions</h4>
+                    </div>
+                    <div class="card-content">
+                        <div class="px-3">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <p-table #table [paginator]="true" [rows]="10" [value]="assignmentCommissions"
+                                        [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="load($event)"
+                                        [paginator]="true" [scrollable]="true" scrollHeight="70vh" text-align: center>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th></th>
+                                                <th>AssignmentID</th>
+                                                <th>FreezeDate</th>
+                                                <th>Amount to Pay</th>
+                                                <th>Status</th>
+                                                <th>Commission Details</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                                            <tr *ngIf="agentCommission && agentCommission.Id">
+                                                <td><input type="checkbox" [(ngModel)]="rowData.active"
+                                                        (change)="addPaymentSettlementList($event, rowData)"
+                                                        [name]="rowData.Id" [id]="rowData.Id" />
+                                                </td>
+                                                <td>
+                                                    {{rowData.AssignmentID}}</td>
+                                                <td>{{rowData.FreezeDate | date}}</td>
+                                                <td>
+                                                    {{(rowData.CommissionAmount - rowData.PaidAmount) | number: '1.0-0'}}
+                                                    <i class="fa fa-inr" aria-hidden="true"></i>
+                                                </td>
+                                                <td>{{rowData.Status}}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                                        (click)="getAssignmentDetailById(rowData.AssignmentID)">View
+                                                        Details</button>
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+
+                                </div>
+                                <div class=" col-12">
+                                    <div class="row totalamt" *ngIf="agentCommission && agentCommission.Id">
+                                        <div class="col-md-6 ">
+                                            <div class="form-group">
+                                                <label>Total Amount </label>
+                                                <div class="form-control" style="background-color :gainsboro;">
+                                                    {{calculateTotalAmount(assignmentCommissions)   | number: '1.2-2'}}
+                                                    <i class="fa fa-inr" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-12">
+        <br>
+
+
+        <br> <br>
+    </div>
+</div>
+
+<div>
+    <p-dialog [header]="'Assignment Commission Details'" *ngIf="display" [(visible)]="display" appendTo="body">
+        <div class="card-content">
+            <h4 class="card-title" id="basic-layout-colored-form-control" style="padding-bottom: 20px;">
+                <div class="row">
+                    <div class="col-md-4" style="margin-left: 50px;">
+                        Details for AssignmentID : {{assignmentCommissionDetail[0].AssignmentID}}
+                    </div>
+                    <div>
+                        Total Commission : <i class="fa fa-inr" aria-hidden="true"></i>
+                        {{getTotal(assignmentCommissionDetail) | number: '1.2-2'}}
+                    </div>
+                    <div style="margin-left: 100px;">
+                        <button type="button" (click)="ExportToExcel();" pButton icon="pi pi-info-circle"
+                            label="Export To Excel">Export Details To Excel</button>
+                    </div>
+                </div>
+            </h4>
+            <div style="margin-left: 30px;" class="px-3" *ngIf="assignmentCommissionDetail.length">
+
+                <p-table #table [paginator]="false" [rows]="10" [value]="assignmentCommissionDetail" appendTo="body"
+                    [style]="{'width':'1400px'}" [lazy]="true" [totalRecords]="assignmentCommissionDetail.length"
+                    [paginator]="true" [scrollable]="true" scrollHeight="70vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Sno.</th>
+                            <th *ngFor="let col of detailCols" [pSortableColumn]="col.field">
+                                {{col.header}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                        <tr *ngIf="agentCommission && agentCommission.Id">
+                            <td>{{i+1}} </td>
+                            <td *ngFor="let col of detailCols">
+                                <ng-container *ngIf="col.field == 'TotalAmount' || col.field == 'CommissionAmount'">
+                                    <i class="fa fa-inr" aria-hidden="true"></i>
+                                    {{rowData[col.field] | number: '1.2-2'}}
+                                </ng-container>
+                                <ng-container *ngIf="col.field == 'CommissionPercentage'">
+                                    {{rowData[col.field]}} %
+                                </ng-container>
+                                <ng-container
+                                    *ngIf="col.field != 'CommissionPercentage' && col.field != 'TotalAmount' && col.field != 'CommissionAmount'">
+                                    {{rowData[col.field]}}
+                                </ng-container>
+
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+            <div *ngIf="!assignmentCommissionDetail.length">
+                <p>No Details for this Assignment </p>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+
+<p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,141 @@
+<!-- <h4 *ngIf="!isUserRating">Add Rating</h4>
+<h4 *ngIf="isUserRating">View Rating</h4> -->
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="container-fluid">
+
+    <div class="mt-4">
+        <div class="header" *ngIf="!isUserRating">
+            <h3 class="m-2">Add Rating</h3>
+        </div>
+        <div class="header" *ngIf="isUserRating">
+            <h3 class="m-2">View Rating</h3>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-content p-2">
+
+            <div class="row ">
+                <div class="col-lg-6 col-md-12 col-sm-12">
+                    <label> Type</label>
+                    <select id="app_type" name="app_type" class="form-control" [(ngModel)]="addrating.AppType"
+                        [disabled]="addrating.AppType > 0">
+                        <option value="">Select  Type</option>                        
+                        <option value="3">Retailer Rating</option>
+                        <option value="2">Delivery Rating</option>
+                        <option value="1">Sales Rating</option>
+                    </select>
+                </div>
+                <div class="col-lg-6 col-md-12 col-sm-12" *ngIf="addrating.AppType">
+                    <label>Rating</label>
+                    <select id="rating" name="rating" class="form-control" [(ngModel)]="addrating.Rating"
+                        (change)="addRatingData()" [disabled]="addrating.Rating > 0">
+                        <option value="">Select Rating</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                
+                <!-- <div class="col-md-3">
+                        <button id="add" name="add" type="button" class="btn btn-raised btn-primary bt" (click)="addRatingData()">Add</button>
+                    </div> -->
+            </div>
+            <div class="row">
+                <div class="col-lg-2 col-md-6 col-sm-6" *ngIf="!isUserRating && !isDetail">
+                    <button id="add" name="add" type="button" class="btn btn-raised btn-primary bt"
+                        (click)="clearRatingData()" style="width: 100%;">Clear</button>
+                </div>
+                <div class="col-lg-2 col-md-6 col-sm-6" *ngIf="!isUserRating && !isDetail">
+                    <button id="add" name="add" style="width: 100%;"  type="button" class="btn btn-raised btn-primary bt" (click)="back()">
+                        <i class="fa fa-arrow-left"></i> Go  Back</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <div class="card shadow" *ngIf="isAdd">
+        <div class="card-content p-2">
+            <!-- <div class="px-3">       -->
+
+            <div class="row" *ngIf="!isUserRating">
+                <div class="col-lg-10 col-md-12 col-sm-12">
+                    <label>Detail</label>
+                    <textarea rows="1" id="detail" name="detail" class="form-control"
+                        [(ngModel)]="addrating.Detail"></textarea>
+                </div>
+                <div class="col-lg-1 col-md-6 col-sm-6">
+                    <button id="add" name="add" type="button"
+                        class="btn btn-raised btn-primary bt justify-content-right" (click)="addDetail()">
+                        <i class="fa fa-plus-circle"></i>&nbsp;&nbsp;Add</button>
+                </div>
+            </div>
+
+
+            <!-- <div class="col-md-12"> -->
+            <div class="row p-1">
+                <div class="col-12 text-center">
+                    <p-table #dt [value]="ratingList" [paginator]="true" [rows]="20" [scrollable]="true"
+                        scrollHeight="130vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>S.No.</th>
+                                <!-- <th>App Type</th>
+                                <th>Rating</th> -->
+                                <th>Detail</th>
+                                <th *ngIf="!isUserRating">Delete</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                            <tr>
+                                <td>{{i+1}}</td>
+                                <!-- <td>{{ir.AppTypeName}}</td>
+                                <td>{{ir.Rating}}</td> -->
+                                <td>{{ir.Detail}}</td>
+                                <td *ngIf="!isUserRating"><i class="fa fa-trash" (click)="onDelete(ir)"></i></td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+            <!-- </div>-->
+            <!-- </div> -->
+        </div>
+    </div>
+
+
+
+    <div class="form-actions right col-sm-12 p-3" *ngIf="ratingList.length > 0 && !isUserRating">
+        <button type="submit" class="btn btn-raised btn-primary fl" *ngIf="!isDetail" (click)="onSave()">
+            <i class="fa fa-check-square-o"></i> Save
+        </button>
+        <button type="submit" class="btn btn-raised btn-primary fl" *ngIf="isDetail" (click)="onUpdate()">
+            <i class="fa fa-check-square-o"></i> Update
+        </button>
+    </div>
+
+</div>
+
+
+
+
+
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

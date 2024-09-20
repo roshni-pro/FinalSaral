@@ -1,0 +1,383 @@
+<p-toast  [style]="{width: '20vw'}" position="bottom-right"></p-toast>
+<div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+      (click)="toggleSearchone()">
+      <h5 class="m-0"><b>Search By</b></h5>
+      <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+    <div id="search-content p-2" ><br>
+        <div class="row p-2 px-5">
+            <div class="col-md-2">
+                <label><b>Select City</b></label> 
+                <p-multiSelect id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="SelectedCity" (onChange)="GetWarehouse(SelectedCity)"  [filter]="true"
+                optionLabel="label"  selectedItemsLabel="{0} City selected" placeholder="Select City"> 
+                </p-multiSelect>
+            </div>
+            <div class="col-md-2">
+                <!-- <label><b><span class="required">*</span>Select WareHouse</b></label>
+                <p-multiSelect id="Category" name="Category" [options]="WareHouseList"   [filter]="true" 
+                        [(ngModel)]="selectedWareHouse" optionLabel="WarehouseName" placeholder="Select WareHouse">
+                </p-multiSelect> -->
+
+
+                <label><b>Select WareHouse</b></label>
+                <p-multiSelect id="Categorys" name="Categorys"[options]="WareHouseList"   [filter]="true" 
+                [(ngModel)]="selectedWareHouse"  optionLabel="label"  selectedItemsLabel="{0} City selected"  placeholder="Select WareHouse"  > 
+                </p-multiSelect>
+            </div>
+            <!-- <div class="col-md-2">
+                <label><b>Enter Skcode
+                    </b></label><br>   
+                    <input type="text"  required="1" maxlength="9" type="tel" name="Title" class="form-control" [(ngModel)]="searchModel.SkCode" />
+            </div> -->
+            <div class="col-2 md-3">
+                <label class="d-flex" style=" min-width: max-content;" ><b>Enter Order Numbers</b></label>   
+                <input type="number" required="1"  maxlength="9" type="tel" name="Title" class="form-control"   [(ngModel)]="OrderId" /> 
+            </div>
+            <div class="col-2 md-3">
+                <label><b>Select Start Range</b></label><br>
+                <p-calendar name="startDateInput"  appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  
+                 [readonlyInput]="false" [showIcon]="true" showButtonBar="true"  
+                 [showIcon]="true" [(ngModel)]="FromDate"  showButtonBar="true" >
+                </p-calendar>
+            </div>
+            <div class="col-2 md-3">
+                <label><b>Select End Range</b></label><br>
+                <p-calendar name="endDateInput" name="ToDate" [showIcon]="true"  appendTo="body"  [yearNavigator]="true"  
+                 [monthNavigator]="true" yearRange="2022:2099"  [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+                 [showIcon]="true" [minDate]="FromDate" [(ngModel)]="ToDate" >
+                </p-calendar>
+            </div>
+        </div><br> 
+        <div class="row p-2 px-5">
+            <div class="col mr-2s">
+                <label><b>Status<span class="required"></span></b></label>
+                <p-dropdown id="Category" name="Category" [options]="status" optionLabel="name" placeholder="Select Status"    [filter]="true" [(ngModel)]="Status" > 
+                </p-dropdown>
+            </div>
+            <div class="col mr-2s d-flex" style="margin-top:28px;">                            
+                <button  class="btn btn-primary mr-2" (click)="ForSearchHit()" (click)="getEwaybillList($event)" >Search</button>   
+                <button  class="btn btn-primary mr-2" (click)="ClearEwayOrders()" >Clear</button>   
+                <button  class="btn btn-success mr-2" (click)="ExportEwayOrders()" >Export</button>  
+            </div>
+          
+                <div class="col mr-2s mt-4" style="padding-inline: 30px;">
+                    <h5><b style="padding: 18px;">Color Indicate:</b></h5>
+                </div>
+            <div class="col mr-2s"><br>
+                <div style="background-color: #c6db3b; height: 35px; padding-top: 9px; padding-left: 10px; font-size: large; font-weight: 700;">B2B </div>
+            </div>
+            <div class="col mr-2s"><br>
+                <div style="background-color:#e59579; height: 35px; padding-top: 9px; padding-left: 10px; font-size: large; font-weight: 700;">B2C </div> 
+            </div>
+        </div>
+          
+    </div>
+</div>    
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <p-table [value]="orderlist" [paginator]="true" [rows]="10"  [(first)]="first"  scrollHeight="70vh" text-align: center  [totalRecords]="TotalRecord" [lazy]="true"
+      (onLazyLoad)="load($event)">
+        <ng-template pTemplate="header">
+            <tr >
+                <th style="width: 25%;">OrderId</th>
+                <th style="width: 25%;">Order Amount/<br> Invoice Number</th>
+                <th style="width: 25%;">OrderStatus</th>
+                <th style="width: 25%;">Customer Detail<br> (Skcode/ Customer Name/ MobileNo)</th>
+                <th style="width: 25%;">EWay Bill Number</th>
+                <th style="width: 25%;">Eway Bill Generate Date</th>
+                <th style="width: 25%;">Eway Bill Valid Upto</th>
+                <th style="width: 25%;" *ngIf="roleListarry" >Action</th>
+                <th style="width: 25%;"  *ngIf="roleListarry">History</th>
+                <th style="width: 25%;" >Export PDF</th>
+
+            </tr>         
+        </ng-template>
+        <ng-template pTemplate="body" let-item >
+            <tr  [ngStyle]="(item.CustomerType==0)?{'background-color': '#c6db3b'}:{'background-color':'#e59579'}"  >
+                <td>{{item.OrderId}}</td>
+                <td><b style="font-weight: 900;">Amount:</b>{{item.orderamount }}<br><b style="font-weight: 900;">Invoice No.</b>{{item.InvoiceNo}}</td>  
+                <td>{{item.OrderStatus}}</td> 
+                <td>{{item.Skcode}}<br>{{item.CustomerName}}<br>{{item.MobileNo}}</td>
+                <td>{{item.EwayBillNumber}}</td>
+                <td>{{item.EwayBillDate  | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                <td>{{item.EwayBillValidTill  | date:'dd/MM/yyyy HH:mm:ss'}}</td>                            
+                <td class="text-center" *ngIf="roleListarry">
+                    <ng-container>      
+                        <div *ngIf = "item.EwayBillNumber && item.EwayBillNumber!=null">
+                            <div *ngIf="item.IsExtendEwayBill">
+                                Eway Bill Already Extended
+                            </div>       
+                            <div *ngIf="!item.IsExtendEwayBill && !item.IsCancelEwayBill " style="width: 164%;">
+                                <button  class="btn btn-primary" (click)="UpdatePartAsubmit(item)" >Part A</button>  
+                                <button  class="btn btn-primary cc" (click)="updateitem(item)" >Part B</button>                   
+                                <button  class="btn btn-success mr-2" (click)="CancelOrder(item)" >Cancel</button>
+                            </div>                   
+                        </div>  
+                        
+                        <div *ngIf = "item.IsCancelEwayBill" style="width: 126%;">
+                            <button  class="btn btn-primary " (click)="generateitem(item)" >ReGenerate</button> &nbsp;&nbsp;
+                        </div>  
+                        <div *ngIf ="item.EwayBillNumber==null"  style="width: 126%;">
+                            <button  class="btn btn-primary "  (click)="generateitem(item)" >Generate E-way Bill</button>
+                        </div>
+                    </ng-container>
+                </td>   
+
+                <td class="text-center" *ngIf="roleListarry">
+                    <a class="view" (click)="OrderHistory(item)">
+                        <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                    </a>
+                </td>
+                <td>
+                    <a class="view" (click)="exportPdf(item.EwayBillNumber,item.OrderId,item.CustomerType)">
+                        <i class="fa fa-file-pdf-o  fa-2x" aria-hidden="true"></i>
+                    </a>                    
+                </td>                
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog contentStyleClass="abc" [(visible)]="ophd" [resizable]="false" positionTop="200" [modal]="true" appendTo="body" [blockScroll]="true" [closable]="false"
+[style]="{ width: '55%'}" >
+    <p-table [value]="OrderPageHistoryData" [paginator]="true" [rows]="10" [scrollable]="true"
+    scrollHeight="65vh">
+    <ng-template pTemplate="header">
+        <tr>
+            <th>OrderID</th>
+            <th>ShopName</th>
+            <th>Skcode</th>
+            <th>Status</th>
+            <th>Warehouse</th>
+            <th>InvoiceNo</th>
+            <th>CustomerType</th>
+            <th>IRNNumber</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+        <tr class="classForHoverEffect">
+            <td>{{rowData.OrderID}}</td>
+            <td>{{rowData.ShopName}}</td>
+            <td>{{rowData.Skcode }}</td>
+            <td>{{rowData.Status }}</td>
+            <td>{{rowData.Warehouse }}</td>
+            <td>{{rowData.InvoiceNo }}</td>
+            <td>{{rowData.CustomerType}}</td>
+            <td>{{rowData.IRNNumber }}</td>
+        </tr>
+    </ng-template>
+</p-table>
+<p-footer>
+    <div class="cntr">
+        <button class="btn btn-raised btn-primary m-2 shadow"  id="nBtn" (click)="onDismiss()">Close</button>
+    </div>
+</p-footer>
+</p-dialog>
+<!-- PART A -->
+<p-dialog header="Update Transporter Id" [modal]="true" appendTo="body" [draggable]="false" [blockScroll]="true" [style]="{ width: '35%' }" [(visible)]="openupdatepopupA">
+    <div class="row">
+        <div class="col-md-6">
+            <label><b>Transporter Id/Gst</b></label>
+            <input type="text"  [(ngModel)]="Transporterid"   maxlength="16" type="tel" name="Title" class="form-control" placeholder="Enter Transporter Id/Gst" />
+        </div>
+        <div class="col-md-6 ">
+            <label></label><br>&nbsp;&nbsp;
+            <button type="button" style="margin-top: 7px;" class="btn btn-primary mr-2" (click)="generatesuubmitbtnn()" >Submit</button>
+            <button type="button" style="margin-top: 7px;" class="btn btn-primary mr-2" (click)="generateeeCancel()">Cancel</button>
+        </div>
+    </div>
+    <!-- <div class="row">
+        <div class="col-md-6 ">
+            <label></label><br>&nbsp;&nbsp;
+            <button type="button" style="margin-top: 7px;" class="btn btn-primary mr-2" (click)="generatesuubmitbtn()" >Submit</button>
+            <button type="button" style="margin-top: 7px;" class="btn btn-primary mr-2" (click)="generateeeCancel()">Cancel</button>
+        </div>
+    </div> -->
+    </p-dialog> 
+
+<!-- part B -->
+<p-dialog header="Generate Eway Bill" [modal]="true" appendTo="body" [draggable]="false" [blockScroll]="true" [style]="{ width: '50%',height:'50%'  }" [(visible)]="opengeneratebill">
+<div class="row">
+    <div class="col-md-6">
+        <label><b>Vehicle Number</b></label><br>   
+        <input type="text" name="Title" class="form-control" (keypress)="Capital($event)" [(ngModel)]="VehicleNumgenerateone" placeholder="Enter Vehicle Number"/>
+        <span style="COLOR: red; font-weight: bold;" >Note:- Press CapsLock On Before Enter</span><br>
+        <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!VehicleNumgenerateone && isVehicleNumgenerateone">Enter Vehicle Number</span>
+    </div>
+    <div class="col-md-6">
+        <label><b>Pincode</b></label>
+        <input type="number" (keypress)="keyPress($event)" [(ngModel)]="Pincodeone" Current Pincode type="tel" name="Title" class="form-control" placeholder="Enter Pincode" />
+        <!-- <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!Pincodeone && isPincodeone">Enter Pincode</span> -->
+    </div>
+    
+</div> <br>
+<div class="row">
+    <div class="col-md-6">
+        <label><b>Transport GST</b></label><br>   
+        <div class="d-flex">
+            <input type="text"  required="1"  minlength="15" maxlength="15" name="Title" class="boxx form-control" placeholder="Transport GST" [(ngModel)]="RefNo"
+                />&nbsp;&nbsp;&nbsp;
+            <!-- <button type="button" class="vs btn btn-success mr-2" (click)="VarifiedCustomerGSTNO(RefNo)" >verify</button> -->
+        </div>
+        <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!RefNo && isRefNo">Enter Transport GST</span> 
+    </div>
+    <div class="col-md-6">
+        <label><b>Transport Name: </b></label><br>  
+        <input type="text"  name="Title" class="form-control" placeholder="Enter Transport Name" [(ngModel)]="GSTCustomerName" />
+        <!-- <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!GSTCustomerName && isGSTCustomerName">Enter Transport Name</span>  -->
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <label><b>Transport Document No.</b></label><br>   
+        <div class="d-flex">
+            <input type="text" name="Title" (keypress)="DocumentRegex($event)" class="form-control"   maxlength="15"
+            placeholder="Transport Document No" [(ngModel)]="GenerateTransporterDocNumber">
+            <span style="COLOR: red; font-weight: bold;">Note:- Max length 15 Allowed</span><br>
+        </div>    <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!GenerateTransporterDocNumber && isGenerateTransporterDocNumber">Enter Transport Document No.</span> 
+    </div>
+    <div class="col-md-6">
+        <label><b>Transport Document Date </b></label><br>  
+        <p-calendar [showIcon]="true" [(ngModel)]="GenerateTransporterDocDate" appendTo="body" [readonlyInput]="true" showButtonBar="true" [style]="{ width: 'max-content' }">
+        </p-calendar> <br><span style="COLOR: darkred; font-weight: bold;"  *ngIf="!GenerateTransporterDocDate && isGenerateTransporterDocDate">Enter Transport Document Date </span> 
+    </div>
+</div> <br>
+<div class="row">
+    <div class="col-md-6 cc">
+        <label><b>Enter Distance <span><b>(Kms)</b></span></b></label><br>
+        <div class="d-flex ">
+            <input type="text" [(ngModel)]="Distanceone" (keypress)="keyPress($event)" required="1"  maxlength="9" type="tel" name="Title" class="form-control" placeholder="Enter Distance" /> 
+          
+        </div> <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!Distanceone && isDistanceone">Enter Distance</span> 
+    </div>
+    <div class="col-md-6 ">
+        <label></label><br>&nbsp;&nbsp;
+        <button type="button" style="margin-top: 7px;" class="btn btn-primary mr-2" (click)="generatesuubmitbtn()" >Submit</button>
+        <button type="button" style="margin-top: 7px;" class="btn btn-primary mr-2" (click)="generateeeCancel()">Cancel</button>
+    </div>
+</div>
+</p-dialog> 
+
+
+<p-dialog appendTo="GSTInformation" [modal]="true" appendTo="body" header="GSTN Info" [draggable]="false" [(visible)]="GSTdisplay" [style]="{width: '500px', height: '180px'}">
+    <table style="border: 1px solid rgb(48, 21, 21)">
+        <tr style="border: 1px solid rgb(48, 21, 21)">
+        <th style="width: 450px;">GSTN No. </th>
+        <th style="width: 450px;" >Name on GSTN</th>
+        </tr>
+        <tr style="border: 1px solid rgb(48, 21, 21)">
+            <td style="width: 450px;">{{RefNo}}</td>
+            <td style="width: 450px;">{{GSTCustomerName}}</td>
+        </tr>
+    </table>
+    <button type="button" class="btn btn-primary mr-2" style="margin-left: 85%; margin-top: 3%;" (click)="GSTdisplayClose()">Close</button>
+</p-dialog>
+
+<p-dialog header="Update Eway Bill" [modal]="true" appendTo="body" [blockScroll]="true" [style]="{ width: '50%',height: '50%'  }" [draggable]="false" [(visible)]="openupdatepopup">   
+    <div class="row">
+        <div class="col-6">
+            <label><b>Vehicle Number*</b></label><br>   
+            <input type="text" name="Title" class="form-control" placeholder="Enter Vehicle Number" [(ngModel)]="Vehiclenumupdatetwo" (keypress)="Capital($event)"  />
+            <span style="COLOR: red; font-weight: bold;"> Note:- Press CapsLock On Before Enter</span><br>
+            <span style="COLOR: darkred; font-weight: bold;" *ngIf="!Vehiclenumupdatetwo && isVehiclenumupdatetwo">Enter Vehicle Number</span>
+            
+            <br>
+        </div>
+        <div class="col-6">
+            <label><b>Place of Change*</b></label><br>   
+            <input type="text"  name="Title" class="form-control" placeholder="Enter Place"   [(ngModel)]="placeofchangeupdate" />
+
+            <span style="COLOR: darkred; font-weight: bold;" *ngIf="!placeofchangeupdate && isplaceofchangeupdate">Enter Place of Change</span>
+            
+        </div>                    
+    </div>            
+    <div class="row">
+        <div class="col-6">
+            <label><b>Transport Document No.</b></label><br>   
+            <div class="d-flex">
+                <input type="text" required="1" (keypress)="DocumentRegex($event)"  name="Title"
+                maxlength="15" class="boxx form-control" placeholder="Transport Document No." [(ngModel)]="TransDocNoU">
+            </div>
+            <span style="COLOR: red; font-weight: bold;">Note:- Max length 15 Allowed</span><br>
+
+             <span style="COLOR: darkred; font-weight: bold;" *ngIf="!TransDocNoU && isTransDocNoU">EnterTransport Document No.</span>
+            
+        </div>
+        <div class="col-6">
+            <label><b>Transport Document Date </b></label><br>  
+            <p-calendar [showIcon]="true" [(ngModel)]="TransDocDtU"  [minDate]="dateMin" [maxDate]="dateMax"  
+             [style]="{ width: 'max-content' }" [readonlyInput]="true" showButtonBar="true"  appendTo="body">
+            </p-calendar><br>
+            <span style="COLOR: darkred; font-weight: bold;" *ngIf="!TransDocDtU && isTransDocDtU">Enter Transport Document Date </span>
+            
+        </div>
+    </div> <br>
+    <div class="row">
+        <div class="col-6">
+            <label><b>Select Reason*</b></label>
+            <p-dropdown  appendTo="body" [options]="reasonss" optionLabel="name" placeholder="Select Reason" [(ngModel)]="Reason" (onChange)="reasonchaneg()"> </p-dropdown>
+            <span style="COLOR: darkred; font-weight: bold;" *ngIf="!Reason && isReason">Select Reason*</span>
+            
+        </div>
+        <div class="col-6"><br>
+            <button class="btn btn-primary mr-2" (click)="Updatesubmit()" >Submit</button>
+            <button  class="btn btn-primary mr-2" (click)="updatepopupClose()" >Cancel</button>
+        </div>        
+    </div>
+    <br>
+</p-dialog> 
+
+<p-dialog header="Cancel Eway Bill" [modal]="true" appendTo="body" [style]="{ width: '35%'  }" [draggable]="false" [(visible)]="opencancelbill">
+<div class="row">
+    <div class="col-12">
+        <label><b>Select Reason</b></label><br>
+        <p-dropdown [options]="opencancelbil"  appendTo="body" optionLabel="name" placeholder="Select Reason" (onChange)="cancelreasonchange()" [(ngModel)]="reasoncancel" > </p-dropdown>
+        <span style="COLOR: darkred; font-weight: bold;"   *ngIf="!reasoncancel && cpress">*Select Reason</span>
+    </div>
+</div><br>
+<!-- <div class="row">
+    <div class="col-12" *ngIf="disabledd">
+        <label><b>Remark</b></label><br>
+        <input type="text"  name="Title" class="form-control" placeholder="Enter Comment...."  [(ngModel)]="CommentCancel" />
+    </div>
+</div><br> -->
+<div class="row"></div>
+<div class="row">
+    <div class="col-12" style="text-align: right;">
+        <button class="btn btn-primary mr-2" (click)="CancelSubmitBtn()">Submit</button>
+        <button  class="btn btn-primary mr-2" (click)="cancelbillBtn()">Cancel</button>
+        <br>
+    </div>                    
+</div>
+<div class="row"></div>
+</p-dialog> 
+
+
+<!-- <div class="col-12" ><br>
+    <label><b>Remark*</b></label><br>   
+    <input type="text"  name="Title" class="form-control" placeholder="Enter Comment....."  />
+</div> -->
+<div id="history" *ngIf="popupOpen" >
+    <p-dialog [(visible)]="popupOpen" [resizable]="true" [draggable]="false"  [blockScroll]="true" [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+      <p-header>
+        History
+      </p-header>
+      <app-history [entity]="entity" [id]="rowDataV1.EwayBillId" ></app-history>
+     
+  </p-dialog>
+  </div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+

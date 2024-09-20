@@ -1,0 +1,210 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Customer Referral Configuration</h3>
+    </div>
+    <div>
+        <button type="button" (click)="openAddCustReffPopUp()"
+            class="btn btn-raised btn-primary float-right align-self-end" style="margin-bottom: 0;">
+            <i class="fa fa-plus-circle   mr-2"></i> Add </button>&nbsp;&nbsp;
+        <!-- <button type="button" class="btn btn-raised btn-primary float-right align-self-end mr-2"
+            style="margin-bottom: 0;" (click)="openHistory()">
+            History </button> &nbsp;&nbsp; -->
+
+    </div>
+</div>
+<div class="my-2 card shadow row ">
+    <div class="col-12">
+        <div class="row p-2">
+            <div class="col-4">
+                <label> City </label>
+                <p-dropdown [options]="allClityList" (onChange)="getCustomerRefferalList()" [(ngModel)]="FilterCity"
+                    optionLabel="CityName"></p-dropdown>
+            </div>
+            <div class="col-4">
+                <label> Referral Type </label>
+                <!-- <p-dropdown [options]="AllRefferal" (onChange)="getCustomerRefferalList()" [(ngModel)]="FilterReffType" optionLabel="label"></p-dropdown> -->
+                <select class="form-control" (change)="getCustomerRefferalList()" [(ngModel)]="FilterReffType">
+                    <option value=1>Customer</option>
+                    <option value=2>People</option>
+                    <option value=3>Consumer</option>
+                </select>
+            </div>
+            <div class="col-4">
+                <button class="btn btn-primary" style="margin-top: 2em;" (click)="exportExcel()">Export To
+                    Excel</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 text-center">
+        <div class=" p-2">
+            <p-table [value]="AllCustomerList" [paginator]="true" [rows]="10" [scrollable]="false">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>City Name</th>
+                        <th>Referral Type</th>
+                        <th>On Order (Count)</th>
+                        <th>Order Status</th>
+                        <th>Referral Wallet Point</th>
+                        <th>Customer Wallet Point</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <!-- <th>Action</th> -->
+                        <th>History</th>
+
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{rowData.CityName}}</td>
+                        <td>{{rowData.ReferralType == 1? 'Customer': rowData.ReferralType==3? 'Consumer' :'People'}}</td>
+                        <td>{{rowData.OnOrder}}</td>
+                        <td>{{
+                            rowData.OnDeliverd == 1? "Delivered":
+                            (rowData.OnDeliverd == 2? "Sattled" :
+                            (rowData.OnDeliverd == 3? "Pending" :
+                            (rowData.OnDeliverd == 4? "Issued":
+                            (rowData.OnDeliverd == 5? "Shipped":"Delivered/sattled"
+                            )))) }}</td>
+                        <td>{{rowData.ReferralWalletPoint}}</td>
+                        <td>{{rowData.CustomerWalletPoint}}</td>
+                        <td>{{rowData.IsActive == true? "Active":"Inactive"}}</td>
+                        <td>
+                            <p-inputSwitch [(ngModel)]="rowData.IsActive"
+                                (ngModelChange)="changeActiveStatus(rowData)"></p-inputSwitch>
+                        </td>
+
+                        <!-- <td><button type="button" (click)="openDeleteCustReffPopUp(rowData.id)"
+                                class="btn btn-primary">Delete</button></td> -->
+
+                        <td><button type="button" (click)="openHistory(rowData)"
+                                class="btn btn-primary">History</button></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+</div>
+
+
+<p-dialog header="Add Customer Referral" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="openAddDialog"
+    [style]="{width: '60vw', left: '440px', height: '90vw'}" [draggable]="false">
+
+
+    <div class="row m-2">
+        <div class="col-6">
+            <label for="">City:</label>
+            <p-dropdown [options]="allClityList" optionLabel="CityName" [(ngModel)]="selectedCity"></p-dropdown>
+        </div>
+        <div class="col-6">
+            <label for="">Referral Type:</label>
+            <p-dropdown [options]="AllRefferal" [(ngModel)]="SelectedReffType" optionLabel="label"></p-dropdown>
+        </div>
+    </div>
+
+    <div class="row m-2">
+        <div class="col-6">
+            <label for="">On Order (Count):</label>
+            <input type="number" class="form-control" name="skipName1" autocomplete="off" (keypress)="numberOnly($event)"
+                placeholder="" [(ngModel)]="OnOrder" />
+        </div>
+        <div class="col-6">
+            <label for="">Order Status:</label>
+            <p-dropdown [options]="allCustomerRefStatus" [(ngModel)]="orderStatus" optionLabel="OrderStatus">
+            </p-dropdown>
+        </div>
+    </div>
+
+    <div class="row m-2">
+        <div class="col-6">
+            <label>Referral Wallet Point:</label>
+            <input type="number" class="form-control" name="skipName2" autocomplete="off"
+                (keypress)="numberOnlyWalletPoint($event)" placeholder="" maxlength="10" [(ngModel)]="walletPoints" />
+        </div>
+        <div class="col-6">
+            <label>Customer Wallet Point:</label>
+            <input type="number" class="form-control" name="skipName2" autocomplete="off"
+                (keypress)="numberOnlyWalletPoint($event)" placeholder="" maxlength="10"
+                [(ngModel)]="CustomerWalletPoint" />
+        </div>
+    </div>
+
+    <div class="row m-2">
+        <div class="col-6">
+            <!-- <button style="margin-top: 2em;" type="button" class="btn btn-primary" (click)="save()">Save</button> -->
+            <button style="margin-top: 2em;" type="button" class="btn btn-primary" (click)="check()">Add to
+                list</button>
+        </div>
+    </div>
+
+    <div class="row m-2 pt-2">
+        <div class="col-12 text-center">
+            <p-table [value]="tempCustList" [paginator]="true" [rows]="5" [style]="{height: '200px'}"
+                [scrollable]="false">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>City Name</th>
+                        <th>Referral Type</th>
+                        <th>On Order (Count)</th>
+                        <th>Order Status</th>
+                        <th>Referral Wallet Point</th>
+                        <th>Customer Wallet Point</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{rowData.CityName}}</td>
+                        <td>{{rowData.ReferralType == 1? 'Customer': rowData.ReferralType==3? 'Consumer' :'People'}}</td>
+                        <td>{{rowData.OnOrder}}</td>
+                        <td>{{rowData.orderStatusName}}</td>
+                        <td>{{rowData.ReferralWalletPoint}}</td>
+                        <td>{{rowData.CustomerWalletPoint}}</td>
+                        <td><button type="button" class="btn btn-primary" (click)="removeFromList(rowIndex)">Remove From
+                                List</button></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <p-footer>
+        <div>
+            <!-- <button style="margin-top: 2em;" type="button" class="btn btn-primary" (click)="save()">Save</button> -->
+            <button type="button" class="btn btn-primary"  (click)="save()">Save List</button>
+        </div>
+    </p-footer>
+    <!-- <div class="p-dialog-footer">
+     
+    </div> -->
+    <!-- <div class="row    m-2">
+        
+    </div> -->
+
+
+</p-dialog>
+
+<p-dialog header="Confirmation" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="openDeleteDialog"
+    [style]="{width: '60vw', left: '440px'}" [draggable]="false">
+    <div class="row m-2">
+        <h5>Are you sure want to delete this entry?</h5>
+    </div>
+    <div class="row m-2">
+        <div class="col-8">
+
+        </div>
+        <div class="col-4">
+            <button type="button" class="btn btn-primary" (click)="deleteFromList()">Delete</button> &nbsp;
+            <button type="button" class="btn btn-primary" (click)="closeDeleteCustReffPopUp()">close</button>
+        </div>
+    </div>
+</p-dialog>
+<div id="history" *ngIf="viewHistory" >
+    <p-dialog [(visible)]="viewHistory" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+      <p-header>
+        History
+      </p-header>
+      <app-history [entity]="entity" [id]="historyID" ></app-history>
+     
+  </p-dialog>
+  </div>

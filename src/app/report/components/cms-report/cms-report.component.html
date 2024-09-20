@@ -1,0 +1,122 @@
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>CMS-Report</b></h3>
+    </div>
+
+</div>
+
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label for="Warehouse">Select Warehouse</label><br>
+                    <p-multiSelect optionLabel="WarehouseName" [options]="warehouseList"
+                        [(ngModel)]="selectedwarehouselist" >
+
+                    </p-multiSelect>
+
+                    <!-- <select type="text" id="warehouse" (change)="onWarehouseChange($event.target.value)"
+                        [(ngModel)]="warehouseId" class="form-control col-md-6" name="warehouse"> -->
+
+                    <!-- <option *ngFor="let warehouse of warehouseList" [value]="warehouse.WarehouseId">
+                            {{warehouse.WarehouseName}} {{warehouse.CityName}}</option>
+                    </select>  -->
+
+                </div>
+
+                <div class="col-md-3">
+                    <label for="FromDate">StartDate</label>
+                    <input type="date" id="startDate" name="startDate" class="form-control" [ngModel]="data.start"
+                        (change)="getStart($event.target.value)" (ngModelChange)="data.start  = $event" />
+                    <p style="color:red;font-size:12px;"> Note:'*' select date between 2 month</p>
+                </div>
+                <div class="col-md-3">
+                    <label for="FromDate">End Date</label>
+                    <input type="date" id="endDate" name="endDate" class="form-control" [ngModel]="data.end"
+                        (change)="getEnd($event.target.value)" (ngModelChange)="data.end = $event" />
+                </div>
+
+                <div class="form-group col-md-1">
+                    <p-toast position="top-center"></p-toast>
+                    
+
+                       <!-- <p-dialog [(visible)]="display">
+                       <p>{{msg}}</p> 
+                       </p-dialog> -->
+                    
+                    <button type="button" (click)="loadfuntion()"   
+                        style="margin-top:30px" class="btn btn-primary">Search 
+                    </button>
+                  
+                </div>
+
+                 <div class="form-group col-md-1"> 
+                    <div *ngIf="flag">
+                       <button id="btnExport" (click)="Export()" class="btn"
+                            style="margin-top:30px;background-color: black;color: aliceblue;">Export</button>
+                    </div>
+                </div>
+                <div class="form-group col-md-1"> 
+                    <div>
+                       <button id="btnExport" (click)="Refresh()" class="btn"
+                            style="margin-top:30px;background-color:cadetblue;color: aliceblue;">Reset</button>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div>
+                <!--  -->
+                <p-table #dt [value]="cmsdata" [paginator]="true" [scrollable]="true" [rows]="10" [(first)]="first">
+              
+                    
+               
+                    <ng-template pTemplate="header">
+
+                        <tr>
+                            <!-- <th style="width: 100px;" *ngFor="let data of cmskeyname">{{data}}</th> -->
+                            <!-- <th>Warehouseid</th> -->
+                            <th style="font-family:Sans-serif;font-size:15px;">WarehouseName</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">BOD</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">Opening</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">CashCollection</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">Bank</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">ExchangeIn</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">ExchangeOut</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">Closing</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">OnlineCollectionAmount</th>
+                            <th style="font-family:Sans-serif;font-size:15px;">CashExchangeComments</th>
+
+
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr style="width: 100px;" [ngStyle]="{'background-color': item.OrderColor}">
+                            <!-- <td>{{item.Warehouseid}}</td> -->
+                            <td>{{item.WarehouseName}}</td>
+                            <td>{{item.BOD|date  }}</td>
+                            <td style="background-color:#e6e3e8">{{item.opening}}</td>
+                            <td>{{item.CashCollection}}</td>
+                            <td>{{item.Bank}}</td>
+                            <td>{{item.ExchangeIn}}</td>
+                            <td>{{item.ExchangeOut}}</td>
+                            <td  style="background-color:#e6e3e8">{{item.Closing}}</td>
+                            <td>{{item.onlineCollectionAmount}}</td>
+                            <td>{{item.CashExchangeComments}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+

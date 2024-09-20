@@ -1,0 +1,132 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              
+              <form class="form form-inline" name="form" #taxgroupForm="ngForm">
+                <!-- <input autocomplete="false" name="hidden" type="text" style="display:none;"> -->
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Add Tax Group Info</h4>
+                  <div class="row">
+
+
+
+                    <div class="col-md-6">
+                        <div class="form-group m-2">
+                        <label for="fname" class="col-md-6">Tax Group Name <span  style="color:red"> *</span></label>
+                        <input type="text" id="fname" class="form-control col-md-6" name="fname"
+                          [(ngModel)]="taxGroup.TGrpName" placeholder="Enter Name" required="1" maxlength="50" minlength="2"
+                          #firstName="ngModel" />
+                          <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code >Tax Group Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                            <code >Minlength 2</code>
+                          </div>
+                          <div *ngIf="isInvalid && !firstName.valid && firstName.errors.maxength">
+                            <code >Maxlength 20</code>
+                          </div>
+                      </div>
+                    </div>
+
+                    
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="alias"class="col-md-6" > Alias <span  style="color:red"> *</span></label>
+                        <input type="text" id="alias" class="form-control col-md-6" name="alias"
+                          [(ngModel)]="taxGroup.TGrpAlias" placeholder="Enter Alias" required="1" maxlength="50" minlength="2"
+                          #TGrpAlias="ngModel" />
+                          <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !TGrpAlias.valid && TGrpAlias.errors.required">
+                          <code >Alias is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !TGrpAlias.valid && TGrpAlias.errors.minlength">
+                            <code >Minlength 2</code>
+                          </div>
+                      </div>
+                    </div>              
+                  
+                    <!-- <div class="col-sm-6">
+                      <div class="form-group">
+                        <label for="fname"> </label>
+                        <input type="text" id="fname" class="form-control" name="fname"
+                          [(ngModel)]="accountType.Name" placeholder="Enter Name">
+                      </div>
+                    </div> -->
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="des" class="col-md-6">Description</label>
+                        <textarea type="text" id="des" class="form-control col-md-6" name="des"
+                        [(ngModel)]="taxGroup.TGrpDiscription" placeholder="Enter Description"></textarea>
+                      </div>
+                    </div>
+                 
+                    
+                
+                     <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="cname"class="col-md-6">Select Tax Type<span  style="color:red"> *</span></label>
+                          <select id="tax" name="tax" class="form-control col-md-6" [(ngModel)]="TaxID" (ngModelChange)="onsearch(TaxID)"
+                          placeholder=" select TaxType"  required="1" >
+                          <div class="col-md-6"></div>
+                          <!-- (ngModelChange)="onsearch(taxList)" -->
+                         
+                          <option value = "">--select--</option>
+                          <option *ngFor="let tax of taxList" [ngValue]="tax.TaxID" > 
+                            <!-- pz -->
+                            {{ tax.TaxName }}
+                          </option>
+                        </select>
+                        <div *ngIf="isInvalid && !TaxID.valid && TaxID.errors.required">
+                            <code>Tax Type is required</code>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class=" col-md-6">
+                        <div class="form-group m-2">
+                          <label for="active" class="col-md-6"> Active</label>
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1" type="checkbox" [(ngModel)]="taxGroup.Active">
+                            <label class="custom-control-label" for="customCheckboxInline1"></label>
+                          </div>
+                          </div>
+                        </div>
+                      
+
+  
+                  </div>
+                  <!-- <div class=" col-sm-4">
+                    <div class="form-group m-2">
+                      <label for="active"> Active</label>
+                      <div class="custom-control custom-checkbox custom-control-inline">
+                        <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1" type="checkbox" [(ngModel)]="taxMaster.Active">
+                        <label class="custom-control-label" for="customCheckboxInline1"></label>
+                      </div>
+                    </div>
+                  </div> -->
+                </div>
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                    <i class="ft-x"></i> Cancel
+                  </button>
+                  <button type="submit" class="btn btn-raised btn-primary" (click)="onclick(taxgroupForm)">
+                    <i class="fa fa-check-square-o"></i> Save </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

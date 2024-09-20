@@ -1,0 +1,98 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="offer">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2"> Stock List Page</h3>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label> <b>Select Warehouse : </b></label>
+                        <select id="wh" name="wh" class="form-control" [(ngModel)]="warehouseId">
+                            <option value="0">Select Warehouse</option>
+                            <option *ngFor="let ware of warehouseList" [ngValue]="ware.WarehouseId">
+                                {{ ware.WarehouseName }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label><b>Search Filter Option</b> </label>
+                        <select class="form-control" [(ngModel)]="TableName"
+                        (change)="onSelectTable(warehouseId,TableName)">
+                            <option value="">Choose option</option>
+                            <option value="ExpiredStocks" selected>Expired Stock</option>
+                            <option value="InReceivedStocks">InReceived Stocks</option>
+                            <option value="ITIssueStocks">ITIssue Stocks</option>
+                            <option value="LostAndFoundStocks">LostAndFound Stocks</option>
+                            <option value="PlannedStocks">Planned Stocks</option>
+                            <option value="QuarantineStocks">Quarantine Stocks</option>
+                            <option value="ReservedStocks">Reserved Stocks</option>
+                            <option value="IssuedStocks">Issued Stocks</option>
+                            <option value="ShippedStocks">Shipped Stocks</option>
+                            <option value="DeliveryCancelStocks">DeliveryCancel Stocks</option>
+                            <option value="DeliveryRedispatchStocks">DeliveryRedispatch Stocks</option>
+                            <option value="RTVStocks">RTV Stocks</option>
+                            <option value="RTDStocks">RTD Stocks</option>
+                            <option value="DeliveryCanceledRequestStocks">DCR</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <button type="button"
+                            class="btn btn-raised btn-raised btn-info btn-primary float-right align-self-end"
+                            style="margin-top: 13px; margin-right: 10px;" (click)="export()">
+                            Export
+                        </button>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="reset()"
+                            style="margin-top: 33px;">
+                            Reset Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-left">
+        <p-table #dt  [columns]="cols" [columns]="cols" [value]="DynamicStockList" [paginator]="true" [rows]="25" [scrollable]="true" scrollHeight="70vh"
+            text-align: center>
+            <ng-template pTemplate="caption">
+                <div style="text-align: right">
+                  <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                  <input type="text" pInputText size="50" placeholder="Global Filter"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns">
+                    {{col.header}}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                  <td *ngFor="let col of columns">
+                    {{rowData[col.field]}}
+                  </td>
+                </tr>
+              </ng-template>
+        </p-table>
+    </div>
+</section>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

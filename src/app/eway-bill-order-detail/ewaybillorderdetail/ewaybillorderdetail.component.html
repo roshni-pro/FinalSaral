@@ -1,0 +1,739 @@
+<p-tabView  [activeIndex]="currentTab" (activeIndexChange)="onTabChange($event)" (onChange)="handleChange($event)" >   
+
+    <p-tabPanel header="Eway Bill Order" ><br>
+            <!-- <p-toast [style]="{width: '20vw'}" position="top-right"></p-toast> -->
+            <div class="ui-fluid shadow mb-2 bg-white rounded">
+                <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+                  (click)="toggleSearchone()">
+                  <h5 class="m-0"><b>Search By</b></h5>
+                  <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+                </div>
+                <div id="search-content p-2" *ngIf="isSearch"><br>
+                    <div class="row p-2 px-5">
+                        <div class="col-md-2">
+                            <label><b>Select City</b></label> 
+                            <p-multiSelect id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="searchModel.SelectedCity" (onChange)="GetWarehouse()" [filter]="true"
+                            optionLabel="CityName" optionValue="Cityid" placeholder="Select City" (onChange)="orderlistEmpty()"  > 
+                            </p-multiSelect>
+                        </div>
+                        <div class="col-md-2">
+                            <label><b>Select WareHouse</b></label>
+                            <p-multiSelect id="Category" name="Category" [options]="WareHouseList"   [filter]="true" (onChange)="orderlistEmpty()"
+                                    [(ngModel)]="searchModel.selectedWareHouse" optionLabel="WarehouseName" placeholder="Select WareHouse">
+                            </p-multiSelect>
+                        </div>
+                        <!-- <div class="col-md-2">
+                            <label><b>Enter Skcode
+                                </b></label><br>   
+                                <input type="text"  required="1" maxlength="9" type="tel" name="Title" class="form-control" [(ngModel)]="searchModel.SkCode" />
+                        </div> -->
+                        <div class="col-2 md-3">
+                            <label><b>Enter Order Number
+                                </b></label><br>   
+                                <input type="text"  required="1"  maxlength="9" type="tel" name="Title" class="form-control" (keyup)="orderlistEmpty()" [(ngModel)]="searchModel.OrderId" />
+                        </div>
+                        <div class="col-2 md-3">
+                            <label><b>Select Start Range</b></label><br>
+                            <p-calendar name="startDateInput"  appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  
+                             [readonlyInput]="false" [showIcon]="true" showButtonBar="true"  (click)="orderlistEmpty()"
+                             [showIcon]="true" [(ngModel)]="searchModel.FromDate"  showButtonBar="true" >
+                            </p-calendar>
+                        </div>
+                        <div class="col-2 md-3">
+                            <label><b>Select End Range</b></label><br>
+                            <p-calendar name="endDateInput" name="ToDate" [showIcon]="true"  appendTo="body"  [yearNavigator]="true"  (click)="orderlistEmpty()"
+                             [monthNavigator]="true" yearRange="2022:2099"  [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+                             [showIcon]="true" [minDate]="searchModel.FromDate" [(ngModel)]="searchModel.ToDate" >
+                            </p-calendar>
+                        </div>
+                    </div><br> 
+                    <div class="row p-2 px-5">
+                        <div class="col-2 mr-2s">
+                            <label><b>Status<span class="required"></span></b></label>
+                            <p-dropdown id="Category" name="Category" [options]="status" optionLabel="name" placeholder="Select Status"  (onChange)="orderlistEmpty()"  [filter]="true" [(ngModel)]="searchModel.Status" > 
+                            </p-dropdown>
+                        </div>
+                        <div class="col-2 mr-2s d-flex" style="margin-top:28px;">                            
+                            <button  class="btn btn-primary mr-2" (click)="getEwaybillListundefined()" (click)="getEwaybillList()" >Search</button>   
+                            <button  class="btn btn-primary mr-2" (click)="ClearEwayOrders()" >Clear</button>   
+                            <button  class="btn btn-success mr-2" (click)="ExportEwayOrders()" >Export</button>  
+                        </div>
+                        <div class="col-8 mr-2s">
+                        </div>
+                    </div> 
+                </div>
+            </div>    
+            <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+                <p-table [value]="orderlist" [paginator]="true" [rows]="20" 
+                [scrollable]="true" scrollHeight="70vh" text-align: center 
+                [totalRecords]="TotalRecord" [lazy]="true"  (onLazyLoad)="load($event)">
+                    <ng-template pTemplate="header">
+                        <tr >
+                            <th style="width: 20%;">OrderId</th>
+                            <th style="width: 20%;">Order Amount/<br> Invoice Number</th>
+                            <th style="width: 20%;">OrderStatus</th>
+                            <th style="width: 20%;">Customer Detail<br> (Skcode/ Customer Name/ Custom Type)</th>
+                            <th style="width: 20%;">EWay Bill Number</th>
+                            <th style="width: 20%;">Eway Bill Generate Date</th>
+                            <th style="width: 20%;">Eway Bill Update Upto</th>
+                            <th style="width: 20%;" >Action</th>
+                            <th style="width: 20%;" >History</th>
+                            <!-- <th style="width: 20%;" *ngIf="updateewaybill">Update</th> -->
+                        </tr>         
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item >
+                        <tr >
+                            <td>{{item.OrderId}}</td>
+                            <td>{{item.orderamount }}<br>{{item.InvoiceNo}}</td>  
+                            <td>{{item.OrderStatus}}</td> 
+                            <td>{{item.Skcode}}<br>{{item.CustomerName}}<br>{{item.MobileNo}}</td>
+                            <td>{{item.EwayBillNumber}}</td>
+                            <td>{{item.EwayBillDate  | date:'shortdate'}}</td>
+                            <td>{{item.EwayBillValidTill  | date:'shortdate'}}</td>
+
+                            
+                            <td>
+                                <ng-container>      
+                                    <div *ngIf = "item.EwayBillNumber && item.EwayBillNumber!=null && !kl" class="d-flex">
+                                        <button  class="btn btn-primary " (click)="updateitem(item.EwayBillNumber)" >Update</button> &nbsp;&nbsp;
+                                        <button  class="btn btn-primary " (click)="CancelOrder()" >Cancel</button>
+                                    </div>  
+                                    <div *ngIf = "item.EwayBillNumber && item.EwayBillNumber!=null && kl" class="d-flex">
+                                        <button  class="btn btn-primary " (click)="updateitem()" >ReGenerate</button> &nbsp;&nbsp;
+                                    </div>  
+                                    <div *ngIf ="item.EwayBillNumber==null">
+                                        <button  class="btn btn-primary "  (click)="generateitem(item.OrderId)" >Generate E-way Bill</button>
+                                    </div>
+                                </ng-container>
+                            </td>   
+                            <td>
+                                <a class="view" (click)="OrderHistory(item)">
+                                    <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                          <td colspan="10" style="text-align: center;">
+                            <br>
+                            <h3><b>No Data Found.</b></h3>
+                          </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <p-dialog contentStyleClass="abc" [(visible)]="ophd" [resizable]="false" positionTop="200" [modal]="true" appendTo="body" [blockScroll]="true" [closable]="false"
+            [style]="{ width: '55%'}" >
+            <div class="hrd cntr">
+                
+            </div>
+            <div class="cntr bddt">
+                <p-table [value]="OrderPageHistoryData" [paginator]="true" [rows]="10" [scrollable]="true"
+                scrollHeight="65vh">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>OrderID</th>
+                        <th>ShopName</th>
+                        <th>Skcode</th>
+                        <th>Status</th>
+                        <th>Warehouse</th>
+                        <th>InvoiceNo</th>
+                        <th>CustomerType</th>
+                        <th>IRNNumber</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr class="classForHoverEffect">
+                        <td>{{rowData.OrderID}}</td>
+                        <td>{{rowData.ShopName}}</td>
+                        <td>{{rowData.Skcode }}</td>
+                        <td>{{rowData.Status }}</td>
+                        <td>{{rowData.Warehouse }}</td>
+                        <td>{{rowData.InvoiceNo }}</td>
+                        <td>{{rowData.CustomerType}}</td>
+                        <td>{{rowData.IRNNumber }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            </div>
+    
+            <p-footer>
+                <div class="cntr">
+                    <button class="btn btn-raised btn-primary m-2 shadow"  id="nBtn" (click)="onDismiss()">Close</button>
+                </div>
+            </p-footer>
+        </p-dialog>
+
+
+            <p-dialog header="Generate Eway Bill" [modal]="true" appendTo="body" [draggable]="false" [style]="{ width: '35%'  }" [(visible)]="opengeneratebill">
+                <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+                <div class="row">
+                    <div class="col-6">
+                            <label><b>Pincode</b></label>
+                            <input type="number" (keypress)="keyPress($event)" [(ngModel)]="searchModel.Pincodeone" Current Pincoderequired="1"  maxlength="6" type="tel" name="Title" class="form-control" placeholder="Enter Pincode" />
+                    </div>
+                    <div class="col-6">
+                        <label><b>Vehicle Number</b></label><br>   
+                        <input type="text" name="Title" class="form-control" 
+                        [(ngModel)]="searchModel.VehicleNumgenerateone" placeholder="Enter Vehicle Number"/>
+                    </div>
+                </div> <br>
+                <div class="row">
+                    <div class="col-6">
+                        <label><b>Transport GST</b></label><br>   
+                        <div class="d-flex">
+                            <input type="text"  required="1"  minlength="15" maxlength="15" name="Title" class="boxx form-control" placeholder="Transport GST" [(ngModel)]="searchModel.RefNo"
+                             />&nbsp;&nbsp;&nbsp;
+                            <button type="button" class="vs btn btn-success mr-2" (click)="VarifiedCustomerGSTNO(searchModel.RefNo)" >verify</button>
+                        </div> 
+                    </div>
+                    <div class="col-6">
+                        <label><b>Transport Name: </b></label><br>  
+                        <input type="text"  name="Title" class="form-control" placeholder="Enter Transport Name" disabled [(ngModel)]="GSTCustomerName" />
+                    </div>
+                </div> <br>
+                <div class="row">
+                    <div class="col-6 cc">
+                        <label><b>Enter Distance</b></label><br>
+                        <div class="d-flex ">
+                            <input type="text" [(ngModel)]="searchModel.Distanceone" (keypress)="keyPress($event)" required="1"  maxlength="9" type="tel" name="Title" class="form-control" placeholder="Enter Distance" /> 
+                            &nbsp; <span><b>Kms</b></span>
+                        </div> 
+                    </div>
+                    <div class="col-6 ">
+                        <label></label>
+                        <button type="button" class="btn btn-primary mr-2" (click)="generatesuubmitbtn()" >Submit</button>
+                        <button type="button" class="btn btn-primary mr-2" (click)="generateeeCancel()">Cancel</button>
+                    </div>
+                </div>
+            </p-dialog> 
+
+            <p-dialog appendTo="body" [modal]="true" appendTo="body" header="GSTN Info" [draggable]="false" [(visible)]="GSTdisplay"
+                [style]="{width: '500px', height: '180px'}">
+                <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+                
+                <table style="border: 1px solid rgb(48, 21, 21)">
+                    <tr style="border: 1px solid rgb(48, 21, 21)">
+                    <th style="width: 450px;">GSTN No. </th>
+                    <th style="width: 450px;" >Name on GSTN</th>
+                    </tr>
+                    <tr style="border: 1px solid rgb(48, 21, 21)">
+                        <td style="width: 450px;">{{searchModel.RefNo}}</td>
+                        <td style="width: 450px;">{{GSTCustomerName}}</td>
+                    </tr>
+                    <!-- <button type="button" class="btn btn-primary mr-2" (click)="gstpopupclose()">Ok</button> -->
+                </table>
+                <button type="button" class="btn btn-primary mr-2" style="margin-left: 85%; margin-top: 3%;" (click)="GSTdisplayClose()">Close</button>
+            </p-dialog>
+
+            <p-dialog header="Update" [modal]="true" appendTo="body" [style]="{ width: '35%'  }" [draggable]="false" [(visible)]="openupdatepopup">   
+                <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+                <div class="row">
+                    <div class="col-6">
+                        <label><b>Vehicle Number*</b></label><br>   
+                        <input type="text"   name="Title" class="form-control" placeholder="Enter Vehicle Number" [(ngModel)]="searchModel.Vehiclenumupdatetwo" />
+                        <br>
+                    </div>
+                    <div class="col-6">
+                        <label><b>Place of Change*</b></label><br>   
+                        <input type="text"  name="Title" class="form-control" placeholder="Enter Place"  [(ngModel)]="searchModel.placeofchangeupdate" />
+                    </div>                    
+                </div>
+                
+                <div class="row">
+                    <div class="col-6">
+                        <label><b>Select Reason*</b></label>
+                    </div>
+                    <div class="col-12">
+                        <p-dropdown [options]="reasonss" optionLabel="name" placeholder="Select Reason" [(ngModel)]="searchModel.Reason" (onChange)="reasonchaneg()"> </p-dropdown>
+                    </div>                    
+                    <div class="col-12" *ngIf="disabled"><br>
+                        <label><b>Remark*</b></label><br>   
+                        <input type="text"  name="Title" class="form-control" placeholder="Enter Comment....."  [(ngModel)]="searchModel.UpdateComment" />
+                    </div>   
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-primary mr-2" (click)="Updatesubmit()" >Submit</button>
+                        <button  class="btn btn-primary mr-2" (click)="updatepopupClose()" >Cancel</button>
+                    </div>        
+                </div>
+            </p-dialog> 
+
+            <p-dialog header="Cancel" [modal]="true" appendTo="body" [style]="{ width: '35%'  }" [draggable]="false" [(visible)]="opencancelbill">
+                <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+                <div class="row">
+                    <div class="col-12">
+                        <label><b>Select Reason</b></label><br>
+                        <p-dropdown [options]="opencancelbil" optionLabel="name" placeholder="Select Reason" (onChange)="cancelreasonchange()" [(ngModel)]="searchModel.reasoncancel" > </p-dropdown>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12" *ngIf="disabledd">
+                        <label><b>Remark</b></label><br>
+                        <input type="text"  name="Title" class="form-control" placeholder="Enter Comment...."  [(ngModel)]="searchModel.CommentCancel" />
+                    </div>
+                </div><br>
+
+                <!-- <div class="col-12" ><br>
+                    <label><b>Remark*</b></label><br>   
+                    <input type="text"  name="Title" class="form-control" placeholder="Enter Comment....."  />
+                </div> -->
+
+
+                <div class="row">
+                    <div class="col-6">
+                        <button class="btn btn-primary mr-2" (click)="CancelSubmitBtn()">Submit</button>
+                        <button  class="btn btn-primary mr-2" (click)="cancelbillBtn()">Cancel</button>
+                        <br>
+                    </div>                    
+                </div>
+            </p-dialog>
+
+    </p-tabPanel>
+    
+    <p-tabPanel header="Internal Transfers"><br>
+            <div class="ui-fluid shadow mb-2 bg-white rounded">
+                <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+                  (click)="toggleSearchtwo()">
+                  <h5 class="m-0"><b>Search By</b></h5>
+                  <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+                </div>
+                <div id="search-content p-2"  *ngIf="isSearchtwo"><br>
+                    <div class="row p-2 px-5" >
+                        <div class="col-md-2">
+                            <label><b>Select Warehouse<span class="required"></span></b></label>
+                            <p-multiSelect  [options]="WareHouseListsecond"  [filter]="true" (onChange)="EmptyITList()"
+                                [(ngModel)]="searchModel.selectedWareHousesecond" optionLabel="WarehouseName" placeholder="select warehouse" >
+                        </p-multiSelect>
+                        </div>
+                        <div class="col-md-2">
+                            <label><b>Transfer Order ID
+                                <span class="required"></span></b></label><br>   
+                                <input type="text"  required="1" maxlength="9" (keyup)="EmptyITList()" (keypress)="keyPress($event)" type="tel" name="Title" class="form-control" [(ngModel)]="searchModel.TransferOrderidTwo"/>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label><b>Invoice
+                                <span class="required"></span></b></label><br>   
+                                <input type="Invoice No"  required="1" maxlength="9" (keyup)="EmptyITList()" type="tel" name="Title" class="form-control" [(ngModel)]="searchModel.InvoiceTwo" />
+                        </div>
+                        <div class="col-2 md-3">
+                            <label><b>Select Start Range</b></label><br>
+                            <p-calendar 
+                            appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  
+                             [readonlyInput]="false" [showIcon]="true" showButtonBar="true" (click)="EmptyITList()"
+                             [showIcon]="true" name="startDateInput" [showIcon]="true" [(ngModel)]="searchModel.FromDatetwo" >
+                            </p-calendar>
+                        </div>
+                        <div class="col-2 md-3">
+                            <label><b>Select End Range</b></label><br>
+                            <p-calendar name="endDateInput" appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  
+                             [readonlyInput]="false" [showIcon]="true" showButtonBar="true" [showIcon]="true"  (click)="EmptyITList()"
+                             [showIcon]="true" [minDate]="searchModel.FromDatetwo"  [(ngModel)]="searchModel.ToDatetwo" >
+                            </p-calendar>
+                        </div>
+                        <div class="col-2 md-3 d-flex" style="margin-top:28px;">
+                            <button  class="btn btn-primary mr-2" (click)="InternalTransfers()" >Search</button>  
+                            <button  class="btn btn-primary mr-2" (click)="ClearInternalTransfers()" >Clear</button>
+                            <button  class="btn btn-success mr-2" (click)="ExportInternalTransfers()" >Export</button>
+                        </div>
+                    </div><br>
+                </div>
+            </div>
+            <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+                <p-table [scrollable]="true" [value]="ITList"  scrollHeight="70vh"  text-align: center  
+                                [totalRecords]="TotalRecord" [lazy]="true"  (onLazyLoad)="load($event)"
+                 [paginator]="true" [rows]="20" >
+                    <ng-template pTemplate="header">
+                        <tr >
+                            <th style="width: 20%;">Transfer OrderId</th>
+                            <th style="width: 20%;">Order Amount/ Invoice Number</th>
+                            <th style="width: 20%;">OrderStatus</th>
+                            <th style="width: 20%;">FromWarehouse</th>
+                            <th style="width: 20%;">ToWarehouse</th>
+                            <th style="width: 20%;">EWay Bill Number</th>
+                            <th style="width: 20%;">EWay Bill Generate Date</th>
+                            <th style="width: 20%;">EWay Bill Valid Upto</th>
+                            <!-- <th style="width: 20%;">Error</th> -->
+                            <th style="width: 20%;">IRN for InterState</th>
+                            <th style="width: 20%;">Action</th>
+                            <th style="width: 20%;">History</th>
+                            
+                        </tr>         
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{item.TransferOrderId}}</td>
+                            <td>Amount: {{item.OrderAmount}}<br> Invoice No.: {{item.InvoiceNumber}}</td>  
+                            <td>{{item.OrderStatus}}</td>
+                            <td>{{item.FromWarehouse}}</td>
+                            <td>{{item.RequestToWarehouseName}}</td>
+                            <td>{{item.EwaybillNumber}}</td>
+                            <td>{{item.EwayBillDate | date:'shortdate' }}</td>
+                            <td>{{item.EwayBillValidTill | date:'shortdate' }}</td> 
+                            <td><button  class="btn btn-primary" (click)="IRNGenerate(item.TransferOrderId)">IRNGenerate</button>   </td>
+                            <td><button  class="btn btn-primary mr-2" (click)="tranfergenerate()">Action</button>   </td>
+                            <td>
+                                <a class="view" (click)="openHistoryy(item)">
+                                    <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                                </a>
+                            </td>
+                            
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                          <td colspan="10" style="text-align: center;">
+                            <br>
+                            <h3><b>No Data Found.</b></h3>
+                          </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div> 
+            <p-dialog contentStyleClass="abc" [(visible)]="wer" [resizable]="false" positionTop="0" [modal]="true" appendTo="body"  [blockScroll]="true" [closable]="false"
+            [style]="{width: '75vw'}">
+            <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+            <div class="hrd cntr">
+                
+            </div>
+            <div class="cntr bddt">
+                <p-table [value]="InternalTransferHistoryData"   [paginator]="true" [rows]="10" [scrollable]="true"
+                scrollHeight="65vh">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>TransferOrderID</th>
+                        <th>WarehouseName</th>
+                        <th>RequestToWarehouse</th>
+                        <th>Status</th>
+                        <th>CreationDate</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData>
+                    <tr class="classForHoverEffect">
+                        <td>{{rowData.TransferOrderID}}</td>
+                        <td>{{rowData.WarehouseName}}</td>
+                        <td>{{rowData.RequestToWarehouse }}</td>
+                        <td>{{rowData.Status }}</td>
+                        <td>{{rowData.CreationDate | date : 'mediumDate'}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            </div>
+    
+            <p-footer>
+                <div class="cntr">
+                    <button class="btn btn-raised btn-primary m-2 shadow"  id="nBtn" (click)="onDismisss()">Close</button>
+                </div>
+            </p-footer>
+        </p-dialog>
+
+
+
+            <p-dialog [(visible)]="tranfergeneratepopup" header="Action" [draggable]="false" [style]="{ width: '30%' }" [modal]="true" appendTo="body">
+                <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+                <div class="row">
+                    <div class="col-6">
+                        <label><b>Vehicle Number</b></label><br>   
+                        <input type="text" name="Title" class="form-control" placeholder="Enter Vehicle Number" [(ngModel)]="searchModel.VehicleNumbertwo" />
+                        <br>
+                        <label><b>Transpost GST</b></label><br>
+                        <div class="d-flex">
+                            <input type="text"  required="1"  minlength="15" maxlength="15" name="Title" class="form-control" placeholder="Enter Transpost GST" [(ngModel)]="searchModel.RefNos" />
+                             &nbsp;&nbsp;&nbsp;
+                             <button  class="btn btn-success mr-2" (click)="VarifiedCustomerGSTNOs(searchModel.RefNos)" >Verify</button> 
+                        </div> 
+                    </div>
+                    <div class="col-6">
+                        <label><b>Enter Distance</b></label><br>                           
+                        <div class="d-flex ">
+                            <input type="text" Kms  required="1" maxlength="9" type="tel" (keypress)="keyPress($event)" name="Title" class="form-control" placeholder="Enter Distance" [(ngModel)]="searchModel.Distancetwo"   /> 
+                            &nbsp; <span><b>Kms</b></span>
+                        </div>                         
+                        <br>
+                        <label><b>Transport Name</b></label><br>   
+                        <input type="text" name="Title" class="form-control" placeholder="Enter Transport Name" disabled [(ngModel)]="GSTCustomerNames"  />
+                        <br>
+                        <button type="button" class="btn btn-primary mr-2" (click)="TransferPopupsubmit()">Submit</button>                            
+                        <button type="button" class="btn btn-primary mr-2" (click)="tranferpupopclose()" >Cancel</button>
+                    </div>                    
+                </div>
+            </p-dialog>
+
+            <p-dialog appendTo="body" [modal]="true" appendTo="body" header="GSTN Info" [(visible)]="GSTdisplayy" [draggable]="false"
+                [style]="{width: '500px', height: '180px'}">
+                <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+                <table style="border: 1px solid rgb(48, 21, 21)">
+                    <tr style="border: 1px solid rgb(48, 21, 21)">
+                    <th style="width: 450px;">GSTN No. </th>
+                    <th style="width: 450px;" >Name on GSTN</th>
+                    </tr>
+                    <tr style="border: 1px solid rgb(48, 21, 21)">
+                        <td style="width: 450px;">{{searchModel.RefNos}}</td>
+                        <td style="width: 450px;">{{GSTCustomerNames}}</td>
+                    </tr>
+                    <!-- <button type="button" class="btn btn-primary mr-2" (click)="gstpopupclose()">Ok</button> -->
+                </table>
+                <button type="button" class="btn btn-primary mr-2" style="margin-left: 85%; margin-top: 3%;" (click)="GSTdisplayClosee()">Close</button>
+        </p-dialog>
+
+    </p-tabPanel>
+
+    <p-tabPanel header="Near Expiry Eway bills" > <br>
+            <div class="ui-fluid shadow mb-2 bg-white rounded">
+                <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+                  (click)="toggleSearchthree()">
+                  <h5 class="m-0"><b>Search By</b></h5>
+                  <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+                </div>
+                    <div id="search-content p-2" *ngIf="isSearchthree">
+                    <br>
+                    <div class="row p-2 px-5">
+                        <div class="col-md-2">
+                            <label><b>Select Warehouses<span class="required"></span></b></label>
+                            <p-multiSelect  [options]="WareHouseListthird"  (onChange)="KeyUpClean()"
+                                [(ngModel)]="searchModel.selectedWareHousethird" optionLabel="WarehouseName" placeholder="select warehouse" >
+                        </p-multiSelect>
+                        </div>
+                        <div class="col-md-2">
+                            <label><b>Select OrderType<span class="required"></span></b></label>
+                            <p-dropdown id="Category" name="Category" (onChange)="KeyUpClean()" [(ngModel)]="searchModel.OrderTypeThree" [filter]="true" [options]="OrderTypeList"
+                            optionLabel="name" placeholder="Select OrderType"  > 
+                        </p-dropdown>
+                        </div>
+                        <div class="col-2 md-3">
+                            <label><b>Enter OrderID
+                                <span class="required"></span></b></label><br>   
+                                <input type="text"  required="1"  maxlength="9" type="tel" name="Title" class="form-control"  (keyup)="KeyUpClean()"
+                                optionLabel="Select OrderType" [(ngModel)]="searchModel.Orderidthree"/>
+                        </div>
+                        <div class="col-2 md-3">
+                            <label><b>Select Start Range</b></label><br>
+                            <p-calendar name="startDateInput" [showIcon]="true" [(ngModel)]="searchModel.FromDatethree" 
+                            appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  (click)="KeyUpClean()"
+                            [minDate]="mindate" [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+                             [showIcon]="true" >
+                            </p-calendar>
+                        </div>
+                        <div class="col-2 md-3">
+                            <label><b>Select End Range</b></label><br>
+                            <p-calendar name="endDateInput" name="ToDate" [showIcon]="true" [(ngModel)]="searchModel.ToDatethree" (click)="KeyUpClean()"
+                            appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  [minDate]="searchModel.FromDatethree"
+                            [minDate]="mindate" [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+                             [showIcon]="true" >
+                            </p-calendar>
+                        </div>
+                        <div class="col-2 md-3 d-flex" style="margin-top:28px;">
+                            <button  class="btn btn-primary mr-2" (click)="ExpiryEwaybills()" >Search</button>  
+                            <button  class="btn btn-primary mr-2" (click)="ClearExpiryEway()" >Clear</button>  
+                            <button  class="btn btn-success mr-2" (click)="ExportExpiryEway()" >Export</button>  
+                        </div>
+                    </div><br>          
+                </div>
+            </div>
+            <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+                <p-table [scrollable]="true" [value]="NearExpiryewaybillList"   scrollHeight="70vh"  text-align: center 
+                [totalRecords]="TotalRecordsThird" [lazy]="true"  (onLazyLoad)="load($event)"
+                 [paginator]="true" [rows]="20" >
+                    <ng-template pTemplate="header">
+                        <tr >
+                            <th style="width: 20%;">OrderId</th>
+                            <th style="width: 20%;">Order Amount/ Invoice Amount</th>
+                            <th style="width: 20%;">OrderStatus</th>
+                            <th style="width: 20%;">EWay Bill Number</th>
+                            <th style="width: 20%;">Eway Bill Generate Date</th>
+                            <th style="width: 20%;">Eway Bill Update Upto</th>
+                            <th style="width: 20%;">Action</th>
+                        </tr>         
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{item.OrderId}}</td>
+                            <td> Order Amount: {{item.OrderAmount}}<br> Invoice No.: {{item.InvoiceNumber}}</td>  
+                            <td>{{item.OrderStatus}}</td>
+                            <td>{{item.EwaybillNumber}}</td>
+                            <td>{{item.EwayBillDate | date:'shortdate'}}</td>
+                            <td>{{item.EwayBillValidTill | date:'shortdate'}}</td> 
+                            <td><button  class="btn btn-primary mr-2" (click)="NearExpiryEwaypopup()"  >Extent E-waybill</button>   </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                          <td colspan="10" style="text-align: center;">
+                            <br>
+                            <h3><b>No Data Found.</b></h3>
+                          </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div> 
+
+           
+            <p-dialog [(visible)]="NearExpiryEwayBillspopup" header="Extend Eway-Bill" [draggable]="false" [modal]="true" appendTo="body">
+                <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+                <div class="row">
+                    <div class="col-6">
+                        <label><b>Reason of extension</b></label>&nbsp;&nbsp;
+                        <p-dropdown [options]="NearExpiryreasonss" [(ngModel)]="searchModel.Reasonofextension"
+                            optionLabel="name" placeholder="Select Reason"> 
+                        </p-dropdown>
+                        <br>
+                    </div>
+                    <div class="col-6">
+                        <label><b>Enter Remark</b></label><br>   
+                            <input type="text"  required="1" name="Title" class="form-control" placeholder="Enter Remark"  [(ngModel)]="searchModel.RemarkThird" />
+                            <br>
+                    </div>                    
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <label><b>Current Place</b></label>
+                    </div>
+                    <div class="col-9">
+                         <input type="text"  required="1" name="Title" class="form-control" placeholder="Enter Place"   [(ngModel)]="searchModel.CurrentPlacethird"/>
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <label><b>Current Pincode</b></label>
+                    </div>
+                    <div class="col-9">
+                         <input type="text" (keypress)="keyPress($event)"  [(ngModel)]="searchModel.Pincodethird" maxlength="6" type="tel"  required="1" name="Title" class="form-control" placeholder="Enter Pincode"  />
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <label><b>Current State</b></label>
+                    </div>
+                    <div class="col-9">
+                         <input type="text"  required="1" name="Title" class="form-control" placeholder="Enter Current State"  [(ngModel)]="searchModel.CurrentStatethird" />
+                        <br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <label><b>Vehicle Number</b></label>
+                    </div>
+                    <div class="col-9">
+                         <input type="text"  required="1" name="Title" class="form-control" placeholder="Enter vehicle Number"  [(ngModel)]="searchModel.VehicleNumberThird"  />
+                        <br>
+                    </div>
+                </div>
+                <div class="row" style=" padding-left: 3%;">
+                    <!-- <div class="col-2 md-3" style="margin-top:28px;"> -->
+                        <button  class="btn btn-primary mr-2" (click)=" NearExpiryEwaySearch()" >Submit</button>  
+                        <button  class="btn btn-primary mr-2"  (click)=" NearExpiryEwayCancel()"  >Cancel</button>  
+                    <!-- </div> -->
+                </div>
+            </p-dialog>           
+    </p-tabPanel>
+
+     <p-tabPanel header="Failed Eway-bills"><br>
+            <div class="ui-fluid shadow mb-2 bg-white rounded">
+                <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+                  (click)="toggleSearchfour()">
+                  <h5 class="m-0"><b>Search By</b></h5>
+                  <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+                </div>
+                <div id="search-content p-2" *ngIf="isSearchfour">
+                    <br>
+                <div class="row p-2 px-5">
+                    <div class="col-md-2">
+                        <label><b>Select City</b></label>
+                        <p-multiSelect id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="searchModel.SelectedCityf" (onChange)="GetWarehousef()" [filter]="true"
+                            optionLabel="CityName" optionValue="Cityid" placeholder="Select City"  > 
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-md-2">
+                    <label><b>Select WareHouse</b></label>
+                        <p-multiSelect id="Category" name="Category" [options]="WareHouseListlast"   [filter]="true"
+                                [(ngModel)]="searchModel.selectedWareHouseFour" optionLabel="WarehouseName" placeholder="Select WareHouse">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-md-2">
+                        <label><b>Select OrderType<span class="required"></span></b></label>
+                        <p-dropdown id="Category" name="Category" [options]="OrderTypeListtt" optionLabel="name" [filter]="true" placeholder="Select OrderType"  [(ngModel)]="searchModel.OrderType"> 
+                        </p-dropdown>
+                    </div>
+                    <div class="col-2 md-3">
+                        <label><b>Enter OrderID
+                            <span class="required"></span></b></label><br>   
+                            <input type="text"  required="1"  maxlength="9" type="tel" name="Title" class="form-control" [(ngModel)]="searchModel.OrderIdfour" />
+                    </div>
+                    <div class="col-2 md-3">
+                        <label><b>Select Start Date</b></label><br>
+                        <p-calendar name="startDateInput" [showIcon]="true" appendTo="body" [yearNavigator]="true" [(ngModel)]="searchModel.FromDatefour"
+                         [monthNavigator]="true" yearRange="2022:2099"  
+                         [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+                         [showIcon]="true" >
+                        </p-calendar>
+                    </div>
+                    <div class="col-2 md-3">
+                        <label><b>Select End Date</b></label><br>
+                        <p-calendar name="endDateInput" name="ToDate" [showIcon]="true" appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"   
+                        [readonlyInput]="false" [showIcon]="true" showButtonBar="true"  [(ngModel)]="searchModel.ToDatefour"  [minDate]="searchModel.FromDatefour"
+                        [showIcon]="true" >
+                        </p-calendar>
+                    </div>
+                    <div class="col-2 md-3" style="margin-top:28px;">
+                        <button  class="btn btn-primary mr-2" (click)="getFailedEwaybillss()" >Search</button>   
+                        <button  class="btn btn-primary mr-2" (click)="ClearFailedEway()" >Clear</button> 
+                        <!-- <button  class="btn btn-primary mr-2" (click)="ExportFailedEway()" >Export</button>    -->
+                    </div>
+                </div><br>          
+            </div>
+            </div>
+            <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+                <p-table [value]="FailedEwaybillList"  [scrollable]="true" [lazy]="true"  scrollHeight="70vh"  text-align: center 
+                 [totalRecords]="TotalRecordFour" [lazy]="true" (onLazyLoad)="load($event)"
+                 [paginator]="true" [rows]="20" >
+                    <ng-template pTemplate="header">
+                        <tr >
+                            <th style="width: 20%;">OrderId</th>
+                            <th style="width: 20%;">Order Amount/ Invoice Amount</th>
+                            <th style="width: 20%;">OrderStatus</th>
+                            <th style="width: 20%;">EWay Bill Number</th>
+                            <!-- <th style="width: 20%;">Eway Bill Generate Date</th>
+                            <th style="width: 20%;">Eway Bill Update Upto</th> -->
+                            <th style="width: 20%;">Error</th>
+                            <th style="width: 20%;">Action</th>
+                        </tr>         
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td>{{item.OrderId}}</td>
+                            <td>Amount: {{item.orderamount}}<br> Invoice No.: {{item.InvoiceNo}}</td>  
+                            <td>{{item.OrderStatus}}</td>
+                            <td>{{item.EwayBillNumber}}</td>
+                            <!-- <td>{{item.EwayBillDate | date:'shortdate'}}</td>
+                            <td>{{item.EwayBillValidTill | date:'shortdate'}}</td> -->
+                            <td>{{item.err}}</td> 
+                            <td><button  class="btn btn-primary mr-2" (click)="Redirect($event,item.OrderId)" >Retry</button>   </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                          <td colspan="10" style="text-align: center;">
+                            <br>
+                            <h3><b>No Data Found.</b></h3>
+                          </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>  
+     </p-tabPanel> 
+</p-tabView>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>

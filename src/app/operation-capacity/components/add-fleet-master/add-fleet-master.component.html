@@ -1,0 +1,1280 @@
+<p-toast [style]="{marginTop: '200px'}"></p-toast>
+
+<section>
+  <div class="my-2 d-flex justify-content-between header">
+    <h3 class="m-2" *ngIf="!isEditOpen"><b>Add Fleet master</b></h3>
+    <h3 class="m-2" *ngIf="isEditOpen">Edit Fleet master</h3>
+    <button type="button" class="btn btn-raised btn-warning mr-1" (click)="backToListPage()">
+      Back
+    </button>
+  </div>
+
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <!-- <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+        (click)="toggleSearch()">
+        <h5 >Fleet Master</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div> -->
+    <!-- <h5 style="color: orangered;"><b><u>Fleet Master</u></b></h5> -->
+    <form class="form " name="form" #fleetForm="ngForm">
+      <div class="row">
+
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="CityId">City</label>
+            <br>
+            <select id="City" name="City" class="form-control" [(ngModel)]="data.CityId" #CityId="ngModel"
+              (change)="getWarehouse(data.CityId)" required="1">
+              <option value="" disabled>--select--</option>
+              <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                {{ city.CityName }}
+              </option>
+            </select>
+            <div *ngIf="isInvalid && !CityId.valid && CityId.errors.required">
+              <code>City is required</code>
+            </div>
+            <div class="col-md-4"></div>
+          </div>
+        </div>
+
+        <!-- <div class="col-md-3">
+                <div class="form-group">
+                  <label for="projectinput3">Warehouse</label>
+                  <br>
+                  <select id="Warehouseid" name="Warehouseid" class="form-control"
+                  [(ngModel)]="data.Warehouseid"  required="1"
+                  #Warehouseid="ngModel">
+                  <option value="" disabled>--Select--</option>
+                  <option *ngFor="let w of warehouseList" [ngValue]="w.WarehouseId">
+                    {{ w.WarehouseName }}
+                  </option>
+                </select>
+                <div *ngIf="isInvalid && !Warehouseid.valid && Warehouseid.errors.required">
+                  <code>Warehouse is required</code>
+                </div>
+                  <div class="col-md-4"></div>
+                </div>
+              </div> -->
+        <div class="col-md-3 form-group">
+          <label for="lbFleettype">Fleet Type</label>
+          <select id="fleetType" name="fleetType" class="form-control" [(ngModel)]="data.FleetType "
+            placeholder="Select Fleet Type" required="1" maxlength="50" #fleetType="ngModel">
+            <option value="">-----Select-----</option>
+            <option value="SK-Fix">SK-Fix</option>
+            <option value="SK-Adhoc">SK-Adhoc</option>
+            <option value="Agent">Agent</option>
+            <option value="SKP">SKP</option>
+            <option value="KPP">KPP</option>
+          </select>
+          <div *ngIf="isInvalid && !fleetType.valid && fleetType.errors.required">
+            <code>Fleet Type is required</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbchannel">Channel</label>
+          <select id="channel" name="channel" class="form-control selectType" [(ngModel)]="data.Channel "
+            placeholder="Select Channel" required="1" #channel="ngModel">
+            <option value="">-----Select-----</option>
+            <option value="KPP">KPP</option>
+            <option value="City">City</option>
+          </select>
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !channel.valid && channel.errors.required">
+            <code>Channel is required</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lboperatedBy">Operated By</label>
+          <select id="operatedBy" name="operatedBy" class="form-control selectType" [(ngModel)]="data.OperatedBy"
+            placeholder="Select Operated By" required="1" maxlength="50" #operatedBy="ngModel">
+            <option value="">-----Select-----</option>
+            <option value="Agent">Agent</option>
+            <option value="KPP-Self">KPP-Self</option>
+            <option value="SK">SK</option>
+            <option value="DB">DB</option>
+            <option value="Regular">Regular</option>
+            <option value="Self-Pickup">Self-Pickup</option>
+            <option value="None">None</option>
+          </select>
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !channel.valid && channel.errors.required">
+            <code>Channel is required</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbfrieghtdisc">Freight Discount</label>
+          <select id="frieghtdisc" name="frieghtdisc" class="form-control selectType" [(ngModel)]="data.FreightDiscount"
+            placeholder="Select FreightDiscount" required="1" #frieghtdisc="ngModel">
+            <option value="">-----Select-----</option>
+            <option value="1">Percentage</option>
+            <option value="2">Cash</option>
+            <option value="3">Credit</option>
+            <option value="4">Wallet(%)</option>
+            <option value="5">None</option>
+          </select>
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !frieghtdisc.valid && frieghtdisc.errors.required">
+            <code>Channel is required</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbtollamt">Toll Amount</label>
+          <input type="number" placeholder="Toll Amount" [(ngModel)]="data.TollAmt" id="tollamt" name="tollamt"
+            class="form-control" maxlength="10">
+          <!-- <div *ngIf="isInvalid && !tollamt.valid && tollamt.errors.required">
+              <code>Toll Amount is required</code>
+            </div>
+            <div class="col-md-4"></div> 
+            <div *ngIf="isInvalid && !tollamt.valid && tollamt.errors.minlength">
+              <code>Minlength 4</code>
+            </div> -->
+
+        </div>
+        <div class="col-md-3 form-group">
+          <div class="form-group">
+            <label for="lbstartDate">Contract Start</label>
+            <p-calendar [showIcon]="true" [(ngModel)]="data.ContractStart " id="startDate" name="startDate"
+              [readonlyInput]="true" placeholder="Start Date" required #startDate="ngModel">
+            </p-calendar>
+            <div *ngIf="isInvalid && !startDate.valid && startDate.errors.required">
+              <code>Contract Start Date is required</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <div class="form-group">
+            <label for="lbendDate">Contract End</label>
+            <p-calendar [showIcon]="true" [(ngModel)]="data.ContractEnd" id="endDate" name="endDate"
+              [readonlyInput]="true" placeholder="End Date" required #endDate="ngModel">
+            </p-calendar>
+            <div *ngIf="isInvalid && !endDate.valid && endDate.errors.required">
+              <code>Contract Valid Upto is required</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbtransportName">Transport Name</label>
+          <input type="text" placeholder="Transport Name" [(ngModel)]="data.TransportName" id="transportName"
+            name="transportName" class="form-control selectType" required="1" maxlength="50" #transportName="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !transportName.valid && transportName.errors.required">
+            <code>Transport Name is required</code>
+          </div>
+          <div *ngIf="isInvalid && !transportName.valid && transportName.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group" *ngIf="data.OperatedBy == 'Agent'">
+          <label for="lbtransportagentName">Agent Name</label>
+          <select id="transportagentName" name="transportagentName" class="form-control"
+            [(ngModel)]="data.TransportAgentName" #transportagentName="ngModel"
+            (change)="onSelectAgent(data.TransportAgentName)" required="1">
+            <option value="">--select--</option>
+            <option *ngFor="let agent of agentList" [ngValue]="agent.DisplayName">
+              {{ agent.DisplayName }}
+            </option>
+          </select>
+          <div *ngIf="isInvalid && !transportagentName.valid && transportagentName.errors.required">
+            <code>Agent Name is required</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group" *ngIf="data.OperatedBy != 'Agent'">
+          <label for="lbtransportagentName">Transporter Name</label>
+          <input type="text" placeholder="Transporter Name" [(ngModel)]="data.TransportAgentName"
+            id="transportagentName" name="transportagentName" class="form-control selectType" required="1"
+            maxlength="50" #transportagentName="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !transportagentName.valid && transportagentName.errors.required">
+            <code>Transporter Name is required</code>
+          </div>
+          <div *ngIf="isInvalid && !transportagentName.valid && transportagentName.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+
+
+        <div class="col-md-3 form-group">
+          <label for="lbtransportagentName">TRANSPORT AGENT Mobile No</label>
+          <input type="tel" placeholder="TRANSPORT AGENT Mobile No" [(ngModel)]="data.TransportAgentMobileNo"
+            (keypress)="keyPress($event)" pattern="^[6-9][0-9]{9}$" id="transportagentmobile"
+            name="transportagentmobile" class="form-control selectType" required="1" minlength="10" maxlength="10"
+            #transportagentmobile="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !transportagentmobile.valid && transportagentmobile.errors.required">
+            <code>TRANSPORT AGENT Mobile No is required</code>
+          </div>
+          <div *ngIf="isInvalid && !transportagentmobile.valid && transportagentmobile.errors.minlength">
+            <code>Minlength 10</code>
+          </div>
+          <div *ngIf="isInvalid && !transportagentmobile.valid && transportagentmobile.errors.pattern">
+            <code>Invalid Transport AgentMobile No!</code>
+          </div>
+        </div>
+
+
+        <!--  -->
+
+        <div class="col-md-1 form-group" *ngIf="isEditOpen">
+          <label for="lbtransportagentName">IsActive</label>
+          <div class="col-md-4"></div>
+          <p-inputSwitch name="IsActive" [(ngModel)]="data.IsActive" (ngModelChange)="ActiveInactive(data)">
+          </p-inputSwitch>&nbsp;&nbsp;
+        </div>
+        <div class="col-md-1 form-group" *ngIf="isEditOpen">
+          <label for="lbIsBlocked">IsBlocked</label>
+          <div class="col-md-4"></div>
+          <p-inputSwitch name="IsBlocked" [(ngModel)]="data.IsBlocked" (ngModelChange)="ActiveInactiveIsblocked(data)">
+          </p-inputSwitch>&nbsp;&nbsp;
+        </div>
+        <!-- <div class="col-md-2 form-group">
+          <label></label>
+          <button class="btn btn-primary btn-sm" *ngIf="isEditOpen" (click)="isOpenAddRow('Add')">Add Row</button>
+
+        </div> -->
+        <!-- {{fleetAccountDetail.length}} -->
+        <!-- <div class="col-md-2 form-group" [hidden]="fleetAccountDetail&&fleetAccountDetail.length>0">
+          <label></label>
+          <button class="btn btn-primary btn-sm" *ngIf="isEditOpen" (click)="isAccountDetail('Add')">Add account
+            Details</button>
+
+        </div> -->
+
+
+
+      </div>
+
+      <div class="row">
+        <div class="col-md-3 form-group">
+          <div class="col-md-1" *ngIf="!isEditOpen">
+            <button type="button" class="btn btn-raised btn-primary" [hidden]="!isSearch"
+              (click)="addFleetMaster(fleetForm)">
+              Save
+            </button>
+          </div>
+        </div>
+
+
+      </div>
+    </form>
+  </div>
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover" *ngIf="!isSearch">
+    <!-- <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+        (click)="toggleSearch()">
+        <h5 >Fleet Master</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div> -->
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+      <h5>Fleet Master Details</h5>
+      <div>
+        <button type="button" class="btn btn-raised btn-primary" (click)="isOpenAddRow('Edit')"
+          style="margin-top: 5px;">
+          Add <i class="fa fa-plus"></i>
+        </button>
+      </div>
+
+    </div>
+    <div *ngIf="vehicleDetail && vehicleDetail.length>0" style="margin-left: 15px;">
+
+      <p-table #dt [value]="vehicleDetail" [paginator]="false" [rows]="10">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>S.No</th>
+            <th>Vehicle Type</th>
+            <th>No. Of Vehicle</th>
+            <th>Fixed Cost</th>
+            <th>Extra Km Charge</th>
+            <th>Extra Hr Charge </th>
+            <th>Waiting Charge</th>
+            <th>Vehicle Capacity </th>
+            <th>Make </th>
+            <th>Non-working Day Amt </th>
+            <th>Distance Contract </th>
+            <th>Days Contract </th>
+            <th>Time Contract(hr) </th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-selecteditem let-columns="columns" let-i="rowIndex">
+          <tr>
+            <td>{{i+1}}</td>
+            <td><span style="border-bottom: 1px dashed;">
+                {{selecteditem.VehicleType}}</span>
+            </td>
+            <td>{{selecteditem.NoOfVehicle}}</td>
+            <td>{{selecteditem.FixedCost}}</td>
+            <td>{{selecteditem.ExtraKmCharge}}</td>
+            <td>{{selecteditem.ExtraHrCharge}}</td>
+            <td>{{selecteditem.WaitingCharge}}</td>
+            <td>{{selecteditem.VehicleCapacity}}</td>
+            <td>{{selecteditem.Make}}</td>
+            <td>{{selecteditem.NonworkingDayAmt}}</td>
+            <td>{{selecteditem.DistanceContract}}</td>
+            <td>{{selecteditem.DaysContract}}</td>
+            <td>{{selecteditem.HrContract}}</td>
+            <td>
+              <!--*ngIf="isEditOpen"-->
+              <span (click)="editelected(selecteditem,i+1)" class="mlft">
+                <i class="pi pi-pencil" aria-hidden="true"></i>
+              </span>
+
+            </td>
+
+            <td>
+
+              <span (click)="deleteSelectedRow(selecteditem)" class="mlft">
+                <i class="pi pi-trash" aria-hidden="true"></i>
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+    </div>
+
+
+  </div>
+
+
+
+
+
+
+
+  <!-- -------------------------------------------------------------------------For Account Purpose---------------------------------------------------- -->
+  <br>
+
+  <h2>For Account Purpose</h2>
+
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <form class="form " name="form" #accountsForm="ngForm">
+      <div class="row">
+        <div class="col-md-3 form-group">
+          <label for="lbtransportagentName">Aadhar No</label>
+          <input type="tel" placeholder="AadharNo" [(ngModel)]="data.AadharNo" (keypress)="keyPress($event)"
+            [disabled]="data.IsAppprovedByAccount" pattern="^[0-9]{12}$"
+            id="AadharNo" name="AadharNo" class="form-control selectType" minlength="12" maxlength="12"
+            #AadharNo="ngModel">
+          <div class="col-md-4"></div>
+          <!-- <div *ngIf="checkAccountInvalid && !AadharNo.valid && AadharNo.errors.required">
+            <code>Aadhar No is required</code>
+          </div> -->
+          <div *ngIf="checkAccountInvalid && !AadharNo.valid && AadharNo.errors.minlength">
+            <code>Enter Correct Aadhar no</code>
+          </div>
+
+        </div>
+
+        <div class="col-md-3 form-group">
+          <!-- {{data.PanNo|json}} -->
+          <label for="lbtransportagentName">Pan No* </label>
+          <input type="text" placeholder="PanNo" [(ngModel)]="data.PanNo" pattern="^[A-Za-z]{5}[0-9]{4}[A-Za-z]$"
+          [disabled]="data.IsApprovedByAccount"  id="PanNo" name="PanNo"
+            class="form-control selectType" required="1" minlength="10" maxlength="10" #PanNo="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="checkAccountInvalid && !PanNo.valid && PanNo.errors.required">
+            <code>Pan No is required</code>
+          </div>
+          <div *ngIf="checkAccountInvalid  && !PanNo.valid && PanNo.errors?.pattern">
+            <code>Please Enter valid pan number</code>
+          </div>
+
+        </div>
+
+        <div class="col-md-3 form-group">
+          <label for="lbtransportagentName">GSTIN </label>
+          <input type="text" placeholder="GSTIN" [(ngModel)]="data.GSTIN" id="GSTIN"
+            pattern="\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}" name="GSTIN"
+            [disabled]="data.IsAppprovedByAccount" [disabled]="data.IsApprovedByAccount" class="form-control selectType"
+             minlength="15" maxlength="15" #GSTIN="ngModel">
+          <div class="col-md-4"></div>
+          <!-- <div *ngIf="checkAccountInvalid && !GSTIN.valid && GSTIN.errors.required">
+            <code>GSTIN is required</code>
+          </div> -->
+          <div *ngIf="checkAccountInvalid && GSTIN.errors?.pattern">
+            <code>Please Enter valid GSTIN </code>
+          </div>
+
+        </div>
+
+        <div class="col-md-3 form-group">
+          <!-- {{data.PanNo|json}} -->
+          <label for="lbtransportagentName">Address </label>
+          <textarea type="text" placeholder="Address" [(ngModel)]="data.Address" id="Address" name="Address"
+            [disabled]="data.IsAppprovedByAccount"  class="form-control selectType"
+            #Address="ngModel"></textarea>
+          <div class="col-md-4"></div>
+          <!-- <div *ngIf="checkAccountInvalid && !Address.valid && Address.errors.required">
+            <code>Address is required</code>
+          </div> -->
+
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="CityId">Transporter State*</label>
+            <br>
+            <select id="TransporterStateId" class="form-control" name="TransporterStateId" (change)="onChangeState(data.TransporterStateId)"
+              [disabled]="data.IsAppprovedByAccount"  placeholder="State"
+              [(ngModel)]="data.TransporterStateId" required="1" #TransporterStateId="ngModel">
+              <option value="" disabled>--select--</option>
+              <option *ngFor="let state of stateList" [ngValue]="state.Stateid">{{ state.StateName }}</option>
+            </select>
+
+
+            <div *ngIf="checkAccountInvalid && accountsForm.status==='INVALID' && (accountsForm.value.TransporterStateId=='' || accountsForm.value.TransporterStateId==null)">
+              <code> State is required</code>
+
+            </div>
+
+            <!-- <div *ngIf="checkAccountInvalid && !TransporterStateId.valid ">
+              <code> State is required</code>
+            </div> -->
+            <div class="col-md-4"></div>
+          </div>
+        </div>
+
+
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <!-- {{transportercityList|json}} -->
+
+            <label for="StateId">Transporter City*</label>
+            <br>
+            <select id="transportercity" class="form-control" name="transportercity"
+              [(ngModel)]="data.TransporterCityId" [disabled]="data.IsAppprovedByAccount" placeholder="City"
+              #TransporterCityId="ngModel">
+              <option value="" [selected]="true">--select--</option>
+              <option *ngFor="let city of transportercityList" [ngValue]="city.Cityid"> {{ city.CityName }} </option>
+            </select>
+            <div *ngIf="checkAccountInvalid && accountsForm.status==='INVALID' && (accountsForm.value.transportercity==''||accountsForm.value.transportercity==null)">
+              <code> City is required</code>
+
+            </div>
+    
+          </div>
+
+
+        </div>
+
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="StateId">MSME</label>
+            <br>
+
+            <select id="IsMSME" name="IsMSME" class="form-control"  [disabled]="data.IsAppprovedByAccount" [(ngModel)]="data.IsMSME" #IsMSME="ngModel"
+              placeholder="Select MSME">
+              <option value="" disabled>--select--</option>
+              <option *ngFor="let list of MSME" [ngValue]="list.Id">
+                {{ list.label }}
+              </option>
+            </select>
+            <!-- <div *ngIf="checkAccountInvalid  && IsMSME.errors.required">
+              <code>City is required</code>
+              <div class="col-md-4"></div>
+            </div> -->
+          </div>
+
+
+        </div>
+
+
+
+        <div class="col-md-3"></div>
+
+
+        <div class="col-md-3">
+          <div class="form-group" *ngIf="data.IsMSME">
+            <!-- {{transportercityList|json}} -->
+            <label for="StateId">MSME Image </label>
+            <br>
+
+            <input class="btn btn-raised btn-info" #myInput5 id="myInput5" type="file" accept="image/*" required="1"
+              [disabled]="data.IsAppprovedByAccount || data.IsMSME==null " (change)="uploadMSME($event.target.files)" />
+
+          </div>
+
+
+        </div>
+
+        <div class="col-md-3">
+          <div class="form-group">
+
+            <label>Agreement Pdf*</label><br>
+            <input class="btn btn-raised btn-info" #myInput3 id="myInput1" type="file" accept="application/pdf"
+              required="1" [disabled]="data.IsAppprovedByAccount" (change)="uploadAgreement($event.target.files)" />
+
+          </div>
+
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+
+            <label>Aadhar Copy Image*</label><br>
+            <input class="btn btn-raised btn-info" #myInput2 id="myInput1" type="file" accept="image/*" 
+              [disabled]="data.IsAppprovedByAccount" (change)="uploadAadhar($event.target.files)" />
+
+          </div>
+
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+
+            <label>Pan Card Image*</label><br>
+            <input class="btn btn-raised btn-info" #myInput id="myInput" type="file" accept="image/*" required="1"
+              [disabled]="data.IsAppprovedByAccount" (change)="uploadPan($event.target.files)" />
+
+          </div>
+
+        </div>
+
+      
+        <div class="col-md-3" *ngIf="data.IsMSME && data.MSMECertificatePath">
+          <label >MSME Copy</label>
+          <br>
+          <div class="form-group" (click)="openImage(data.MSMECertificatePath)">
+            <img *ngIf="data.MSMECertificatePath" src="{{baseURL}}{{data.MSMECertificatePath}}" height="100px"
+              width="100px">
+          </div>
+        </div>
+
+        <div class="col-md-3" [ngClass]="{'offset-md-3': !data.IsMSME}">
+          <label *ngIf="data.AgreementPath">Agreement Copy</label>
+          <br>
+          <div class="form-group" (click)="openImage(data.AgreementPath)">
+            <img *ngIf="data.AgreementPath" src="{{baseURL}}{{data.AgreementPath}}" height="100px" width="100px">
+          </div>
+        </div>
+
+
+        <div class="col-md-3">
+          <label *ngIf="data.AadharImagePath">Aadhar Copy</label>
+          <br>
+          <div class="form-group" (click)="openImage(data.AadharImagePath)">
+            <img *ngIf="data.AadharImagePath" src="{{baseURL}}{{data.AadharImagePath}}" height="100px" width="100px">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label *ngIf="data.PanImagePath">Pan Copy</label>
+          <br>
+          <div class="form-group" (click)="openImage(data.PanImagePath)">
+            <img *ngIf="data.PanImagePath" src="{{baseURL}}{{data.PanImagePath}}" height="100px" width="100px">
+          </div>
+        </div>
+      </div>
+
+    
+      <!-- </div>     -->
+      <div class="col-md-3" *ngIf="!isAccountSaved || !iseditAccountSaved ">
+        <div class="form-group">
+          <button type="button" [hidden]="isAccountSaved || iseditAccountSaved" class="btn btn-primary"
+            (click)="saveAccountApproval(accountsForm)">
+            Save
+          </button>
+        </div>
+      </div>
+<!--       
+      <div class="col-md-3" *ngIf="!iseditAccountSaved">
+        <div class="form-group">
+          <button type="button"  class="btn btn-primary" 
+            (click)="saveAccountApproval(accountsForm)">
+            Save edit
+          </button>
+        </div>
+
+      </div> -->
+
+
+
+
+    </form>
+
+    <!-- <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover" > -->
+
+
+    <!-- <-----------------------------------------------------------------------Table section----------------------------------------------------------- -->
+
+    <!-- *ngIf="isAccountSaved" -->
+    <div class="row">
+      <div class="col">
+        <h5>Fleet Master Account Details</h5>
+      </div>
+      <div class="col-2">  
+        
+        <div *ngIf="(isAccountSaved || iseditAccountSaved) &&fleetAccountDetail && fleetAccountDetail.length<1">
+          <button type="button" class="btn btn-raised btn-primary" (click)="isAccountDetail()" style="margin-top: 5px;">
+            Add Account Details <i class="fa fa-plus"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!--  -->
+    <div *ngIf="fleetAccountDetail&&fleetAccountDetail.length>0" style="margin-left: 15px;">
+      <hr>
+      <p-table #dt1 [value]="fleetAccountDetail" [paginator]="false" [rows]="10">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>S.No</th>
+            <th>Account No </th>
+            <th>IFSC code </th>
+            <th>Branch Name </th>
+            <th>Bank Name </th>
+            <th>Holder Name </th>
+            <th> Cancel Cheque</th>
+            <th *ngIf="!data.IsAppprovedByAccount">Edit</th>
+            <th *ngIf="!data.IsAppprovedByAccount">Delete</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-selecteditem let-columns="columns" let-i="rowIndex">
+          <tr>
+            <td>{{i+1}}</td>
+
+            <td>{{selecteditem.AccountNo}}</td>
+            <td>{{selecteditem.IFSCcode}}</td>
+            <td>{{selecteditem.BranchName}}</td>
+            <td>{{selecteditem.BankName}}</td>
+            <td>{{selecteditem.HolderName}}</td>
+            <td (click)="openImage(selecteditem.CancelledChequePath)"><u>{{selecteditem.CancelledChequePath}}</u></td>
+
+            <td *ngIf="!data.IsAppprovedByAccount">
+              <span (click)="editSelectedaccount(selecteditem,i+1)" class="mlft">
+                <i class="pi pi-pencil" aria-hidden="true"></i>
+              </span>
+            </td>
+            <td *ngIf="!data.IsAppprovedByAccount">
+              <span (click)="deleteAccountDetailRow(selecteditem)" class="mlft">
+                <i class="pi pi-trash" aria-hidden="true"></i>
+              </span>
+            </td>
+        </ng-template>
+      </p-table>
+
+    </div>
+
+    <div class="row">
+      <div class="col">
+      </div>
+      <div class="col-2">
+        <!-- {{checkrole}} {{isEditOpen}} {{data.IsAppprovedByAccount}} -->
+        <button *ngIf="(checkrole &&isEditOpen && !data.IsAppprovedByAccount && iseditAccountSaved)" type="button"
+          class="btn btn-raised btn-primary" (click)="accountapproval(accountsForm,true)">
+          Approve
+        </button>
+        <button *ngIf="(checkrole && isEditOpen && data.IsAppprovedByAccount && iseditAccountSaved)" type="button"
+          class="btn btn-raised btn-primary" (click)="accountapproval(accountsForm,false)">
+          Disapprove
+        </button>
+      </div>
+    </div>
+
+    <!-- </div> -->
+
+  </div>
+
+
+
+
+
+
+
+
+  <!-- *ngIf="vehicleDetail&&vehicleDetail.length>0&&showAccountTable" -->
+  <div class="ui-fluid shadow mb-2 bg-white rounded form-actions right p-3">
+    <button type="button" class="btn btn-raised btn-warning mr-1" (click)="backToListPage()">
+      Back
+    </button>
+    <button type="button" class="btn btn-raised btn-primary" (click)="saveFleetMaster(data)">
+      Submit
+    </button>
+  </div>
+  <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</section>
+
+
+
+<!-- popup start -->
+<div *ngIf="isEdit">
+
+  <p-dialog [(visible)]="isEdit" positionTop="100" [style]="{width: '90vw',height: '70%'}" appendTo="body">
+    <p-header>
+      Fleet Details
+
+    </p-header>
+    <form class="form " name="fform" #vehilclefleetForm="ngForm">
+      <div class="row">
+        <div class="col-md-3">
+          <label for="lbvehicleType">Vehicle Type</label>
+          <input type="text" placeholder="Vehicle Type" [(ngModel)]="data.VehicleType " id="vehicleType"
+            name="vehicleType" class="form-control" required="1" maxlength="50" #vehicleType="ngModel">
+          <div *ngIf="isInvalid && !vehicleType.valid && vehicleType.errors.required">
+            <code>Vehicle Type is required</code>
+          </div>
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !vehicleType.valid && vehicleType.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label for="lbnoofvehicle">No. Of Vehicle</label>
+          <input type="text" placeholder="No. of Vehicle" [(ngModel)]="data.NoOfVehicle " id="noofvehicle"
+            name="noofvehicle" class="form-control" required="1" maxlength="50" #noofvehicle="ngModel">
+          <div *ngIf="isInvalid && !noofvehicle.valid && noofvehicle.errors.required">
+            <code>No. Of Vehicle is required</code>
+          </div>
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !noofvehicle.valid && noofvehicle.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbfixedCost">Fixed Cost</label>
+          <input type="number" placeholder="Fixed Cost" [(ngModel)]="data.FixedCost" id="fixedCost" name="fixedCost"
+            class="form-control selectType" required="1" maxlength="50" #fixedCost="ngModel">
+          <div class="col-md-12"></div>
+          <div *ngIf="isInvalid && !fixedCost.valid && fixedCost.errors.required">
+            <code>Fixed Cost is required</code>
+          </div>
+          <div *ngIf="isInvalid && !fixedCost.valid && fixedCost.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbextrakmCharge">Extra KM Charge</label>
+          <input type="number" placeholder="Extra KM Charge" [(ngModel)]="data.ExtraKmCharge" id="extrakmCharge"
+            name="extrakmCharge" class="form-control selectType" required="1" maxlength="50" #extrakmCharge="ngModel">
+          <div class="col-md-12"></div>
+          <div *ngIf="isInvalid && !extrakmCharge.valid && extrakmCharge.errors.required">
+            <code>Extra KM Charge is required</code>
+          </div>
+          <div *ngIf="isInvalid && !extrakmCharge.valid && extrakmCharge.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbextraHrCharge">Extra Hr Charge</label>
+          <input type="number" placeholder="Extra Hr Charge" [(ngModel)]="data.ExtraHrCharge " id="extraHrCharge"
+            name="extraHrCharge" class="form-control selectType" required="1" maxlength="50" #extraHrCharge="ngModel">
+          <div class="col-md-12"></div>
+          <div *ngIf="isInvalid && !extraHrCharge.valid && extraHrCharge.errors.required">
+            <code>Extra Hr Charge is required</code>
+          </div>
+          <div *ngIf="isInvalid && !extraHrCharge.valid && extraHrCharge.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbwaitingCharge">Waiting Charges/Per Hour</label>
+          <input type="number" placeholder="Waiting Time/HaultCharges" [(ngModel)]="data.WaitingCharge"
+            id="waitingCharge" name="waitingCharge" class="form-control selectType" required="1" maxlength="50"
+            #waitingCharge="ngModel">
+          <div class="col-md-12"></div>
+          <div *ngIf="isInvalid && !waitingCharge.valid && waitingCharge.errors.required">
+            <code>Waiting Time/HaultCharges is required</code>
+          </div>
+          <div *ngIf="isInvalid && !waitingCharge.valid && waitingCharge.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbvehicleCapcity">Vehicle Capacity(KGs)</label>
+
+
+          <select class="form-control" [(ngModel)]="data.VehicleCapacity" id="vehicleCapcity" name="vehicleCapcity"
+            required="1" #VehicleCapacity="ngModel" name="vehicleCapcity" class="form-control" required="1">
+
+            <option value="" disabled>--select--</option>
+            <option *ngFor="let threshold of thresholdkgList" [ngValue]="threshold.Id">
+              {{ threshold.ThresholdLoadInKg }}
+            </option>
+            <div class="col-md-4"></div>
+            <div *ngIf="isInvalid && !vehicleCapcity.valid && vehicleCapcity.errors.required">
+              <code>Vehicle Capacity(KGs) is required</code>
+            </div>
+            <div *ngIf="isInvalid && !vehicleCapcity.valid && vehicleCapcity.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </select>
+        </div>
+
+
+
+
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbmake">Make</label>
+            <input type="text" placeholder="Make" [(ngModel)]="data.Make " id="make" name="make"
+              class="form-control selectType" required="1" maxlength="50" #make="ngModel">
+            <div *ngIf="isInvalid && !make.valid && make.errors.required">
+              <code>Make is required</code>
+            </div>
+            <div *ngIf="isInvalid && !make.valid && make.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbnon_workingDayamt">Non Working Day Amount</label>
+            <input type="number" placeholder="Non Working Day Amount" [(ngModel)]="data.NonworkingDayAmt"
+              id="lbnon_workingDayamt" name="lbnon_workingDayamt" class="form-control selectType" required="1"
+              maxlength="50" #lbnon_workingDayamt="ngModel">
+            <div class="col-md-4"></div>
+            <div *ngIf="isInvalid && !lbnon_workingDayamt.valid && lbnon_workingDayamt.errors.required">
+              <code>Non Working Day Amount is required</code>
+            </div>
+            <div *ngIf="isInvalid && !lbnon_workingDayamt.valid && lbnon_workingDayamt.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbdistance">Km Contract</label>
+          <input type="number" placeholder="Distance Contract(KM)" [(ngModel)]="data.DistanceContract" id="distance"
+            name="distance" class="form-control" required="1" maxlength="50" #distance="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !distance.valid && distance.errors.required">
+            <code>Distance Contract is required</code>
+          </div>
+          <div *ngIf="isInvalid && !distance.valid && distance.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbdays">Days Contract</label>
+          <input type="number" placeholder="Days Contract" [(ngModel)]="data.DaysContract " id="days" name="days"
+            class="form-control" required="1" maxlength="50" #days="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !days.valid && days.errors.required">
+            <code>Days Contract is required</code>
+          </div>
+          <div *ngIf="isInvalid && !days.valid && days.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbtimeContract"> Contract Per Day in time
+            <span style=" text-transform: lowercase;">(hr)</span></label>
+          <input type="number" placeholder="Contract(hr)" [(ngModel)]="data.HrContract" id="timeContract"
+            name="timeContract" class="form-control" required="1" maxlength="50" #timeContract="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !timeContract.valid && timeContract.errors.required">
+            <code>Contract is required</code>
+          </div>
+          <div *ngIf="isInvalid && !timeContract.valid && timeContract.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <!-- <div class="p-3">
+                    <button type="button" class="btn btn-raised btn-primary" (click)="addFleetVehicleType(vehilclefleetForm)" style="margin-top: 5px;" >
+                        Save 
+                      </button>
+                      <button type="button" class="btn btn-raised btn-primary" (click)="isOpen = false;" style="margin-top: 5px;margin-left: 10px;" >
+                        Cancel 
+                      </button>
+                </div> -->
+      </div>
+    </form>
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary" (click)="addFleetVehicleType(vehilclefleetForm,data)">
+        Save
+      </button>
+      <button type="button" pButton (click)="isEdit=false;showTable=true;" label="Close"></button>
+    </p-footer>
+  </p-dialog>
+</div>
+
+<div *ngIf="!isEdit">
+  <p-dialog [(visible)]="isOpen" positionTop="100" [style]="{width: '90vw',height: '70%'}" appendTo="body">
+
+    <p-header>
+      Fleet Details
+    </p-header>
+
+    <form class="form " name="fform" #vehilclefleetForm="ngForm">
+      <div class="row">
+        <div class="col-md-3">
+          <label for="lbvehicleType">Vehicle Type</label>
+          <input type="text" placeholder="Vehicle Type" [(ngModel)]="data.VehicleType " id="vehicleType"
+            name="vehicleType" class="form-control" required="1" maxlength="50" #vehicleType="ngModel">
+          <div *ngIf="isInvalid && !vehicleType.valid && vehicleType.errors.required">
+            <code>Vehicle Type is required</code>
+          </div>
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !vehicleType.valid && vehicleType.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label for="lbnoofvehicle">No. Of Vehicle</label>
+          <input type="text" placeholder="No. of Vehicle" [(ngModel)]="data.NoOfVehicle " id="noofvehicle"
+            name="noofvehicle" class="form-control" required="1" maxlength="50" #noofvehicle="ngModel">
+          <div *ngIf="isInvalid && !noofvehicle.valid && noofvehicle.errors.required">
+            <code>No. Of Vehicle is required</code>
+          </div>
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !noofvehicle.valid && noofvehicle.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbfixedCost">Fixed Cost</label>
+          <input type="number" placeholder="Fixed Cost" [(ngModel)]="data.FixedCost" id="fixedCost" name="fixedCost"
+            class="form-control selectType" required="1" maxlength="50" #fixedCost="ngModel">
+          <div class="col-md-12"></div>
+          <div *ngIf="isInvalid && !fixedCost.valid && fixedCost.errors.required">
+            <code>Fixed Cost is required</code>
+          </div>
+          <div *ngIf="isInvalid && !fixedCost.valid && fixedCost.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbextrakmCharge">Extra KM Charge</label>
+          <input type="number" placeholder="Extra KM Charge" [(ngModel)]="data.ExtraKmCharge" id="extrakmCharge"
+            name="extrakmCharge" class="form-control selectType" required="1" maxlength="50" #extrakmCharge="ngModel">
+          <div class="col-md-12"></div>
+          <div *ngIf="isInvalid && !extrakmCharge.valid && extrakmCharge.errors.required">
+            <code>Extra KM Charge is required</code>
+          </div>
+          <div *ngIf="isInvalid && !extrakmCharge.valid && extrakmCharge.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbextraHrCharge">Extra Hr Charge</label>
+          <input type="number" placeholder="Extra Hr Charge" [(ngModel)]="data.ExtraHrCharge " id="extraHrCharge"
+            name="extraHrCharge" class="form-control selectType" required="1" maxlength="50" #extraHrCharge="ngModel">
+          <div class="col-md-12"></div>
+          <div *ngIf="isInvalid && !extraHrCharge.valid && extraHrCharge.errors.required">
+            <code>Extra Hr Charge is required</code>
+          </div>
+          <div *ngIf="isInvalid && !extraHrCharge.valid && extraHrCharge.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbwaitingCharge">Waiting Charges/Per Hour</label>
+          <input type="number" placeholder="Waiting Time/HaultCharges" [(ngModel)]="data.WaitingCharge"
+            id="waitingCharge" name="waitingCharge" class="form-control selectType" required="1" maxlength="50"
+            #waitingCharge="ngModel">
+          <div class="col-md-12"></div>
+          <div *ngIf="isInvalid && !waitingCharge.valid && waitingCharge.errors.required">
+            <code>Waiting Time/HaultCharges is required</code>
+          </div>
+          <div *ngIf="isInvalid && !waitingCharge.valid && waitingCharge.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbvehicleCapcity">Vehicle Capacity(KGs)</label>
+
+          <select class="form-control" [(ngModel)]="data.VehicleCapacity" id="vehicleCapcity" name="vehicleCapcity"
+            required="1" #VehicleCapacity="ngModel" name="vehicleCapcity" class="form-control" required="1">
+
+            <option value="" disabled>--select--</option>
+            <option *ngFor="let threshold of thresholdkgList" [ngValue]="threshold.Id">
+              {{ threshold.ThresholdLoadInKg }}
+            </option>
+            <div class="col-md-4"></div>
+            <!--  <div *ngIf="isInvalid && !vehicleCapcity.valid && vehicleCapcity.errors.required">
+                <code>Vehicle Capacity(KGs) is required</code>
+              </div> -->
+            <!-- <div *ngIf="isInvalid && !vehicleCapcity.valid && vehicleCapcity.errors.minlength">
+                <code>Minlength 4</code>
+              </div> -->
+          </select>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbmake">Make</label>
+            <input type="text" placeholder="Make" [(ngModel)]="data.Make " id="make" name="make"
+              class="form-control selectType" required="1" maxlength="50" #make="ngModel">
+            <div *ngIf="isInvalid && !make.valid && make.errors.required">
+              <code>Make is required</code>
+            </div>
+            <div *ngIf="isInvalid && !make.valid && make.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="lbnon_workingDayamt">Non Working Day Amount</label>
+            <input type="number" placeholder="Non Working Day Amount" [(ngModel)]="data.NonworkingDayAmt"
+              id="lbnon_workingDayamt" name="lbnon_workingDayamt" class="form-control selectType" required="1"
+              maxlength="50" #lbnon_workingDayamt="ngModel">
+            <div class="col-md-4"></div>
+            <div *ngIf="isInvalid && !lbnon_workingDayamt.valid && lbnon_workingDayamt.errors.required">
+              <code>Non Working Day Amount is required</code>
+            </div>
+            <div *ngIf="isInvalid && !lbnon_workingDayamt.valid && lbnon_workingDayamt.errors.minlength">
+              <code>Minlength 4</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbdistance">Km Contract</label>
+          <input type="number" placeholder="Distance Contract(KM)" [(ngModel)]="data.DistanceContract" id="distance"
+            name="distance" class="form-control" required="1" maxlength="50" #distance="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !distance.valid && distance.errors.required">
+            <code>Distance Contract is required</code>
+          </div>
+          <div *ngIf="isInvalid && !distance.valid && distance.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbdays">Days Contract</label>
+          <input type="number" placeholder="Days Contract" [(ngModel)]="data.DaysContract " id="days" name="days"
+            class="form-control" required="1" maxlength="50" #days="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !days.valid && days.errors.required">
+            <code>Days Contract is required</code>
+          </div>
+          <div *ngIf="isInvalid && !days.valid && days.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+          <label for="lbtimeContract"> Contract Per Day in time
+            <span style=" text-transform: lowercase;">(hr)</span></label>
+          <input type="number" placeholder="Contract(hr)" [(ngModel)]="data.HrContract" id="timeContract"
+            name="timeContract" class="form-control" required="1" maxlength="50" #timeContract="ngModel">
+          <div class="col-md-4"></div>
+          <div *ngIf="isInvalid && !timeContract.valid && timeContract.errors.required">
+            <code>Contract is required</code>
+          </div>
+          <div *ngIf="isInvalid && !timeContract.valid && timeContract.errors.minlength">
+            <code>Minlength 4</code>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+    <div class="row">
+      <div class="col-"></div>
+      <div class="col-1">
+        <button type="button" class="btn btn-raised btn-primary" (click)="saveFleetVehicleType(vehilclefleetForm,data)">
+          Save
+        </button>
+      </div>
+      <div class="col-1">
+        <button type="button" pButton (click)="isOpen=false;" label="Close"></button>
+      </div>
+    </div>
+  </p-dialog>
+</div>
+<!-- end -->
+
+<!-- popup for accountdetails -->
+<div *ngIf="isAccountEdit">
+  <p-dialog [(visible)]="isAccountEdit" positionTop="100" [style]="{width: '90vw',height: '70%'}" appendTo="body"
+    [draggable]="false">
+    <p-header>
+      EDIT - Fleet Account Details
+    </p-header>
+
+    <form class="form " name="fform" #accountdetail="ngForm">
+
+
+      <div class="row">
+        <div class="col-6">
+          <label> <b>Account Holder Name </b></label>
+          <input type="text" [(ngModel)]="data.fleetMasterAccountDetailDc[0].HolderName" #HolderName="ngModel" pattern="^[a-zA-Z\s]*$"
+            id="HolderName" name="HolderName" style="width:50% ;" class="form-control">
+          <div *ngIf="isaccountInvalid && HolderName.errors.required">
+            <code>Account Holder Name is required</code>
+          </div>
+        </div>
+        <div class="col-6">
+          <label> <b>Account No </b></label>
+          <input type="number" [(ngModel)]="data.fleetMasterAccountDetailDc[0].AccountNo" #AccountNo="ngModel"
+            id="AccountNo" style="width:50% ;" name="AccountNo" class="form-control">
+          <div *ngIf="isaccountInvalid  && AccountNo.errors.required ">
+            <code>Account No is required</code>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <label> <b>IFSC code </b></label>
+          <input type="text" [(ngModel)]="data.fleetMasterAccountDetailDc[0].IFSCcode" #IFSCcode="ngModel" id="IFSCcode"
+            style="width:50% ;" name="IFSCcode" class="form-control">
+          <div *ngIf="isaccountInvalid  && IFSCcode.errors.required">
+            <code>IFSC code is required</code>
+          </div>
+        </div>
+
+        <div class="col-6">
+
+          <label> <b>Bank Name </b></label>
+          <input type="text" [(ngModel)]="data.fleetMasterAccountDetailDc[0].BankName" #BankName="ngModel" id="BankName" pattern="^[a-zA-Z\s]*$"
+            style="width:50% ;" name="BankName" class="form-control">
+          <div *ngIf="isaccountInvalid   && BankName.errors.required">
+            <code>Bank Name code is required</code>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <!-- isaccountInvalid   {{isaccountInvalid}} BranchName.errors.required {{BranchName.errors.required}} -->
+          <label> <b>Branch Name </b></label>
+          <input type="text" [(ngModel)]="data.fleetMasterAccountDetailDc[0].BranchName" #BranchName="ngModel" 
+            id="BranchName" style="width:50% ;" name="BranchName" class="form-control">
+          <!-- <div *ngIf="isaccountInvalid  && BranchName.errors.required">
+            <code>Bank Name code is required</code> -->
+          <!-- </div> -->
+        </div>
+        <div class="col-6">
+
+          <label><b>Cheque Image*</b> </label><br>
+          <input class="btn btn-raised btn-info" #myInput1 id="myInput1" type="file" accept="image/*" required="1"
+            (change)="uploadCancelCheque($event.target.files)" />
+
+          <div class="form-group" (click)="openImage(data.fleetMasterAccountDetailDc[0].CancelledChequePath)">
+            <img *ngIf="data.fleetMasterAccountDetailDc[0].CancelledChequePath"
+              src="{{baseURL}}{{data.fleetMasterAccountDetailDc[0].CancelledChequePath}}" height="100px" width="100px">
+          </div>
+
+        </div>
+
+      </div>
+      <br>
+    </form>
+    <p-footer>
+      <div class="row">
+        <div class="col-8"></div>
+        <div class="col-2">
+          <button type="button" class="btn btn-raised btn-primary" (click)="savefleetAccountDetails(accountdetail)">
+            Save
+          </button>
+        </div>
+        <div class="col-1">
+
+          <button type="button" pButton (click)="onAccountEditclose()" label="Close"></button>
+        </div>
+      </div>
+    </p-footer>
+
+  </p-dialog>
+</div>
+
+<div *ngIf="isAccountAdd">
+  <p-dialog [(visible)]="isAccountAdd" positionTop="100" [style]="{width: '90vw',height: '70%'}" appendTo="body"
+    [draggable]="false">
+    <p-header>
+      Add - Fleet Account Details
+      <!-- {{isEdit}}edit -->
+    </p-header>
+    <form class="form " name="fform" #accountdetail="ngForm">
+
+
+      <div class="row">
+        <div class="col-6">
+          <label> <b>Account Holder Name </b></label>
+          <input type="text" [(ngModel)]="data.fleetMasterAccountDetailDc[0].HolderName" #HolderName="ngModel" (keypress)="letterOnly($event)"
+            id="HolderName" name="HolderName" style="width:50% ;" class="form-control">
+          <div *ngIf="isaccountInvalid && HolderName.errors.required ">
+            <code>Account Holder Name is required</code>
+          </div>
+        </div>
+        <div class="col-6">
+          <label> <b>Account No </b></label>
+          <input type="number" [(ngModel)]="data.fleetMasterAccountDetailDc[0].AccountNo" #AccountNo="ngModel"
+            id="AccountNo" style="width:50% ;" name="AccountNo" class="form-control">
+          <div *ngIf="isaccountInvalid  && AccountNo.errors.required ">
+            <code>Account No is required</code>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <label> <b>IFSC code </b></label>
+          <input type="text" [(ngModel)]="data.fleetMasterAccountDetailDc[0].IFSCcode" #IFSCcode="ngModel" id="IFSCcode"
+            style="width:50% ;" name="IFSCcode" class="form-control">
+          <div *ngIf="isaccountInvalid  && IFSCcode.errors.required ">
+            <code>IFSC code is required</code>
+          </div>
+        </div>
+
+        <div class="col-6">
+
+          <label> <b>Bank Name </b></label>
+          <input type="text" [(ngModel)]="data.fleetMasterAccountDetailDc[0].BankName" #BankName="ngModel" id="BankName" (keypress)="letterOnly($event)"
+            style="width:50% ;" name="BankName" class="form-control ">
+          <div *ngIf="isaccountInvalid  && BankName.errors.required ">
+            <code>Bank Name code is required</code>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="row">
+        <div class="col-6">
+
+          <label> <b>Branch Name </b></label>
+          <input type="text" [(ngModel)]="data.fleetMasterAccountDetailDc[0].BranchName" #BranchName="ngModel"
+            id="BranchName" style="width:50% ;" name="BranchName" class="form-control">
+          <div *ngIf="isaccountInvalid  && BranchName.errors.required">
+            <code>Bank Name code is required</code>
+          </div>
+        </div>
+
+        <div class="col-6">
+
+          <label><b>Cheque Image*</b> </label><br>
+          <input class="btn btn-raised btn-info" #myInput1 id="myInput1" type="file" accept="image/*" required="1"
+            (change)="uploadCancelCheque($event.target.files)" />
+  
+          <div class="form-group" (click)="openImage(data.fleetMasterAccountDetailDc[0].CancelledChequePath)">
+            <img *ngIf="data.fleetMasterAccountDetailDc[0].CancelledChequePath"
+              src="{{baseURL}}{{data.fleetMasterAccountDetailDc[0].CancelledChequePath}}" height="100px" width="100px">
+          </div>
+  
+        </div>
+      </div>
+      
+      <br>
+    </form>
+
+    <p-footer>
+      <div class="row">
+        <div class="col-8"></div>
+        <div class="col-2">
+          <!-- <button type="button" class="btn btn-raised btn-primary"
+              (click)="addAccount(accountdetail)">
+              add
+            </button> -->
+          <button type="button" class="btn btn-raised btn-primary" (click)="savefleetAccountDetails(accountdetail)">
+            save
+          </button>
+        </div>
+        <div class="col-1">
+
+          <button type="button" pButton (click)="isAccountAdd=false" label="Close"></button>
+        </div>
+      </div>
+    </p-footer>
+
+  </p-dialog>
+</div>
+<!-- end -->

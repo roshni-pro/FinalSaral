@@ -1,0 +1,60 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<section id="City">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2"><b>Membership Page</b></h3>
+        </div>
+        <div>
+            <button type="button" class="btn btn-raised btn-primary float-right align-self-end"
+                style="margin-bottom: 0;" (click)="addMembership()"> Add Membership
+            </button>
+        </div>
+    </div>
+
+    <div class="ui-fluid shadow p-3 mb-2 mt-4 bg-white rounded table table-hover min-height-80">
+        <div class="position-relative">
+            <div class="position-relative ">
+                <p-table #dt [value]="MemberShipList" [paginator]="true" [rows]="20" 
+                    [scrollable]="true" scrollHeight="70vh" text-align: center>
+                    <!-- <ng-template pTemplate="caption">
+                <div style="text-align: right">
+                  <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                  <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                </div>
+              </ng-template>  -->
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="text-align: center">MemberShipName</th>
+                  <th style="text-align: center">Amount</th>
+                  <th style="text-align: center">MemberShip In Month</th>
+                  <th style="text-align: center">CreatedDate</th>
+                  <th style="text-align: center">MemberShip Logo</th>
+                  <th style="text-align: center">Actions</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                <tr>
+                  <td style="text-align: center">{{rowData.MemberShipName}}</td>
+                  <td style="text-align: center">{{rowData.Amount}}</td>
+                  <td style="text-align: center">{{rowData.MemberShipInMonth}}</td>
+                  <td style="text-align: center">{{rowData.CreatedDate | date}}</td>
+                  <td style="text-align: center">
+                    <img *ngIf="rowData.MemberShipLogo" src="{{rowData.MemberShipLogo}}"
+                    style="height: 75px;width: 75px;" class="wcr">
+                </td>
+                  <td style="text-align: center">
+                    <button style="color: #009DA0" class="btn" (click)="Edit(rowData)">Edit</button>
+                  </td>
+                </tr>
+              </ng-template>
+
+                </p-table>
+            </div>
+        </div>
+    </div>
+</section>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

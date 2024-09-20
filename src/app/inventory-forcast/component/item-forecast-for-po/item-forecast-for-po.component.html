@@ -1,0 +1,868 @@
+<div *ngIf="inventoryForecastingExecutive || inventoryForecastingSeniorExecutive || hqMasterRole || fulFillmentRequest || hubExecutiveRole || hubPurAssRole || regionPurLeadRole">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="headerName">
+            <h3 class="m-2">Item Fulfilment</h3>
+        </div>
+    </div>  
+    <div class="container-fluid mob">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow p-2">
+                    <div class="row">
+                        <div class="row m-2">
+                            <div class="col-lg-3 col-md-4">
+                                <label for="ware" class="col-md-12"><b>Warehouse: <code>*</code></b></label>
+                                <p-dropdown [options]="masterwarehouseList" name="warehouseInput" placeholder="Select Warehouse"
+                                    [(ngModel)]="selectedwarehouse" id="ware" [panelStyle]="{minWidth:'25em'}"
+                                    optionLabel="WarehouseName" [filter]="true" (onClick)="getWHId()">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-lg-3 col-md-4">
+                                <label for="Category" class="col-md-8"><b>Category: <code>*</code></b></label>
+                                <p-multiSelect id="Category" name="Category" [options]="CategoryList"
+                                    [(ngModel)]="selectedCatregory" [panelStyle]="{minWidth:'25em'}"
+                                    (onClick)="getSubCatList(selectedCatregory)" optionLabel="CategoryName">
+                                </p-multiSelect>
+                            </div>
+                            <div class="col-lg-3 col-md-4">
+                                <label for="SubCategoryName" class="col-md-6" style="white-space: nowrap;"><b>Sub
+                                        Category: <code>*</code></b></label>
+                                <p-multiSelect id="SubCategoryName" name="SubCategoryName" [options]="subCatList"
+                                    [(ngModel)]="selectedSubCat" (onClick)="getBrandsnew(selectedCatregory,selectedSubCat)"
+                                    [panelStyle]="{minWidth:'25em'}" optionLabel="SubCategoryName">
+                                </p-multiSelect>
+                            </div>
+                            <div class="col-lg-3 col-md-4">
+                                <label for="Brand" class="col-md-6"
+                                    style="white-space: nowrap;"><b>SubSubCategory/Brand: <code>*</code></b></label>
+                                <p-multiSelect id="Brand" name="Brand" [options]="brandList"
+                                    [(ngModel)]="selectedSubsubCatregory" [panelStyle]="{minWidth:'25em'}"
+                                    optionLabel="BrandName">
+                                </p-multiSelect>
+                            </div>
+                            <div class="col-lg-3 col-md-4 mt-2">
+                                <label for="type" class="col-md-6" 
+                                style="white-space: nowrap;"><b>Type : <code>*</code></b></label>
+                                <p-dropdown [options]="poType" name="poName" placeholder="Select Type"
+                                    [(ngModel)]="selectedCmt" [panelStyle]="{minWidth:'25em'}"
+                                    optionLabel="poName">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-lg-3 col-md-4 mt-2">
+                                <label for="search" class="col-md-6" 
+                                style="white-space: nowrap;"><b>Search </b></label>
+                                <input type="text" [(ngModel)]="searchKeyword" class="form-control" placeholder="Search Item Name / Multi MRP Id">
+                            </div>
+                            <div class="col-lg-3 col-md-3 mt-2">
+                                <label></label><br>
+                                <button type="button" class="btn btn-primary mt-1" (click)="GetItemForeCastForPO()"> 
+                                    Show Eligible Products for Auto PO </button>
+                            </div>
+                            <div class="col-lg-3 col-md-1 mt-4 text-right">
+                                <button class="btn btn-primary mt-1" style="background-color: rgb(124, 42, 134) !important;
+                                border-color: rgb(124, 42, 134) !important;" (click)="viewDraft()" *ngIf="savedDraftCountData>0">View Draft ({{savedDraftCountData}})</button>
+                                <button *ngIf="exportBtn" class="btn btn-primary mt-1 ml-2" style="background-color: green !important;
+                                border-color: green !important;" (click)="exportDownload()">Export</button>
+                                <!-- loader btn start -->
+                                <button *ngIf="exportLoaderBtn" class="btn btn-primary mt-1 ml-2" type="button" 
+                                style="width: 18%;background-color: green !important;border-color: green !important;">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    <span class="sr-only">Loading...</span>
+                                  </button>
+                                <!-- loader btn end -->
+                                <!-- <button class="btn btn-primary mt-1 ml-2" style="background-color: #f0532d !important;
+                                border-color: #f0532d !important;" (click)="showBulkPr()" [disabled]="!btnEnableForPr" *ngIf="(hubExecutiveRole !=hubExecutiveRole)  || (hubPurAssRole != hubPurAssRole) || (regionPurLeadRole  != regionPurLeadRole) || hqMasterRole || inventoryForecastingSeniorExecutive">Create Bulk PR</button>     -->
+                            </div>
+
+                            <!-- <div class="col-lg-3 col-md-2 m-2">
+                                <label></label><br>
+                                <button type="button" class="btn btn-primary" (click)="Save()"> Save </button>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow p-2">
+                    <div class="row">
+                        <div class="col-12">
+                            <p-dataView #dv filterBy="ItemName" [value]="details" [paginator]="true" [rows]="10" layout="list" [lazy]="true"
+                                (onLazyLoad)="loadData($event)" [totalRecords]="totalRecords" [loading]="loading"
+                                [first]="first" >
+                                <p-header>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <p style="font-size: 22px;margin-top: 7px;">List View</p>
+                                        </div>
+                                        <!-- <div class="col-md-9" style="text-align: right">        
+                                            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                                            <input type="text" pInputText size="50" placeholder="Search" style="width:auto;padding: 10px 15px !important" (input)="dv.filter($event.target.value)">
+                                        </div> -->
+                                    </div>
+                                </p-header>
+                                <ng-template let-product pTemplate="listItem">
+                                    <div class="card shadow">
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <div class="col-md-7 pl-0">
+                                                    <ng-container *ngIf="product.PrDate != null">
+                                                        <p class="headerDesign">PR Sent on {{product.PrDate | date:'dd MMM yyyy HH:mm:ss a'}}</p>
+                                                    </ng-container>
+                                                 </div>
+                                                <div class="col-md-2" *ngIf="(hubExecutiveRole !=hubExecutiveRole)  || (hubPurAssRole != hubPurAssRole) || (regionPurLeadRole  != regionPurLeadRole) || hqMasterRole || inventoryForecastingSeniorExecutive">
+                                                    <p-dropdown [options]="cmtType" placeholder="Please Select Comment"
+                                                        [(ngModel)]="product.Comments" optionLabel="name">
+                                                    </p-dropdown>
+                                                    
+                                                </div>
+                                                <div class="col-md-3 text-right">
+                                                    <span *ngIf="(hubExecutiveRole !=hubExecutiveRole)  || (hubPurAssRole != hubPurAssRole) || (regionPurLeadRole  != regionPurLeadRole) || hqMasterRole || inventoryForecastingSeniorExecutive">
+                                                        <button class="btn btn-primary" type="button" style="background-color: green !important; border-radius: 21px;
+                                                    border-color: white !important;" (click)="cmtSaveForPo(product)">Save</button>
+                                                    </span>
+                                                    <ng-container *ngIf="product.RequiredQty > 0 else otherChk">
+                                                        <button class="btn btn-primary ml-1" type="button"
+                                                        (click)="processDialog(product)" style="background-color: #0940cf !important; border-radius: 21px;
+                                                        border-color: white !important;" [disabled]="product.checked == true" *ngIf="(hubExecutiveRole !=hubExecutiveRole)  || (hubPurAssRole != hubPurAssRole) || (regionPurLeadRole  != regionPurLeadRole) || hqMasterRole || inventoryForecastingSeniorExecutive">Fulfillment</button>
+                                                    </ng-container>
+                                                    <ng-template #otherChk>
+                                                        <ng-container *ngIf="product.RequiredQty == 0">
+                                                            <span class="pi pi-info-circle ml-1" pTooltip="Allowed Quantity is 0" tooltipPosition="top" style="font-size: 40px;
+                                                        color: blue;"></span>
+                                                        </ng-container>
+                                                    </ng-template>
+                                                </div>
+                                                <!-- <div class="col-md-1" *ngIf="(hubExecutiveRole !=hubExecutiveRole)  || (hubPurAssRole != hubPurAssRole) || (regionPurLeadRole  != regionPurLeadRole) || hqMasterRole || inventoryForecastingSeniorExecutive">
+                                                    
+                                                </div> -->
+                                                <!-- <div class="col-md-1" >
+                                                    
+                                                   
+                                                </div> -->
+                                                <!-- <div class="col-md-1" >
+                                                    
+                                                        
+                                                </div> -->
+                                                
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-8 pl-0">
+                                                    <h4>  <p-checkbox [(ngModel)]="product.checked" [binary]="true"
+                                                        (onChange)="onRowClick(product)" *ngIf="(((hubExecutiveRole !=hubExecutiveRole)  || (hubPurAssRole != hubPurAssRole) || (regionPurLeadRole  != regionPurLeadRole) || hqMasterRole || inventoryForecastingSeniorExecutive) && (product.RequiredQty != 0))"></p-checkbox>
+                                                        <b class="ml-2">Item Name :</b> <strong style="color:#2097ff;">
+                                                            {{product.ItemName}}</strong></h4>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class=" col-3">
+                                                    <div class="row">
+                                                        <label> <b>HUB :</b> {{product.WarehouseName}}</label>
+                                                    </div>
+                                                    <div class="row" *ngIf="product.Tag>0">
+                                                        <label style="color: red;"> <b>ROC :</b> {{product.Tag}}</label>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label> <b>MRP ID :</b>
+                                                            {{product.ItemMultiMrpId}}</label>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label> <b>MRP :</b> &#8377; <strong
+                                                                style="color:#008500;">{{product.MRP}}</strong> </label>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <label> <b>Average Purchase Price:</b>
+                                                            {{product.AveragePurchasePrice}}</label>
+                                                    </div>
+
+                                                    <!-- <div class="row">
+                                                    <label> <b>Other Warehouse :</b> {{product.otherWhStock}}</label>
+                                                                                </div> -->
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="row">
+                                                        <label> <b>Current Stock :</b> {{product.CurrentStock}}</label>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label> <b>Allowed Quantity :</b> {{product.RequiredQty}}</label>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label> <b>Demand :</b> {{product.YesterdayDemand}}</label>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label> <b>CNS Qty :</b> {{product.NetStock}}</label>
+                                                    </div>
+                                                    <div class="row">
+                                                        <label> <b>Open PO Qty :</b> {{product.OPenQty}}</label>                             
+                                                    </div>
+                                                    <div class="row" *ngIf="product.OPenQty >0">
+                                                        <button  class="btn btn-primary" (click)="GETPOIDforOpenQty(product)" >GetOrderIDs</button>                              
+                                                    </div>  
+                                                </div>
+                                                <div class="col-5">
+                                                    <div class="row">
+                                                        <label> <b>Other Warehouse :</b></label>
+                                                    </div>
+
+                                                    <span *ngIf="product.OtherWarehouseDetails[0].OtherWarehouseId>0">
+                                                        <span class="row"
+                                                            *ngFor="let items of product.OtherWarehouseDetails">
+                                                            <b>{{items.OtherWarehouseName}}</b>&nbsp;-&nbsp;
+                                                            <label> <b>Current Stock
+                                                                    :</b> {{items.OtherWhStock}}</label> /
+                                                            <label><b>Current Net Stock :</b>
+                                                                {{items.OtherWhDemand}}</label>/
+                                                            <label><b>Allowed Qty :</b>
+                                                                {{items.otherWhReqQty}}</label>
+                                                        </span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-dataView>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    
+
+<p-dialog [(visible)]="ShowGETID" header="OpenPOQty" [draggable]="false" [style]="{ width: '50%'}" [modal]="true" appendTo="body">
+    <p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+    <div class="p-card d-flex">
+        <p-tabView> 
+            <p-tabPanel header="InternalIDs">
+                <p-table [value]="InternalIDs"[paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="65vh">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>TransferOrderId</th>
+                            <th>OpenQty</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr class="classForHoverEffect">
+                            <td>{{rowData.TransferOrderId}}</td>
+                            <td>{{rowData.Qty}}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                          <td colspan="10" style="text-align: center;">
+                            <br>
+                            <h3><b>No Data Found.</b></h3>
+                          </td>
+                        </tr>
+                    </ng-template>
+                </p-table>     
+            </p-tabPanel>        
+            <p-tabPanel header="PurchaseOrderIDs">
+                <p-table [value]="POIDs"  [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="65vh">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>PurchaseOrderId</th>
+                            <th>OpenQTy</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                        <tr class="classForHoverEffect">
+                            <td>{{rowData.PurchaseOrderId}}</td>
+                            <td>{{rowData.OpenPOQTy}}</td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage" let-columns>
+                        <tr>
+                          <td colspan="10" style="text-align: center;">
+                            <br>
+                            <h3><b>No Data Found.</b></h3>
+                          </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-tabPanel>
+        </p-tabView> 
+        <!-- <p-table [value]="InternalIDs"   [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="65vh">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>TransferOrderId</th>
+                    <th>OpenQty</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr class="classForHoverEffect">
+                    <td>{{rowData.TransferOrderId}}</td>
+                    <td>{{rowData.Qty}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-table [value]="POIDs"  [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="65vh">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>PurchaseOrderId</th>
+                    <th>OpenQTy</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr class="classForHoverEffect">
+                    <td>{{rowData.PurchaseOrderId}}</td>
+                    <td>{{rowData.OpenPOQTy}}</td>
+                </tr>
+            </ng-template>
+        </p-table> -->
+    </div>
+</p-dialog>
+
+
+
+
+<p-dialog [(visible)]="processDialogVar" header="Fulfillment" [modal]="true" appendTo="body"
+[style]="{'height':'100vh','width':'100vw', 'max-height':'auto','overflow':'auto'}" [draggable]="false" >
+
+    <div class="container-fluid">
+        <div class=" row mt-1 p-2">
+            <div class="col-12">
+                <h4> <b>Item Name :</b> <strong style="color:#2097ff;">
+                        {{dialogData.ItemName}}</strong>
+                </h4>
+            </div>
+            <div class="col-3 mt-3">
+                <input name="options" id="PurchaseRequest" ng-control="options" type="radio" [value]='1'
+                    [(ngModel)]="Fulfillment" (click)="poclearDialog(dialogData)">&nbsp;
+                <label for="PurchaseRequest" >Purchase
+                    Request</label>
+            </div>
+            <div class="col-3 mt-3">
+                <input name="options" id="InernalTransfer" ng-control="options" type="radio" [value]='2'
+                    [(ngModel)]="Fulfillment" (click)="clearDialog()">&nbsp;
+                <label for="InernalTransfer" >Internal
+                    Transfer</label>
+            </div>
+            <div class="col-3 mt-3">
+                <input name="options" id="InventoryForecastInternalTransfer" ng-control="options" type="radio" [value]='3'
+                    [(ngModel)]="Fulfillment" (click)="clearDialog()">&nbsp;
+                <label for="InventoryForecastInternalTransfer" >Inventory Forecast Internal Transfer
+                    </label>
+            </div>
+        </div>
+
+
+        <div class="row p-2 mt-1" *ngIf="Fulfillment == 1 && poshown" >
+            <div class="col-12">
+                <hr>
+            </div>
+            <div class="col-md-4 col-12 mt-1">
+                <label> <b><span style="color: red;">*</span>Picker Type :</b></label><br>
+                <p-dropdown [options]="pickerType" placeholder="Select Picker" optionLabel="pickerName"
+                    [(ngModel)]="selectedPicker">
+                </p-dropdown>
+            </div>
+            <div class="col-md-4 col-12 mt-1">
+                <label> <b><span style="color: red;">*</span>ETA Date :</b></label><br>
+                <p-calendar placeholder="Select Date" [(ngModel)]="selectedDate" [minDate]="minDateValue"></p-calendar>
+            </div>
+            <div class="col-md-2 col-12 mt-1">
+                <label> <b><span style="color: red;">*</span>Supplier :</b> </label><br>
+                <p-dropdown [options]="supplierList" [(ngModel)]="selectedSupplier" optionLabel="SupplierName"
+                    placeholder="Select Supplier" (onChange)="getDepoList(selectedSupplier)" filter="true">
+                </p-dropdown>
+            </div>
+            <div class="col-md-2 col-12  mt-1">
+                <label> <b><span style="color: red;">*</span>PO Expiry Date :</b> </label><br>
+                <input pInputText [disabled]="true" [(ngModel)]="ExpiryDate">
+            </div>
+
+            <div class="col-md-2 col-12 mt-2 text-center" *ngIf="showcheckBoXSupplier">
+                <p-checkbox  [(ngModel)]="isSuplier" [binary]="true" value="val1"></p-checkbox>
+                <label style="margin-top: 29px;margin-left: 11px;">Direct Supplier</label>
+            </div>
+            <div class="col-md-4 col-12 mt-1">
+                <label> <b><span style="color: red;">*</span>Depo :</b> </label><br>
+                <p-dropdown [options]="depoList" [(ngModel)]="selectedDepo" optionLabel="DepoName"
+                    placeholder="Select Depo">
+                </p-dropdown>
+                <span *ngIf="depoNameBoolean"><b style="color: red;"><strong>Note:</strong> Depo Name Not
+                        Null</b></span>
+            </div>
+            <div class="col-md-4 col-12 mt-1">
+                <label> <b><span style="color: red;">*</span>PR Type :</b> </label><br>
+                <p-dropdown [options]="PRType" [(ngModel)]="selectedPRPaymentType" optionLabel="label"
+                    placeholder="Select PR">
+                </p-dropdown>
+            </div>
+            <!-- <div class="col-md-4 mt-1">
+                <label> <b>Average Purchase Price :</b></label><br>
+                <label><b> {{dialogData.AveragePurchasePrice}} </b></label>
+            </div> -->
+            <!-- <div class="col-md-4 mt-1">
+                <label> <b><span style="color: red;">*</span>Buyer Price :</b></label><br>
+                <input type="text" class="form-control" [(ngModel)]="selectedBuyerPrice" (keyup)="buyingPriceKeyPress()"
+                    appTwoDigitDecimaNumber>
+                <span *ngIf="buyingVal"><b style="color: red;"><strong>Note:</strong> Buying Price Should be less than
+                        MRP Price</b></span>
+                <span *ngIf="buyingValNotZero"><b style="color: red;"><strong>Note:</strong> Buying Price Should be More
+                        than 0 price</b></span>
+            </div> -->
+            <!-- <div class="col-md-4 mt-1">
+                <label> <b><span style="color: red;">*</span>MOQ :</b></label><br>
+                <p-dropdown [options]="MOQList" [(ngModel)]="selectedMOQ" optionLabel="Quantity"
+                    (onChange)="getMoq(selectedMOQ)" placeholder="Select MOQ">
+                </p-dropdown>
+            </div>
+            <div class="col-md-4 mt-1">
+                <label> <b><span style="color: red;">*</span>No. Of Sets :</b></label><br>
+                <input class="form-control"  type="text" placeholder="Enter No of sets" (keypress)="decimalFilterNos($event)" (keyup)="keyPress()" 
+                [(ngModel)]="selectedNoOfSets">
+            </div> -->
+            <div class="col-md-4 col-12 mt-1">
+                <label> <b><span style="color: red;">*</span>Buyer :</b></label><br>
+                <p-dropdown appendTo="body" [options]="buyerList" [(ngModel)]="selectedBuyer" optionLabel="DisplayName"
+                    placeholder="Select Buyer">
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class=" row p-2 mt-1" *ngIf="Fulfillment == 2" >
+            <div class="col-12">
+                <hr>
+            </div>
+            <div class="col-4">
+                <label> <b><span style="color: red;">*</span>WareHouse:</b> </label><br>
+                <p-dropdown [options]="OtherWareHouseList" placeholder="Select Warehouse"
+                    [(ngModel)]="selectedOtherWarehouse" optionLabel="label"
+                    (onChange)="getDemandBasedOnWarehouse(selectedOtherWarehouse)">
+                </p-dropdown>
+            </div>
+            <div class="col-4">
+                <label> <b><span style="color: red;">*</span>Net Demand : </b> </label><br>
+                <label> <strong> {{selectedNetDemand}}</strong> </label>
+            </div>
+            <div class="col-4">
+                <label> <b><span style="color: red;">*</span>MOQ :</b></label><br>
+                <p-dropdown [options]="MOQList" [(ngModel)]="selectedMOQ" optionLabel="Quantity"
+                    (onChange)="getMoq(selectedMOQ)" placeholder="Select MOQ">
+                </p-dropdown>
+            </div>
+            <div class="col-4">
+                <label> <b><span style="color: red;">*</span>No. Of Sets :</b></label><br>
+                <input class="form-control"  type="text" placeholder="Enter No of sets" (keypress)="decimalFilterNos($event)" (keyup)="keyPress()" 
+                [(ngModel)]="selectedNoOfSets">
+            </div>
+        </div>
+<!-- //Ritika--------------------------------------------------------------------------- -->
+        <div class=" row p-2 mt-1" *ngIf="Fulfillment == 3" >
+            <div class="col-12">
+                <hr>
+            </div>
+            <div class="col-4">
+                <label> <b><span style="color: red;">*</span>WareHouse:</b> </label><br>
+                <p-dropdown [options]="InventoryMasterWarehouseList" placeholder="Select Warehouse" [filter]="true"
+                [(ngModel)]="selectedInventoryWarehouse" optionLabel="WarehouseName"
+                (onChange)="getDemandBasedOnWarehouse(selectedOtherWarehouse)">
+            </p-dropdown>
+            </div>
+            <div class="col-4">
+                <label> <b><span style="color: red;">*</span>Allowed Quantity : </b> </label><br>
+                <label> <strong>{{dialogData.RequiredQty}}</strong> </label>
+            </div>
+            <div class="col-4">
+                <label> <b><span style="color: red;">*</span>MOQ :</b></label><br>
+                <p-dropdown [options]="MOQList" [(ngModel)]="selectedMOQ" optionLabel="Quantity"
+                    (onChange)="getMoq(selectedMOQ)" placeholder="Select MOQ">
+                </p-dropdown>
+            </div>
+            <div class="col-4">
+                <label> <b><span style="color: red;">*</span>No. Of Sets :</b></label><br>
+                <input class="form-control"  type="text" placeholder="Enter No of sets" (keypress)="decimalFilterNos($event)" (keyup)="keyPress()" 
+                [(ngModel)]="selectedNoOfSets">
+            </div>
+        </div>
+        <!-- //Ritika- End-------------------------------------------------------------------------- -->
+
+        <div class="row mt-3">
+            <div class="col-12 ml-2" *ngIf="Fulfillment == 1 || Fulfillment == 2">
+                <hr>
+            </div>
+            <div class="col-12" *ngIf="Fulfillment == 1 && poshown">
+                <p-table [value]="singleRowDetails" [paginator]="false" responsiveLayout="scroll" [scrollable]="true">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 10%;"> Item Name </th>
+                           
+                            <th style="width: 5%;"> Avg Purchase<br>Price </th>
+                            <th style="width: 5%;"> PO Price </th>
+                            <th style="width: 13%;"> Purchase MOQ </th>
+                            <th style="width: 5%;"> No of sets<br>In Cases</th>
+                            <th style="width: 5%;"> Demand In Cases</th>
+                            <th style="width: 5%;"> Allowed Qty<br>In Cases</th>
+                            <th style="width: 6%;"> Allow Qty<br>(Other Hub)<br>In Cases</th>
+                            <th style="width: 4%;"> Exec Qty </th>
+                            <th style="width: 10%;"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td style="width: 10%;">{{item.ItemName}}</td>
+                         
+                            <td style="width: 5%;">{{item.AveragePurchasePrice}}</td>
+                            <td style="width: 5%;">
+                                <input type="text" class="sizeReduced" [(ngModel)]="item.poPurchasePrice" (keyup)="bulkbuyingPriceKeyPress(item)" 
+                                (keypress)="decimalFilter($event)">
+                                <br>
+                                <ng-container *ngIf="item.MRP < item.poPurchasePrice else second">
+                                    <b style="color: red;"><strong>Note:</strong> PO Price Should be less than MRP Price</b>
+                                </ng-container>
+                                <ng-template #second>
+                                    <ng-container *ngIf="item.poPurchasePrice == 0 else end">
+                                        <b style="color: red;"><strong>Note:</strong> PO price cannot be zero</b>
+                                    </ng-container>
+                                </ng-template>
+                                <ng-template #end>
+                                    <ng-container>
+                                    </ng-container>
+                                </ng-template>
+                            </td>
+                            <td style="width: 13%;">
+                                <p-dropdown [style]="{'width':'1%'}"  appendTo="body" [options]="item.moqSupplierList" optionLabel="Quantity"
+                                    (onChange)="getMoqValue($event,item)" [(ngModel)]="item.ItemForecastDetailId">
+                                </p-dropdown>
+                                <!-- <ng-container *ngIf="item.moqSupplierList?.length == 0">
+                                    <p style="color: red;"><strong>Note : </strong>Moq List is Empty</p>
+                                </ng-container> -->
+                            </td>
+                            <td style="width: 5%;">
+                                <input type="text" class="sizeReduced" [(ngModel)]="item.NoOfSet" (keyup)="getItemValue(item)" (keypress)="decimalFilterNos($event)">
+                                <br>
+                                <ng-container *ngIf="item.NoOfSet == 0 else otherCase">
+                                    <b style="color: red;"><strong>Note:</strong> No Of Set Should be More than 0 </b>
+                                </ng-container>
+                                <ng-template #otherCase>
+                                    <ng-container>
+                                    </ng-container>
+                                </ng-template>
+                            </td>
+                            <td style="width: 5%;">{{item.DemandInCase}}</td>
+                            <td style="width: 5%;">{{item.RequiredQtyFinal}}</td>
+                            <td style="width: 6%;">{{item.OtherWarehouseCount}}</td>
+                            <td style="width: 4%;">{{item.FinalQty}}</td>
+                            <td style="width: 10%;">
+                                <ng-container *ngIf="((item.NoOfSet) > (item.RequiredQtyFinal + item.OtherWarehouseCount))">
+                                    <p style="color: red;">No of set in cases should be less or equal than(allowed qty + other hub) in cases</p>
+                                </ng-container>
+                            </td>     
+                        </tr>
+                    </ng-template>
+                </p-table>
+             </div>   
+            <div class="col-12 pr-4" *ngIf="Fulfillment == 1 && poshown">
+                <div class="row">
+                    <div class="col-md-8">
+                        <span *ngIf="saveBtnDisable">
+                            <b style="color: red;font-size: 30px;margin-left: 27%;"><strong>Note:</strong> Please Fill Details </b>
+                        </span>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button type="button" class="btn btn-primary ml-2" style="background-color: green !important;
+                        border-color: green !important;" (click)="updateItemFulFillRequest()" [disabled]="finalQty>dialogData.RequiredQty && finalQty!=0  && dialogData.RequiredQty != 0 || numberBoolean || depoNameBoolean || buyingVal || buyingValNotZero">Save</button>
+                        <button type="button" class="btn btn-primary ml-2" (click)="ClearRecordForSinglePr()">Close</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 pr-4" *ngIf="Fulfillment == 2">
+                <div class="row">
+                    <div class="col-md-3 ml-2" style="font-size: 15px;font-weight: bold;">
+                        <label>Allowed Qty:
+                        </label><br>
+                        <label>
+                            {{dialogData.RequiredQty}}
+                        </label>
+                    </div>
+                    <div class="col-md-5" style="font-size: 15px;font-weight: bold;">
+                        <label> Final Quantity: </label><br>
+                        <label *ngIf="finalQty > dialogData.RequiredQty"> <b style="color: red;"> {{finalQty}}
+                                <br> <strong>Note:</strong> Final Quantity should be less than
+                                Required Quantity</b> </label>
+                        <label *ngIf="finalQty <= dialogData.RequiredQty"> <b style="color: green;"> {{finalQty}} </b> </label>
+                    </div>
+                    <div class="col-md-3 text-right">
+                        <button type="button" class="btn btn-primary ml-2" style="background-color: green !important;
+                        border-color: green !important;" (click)="updateItemFulFillRequest()" [disabled]="finalQty>dialogData.RequiredQty && finalQty!=0  && dialogData.RequiredQty != 0 || numberBoolean || depoNameBoolean || buyingVal || buyingValNotZero">Save</button>
+                        <button type="button" class="btn btn-primary ml-2" (click)="ClearRecordForSingleInternalTransfer()">Close</button>
+                    </div>
+                </div>
+               
+            </div>
+            <!-- RRRRRRRRRR -->
+            
+            <div class="col-12 pr-4" *ngIf="Fulfillment == 3">
+                <div class="row">
+                    <div class="col-md-3 ml-2" style="font-size: 15px;font-weight: bold;">
+                        <label> Final Quantity: </label><br>
+                        <label *ngIf="finalQty > dialogData.RequiredQty"> <b style="color: red;"> {{finalQty}}
+                                <br> <strong>Note:</strong> Final Quantity should be less than
+                                Required Quantity</b> </label>
+                        <label *ngIf="finalQty <= dialogData.RequiredQty"> <b style="color: green;"> {{finalQty}} </b> </label>
+                    </div>
+                    <div class="col-md-5" style="font-size: 15px;font-weight: bold;"></div>
+                    <div class="col-md-3 text-right">
+                        <button type="button" class="btn btn-primary ml-2" style="background-color: green !important;
+                        border-color: green !important;" (click)="updateItemFulFillRequest()" [disabled]="finalQty>dialogData.RequiredQty && finalQty!=0  && dialogData.RequiredQty != 0 || numberBoolean || depoNameBoolean || buyingVal || buyingValNotZero">Save</button>
+                        <button type="button" class="btn btn-primary ml-2" (click)="ClearRecordForSingleInternalTransfer()">Close</button>
+                    </div>
+                </div>
+               
+            </div>
+            <!-- RRRRRRRRRR -->
+           
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog [(visible)]="bulkPrView" header="Fulfillment" [modal]="true" appendTo="body" positionTop="20" (onHide)="cancel()"
+    [style]="{left: '68px',right: '40px','max-height':'auto','overflow':'auto'}" [draggable]="true">
+
+    <div class="container-fluid">
+        <div class=" row mt-1 p-2">
+            <div class="col-12">
+                <h4><b>Purchase Request</b></h4>
+            </div>
+        </div>
+        <div class=" row pl-2 pr-2 mt-1" >
+            <div class="col-12">
+                <hr>
+            </div>
+            <div class="col-md-4 mt-1">
+                <label> <b><span style="color: red;">*</span>Picker Type :</b></label><br>
+                <p-dropdown [options]="pickerType" placeholder="Select Picker" optionLabel="pickerName"
+                    [(ngModel)]="prSelectedPicker" (onChange)="saveAsDraftChkForCondition(prSelectedPicker)">
+                </p-dropdown>
+            </div>
+            <div class="col-md-4 mt-1">
+                <label> <b><span style="color: red;">*</span>ETA Date :</b></label><br>
+                <p-calendar placeholder="Select Date" [(ngModel)]="prSelectedDate" [minDate]="minDateValue" (onSelect)="saveAsDraftChkForCondition(prSelectedDate)"></p-calendar>  
+            </div>
+            <div class="col-md-2 mt-1">
+                <label> <b><span style="color: red;">*</span>Supplier :</b> </label><br>
+                <p-dropdown [options]="prSupplierList" [(ngModel)]="prSelectedSupplier" optionLabel="SupplierName"
+                    placeholder="Select Supplier" (onChange)="getDepoList(prSelectedSupplier)" filter="true">
+                </p-dropdown>
+            </div>
+            <div class="col-md-2 mt-1">
+                <label> <b><span style="color: red;">*</span>PO Expiry Date :</b> </label><br>
+                <input pInputText [disabled]="true" [(ngModel)]="ExpiryDate">
+            </div>
+
+            <div class="col-md-2 mt-1" *ngIf="showcheckBoXSupplier">    
+                <p-checkbox  [(ngModel)]="isSuplier" [binary]="true" value="val1"></p-checkbox>
+                <label style="margin-top: 38px;margin-left: 11px;">Direct Supplier</label>
+            </div>
+            <div class="col-md-4 mt-3">
+                <label> <b><span style="color: red;">*</span>Depo :</b> </label><br>
+                <p-dropdown [options]="depoList" [(ngModel)]="prSelectedDepo" optionLabel="DepoName"
+                    placeholder="Select Depo" (onChange)="saveAsDraftChkForCondition(prSelectedDepo)">
+                </p-dropdown>
+                <span *ngIf="depoList?.length == 0"><b style="color: red;"><strong>Note:</strong> Depo Name List is Empty</b></span>
+            </div>
+            <div class="col-md-4 mt-3">
+                <label> <b><span style="color: red;">*</span>PR Type :</b> </label><br>
+                <p-dropdown [options]="PRType" [(ngModel)]="prSelectedPRPaymentType" optionLabel="label"
+                    placeholder="Select PR" (onChange)="saveAsDraftChkForCondition(prSelectedPRPaymentType)">
+                </p-dropdown>
+            </div>
+            <div class="col-md-4 mt-3">
+                <label> <b><span style="color: red;">*</span>Buyer :</b> </label><br>
+                <p-dropdown [options]="buyerList" [(ngModel)]="selectedBuyer" optionLabel="DisplayName"
+                    placeholder="Select Buyer" (onChange)="saveAsDraftChkForCondition(selectedBuyer)">
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 ">
+                <hr>
+            </div>
+            <div class="col-md-12">
+                <p-table [value]="selectedRowItemList" [paginator]="false" responsiveLayout="scroll" [scrollable]="true">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 10%;"> Item Name </th>
+                            <th style="width: 5%;"> Avg Purchase<br>Price </th>
+                            <th style="width: 5%;"> PO Price </th>
+                            <th style="width: 13%;"> Purchase MOQ </th>
+                            <th style="width: 5%;"> No of sets<br>In Cases</th>
+                            <th style="width: 5%;"> Demand In Cases</th>
+                            <th style="width: 5%;"> Allowed Qty<br>In Cases</th>
+                            <th style="width: 6%;"> Allow Qty<br>(Other Hub)<br>In Cases</th>
+                            <th style="width: 4%;"> Exec Qty </th>
+                            <th style="width: 4%;"> Delete </th>
+                            <th style="width: 10%;"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr *ngIf="item.checked == true">
+                            <td style="width: 10%;">{{item.ItemName}}</td>
+                            <td style="width: 5%;">{{item.AveragePurchasePrice}}</td>
+                            <td style="width: 5%;">
+                                <input type="text" class="sizeReduced" [(ngModel)]="item.poPurchasePrice" (keyup)="bulkbuyingPriceKeyPress(item)" 
+                                (keypress)="decimalFilter($event)">
+                                <br>
+                                <ng-container *ngIf="item.MRP < item.poPurchasePrice else second">
+                                    <b style="color: red;"><strong>Note:</strong> PO Price Should be less than MRP Price</b>
+                                </ng-container>
+                                <ng-template #second>
+                                    <ng-container *ngIf="item.poPurchasePrice == 0 else end">
+                                        <b style="color: red;"><strong>Note:</strong> PO price cannot be zero</b>
+                                    </ng-container>
+                                </ng-template>
+                                <ng-template #end>
+                                    <ng-container>
+                                    </ng-container>
+                                </ng-template>
+                            </td>
+                            <td style="width: 13%;">
+                                <p-dropdown [style]="{'width':'1%'}"  appendTo="body" [options]="item.moqSupplierList" optionLabel="Quantity"
+                                    (onChange)="getMoqValue($event,item)" [(ngModel)]="item.ItemForecastDetailId">
+                                </p-dropdown>
+                                <!-- <ng-container *ngIf="item.moqSupplierList?.length == 0">
+                                    <p style="color: red;"><strong>Note : </strong>Moq List is Empty</p>item.MinOrderQty || item.ItemForecastDetailId
+                                </ng-container> -->
+                            </td>
+                            <td style="width: 5%;">
+                                <input type="text" class="sizeReduced" [(ngModel)]="item.NoOfSet" (keyup)="getItemValue(item)" (keypress)="decimalFilterNos($event)">
+                                <br>
+                                <ng-container *ngIf="item.NoOfSet == 0 else otherCase">
+                                    <b style="color: red;"><strong>Note:</strong> No Of Set Should be More than 0 </b>
+                                </ng-container>
+                                <ng-template #otherCase>
+                                    <ng-container>
+                                    </ng-container>
+                                </ng-template>
+                            </td>
+                            <td style="width: 5%;">{{item.DemandInCase}}</td>
+                            <td style="width: 5%;">{{item.RequiredQtyFinal}}</td>
+                            <td style="width: 6%;">{{item.OtherWarehouseCount}}</td>
+                            <td style="width: 4%;">{{item.FinalQty}}</td>
+                            <td style="width: 4%;">
+                                <span (click)="rejectItem(item)" data-toggle="tooltip" data-placement="top"
+                                            title="Reject">
+                                <i class="pi pi-times-circle"
+                                style="font-size: 3rem; cursor: pointer; color: red;"></i></span>
+                            </td>
+                            <td style="width: 10%;">
+                                <ng-container *ngIf="((item.NoOfSet) > (item.RequiredQtyFinal + item.OtherWarehouseCount))">
+                                    <!-- <p style="color: red;">Final Quantity should be less or equal than Required Quantity</p> -->
+                                    <p style="color: red;">No of set in cases should be less or equal than(allowed qty + other hub) in cases</p>
+                                </ng-container>
+                            </td>     
+                        </tr>
+                    </ng-template>
+                </p-table>
+             </div>   
+            <div class="col-12 pr-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <!-- <span *ngIf="savedDraftCountData == 0 || viewDraftAddBtnClick == true"> 
+                            <button *ngIf="draftBtn || saveDraftBtn" class="btn btn-primary" style="background-color: rgb(42 42 72)!important; border-color: rgb(42 42 72) !important;" (click)="saveAsDraft()">Save as Draft</button>
+                        </span> -->
+                        <!-- <span *ngIf="saveDraftBtnEnable"> -->
+                            <ng-container *ngIf="savedDraftCountData == 0 else saveOtherCondition">
+                                <button class="btn btn-primary" style="background-color: rgb(42 42 72)!important; border-color: rgb(42 42 72) !important;" (click)="saveAsDraft()">Save as Draft</button>
+                            </ng-container>
+                            <ng-template #saveOtherCondition>
+                                <ng-container *ngIf="saveDraftBtnEnable else clearDraftCondition">
+                                    <button class="btn btn-primary" style="background-color: rgb(42 42 72)!important; border-color: rgb(42 42 72) !important;" (click)="saveAsDraft()">Save as Draft</button>
+                                    <button class="btn btn-primary ml-2" style="background-color: rgb(163, 83, 152)!important; border-color: rgb(163, 83, 152) !important;" (click)="deleteAllDraft(selectedRowItemList)">Clear Draft Items</button>
+                                </ng-container>
+                            </ng-template>
+                            <ng-template #clearDraftCondition>
+                                <ng-container *ngIf="savedDraftCountData>0">
+                                    <button class="btn btn-primary" style="background-color: rgb(163, 83, 152)!important; border-color: rgb(163, 83, 152) !important;" (click)="deleteAllDraft(selectedRowItemList)">Clear Draft Items</button>
+                                </ng-container>
+                            </ng-template>
+                        <!-- </span> -->
+                    </div>
+                    <div class="col-md-5">
+                        <!-- <span *ngIf="saveBtnDisable || saveDraftBtn">
+                            <b style="color: red;font-size: 30px;margin-left: 27%;"><strong>Note:</strong> Please Fill Details </b>
+                        </span> -->
+                        <span *ngIf="poSelectReq">
+                            <b style="color: red;font-size: 30px;margin-left: 27%;"><strong>Note:</strong> PO Price can not be zero</b>
+                        </span>
+                        <span *ngIf="moqSelectReq">
+                            <b style="color: red;font-size: 30px;margin-left: 27%;"><strong>Note:</strong> Please Select MOQ </b>
+                        </span>
+                        <span *ngIf="nosSelectReq">
+                            <b style="color: red;font-size: 30px;margin-left: 27%;"><strong>Note:</strong> No of set can not be zero</b>
+                        </span>
+                        <span *ngIf="saveAsDraftFirst">
+                            <b style="color: red;font-size: 16px;margin-left: 0%;"><strong>Note:</strong> firstly click save as draft then after click on save button </b>
+                        </span>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <!-- <button *ngIf="(addMoreItemBtn || (savedDraftCountData > 0) && viewDraftAddBtnClick == false)" class="btn btn-primary ml-2" style="background-color: rgb(7 69 188)!important; border-color: rgb(7 69 188) !important;" (click)="addMoreItem()">Add More Items</button> -->
+                        <button class="btn btn-primary ml-2" style="background-color: rgb(7 69 188)!important; border-color: rgb(7 69 188) !important;" 
+                        (click)="addMoreItem()">Add More Items</button>
+                        <button type="button" class="btn btn-primary ml-2" style="background-color: green !important;
+                        border-color: green !important;" (click)="saveBulkPr()" [disabled]="saveBtnDisable || buyingVal || buyingValNotZero || nosChkCase">Save</button>
+                        <button type="button" class="btn btn-primary ml-2" (click)="ClearData()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<div class="rght-windw" *ngIf="selectedRowItemList && selectedRowItemList.length > 0">
+    <div class="row">
+        <div class="col-12 tt">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Item Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of selectedRowItemList">
+                        <ng-container *ngIf="item.saveDraftUniqueId != 0 else chkOtherOption">
+                            <td><p-checkbox [(ngModel)]="item.checked" [binary]="true"
+                                (click)="itemChkOnId(item)" disabled></p-checkbox></td>
+                            <td>{{item.ItemName}}</td>
+                        </ng-container>
+                        <ng-template #chkOtherOption>
+                            <ng-container *ngIf="item.saveDraftUniqueId == 0">
+                                <td><p-checkbox [(ngModel)]="item.checked" [binary]="true"
+                                    (onChange)="onFinalRowSelect(item)"></p-checkbox></td>
+                                <td>{{item.ItemName}}</td>
+                            </ng-container>
+                        </ng-template>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="bt-tb">
+                        <div class="cntn" (click)="showBulkPr()">Create Bulk PR</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bt-tb">
+                        <div class="cntn" (click)="cancelSelectedItemPopUp()">Cancel</div>
+                    </div>
+                </div>
+            </div>    
+        </div>
+    </div>
+
+</div>
+<p-confirmDialog appendTo="body" header="Confirmation" [style]="{width: '40vw'}" [baseZIndex]="10000"></p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+<!-- selectedNetDemand>dialogData.RequiredQty -->

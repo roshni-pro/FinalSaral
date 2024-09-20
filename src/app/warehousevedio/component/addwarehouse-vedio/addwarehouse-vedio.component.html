@@ -1,0 +1,111 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form " name="form" #groupEditForm="ngForm">
+                <!-- <div class="form-body"> -->
+                <h4 class="form-section">
+                  <p class="ft-user"></p> Add Warehouse Video
+                </h4>
+                <div class="row col-md-12" *ngIf="input">
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="Warehouse"> WareHouses :</label>
+                      <!-- <div class="col-md-6"> -->
+                      <select id="Warehouse" name="WarehouseName" class="form-control" [(ngModel)]="input.WarehouseId"
+                        #WarehouseId="ngModel" required="1">
+                        <option *ngFor="let WareHouse of warehousess" [ngValue]="WareHouse.WarehouseId">
+                          {{WareHouse.CityName}} -{{WareHouse.WarehouseName}}
+                        </option>
+                      </select>
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !WarehouseId.valid && WarehouseId.errors.required">
+                        <code>Warehouse Name is required</code>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="projectinput3">Today Date</label>
+                      <br>
+                      <p-calendar name="month" placeholder="Month" [(ngModel)]="input.Month" [showIcon]="true" 
+                      dateFormat="dd/mm/yy"  required="1" #month="ngModel"></p-calendar><br/>
+                    </div>
+                    <div class="col-md-6"></div>
+                    <div *ngIf="isInvalid && !TodayDate.valid && TodayDate.errors.required">
+                      <code>Select Today  Date</code>
+                    </div>
+                  </div> -->
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="aname">Youtube Link</label>
+                      <!-- <div class="col-md-6"> -->
+                      <input type="text" id="link" class="form-control" name="aname" placeholder="Enter Link "
+                        [(ngModel)]="input.Link" maxlength="100" required="1" #Link="ngModel" />
+                      <div class="col-md-6"></div>
+                      <div *ngIf="isInvalid && !Link.valid && Link.errors.required">
+                        <code>Youtube Link is required</code>
+                      </div>
+                      <br>
+                      <label>Link format :</label>
+                      <h6 style="color: orangered;">https://www.youtube.com/embed/ULcflTw6KY0?rel=0</h6>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="projectinput3">From Date</label>
+                      <br>
+                      <p-calendar name="startDateInput" [(ngModel)]="input.StartDate" [showIcon]="true" name="fromDate"
+                        #StartDate="ngModel" [showTime]="true" required="1"></p-calendar>
+                    </div>
+                    <div class="col-md-6"></div>
+                    <div *ngIf="isInvalid && !StartDate.valid && StartDate.errors.required">
+                      <code>Select START Date</code>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="projectinput4">To Date</label>
+                      <br>
+                      <p-calendar name="endDateInput" [showTime]="true" [(ngModel)]="input.EndDate" [showIcon]="true"
+                        name="toDate" #EndDate="ngModel" required="1"></p-calendar>
+                    </div>
+                    <div class="col-md-6"></div>
+                    <div *ngIf="isInvalid && !EndDate.valid && EndDate.errors.required">
+                      <code>Select END Date</code>
+                    </div>
+                  </div>
+                  <div class="form-actions right col-sm-12 p-3">
+                    <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                      Cancel
+                    </button>
+                    <button type="button" class="btn btn-raised btn-primary" (click)="save(input,groupEditForm)">
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

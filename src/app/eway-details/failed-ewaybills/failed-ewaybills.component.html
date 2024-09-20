@@ -1,0 +1,196 @@
+<p-toast  [style]="{width: '20vw'}" position="top-right"></p-toast>
+<div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+      (click)="toggleSearch()">
+      <h5 class="m-0"><b>Search By</b></h5>
+      <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+    <div id="search-content p-2">
+        <br>
+    <div class="row p-2 px-5">
+        <div class="col-md-2">
+            <label><b> <span class="required">*</span>Select City</b></label>
+            <p-multiSelect id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="SelectedCityf" (onChange)="GetWarehouse(SelectedCityf)" [filter]="true" 
+                optionLabel="label"  selectedItemsLabel="{0} City selected" placeholder="Select City"  > 
+            </p-multiSelect>
+            <!-- <p-multiSelect [options]="CityList" [(ngModel)]="selectedCity" defaultLabel="Select City" (onChange)="getWarehouseByCityId(selectedCity)"
+            optionLabel="CityName"  optionValue="Cityid" selectedItemsLabel="{0} City selected" ></p-multiSelect> -->
+        </div>
+        <div class="col-md-2">
+        <label><b><span class="required">*</span>Select WareHouse</b></label>
+            <p-multiSelect id="Category" name="Category" [options]="WareHouseList"   [filter]="true" 
+                    [(ngModel)]="selectedWareHouseFour"  optionLabel="label"  selectedItemsLabel="{0} City selected"  placeholder="Select WareHouse">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-2">
+            <label><b>Select Status<span class="required"></span></b></label>
+            <p-dropdown id="Category" name="Category" [options]="OrderTypeListtt" optionLabel="name" [filter]="true" placeholder="Select Status"  [(ngModel)]="OrderType"> 
+            </p-dropdown>
+        </div>
+        <div class="col-2 md-3">
+            <label><b>Enter OrderID
+                <span class="required"></span></b></label><br>   
+                <input type="text"  required="1"  maxlength="9" type="tel" name="Title" class="form-control"  [(ngModel)]="OrderIdfour"  />
+        </div>
+        <!-- <div class="col-2 md-3">
+            <label><b>Select Start Date</b></label><br>
+            <p-calendar name="startDateInput" [showIcon]="true" appendTo="body" [yearNavigator]="true" [(ngModel)]="FromDatefour" (click)="EmptyITList()"
+             [monthNavigator]="true" yearRange="2022:2099"  
+             [readonlyInput]="false" [showIcon]="true" showButtonBar="true"
+             [showIcon]="true" >
+            </p-calendar>
+        </div>
+        <div class="col-2 md-3">
+            <label><b>Select End Date</b></label><br>
+            <p-calendar name="endDateInput" name="ToDate" [showIcon]="true" appendTo="body"  [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"   (click)="EmptyITList()" 
+            [readonlyInput]="false" [showIcon]="true" showButtonBar="true"  [(ngModel)]="ToDatefour"  [minDate]="FromDatefour"
+            [showIcon]="true" >
+            </p-calendar>
+        </div> -->
+
+
+        <div class="col-md-2">
+            <label><b>Select Order Types</b></label><br>
+            <p-dropdown  [options]="General" optionLabel="name" optionValue="code"[(ngModel)]="general">
+            </p-dropdown>
+            </div>
+        <div class="col-2 md-3 d-flex" style="margin-top:28px;">
+            <button  class="btn btn-primary mr-1" (click)="ForSearchHit()" (click)="getFailedEwaybillss($event)" >Search</button>   
+            <button  class="btn btn-primary mr-1" (click)="ClearFailedEway()" >Clear</button> 
+            <button  class="btn btn-success mr-1" (click)="ExportFailedEway()" >Export</button>    
+        </div>
+    </div><br>          
+</div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+    <p-table [value]="FailedEwaybillList"  [scrollable]="true" [lazy]="true"  scrollHeight="70vh"  text-align: center [(first)]="first"
+     [totalRecords]="TotalRecordFour" [lazy]="true" (onLazyLoad)="load($event)"
+     [paginator]="true" [rows]="10" >
+        <ng-template pTemplate="header">
+            <tr >
+
+               <th *ngIf="showOrderType" style="width: 20%;">TransferOrderId</th>
+                <th *ngIf="!showOrderType" style="width: 20%;">OrderId</th>
+                <th style="width: 20%;">Order Amount/ Invoice Number</th>
+                <th style="width: 20%;">OrderStatus</th>
+                <th style="width: 22%;">WarehouseName/RequestToWarehouse</th>
+                <th style="width: 20%;">Error</th>
+                <th style="width: 20%;">Action</th>
+            </tr>         
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.OrderId}}</td>
+                <td><b style="font-weight: 900;">Amount:</b> {{item.orderamount}}<br><b style="font-weight: 900;">Invoice No.:</b>  {{item.InvoiceNo}}</td>  
+                <td>{{item.OrderStatus}}</td>
+                <td>{{item.WarehouseName}} <br>{{item.RequestToWarehouseName}}</td>
+                <td>{{item.err}}</td> 
+                <td><button  class="btn btn-primary mr-2" (click)="ReGenrate(item)" >Retry</button>   </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="10" style="text-align: center;">
+                <br>
+                <h3><b>No Data Found.</b></h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div> 
+<p-dialog appendTo="body" header="GSTN Info" [(visible)]="GSTdisplay"
+[style]="{width: '540px', height: '300px'}">
+<div *ngIf="GSTdisplay">
+  <table style="border: 1px solid rgb(48, 21, 21)">
+    <tr style="border: 1px solid rgb(48, 21, 21)">
+      <th>GSTN No. </th>
+      <th>Name on GSTN</th>
+      <th>ShopName</th>
+      <!-- <th>BillingAddress</th> -->
+      <!-- <th>Active </th> -->
+      <!-- <th>Zipcode</th> -->
+    </tr>
+    <tr style="border: 1px solid rgb(48, 21, 21)">
+      <td>{{GSTData.RefNo}} </td>
+      <td>{{GSTData.Name}} </td>
+      <td>{{GSTData.ShopName}}</td>
+      <!-- <td>{{GSTData.ShippingAddress}}</td> -->
+      <!-- <td>{{GSTData.Active}} </td> -->
+      <!-- <td>{{GSTData.Zipcode}}</td> -->
+    </tr>
+  </table>
+</div>
+</p-dialog>
+<p-dialog header="Generate Eway Bill" [modal]="true" appendTo="body" [draggable]="false" [blockScroll]="true" [style]="{ width: '50%',height:'50%'  }" [(visible)]="opengeneratebill">
+    <div class="row">
+        <div class="col-md-6">
+            <label><b>Vehicle Number</b></label><br>   
+            <input type="text" name="Title" class="form-control" (keypress)="Capital($event)" [(ngModel)]="VehicleNumgenerateone" placeholder="Enter Vehicle Number"/>
+            <span style="COLOR: red; font-weight: bold;" >Note:- Press CapsLock On Before Enter</span><br>
+            <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!VehicleNumgenerateone && isVehicleNumgenerateone">Enter Vehicle Number</span>
+        </div>
+        <div class="col-md-6">
+            <label><b>Pincode</b></label>
+            <input type="number" (keypress)="keyPress($event)" [(ngModel)]="Pincodeone" Current Pincoderequired="1"  maxlength="6" type="tel" name="Title" class="form-control" placeholder="Enter Pincode" />
+            <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!Pincodeone && isPincodeone">Enter Pincode</span>
+        </div>
+        
+    </div> <br>
+    <div class="row">
+        <div class="col-md-6">
+            <label><b>Transport GST</b></label><br>   
+            <div class="d-flex">
+                <input type="text"  required="1"  minlength="15" maxlength="15" name="Title" class="boxx form-control" placeholder="Transport GST" [(ngModel)]="RefNo"
+                    />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <!-- <button type="button" class="vs btn btn-success mr-2" (click)="VarifiedCustomerGSTNO(RefNo)" >verify</button> -->
+            </div>
+            <!-- <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!RefNo && isRefNo">Enter Transport GST</span>  -->
+        </div>
+        <div class="col-md-6">
+            <label><b>Transport Name: </b></label><br>  
+            <input type="text"  name="Title" class="form-control" placeholder="Enter Transport Name" [(ngModel)]="GSTCustomerName" />
+            <!-- <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!GSTCustomerName && isGSTCustomerName">Enter Transport Name</span>  -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label><b>Transport Document No.</b></label><br>   
+            <div class="d-flex">
+                <input type="text" name="Title" (keypress)="DocumentRegex($event)" class="form-control"     maxlength="15" 
+                placeholder="Transport Document No" [(ngModel)]="GenerateTransporterDocNumber">
+            </div>  
+            <span style="COLOR: red; font-weight: bold;">Note:- Max length 15 Allowed</span><br>
+
+             <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!GenerateTransporterDocNumber && isGenerateTransporterDocNumber">Enter Transport Document No.</span> 
+        </div>
+        <div class="col-md-6">
+            <label><b>Transport Document Date </b></label><br>  
+            <p-calendar [showIcon]="true" [(ngModel)]="GenerateTransporterDocDate" [minDate]="dateMin" [maxDate]="dateMax"  appendTo="body" [readonlyInput]="true" showButtonBar="true" [style]="{ width: 'max-content' }">
+            </p-calendar> <br><span style="COLOR: darkred; font-weight: bold;"  *ngIf="!GenerateTransporterDocDate && isGenerateTransporterDocDate">Enter Transport Document Date </span> 
+        </div>
+    </div> <br>
+    <div class="row">
+        <div class="col-md-6 cc">
+            <label><b>Enter Distance <span><b>(Kms)</b></span></b></label><br>
+            <div class="d-flex ">
+                <input type="text" [(ngModel)]="Distanceone" (keypress)="keyPress($event)" required="1"  maxlength="9" type="tel" name="Title" class="form-control" placeholder="Enter Distance" /> 
+              
+            </div> <span style="COLOR: darkred; font-weight: bold;"  *ngIf="!Distanceone && isDistanceone">Enter Distance</span> 
+        </div>
+        <div class="col-md-6 ">
+            <label></label><br>&nbsp;&nbsp;
+            <button type="button" style="margin-top: 7px;" class="btn btn-primary mr-2" (click)="generatesuubmitbtn()" >Submit</button>
+            <button type="button" style="margin-top: 7px;" class="btn btn-primary mr-2" (click)="generateeeCancel()">Cancel</button>
+        </div>
+    </div>
+    </p-dialog> 
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+   <!-- <th style="width: 20%;">Eway Bill Generate Date</th>
+                <th style="width: 20%;">Eway Bill Update Upto</th> -->
+<!-- <td>{{item.EwayBillDate | date:'short'}}</td>
+                <td>{{item.EwayBillValidTill | date:'short'}}</td> -->

@@ -1,0 +1,508 @@
+<div class="ui-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div id="kick-start" class="card">
+        <div class="card-content">
+          <div class="card-body">
+            <div class="card-text">
+              <div class="card">
+                <div class="card-content">
+                  <div class="card-body">
+                    <div class="ui-g-3">
+                      <div class="form-group">
+                        <label for="Category">From Date*</label><br>
+                        <p-calendar [(ngModel)]="StartDate" [monthNavigator]="true" [yearNavigator]="true"
+                          yearRange="2000:2030" [showIcon]="true" [showTime]="true"> </p-calendar>
+                      </div>
+                    </div>
+                    <div class="ui-g-3">
+                      <div class="form-group">
+                        <label for="Category">To Date*</label><br>
+                        <p-calendar [(ngModel)]="EndDate" [monthNavigator]="true" [yearNavigator]="true"
+                          yearRange="2000:2030" [showIcon]="true" [showTime]="true"> </p-calendar>
+                      </div>
+                    </div>
+                    <div class="ui-g-6">
+                        <label for="Category">Filter</label>
+                        <br>
+                        <p-button  label="Search" (click)="getAllData()"></p-button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <!-- Kick start -->
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+            <section id="shopping-cart">
+              <div class="row text-left">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Demand</h4>
+                    </div>
+                    <div class="card-content">
+                      <div class="card-body">
+                        <nvd3 #nvd3 [options]="demandOptions" [data]="demandData"></nvd3>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>    
+    </div>
+    <!--/ Kick start -->
+  </div>
+  <div class="col-md-4">
+    <!-- Kick start -->
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+            <section id="shopping-cart">
+              <div class="row text-left">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Stock</h4>
+                    </div>
+                    <div class="card-content">
+                      <div class="card-body">
+                        <nvd3 #nvd3 [options]="demandOptions" [data]="stockData"></nvd3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>  
+    </div>
+    <!--/ Kick start -->
+  </div>
+  <div class="col-md-4">
+    <!-- Kick start -->
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+            <section id="shopping-cart">
+              <div class="row text-left">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Order</h4>
+                    </div>
+                    <div class="card-content">
+                      <div class="card-body">
+                        <nvd3 #nvd3 [options]="orderOptions" [data]="orderData"></nvd3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div> 
+    </div>
+    <!--/ Kick start -->
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+            <section id="shopping-cart">
+              <div class="row text-left">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Demand</h4>
+                    </div>
+                    <div class="card-content">
+                      <div class="card-body">
+                        <p-scrollPanel [style]="{width: '100%', height: '500px'}" styleClass="custombar1">
+                          <table class="table table-responsive-md text-center">
+                            <thead>
+                              <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>MRP</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>OrderQty</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let demand of demandList; let dindex = index;">
+                                <td>
+                                  <a href="javascript:;" (click)="goToItem(demand)">
+                                    <img class="media-object round-media" [src]="demand.ImagePath"
+                                      alt="Generic placeholder image" style="height: 75px;" />
+                                  </a>
+                                </td>
+                                <td>
+                                  <a class="are" href="javascript:;" (click)="goToItem(demand)">
+                                    {{demand.ItemName}}
+                                  </a>
+                                </td>
+                                <td>{{demand.MRP}}</td>
+                                <td>{{demand.Price? (demand.Price | number : '1.2-2') : '-'}}</td>
+                                <td>{{demand.Qty}}</td>
+                                <td>{{demand.OrderQty}}</td>
+                              </tr>
+
+                            </tbody>
+                          </table>
+                        </p-scrollPanel>
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+          <div class="btn-holder">
+            <button type="button" class="bottom" (click)="getAllDemand()" >More</button>
+          </div>
+        </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <!-- Kick start -->
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+            <section id="shopping-cart">
+              <div class="row text-left">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Stock</h4>
+                    </div>
+                    <div class="card-content">
+                      <div class="card-body">
+                        <p-scrollPanel [style]="{width: '100%', height: '500px'}" styleClass="custombar1">
+                          <table class="table table-responsive-md text-center">
+                            <thead>
+                              <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>MRP</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>OrderQty</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let stock of stockList; let sindex = index;">
+                                <td>
+                                  <a href="javascript:;" (click)="goToItem(stock)">
+                                    <img class="media-object round-media" [src]="stock.ImagePath"
+                                      alt="Generic placeholder image" style="height: 75px;" />
+                                  </a>
+                                </td>
+                                <td>
+                                  <a class="are" href="javascript:;" (click)="goToItem(stock)">
+                                    {{stock.ItemName}}
+                                  </a>
+                                </td>
+                                <td>{{stock.MRP}}</td>
+                                <td>{{stock.Price}}</td>
+                                <td>{{stock.Qty}}</td>
+                                <td>{{stock.OrderQty}}</td>
+                              </tr>
+
+                            </tbody>
+                          </table>
+                        </p-scrollPanel>
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+        <div class="container">
+            <div class="btn-holder">
+              <button type="button" class="bottom">More</button>
+            </div>
+          </div>
+      </div>
+    </div>
+    <!--/ Kick start -->
+  </div>
+  <div class="col-md-4">
+    <!-- Kick start -->
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+            <section id="shopping-cart">
+              <div class="row text-left">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Order</h4>
+                    </div>
+                    <div class="card-content">
+                      <div class="card-body">
+                        <p-scrollPanel [style]="{width: '100%', height: '500px'}" styleClass="custombar1">
+                          <table class="table table-responsive-md text-center">
+                            <thead>
+                              <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Volume</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let order of orderList; let sindex = index;">
+                                <td><img class="media-object round-media" [src]="order.ImagePath"
+                                    alt="Generic placeholder image" style="height: 75px;" /></td>
+                                <td>{{order.ItemName}}</td>
+
+                                <td>{{order.AveragePrice}}</td>
+                                <td>{{order.TotalQty}}</td>
+
+                                <td>{{order.Volume}}</td>
+                              </tr>
+
+                            </tbody>
+                          </table>
+                        </p-scrollPanel>
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+          <div class="btn-holder">
+            <button type="button" class="bottom">More</button>
+          </div>
+        </div>
+    </div>
+    <!--/ Kick start -->
+  </div>
+</div>
+
+<!-- customer data -->
+<div class="row">
+  <div class="col-md-4">
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+            <section id="shopping-cart">
+              <div class="row text-left">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Demand</h4>
+                    </div>
+                    <div class="card-content">
+                      <div class="card-body">
+                        <p-scrollPanel [style]="{width: '100%', height: '500px'}" styleClass="custombar1">
+                          <table class="table table-responsive-md text-center">
+                            <thead>
+                              <tr>
+                       
+                                <th>Name</th>
+                                <th>MRP</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>OrderQty</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let demand of demandCustomerList; let dindex = index;">
+                                
+                                <td>
+                                  <a class="are" href="javascript:;" (click)="goToCustomer(demand)">
+                                    {{demand.CustomerName + ' - ' + demand.SkCode}}
+                                  </a>
+                                </td>
+                                <td>{{demand.MRP? (demand.MRP | number : '1.2-2') : '-'}}</td>
+                                <td>{{demand.Price? (demand.Price | number : '1.2-2') : '-'}}</td>
+                                <td>{{demand.Qty}}</td>
+                                <td>{{demand.OrderQty}}</td>
+                              </tr>
+
+                            </tbody>
+                          </table>
+                        </p-scrollPanel>
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+          <div class="btn-holder">
+            <button type="button" class="bottom" (click)="getAllCustomer()">More</button>
+          </div>
+        </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+            <section id="shopping-cart">
+              <div class="row text-left">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Stock</h4>
+                    </div>
+                    <div class="card-content">
+                      <div class="card-body">
+                        <p-scrollPanel [style]="{width: '100%', height: '500px'}" styleClass="custombar1">
+                          <table class="table table-responsive-md text-center">
+                            <thead>
+                              <tr>
+                       
+                                <th>Name</th>
+                                <th>MRP</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>OrderQty</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let demand of stockCustomerList; let dindex = index;">
+                               
+                                <td>
+                                  <a class="are" href="javascript:;" (click)="goToCustomer(demand)">
+                                    {{demand.CustomerName + ' - ' + demand.SkCode}}
+                                  </a>
+                                </td>
+                                <td>{{demand.MRP? (demand.MRP | number : '1.2-2') : '-'}}</td>
+                                <td>{{demand.Price? (demand.Price | number : '1.2-2') : '-'}}</td>
+                                <td>{{demand.Qty}}</td>
+                                <td>{{demand.OrderQty}}</td>
+                              </tr>
+
+                            </tbody>
+                          </table>
+                        </p-scrollPanel>
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+          <div class="btn-holder">
+            <button type="button" class="bottom">More</button>
+          </div>
+        </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+
+    <div id="kick-start" class="card">
+      <div class="card-content">
+        <div class="card-body">
+          <div class="card-text">
+            <section id="shopping-cart">
+              <div class="row text-left">
+                <div class="col-sm-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Order</h4>
+                    </div>
+                    <div class="card-content">
+                      <div class="card-body">
+                        <p-scrollPanel [style]="{width: '100%', height: '500px'}" styleClass="custombar1">
+                          <table class="table table-responsive-md text-center">
+                            <thead>
+                              <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Volume</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let order of orderList; let sindex = index;">
+                                <td><img class="media-object round-media" [src]="order.ImagePath"
+                                    alt="Generic placeholder image" style="height: 75px;" /></td>
+                                <td>{{order.ItemName}}</td>
+                                <td>{{order.AveragePrice}}</td>
+                                <td>{{order.TotalQty}}</td>
+                                <td>{{order.Volume}}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </p-scrollPanel>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+          <div class="btn-holder">
+            <button type="button" class="bottom">More</button>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

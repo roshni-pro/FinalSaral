@@ -1,0 +1,127 @@
+<p-toast [style]="{marginTop: '10px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+<div class="ui-fluid" id="sp">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-sm-5">
+        <div class="content-header">Supplier Manual Ladger </div>
+      </div>
+
+    </div>
+    <hr>
+    <div class="row text-left">
+      <div class="col-sm-12">
+
+        <div class="px-3">
+          <form class="form" #ledgerForm="ngForm">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput3">Supplier Name*</label>
+                    <br>
+                    <p-autoComplete [(ngModel)]="selectedSupplier" [suggestions]="supplierList"
+                      (completeMethod)="getSupplierList($event)" field="Name" [size]="30"
+                      placeholder="enter at least 3 chars" [minLength]="1" name="supplierName"
+                      (ngModelChange)="onSelectSupplier()" name="supplierName"
+                     #supplierName="ngModel">
+                    </p-autoComplete>
+                    <!-- <button class="btn btn-danger bt-2" *ngIf="inputModel.SupplierId" (click)="discardSupplier()">
+                      <i class="fa fa-times" aria-hidden="true" (click)="discardSupplier()"></i>
+                    </button> -->
+
+                    <!-- <div [hidden]="!(isInvalid && !supplierName.valid)">
+                      <code>Required!</code>
+                    </div> -->
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="guid">Guid </label>
+                    <select id="guid" name="guid" class="form-control" [(ngModel)]="inputModel.UploadGUID" >
+                      <option [ngValue]="null">--All--</option>
+                      <option *ngFor="let g of guidList" [ngValue]="g">
+                        {{ g }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4" style="padding-top: 30px">
+                  <div class="form-group">
+                    <button type="button" class="btn btn-raised btn-raised btn-primary mr-l-10"
+                      (click)="search()">
+                      Search
+                    </button>
+                    <button type="button" class="btn btn-raised btn-raised btn-primary mr-l-10" style="margin-left: .5em"
+                    (click)="clear()">
+                    Clear
+                  </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui-fluid shadow p-3 m-2 mt-4 bg-white rounded table">
+      <p-table [value]="manualLadgerList" dataKey="Date" [lazy]="true" [totalRecords]="totalRecords"  
+      (onLazyLoad)="load($event)" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="60vh" text-align: center>
+        <ng-template pTemplate="header">
+          <tr>
+              <th>
+                  ID
+              </th>
+            <th>
+              Date
+            <th>
+              Particulars
+            </th>
+            <th>
+              Credit
+            </th>
+            <th>
+              Debit
+            </th>
+            <th >Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+          <tr>
+            <td>
+              {{rowData.ID}}
+            </td>
+            <td>
+                {{rowData.Date | date:'short' }}
+              <!-- <p-calendar *ngIf="rowData.editing" [(ngModel)]="rowData.Date" [showIcon]="true"></p-calendar>
+              <p *ngIf="!rowData.editing">{{rowData.Date | date:'short' }}</p> -->
+            </td>
+            <td>
+              {{rowData.Particulars}}
+              <!-- <input [disabled]="!rowData.editing" class="form-control" type="text"
+                [(ngModel)]="rowData.Particulars"> -->
+            </td>
+            <td>
+              <input [disabled]="!rowData.editing"  class="form-control" type="number" [(ngModel)]="rowData.Credit">
+            </td>
+            <td>
+              <input [disabled]="!rowData.editing"  class="form-control" type="number" [(ngModel)]="rowData.Debit">
+            </td>
+            <td style="text-align:center">
+              <button *ngIf="!rowData.editing" pTooltip="Edit" pButton type="button"  icon="pi pi-pencil" class="ui-button-info" (click)="onRowEditInit(rowData)"></button>
+              <button  *ngIf="rowData.editing" pTooltip="Save"  pButton type="button"  icon="pi pi-check" class="ui-button-success" style="margin-right: .5em" (click)="onRowEditSave(rowData)"></button>
+              <button *ngIf="rowData.editing" pTooltip="Cancel"  pButton type="button"  icon="pi pi-times" class="ui-button-warning "style="margin-left: .5em" (click)="oncancel(rowData)"></button>
+              <button  pButton type="button"   pTooltip="Delete" icon="pi pi-trash" class="ui-button-danger"style="margin-left: .5em" (click)="onDelete(rowData.ID)"></button>
+          </td>
+          </tr>
+        </ng-template> 
+      </p-table>
+    </div>
+  </section>
+</div>

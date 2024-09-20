@@ -1,0 +1,82 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form-inline" name="form" #countryEditForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> <b>Country</b></h4>
+                  <div class="row col-md-12" *ngIf="country">
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="cname" class="col-md-6"><b>Country Name:</b><span  style="color:red"> *</span></label>
+                        <!-- <div class="col-md-6"> -->
+                          <input type="text" id="cname" class="form-control col-md-6" name="cname"
+                            [(ngModel)]="country.CountryName" placeholder="Country Name" required="1" maxlength="50" minlength="2" (input)="inputValidator($event)"
+                            #firstName="ngModel" />
+                            <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                            <code>Country Name is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                              <code>Minlength 2</code>
+                            </div>
+                        <!-- </div> -->
+
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="aname" class="col-md-6"><b>Alias Name:</b></label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="aname" class="form-control col-md-6" name="aname" (input)="inputValidator($event)"
+                          placeholder="Alias Name" [(ngModel)]="country.AliasName">
+                      <!-- </div> -->
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="people" class="col-md-6"><b>Country Manager Name:</b><span  style="color:red"> *</span></label>
+                        <!-- <div class="col-md-6"> -->
+                        <select id="people" name="people" class="form-control col-md-6"
+                          [(ngModel)]="country.CountryManagerId" placeholder="Select Country Manager Name"  required="1" #managername="ngModel" required="1">
+                          <div class="col-md-6"></div>
+                          <!-- #managerName="ngModel" required> -->
+                          <div class="invalid-feedback">
+                            <code>Country Manager Name is required</code>
+                          </div>
+                          <option *ngFor="let people of peopleList" [ngValue]="people.PeopleID">
+                            {{ people.DisplayName }}
+                          </option>
+                        </select>
+                        <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !managername.valid && managername.errors.required">
+                      <code> country manager name is required</code>
+                  </div>
+                      </div>
+                    <!-- </div> -->
+                  </div>
+                </div>
+              </div>
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    Cancel
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="update(countryEditForm)">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

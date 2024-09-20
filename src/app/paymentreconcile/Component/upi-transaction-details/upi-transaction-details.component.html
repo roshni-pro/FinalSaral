@@ -1,0 +1,74 @@
+<div class="row">
+    <div class="col-sm-12">
+      <div class="header">
+        <h3 class="content-header">UPI-Transactions Details</h3>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-3">
+                <!-- <input type="text" pInputText placeholder="Enter OrderId/ Payment req.Id" [(ngModel)]="Keyword" style="width:100%;"> -->
+             <!-- <select [(ngModel)]="warehouseId" class="form-control" name="warehouse">
+              <option [value]="null">select </option>
+              <option *ngFor="let warehouse of warehouses" [value]="warehouse.WarehouseId">
+                {{warehouse.WarehouseName}} </option>
+            </select> -->
+            <p-multiSelect [options]="hubList" placeholder="Select Hub" [(ngModel)]="selectedHub"
+            defaultLabel="Select Warehouse"    [panelStyle]="{minWidth:'100%'}" optionLabel="WarehouseName">
+                                </p-multiSelect>
+            </div>
+            <div class="col-3">
+                <input type="text" pInputText placeholder="Enter OrderId/ Payment req.Id" [(ngModel)]="Keyword" style="width:100%;">
+            </div>
+            <div class="col-2">
+                <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" inputId="range" placeholder="select date range"></p-calendar>
+            </div>
+            <div class="col-1 ml-3">
+                <button class="btn btn-primary" label="search" (click)="Search()">Search</button>
+            </div>
+            <div class="col-1">
+                <button class="btn btn-primary" label="Export" (click)="Export()" [disabled]="!isExport" disabled>Export</button>
+            </div>
+        </div>
+
+
+        <p-table [value]="TransactionData" [totalRecords]="totalRecords"
+        [paginator]="true" [rows]="10" (onLazyLoad)="load($event)" [lazy]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>OrderId/PaymentReq.Id</th>
+                    <th>WarehouseName</th> 
+                    <th>Skcode</th>
+                    <th>TxnNo</th>
+                    <th>Status</th>
+                    <th>IsSuccess</th>
+                    <th>CreatedDate</th>
+                    <th>Amount</th>
+                    <th>Response</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-Data>
+                <tr>
+                    <td>{{Data.OrderId}}</td>
+                    <td>{{Data.WarehouseName}}</td>
+                    <td>{{Data.Skcode}}</td>
+                    <td>{{Data.TxnNo}}</td>
+                    <td>{{Data.Status}}</td>
+                    <td>{{Data.IsSuccess}}</td>
+                    <td>{{Data.CreatedDate|date:'short'}}</td>
+                    <td>{{Data.Amount}}</td>
+                    <td *ngIf="Data.Status=='SUCCESS'"><button class="btn btn-primary" (click)="showDialog(Data.OrderId)" >Response</button></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+  </div>
+  <p-dialog header="View Response" [(visible)]="display" [style]="{width: '40vw'}" appendTo="body" [modal]="true"> 
+    <label>Response Message :</label><br>
+    <textarea pInputTextarea [(ngModel)]="response" [rows]="5" [cols]="80" disabled></textarea><br>
+    <div style="float:right;margin-top: 20px;">
+        <button class="btn btn-primary" (click)="display=false" label="Ok">close</button>
+    </div>   
+</p-dialog>

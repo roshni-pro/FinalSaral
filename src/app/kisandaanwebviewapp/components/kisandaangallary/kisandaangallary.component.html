@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Kisan Kirana</title>
+	<!-- <link rel="icon" href="demo_icon.gif" type="image/gif" sizes="16x16"> -->
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<script>
+		$.urlParam = function (name) {
+			var results = new RegExp('[\?&]' + name + '=([^&#]*)')
+				.exec(window.location.search);
+
+			return (results !== null) ? results[1] || 0 : false;
+		}
+		$(document).ready(function () {
+			var custid = $.urlParam('customerid');
+			var lang = $.urlParam('lang');
+			var wid = $.urlParam('wid');
+			$("#Param").text("CustomerId :" + custid + " <br /> WarehouseId :" + wid + " <br /> Language :" + lang);
+		});
+	</script>
+</head>
+
+
+
+<body>
+	<div class="container">
+		<header>
+			<!-- <div class="navBtn" onclick="openNav()"><img src="images/icon/breadcrumbMenu.svg"> </div>
+			<div class="navBtn backBtn" onclick="goBack()"><i class="fa fa-angle-left" aria-hidden="true"></i></div>  -->
+			<div class="pageTitle">Gallery</div>
+		</header>
+
+		<main>
+			<section class="galleryImg">
+				<div *ngFor="let col of Kisandanimage" class="thumbImg">
+					<img src="{{col.KisanDaanImage}}">
+					<div class="galleryImgSummery show">
+						<button type="button" class="readMore" (click)="IsShowDesCription(col)">View More
+							<span><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+						</button>
+						<div class="galleryConent" *ngIf="col.IsShow">
+							{{col.Description}}
+						</div>
+					</div>
+
+				</div>
+				<!-- <div >
+							{{col.Description}}
+						</div> -->
+			</section>
+		</main>
+
+	</div>
+	<a href="#" class="cd-top"><i class="fas fa fa-angle-up"></i></a>
+</body>
+
+</html>

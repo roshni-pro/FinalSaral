@@ -1,0 +1,200 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="col-md-12">
+  <div class="card pt-2">
+    <div class="card-content">
+      <div class="px-3">
+        <form class="form form-inline" name="form" #cityEditForm="ngForm">
+          <input autocomplete="false" name="hidden" type="text" style="display:none;">
+          <div class="form-body">
+
+
+            <h5 class="m-1 ml-2"><strong><b>City</b></strong></h5>
+            <hr>
+            <div class="row" *ngIf="city">
+              <div class="col-md-6" *ngIf="!Cityid">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6"><b>City Name:</b><span style="color:red"> *</span></label>
+                  <!-- <input type="text" id="CityName" class="form-control col-md-6" name="cname"
+                    [(ngModel)]="city.CityName" (input)="inputValidator($event)" placeholder="City Name"
+                    #firstName="ngModel" required="1" maxlength="50" minlength="2" /> -->
+                  <p-autoComplete [(ngModel)]="cityKeyword" id="CityName" name="cname" placeholder="Enter City name"
+                    [style]="{'width':'110%'}" [inputStyle]="{'width':'188%'}" [suggestions]="cityList"
+                    field="description" (onSelect)="selectCity($event)" #cityautocomplete #firstName="ngModel"
+                    required="1">
+                  </p-autoComplete>
+                  <button pButton type="button" icon="pi pi-search" (click)="getcityList(cityautocomplete)"
+                    class="ui-button-success button-success"></button>
+
+                  <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                    <code>City Name is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                    <code>minlength 2</code>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6" *ngIf="Cityid">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6"><b>City Name:</b><span style="color:red"> *</span></label>
+                 <div *ngIf="!isClearCity && city.CityName != null">
+                  <input type="text" class="form-control" name="citynme" pInputText placeholder="City Name"
+                  [(ngModel)]="city.CityName" disabled>
+                <button pButton (click)="clearCity()" type="button" icon="pi pi-times"
+                  class="ui-button-danger"></button>
+
+                 </div>
+                 <div *ngIf="isClearCity">
+                  <p-autoComplete [(ngModel)]="cityKeyword" id="CityName" name="cname" placeholder="Enter City name"
+                    [suggestions]="cityList" 
+                  field="description" (onSelect)="selectCity($event)" #cityautocomplete #firstName="ngModel"
+                  required="1">
+                </p-autoComplete>
+                <button pButton type="button" icon="pi pi-search" (click)="getcityList(cityautocomplete)"
+                  class="ui-button-success edt" *ngIf="isClearCity || city.CityName == null"></button>
+</div>
+                <div class="col-md-6"></div>
+                <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                  <code>City Name is required</code>
+                </div>
+                <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                  <code>minlength 2</code>
+                </div>
+                 <!-- </div> -->
+                </div>
+              </div>
+
+              <!-- <div class="col-md-6">
+                    <div class="form-group m-2">
+                      <label for="country"  class="col-md-6"><b>Country Name:</b></label>
+                      
+                      <select id="country" name="country" class="form-control col-md-6" [(ngModel)]="city.CountryId" >                                          
+                        <option *ngFor="let country of countryList" [ngValue]="country.CountryId">
+                          {{ country.CountryName }}
+                        </option>
+                      </select>
+                    </div>
+                </div> -->
+
+              <!-- </div>
+
+            <div class="row"> -->
+
+              <!-- <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="zone"  class="col-md-6"><b>Zone Name: </b></label>
+                  <select id="zone" name="zone" class="form-control col-md-6" [(ngModel)]="city.ZoneId">
+                    <option *ngFor="let zone of zoneList" [ngValue]="zone.ZoneId">
+                      {{ zone.ZoneName }}
+                    </option>
+                  </select>
+                </div>
+              </div> -->
+
+
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="state" class="col-md-6"><b>State Name<span style="color:red"> *</span></b></label>
+                  <select id="state" name="state" class="form-control col-md-6" [(ngModel)]="city.Stateid"
+                    #statename="ngModel" required="1">
+                    <option value=""></option>
+                    <option *ngFor="let state of stateList" [ngValue]="state.Stateid">
+                      {{ state.StateName }}
+                    </option>
+                  </select>
+                  <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !statename.valid && statename.errors.required">
+                    <code>State name is required</code>
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="people"  class="col-md-6"><b>City Manager Name:</b></label>
+                  <select id="people" name="people" class="form-control col-md-6" [(ngModel)]="city.CityManagerId">
+                    <option *ngFor="let people of peopleList" [ngValue]="people.PeopleID">
+                      {{ people.DisplayName }}
+                    </option>
+                  </select>
+                </div>
+              </div> -->
+
+
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6"><b>City Code:</b><span style="color:red"> *</span></label>
+                  <input type="text" id="code" class="form-control col-md-6" name="code" [(ngModel)]="city.Code"
+                    (keypress)="omit_special_char($event)" placeholder="City code" #Code="ngModel" required="1"
+                    maxlength="50" minlength="2" />
+                  <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !Code.valid && Code.errors.required">
+                    <code>City code is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !Code.valid && Code.errors.minlength">
+                    <code>minlength 2</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6"><b>Alias Name:</b><span style="color:red"> *</span></label>
+                  <input type="text" id="aname" class="form-control col-md-6" name="aname" [(ngModel)]="city.aliasName"
+                    (input)="inputValidator($event)" placeholder="Alias Name" #aliasName="ngModel" required="1"
+                    maxlength="50" minlength="2" />
+                  <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !aliasName.valid && aliasName.errors.required">
+                    <code>Alias Name is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !aliasName.valid && aliasName.errors.minlength">
+                    <code>minlength 2</code>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="row" *ngIf="city">
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="active" class="col-md-8">Retailer is Active</label>
+                  <div class="custom-control custom-checkbox custom-control-inline">
+                    <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1"
+                      type="checkbox" [(ngModel)]="city.active">
+                    <label class="custom-control-label" for="customCheckboxInline1"></label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="Createactive" class="col-md-6">Supplier is Active </label>
+                  <div class="custom-control custom-checkbox custom-control-inline">
+                    <input class="custom-control-input" id="customCheckboxInline2" name="customCheckboxInline2"
+                      type="checkbox" [(ngModel)]="city.IsSupplier">
+                    <label class="custom-control-label" for="customCheckboxInline2"></label>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+
+
+
+          <div class="form-actions right col-sm-12 p-3">
+            <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+              Cancel
+            </button>
+            <button type="button" class="btn btn-raised btn-primary" (click)="update(cityEditForm)">
+              Save
+            </button>
+          </div>
+          <!-- </div>    -->
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

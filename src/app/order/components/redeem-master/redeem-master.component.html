@@ -1,0 +1,310 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+          <h3 class="m-2">Redeem Order</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+          <div class="row ">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label style="font-size: medium;">Zone</label>
+                        <p-dropdown [options]="zoneList" name="ZoneName" [(ngModel)]="Zoneid" 
+                        optionLabel="name" placeholder="Select Zone" optionLabel="ZoneName" appendTo="body" 
+                        (onChange)="getZoneId($event)"></p-dropdown>
+                    </div>
+                    <div class="col-sm-3">
+                      <label style="font-size: medium;">Region</label>
+                      <p-dropdown [options]="regionData" name="RegionName" [(ngModel)]="Regionid" 
+                      optionLabel="name" placeholder="Select Region" optionLabel="RegionName" appendTo="body" 
+                      (onChange)="getRegionId($event)"></p-dropdown>
+                  </div>
+                  <div class="col-sm-3">
+                      <label style="font-size: medium;">Hub</label>
+                      <p-dropdown [options]="wareHouseData" name="WarehouseName" [(ngModel)]="Warehouseid" 
+                      optionLabel="name" placeholder="Select Hub" optionLabel="WarehouseName" appendTo="body"
+                      (onChange)="getWarehouseData($event)"></p-dropdown>
+                  </div>
+                  <div class="col-sm-3">
+                      <label style="font-size: medium;">Select Status</label>
+                      <p-dropdown [options]="cities" [(ngModel)]="keyword" optionLabel="statusName" optionValue="statusCode"
+                      placeholder="Select All"></p-dropdown>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+                <input type="button" value="Search" [disabled]="!keyword" (click)="searchdata()" class="btn btn-raised btn-primary" style="margin-top: 27px;">&nbsp;
+                <input type="button" value="Export" [disabled]="!wareHouseRecord" (click)="excelFile()" class="btn btn-raised btn-primary" style="margin-top: 27px;">&nbsp;
+              </div>
+          </div>
+          
+    </div>
+    <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover"> 
+          <div>
+            <p-table #dt [value]="wareHouseRecord" [paginator]="true" [rows]="30" dataKey="PeopleID"
+                [scrollable]="true" [lazy]="true" [totalRecords]="totalRecords"  scrollHeight="350vh" (onLazyLoad)="load($event)"
+                text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="text-align: center">S no</th>
+                        <th style="text-align: center">Order No</th>
+                        <th style="text-align: center">SK Code</th>
+                        <th style="text-align: center">Shop Name</th>
+                        <th style="text-align: center">Warehouse Name</th>
+                        <th style="text-align: center">Customer Phone</th>
+                        <th style="text-align: center">Order Date</th>
+                        <th style="text-align: center">Status</th>
+                        <th style="text-align: center">Open Order Details</th>
+                        <th style="text-align: center">Comment Box</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-wareHouseRecord let-columns="columns"  let-rowIndex="rowIndex">
+                        <tr (click)="openDetails(wareHouseRecord,$event)">
+                            <td style="text-align: center">{{rowIndex+1}}</td>
+                            <td style="text-align: center">{{wareHouseRecord.Order_Id}}</td>
+                            <td style="text-align: center">{{wareHouseRecord.Skcode}}</td>
+                            <td style="text-align: center">{{wareHouseRecord.ShopName}}</td>
+                            <td style="text-align: center">
+                                <ng-container *ngIf="wareHouseRecord.WarehouseName == null else second">
+                                    {{warehouseName}}
+                                </ng-container>
+                                <ng-template #second>
+                                    <ng-container>
+                                        {{wareHouseRecord.WarehouseName}}
+                                    </ng-container>
+                                </ng-template>
+                            </td>
+                            <td style="text-align: center">{{wareHouseRecord.CustomerMobile}}</td>
+                            <td style="text-align: center">{{wareHouseRecord.CreatedDate}}</td>
+                            <td style="text-align: center" [ngClass]="wareHouseRecord.Status">{{wareHouseRecord.Status}}</td>
+                            <td style="text-align: center"><button (click)="showDialogOpen()" class="btn btn-primary">Open</button></td>
+                            <td style="text-align: center"><button (click)="showDialogComment()" class="btn btn-primary">Comment</button></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+         </div>
+     </div>
+          
+      
+     <!-- <p-blockUI [blocked]="blocked"></p-blockUI>
+     <p-progressSpinner *ngIf="blocked"
+         [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+         fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> -->
+
+    <!-- Open dialog box --start -->
+    <p-dialog header="Order Details" [(visible)]="displayOpen" [style]="{width: '60vw', left: '440px'}" [modal]="true" appendTo="body" 
+    [draggable]="false">
+        <section id="tax-details">
+              <div class="email-app-mail-content-detail h-90 overflow-hidden">
+                <div class="info-header">
+                    <div class="row">
+                        <div class="col-12">
+                          <h4 style="padding-top: 10px; padding-left: 20px"><b>Initial Orders</b></h4>
+                        </div>
+                      </div>
+                </div>
+                <div class="info-div m-2">
+                    <div class="scale-small">
+                        <div class="container-fluid ui-fluid bg-white rounded table table-hover">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Shop Name</label>
+                                                <input type="text" class="form-control" value={{shopName}} disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Customer Phone Number</label>
+                                                <input type="text" class="form-control" value={{mobile}} disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Shipping Address</label>
+                                                <input type="text" class="form-control" value={{ship}} disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Wallet Point</label>
+                                                <input type="text" class="form-control" value={{walletPoint}} disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Select Delivery Boy</label>
+                                                <select class="form-control" [(ngModel)]="dboy">
+                                                    <option *ngFor="let item of deliveryFilter" [value]="item.PeopleID">
+                                                        {{item.PeopleFirstName}} {{item.PeopleLastName}}
+                                                      </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Delivery By</label>
+                                               <h3>{{DboyName}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p-table #dt [paginator]="false" [value]="wareHouseFilterData"
+                                [scrollable]="true" [lazy]="true" scrollHeight="10vh" 
+                                text-align: center>
+
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>S no</th>
+                                            <th>Item Id</th>
+                                            <th>Item Name</th>
+                                            <th>Quantity</th>
+                                        <tr>
+                                    </ng-template>  
+                                    <ng-template pTemplate="body" let-resultData let-rowIndex="rowIndex">
+                                        <tr>
+                                            <td>{{rowIndex + 1}}</td>
+                                            <td>{{resultData.ItemId}}</td>
+                                            <td>{{resultData.ItemName}}</td>
+                                            <td><input type="number" [ngModel]="resultData.OrderQty || orderQuantity"></td>
+                                        </tr>
+                                    </ng-template>                  
+                                </p-table>
+                            </div>
+                        </div>    
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="row">
+                                    <div class="col-sm-3"><button class="btn btn-primary" (click)="save()" *ngIf="status == 'Pending'">Save Dispatched Order</button></div>
+                                    <div class="col-sm-3"><button class="btn btn-primary" (click)="Delivered()" *ngIf="status == 'Dispatched'">Delivered</button></div>
+                                    <div class="col-sm-2"><button class="btn btn-primary" (click)="cancelOrder()"
+                                        *ngIf="status == 'Pending' || status == 'Dispatched'">
+                                        Cancel Order</button></div>
+                                    <div class="col-sm-2"><button class="btn btn-primary" 
+                                        printTitle="ShopKirana - Empowering Retailers" printSectionId="print-section" ngxPrint>Invoice</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                       
+              </div>
+          </section>
+    </p-dialog> 
+    <!-- Open dialog box --end -->
+    
+    <!-- Comment dialog box --start -->
+    <p-dialog header="Comment" [(visible)]="displayComment" [style]="{width: '60vw', left: '440px'}"  [modal]="true" appendTo="body" 
+    [draggable]="false" >
+        <section id="tax-details">
+              <div class="email-app-mail-content-detail h-90 overflow-hidden">
+                <div class="info-header">
+                    
+                    <div class="row">
+                        <div class="col-12">
+                          <h4 style="padding-top: 10px; padding-left: 20px"><b>Comment Section</b></h4>
+                        </div>
+                      </div>
+                      
+                </div>
+                <div class="info-div m-2">
+                    <div class="scale-small">
+                        <form [formGroup]="saveData" (ngSubmit)="onSubmit()">
+                            <div class="container-fluid ui-fluid bg-white rounded table table-hover">
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-sm-10">
+                                                <div class="form-group">
+                                                    <label for="name">Comment : 1</label>
+                                                    <textarea class="form-control" formControlName="comments" [(ngModel)]="comments"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-sm-10">
+                                                <div class="form-group">
+                                                    <label for="name">Comment : 2</label>
+                                                    <textarea class="form-control" formControlName="comments2" [(ngModel)]="comments2"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" formControlName="Order_Id" [(ngModel)]="orderId">
+                                </div>
+                            </div>    
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-sm-2"><button class="btn btn-primary">Save</button></div>
+                                        <div class="col-sm-2"><button class="btn btn-primary" (click)="cancelComment()">Close</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                       
+              </div>
+            
+        </section>
+          
+    </p-dialog> 
+    <!-- Comment dialog box --end -->
+    
+    <div [hidden]="true" id="print-section"> 
+            <div>
+                <div style="width:100%;text-align:center;float:center;">
+                <b>Order Details </b><br><br><br></div>
+            </div>
+            <div class="panel-body">
+                <div>
+                    <div style="width:50%;text-align:left;float:left;">
+                      <b>Invoice id: OD_{{orderId}} </b><br><br></div>
+                    <div style="text-align:left;width:50%;float:right">
+                      <b>Wallet Point : {{walletPoint}}</b><br><br></div>
+                    <div style="width:50%;text-align:left;float:left;">
+                      <b>Shop Name: {{shopName}} </b><br><br></div>
+                    <div style="text-align:left;width:50%;float:right">
+                      <b>Shipping Address : {{ship}}</b><br><br></div>
+                    <div style="width:50%;text-align:left;float:left;">
+                      <b>Customer Phone Number : {{mobile}}</b><br><br><br></div>
+                    <div style="text-align:left;width:50%;float:right">
+                      <b>Delivery By: {{DboyName}}</b><br><br><br></div>
+                  </div>
+                  <div>
+                  <table style="border: 1px solid black; width: 100%;border-collapse: collapse;">
+                    <thead>
+                      <tr>
+                        <th style="border: 1px solid black;">S_No</th>
+                        <th style="border: 1px solid black;">Item ID</th>
+                        <th style="border: 1px solid black;">Item Name</th>
+                        <th style="border: 1px solid black;">Quantity</th>
+                  
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of wareHouseFilterData">
+                        <td style="border: 1px solid black;">1</td>
+                        <td style="border: 1px solid black;">{{item.ItemId}}</td>
+                        <td style="border: 1px solid black;">{{item.ItemName}}</td>
+                        <td style="border: 1px solid black;">{{item.OrderQty}}</td>
+                      </tr>
+                    </tbody>
+                    </table>
+                  </div>
+            </div>
+    
+    </div>
+    

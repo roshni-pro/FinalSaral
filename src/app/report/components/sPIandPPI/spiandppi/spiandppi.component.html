@@ -1,0 +1,101 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="customer-master">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">SPI & PPI Report</h3>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="projectinput3"><b>Brands</b></label>
+                <br>
+                <select id="brand" name="brand" class="form-control" [(ngModel)]="searchModel.SubsubCategoryid"
+                    (change)="brandclick(searchModel.SubsubCategoryid)">
+                    <option value="0" disabled>--select--</option>
+                    <option *ngFor="let brand of BrandList" [ngValue]="brand.SubsubCategoryid">
+                        {{ brand.SubsubcategoryName }}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="projectinput3"><b>Items</b></label>
+                <br>
+                <select id="item" name="item" class="form-control" [(ngModel)]="searchModel.ItemMultiMRPId">
+                    <option value="0" disabled>--select--</option>
+                    <option *ngFor="let item of itemList" [ngValue]="item.ItemMultiMRPId">
+                        {{ item.itemname }},{{item.ItemMultiMRPId}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label for="projectinput3" class="col-md-2"><b>SPI</b></label>
+                <div class="col-md-2">
+                    <!-- <p-checkbox name="SPI" binary="true" [(ngModel)]="searchModel.SPI"></p-checkbox> -->
+                    <p-radioButton name="groupname1" value="true" [(ngModel)]="searchModel.SPI"
+                        (ngModelChange)="onEventTypeSPIChange(searchModel)">
+                    </p-radioButton>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group">
+                <label for="projectinput3" class="col-md-2"><b>PPI</b></label>
+                <div class="col-md-2">
+                    <!-- <p-checkbox name="PPI" binary="true" [(ngModel)]="searchModel.PPI"></p-checkbox> -->
+                    <p-radioButton name="groupname" value="true" (ngModelChange)="onEventTypePPIChange(searchModel)"
+                        [(ngModel)]="searchModel.PPI">
+                    </p-radioButton>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <div></div>
+                <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="search(searchModel)">
+                    Search
+                </button>
+                &nbsp;
+                <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="clear()">
+                    Clear
+                </button>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <div></div>
+                <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="generateExcel()">
+                    Generate Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <div class="position-relative">
+        <div class="position-relative">
+            <table>
+                <tr>
+                    <th class="tdd" *ngFor="let col of columnList">
+                        {{col}}
+                    </th>
+                </tr>
+                <tr *ngFor="let row of list">
+                    <td [ngClass]="{'tdd': true, 'clr-1': getColorCodeClass(row, col) == 'clr-1', 'clr-2': getColorCodeClass(row, col) == 'clr-2', 'clr-3': getColorCodeClass(row, col) == 'clr-3', 'clr-4': getColorCodeClass(row, col) == 'clr-4', 'clr-5': getColorCodeClass(row, col) == 'clr-5', 'clr-6': getColorCodeClass(row, col) == 'clr-6'}"  *ngFor="let col of columnList">
+                        {{row[col]?row[col]: 0}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

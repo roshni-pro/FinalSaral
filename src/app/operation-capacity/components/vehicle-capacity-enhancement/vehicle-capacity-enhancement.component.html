@@ -1,0 +1,444 @@
+<section style="position: relative;">
+    <div class="col-xl-12 col-lg-12">
+        <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">Vehicle Details</h4>
+    </div>
+
+    <div class="ui-fluid shadow p-3
+     m-3 bg-white rounded table table-hover">
+        <div class="row m-1">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="">Select Warehouse</label>
+                    <!-- <p-dropdown [options]="warehouseList" name="warehouse" [(ngModel)]="warehouseId" filter="true"
+                        [disabled]="displayExport" placeholder="select warehouse">
+                        <ng-template let-item pTemplate="selectedItem">
+                            <span style="vertical-align:middle; margin-left: .5em">{{item.label}}</span>
+                        </ng-template>
+                        <ng-template let-car pTemplate="item">
+                            <div class="ui-helper-clearfix" style="position: relative;min-height: 25px;">
+                                <div style="margin-top:4px;">{{car.label}}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown> -->
+                    <p-dropdown [options]="warehouseList" name="warehouseList" optionLabel="label" 
+                         [(ngModel)]="warehouseId" [filter]="true" [disabled]="displayExport" placeholder="select warehouse">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="">Select Criteria</label>
+
+                    <p-dropdown [options]="dayList" name="DayList" optionLabel="label" optionValue="Id"
+                        (click)="onDateChange()" [disabled]="displayExport" [(ngModel)]="selectedDay" filter="true">
+                    </p-dropdown>
+                </div>
+            </div>
+
+            <div class="col-sm-3" *ngIf="selectedDay?.Id==3">
+                <div class="form-group">
+                    <label for="projectinput3">Select Date Range<span style="color:red"> *</span></label>
+                    <br>
+                    <p-calendar name="startDateInput" [(ngModel)]="rangeDates" selectionMode="range"
+                        placeholder="Select Date Range" (onselect)="getVehicleAttendanceList()" [readonlyInput]="true"
+                        inputId="range" required [monthNavigator]="true" [yearNavigator]="true" yearRange="2022:2050">
+                    </p-calendar>
+                    <div [hidden]="!(isInvalid && !startDate.valid)">
+                        <code>Required!</code>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 ">
+                <label for="">Select Vehicle Creation Type</label>
+
+                <p-dropdown [options]="editList" name="editList"   
+                     [disabled]="displayExport"  placeholder="Select List" 
+                    [(ngModel)]="selectedEditList" filter="true">
+                </p-dropdown>
+
+
+            </div>
+            <div class="col-sm-2 ">
+
+
+                <!-- <div class="triCheckBox">
+                    <p-triStateCheckbox (onChange)="tricheckboxAttendance($event)" [disabled]="triCheckBox"
+                        [label]="triCheckBoxLabel"></p-triStateCheckbox>
+                </div>  (click)="triCheckBox=false"-->
+                <label for="">Select Attendance</label>
+
+                <p-dropdown [options]="statusList" name="statusList" optionLabel="label" optionValue="Id"
+                    [disabled]="triCheckBox" [disabled]="displayExport" (onChange)="tricheckboxAttendance()"
+                    [(ngModel)]="selectedStatus" filter="true">
+                </p-dropdown>
+
+
+            </div>
+            <div class="col-sm-6 pt-3">
+                <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px"
+                    placeholder="select Attendance" [disabled]="displayExport " (click)="getVehicleAttendanceList()"
+                    (click)="triCheckBox=false">
+                    Search
+                </button>
+
+                <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px"
+                    [disabled]="displayExport" (click)="reset()">
+                    Reset
+                </button>
+
+                <button type="button" class="btn btn-raised btn-raised btn-primary " [disabled]="displayExport"
+                    style="margin-left:15px" (click)="exportPopup()">
+                    Export
+                </button>
+
+                <button type="button" class="btn btn-raised btn-raised btn-primary " [disabled]="displayVehicleExport"
+                    style="margin-left:15px" (click)="exportVehicle()">
+
+                    Export Vehicle
+                </button>
+
+                <!-- <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px"
+                    [disabled]="displayExport" (click)="updateTodaysAttandance()">
+                    Update Today Attendance
+                </button> -->
+            </div>
+        </div>
+
+        <div class="col-12">
+            <p-table [value]="vehicleAttendanceList">
+                <ng-template pTemplate="header">
+                    <tr class="myheader">
+                        <th>S.No </th>
+                        <th>Vehicle NO</th>
+                        <th>Transporter Name</th>
+                        <th>Type</th>
+                        <th>Vehicle Model</th>
+                        <th>Monthly Limit Amount</th>
+                        <th>Visited Uti Amount</th>
+                        <th>Monthly Limit Km</th>
+                        <th>Visited Uti KM</th>
+                        <th>No of Order</th>
+                        <th>Touch Point Planned</th>
+                        <th>Touch Point Visited</th>
+                        <th>Thresold value of load</th>
+                        <th>Visited value of load</th>
+                        <th>Delivered value of load</th>
+                        <th>DBoyCost</th>
+                        <th>ReplacementVehicleNo</th>
+                        <th>Today</th>
+                        <th>Future</th>
+                        <th>History</th>
+                    </tr>
+
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                    <tr>
+                        <td>{{i+1}}</td>
+                        <td> {{rowData.VehicleNo}}</td>
+                        <td>{{rowData.TransportName}}</td>
+                        <td>{{rowData.Type}}</td>
+                        <td>{{rowData.VehicleModel}}</td>
+                        <td>{{rowData.MonthlyLimitAmount}}</td>
+                        <td
+                            [ngClass]="{'before-86': rowData.UtilAmountPercentage < 86,'after-86': (rowData.UtilAmountPercentage >=86) && (rowData.UtilAmountPercentage <=99) ,'after-99':(rowData.UtilAmountPercentage >99) }">
+                            <!--,'after-66': (rowData.UtilAmountPercentage > 66)-->
+                            <span>{{rowData.OrderAmount}}</span>
+                            <br><br>
+                            <span>{{rowData.UtilAmountPercentage}}%</span>
+                        </td>
+                        <td>{{rowData.MonthlyLimitKM}}</td>
+                        <td
+                            [ngClass]="{'before-86': rowData.UtilKmPercentage < 86 ,'after-86': (rowData.UtilKmPercentage >=86) && (rowData.UtilKmPercentage <=99) ,'after-99': (rowData.UtilKmPercentage >99 )  }">
+                            <span>{{rowData.UtiKMTillYesterday}}</span>
+
+                            <br><br>
+                            <span>{{rowData.UtilKmPercentage}}%</span>
+                        </td>
+                        <td>{{rowData.NoOfOrders}}</td>
+                        <td>{{rowData.TouchPointPlanned}}</td>
+                        <td>{{rowData.TouchPointVisited}}</td>
+                        <td>{{rowData.ThresholdValueOfLoad}}</td>
+                        <td>{{rowData.VisitedOrderAmount}}</td>
+                        <td>{{rowData.OrderAmountDelivered}}</td>
+                        <td>{{rowData.DboyCost | number:'1.0-2'}}</td> 
+                        <td>{{rowData.ReplacementVehicleNo}}</td>
+                        <td>
+                            <p-inputSwitch [(ngModel)]="rowData.TodaySwitch"
+                                (ngModelChange)="changeActiveStatus(true,rowData)"></p-inputSwitch>
+
+                        </td>
+                        <td>
+
+
+                            <!-- <p-inputSwitch [(ngModel)]="rowData.TomorrowSwitch "
+                            (ngModelChange)="changeActiveStatus(false,rowData)"></p-inputSwitch> -->
+                            <button type="button" class="btn btn-raised btn-raised btn-primary "
+                                style="margin-left:15px"
+                                (click)="calenderDisplay=true;VehicleMasterId=rowData.VehicleMasterId; onChangeMonth($event)"><!--getFutureAttandance(rowData.VehicleMasterId)-->
+
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                            </button>
+
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-raised btn-raised btn-primary "
+                                style="margin-left:15px" (click)="VehicleMasterId=rowData.VehicleMasterId;display=true">
+                                <i class="fa fa-history" aria-hidden="true"></i>
+                            </button>
+                        </td>
+
+
+                    </tr>
+                    <tr>
+
+                        <td colspan="18">
+                            <p>
+                                <span style="font-weight: bold;">Status of Utilization: </span>
+                                <span > 
+                                    <!-- [ngClass]="{'red': rowData.orderStatusResult == ' under utilized', 'green':rowData.orderStatusResult ==' over utilized '}" -->
+                                    {{rowData.StatusOfUtilization}} </span>
+                            </p>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <span class="emptymsg">No Record</span>
+                </ng-template>
+            </p-table>
+        </div>
+        <hr>
+        <div *ngIf="vehicleAttendanceList && vehicleAttendanceList.length>0">
+            <div class="row">
+                <!-- <div class="col-sm-2">
+                    <div><i class="pi pi-plus"></i>
+
+                        <span style="margin-bottom:15px" (click)="AlldataExport()">
+                            Add Adhoc Vehicle
+                        </span>
+                    </div>
+                </div> -->
+
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label for="">Select By</label>
+                        <p-dropdown [options]="orderTouchpoint" name="orderTouchpoint"
+                            (onChange)="getVehicleAttendanceList()" optionLabel="label" optionValue="Id"
+                            [(ngModel)]="orderTouchpointId" filter="true">
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="orderTouchpointId && orderTouchpointId.Id > 0">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <h5>Vertical</h5>
+                        <p-chart type="bar" [data]="basicData" [options]="basicOptions"></p-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<p-dialog header="History" [(visible)]="display" [modal]="true" [blockScroll]="true"
+    [style]="{'width': '75vw' ,    'margin-inline': '80px'}" [draggable]="false" [resizable]="false" appendTo="body">
+    <div *ngIf="display">
+        <p-table [value]="historyList" [totalRecords]="totalcount" (onLazyLoad)="onLazyLoad($event)" [lazy]="true"
+            scrollHeight="60vh" [paginator]="true" [rows]="5" [scrollable]="true" [(first)]="first">
+            <ng-template pTemplate="header">
+                <tr class="myheader">
+                    <th>S NO</th>
+                    <th>VehicleNo</th>
+                    <th>TransportName</th>
+                    <th>Date of Utilization</th>
+                    <th>Hub Name</th>
+                    <th>Type</th>
+                    <th>Capacity</th>
+                    <th>LoadedWeight</th>
+                    <th>Cost</th>
+                    <th>CreatedBy</th>
+                    <th>ModifiedBy</th>
+                    <th>CreatedDate</th>
+                    <th>ModifiedDate</th>
+                    <th>Status Utilization</th>
+                </tr>
+
+            </ng-template>
+            <ng-template pTemplate="body" let-data let-i="rowIndex">
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{data.VehicleNo}}</td>
+                    <td>{{data.TransportName }}</td>
+                    <td>{{data.DateOfUtilization |date}}</td>
+                    <td>{{data.WarehouseName}}</td>
+                    <td>{{data.Type}}</td>
+                    <td>{{data.VehicleCapacity}}</td>
+                    <td>{{data.LoadedWeight}}</td>
+                    <td>{{data.Cost}}</td>
+                    <td>{{data.CreatedBy}}</td>
+                    <td>{{data.ModifiedBy}}</td>
+                    <td>{{data.CreatedDate | date:'short'}}</td>
+                    <td>{{data.ModifiedDate | date:'short'}}</td>
+                    <td>{{data.StatusUtilization}}</td>
+
+
+                </tr>
+            </ng-template>
+            <!-- <ng-template pTemplate="emptymessage">
+                <h5 class="emptymsg">No Record</h5>
+              </ng-template> -->
+        </p-table>
+    </div>
+</p-dialog>
+
+<p-dialog header="Export" [(visible)]="displayExport" [blockScroll]="true" appendTo="body" [modal]="true"
+    [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="">Select Warehouse</label>
+                <p-dropdown [options]="warehouseList" name="warehouse" appendTo="body" [(ngModel)]="exportWarehouseId"
+                    filter="true" (onChange)="getVehicleNumberList()">
+
+                    <ng-template let-item pTemplate="selectedItem">
+                        <span style="vertical-align:middle; margin-left: .5em">{{item.label}}</span>
+                    </ng-template>
+                    <ng-template let-car pTemplate="item">
+                        <div class="ui-helper-clearfix" style="position: relative;min-height: 25px;">
+                            <div style="margin-top:4px;">{{car.label}}</div>
+                        </div>
+                    </ng-template>
+                </p-dropdown>
+
+                <!-- <p-dropdown id="warehouse" name="warehouse" appendTo="body" [options]="warehouseList"  (onChange)="getVehicleNumberList()" [(ngModel)]="exportWarehouseId"
+                optionLabel="label" optionValue="Id" placeholder="Select WareHouse">
+            </p-dropdown> -->
+
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="">Select Vehicle</label>
+                <p-multiSelect [options]="vechicleList" appendTo="body" placeholder="Select Vehicle" name="vechicleList"
+                    optionLabel="VehicleNo" optionValue="Id" [(ngModel)]="vechicleId" filter="true">
+
+                </p-multiSelect>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="projectinput3">Select Date Range<span style="color:red"> *</span></label>
+                <br>
+                <p-calendar name="startDateInputExport" appendTo="body" [(ngModel)]="rangeDates" dateFormat="mm/dd/yy"
+                    selectionMode="range" [readonlyInput]="true" inputId="range" name="startDate" required
+                    [monthNavigator]="true" [yearNavigator]="true" yearRange="2022:2050" yearRange="2022:2050">
+                </p-calendar>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px"
+                (click)="export()">
+                Export
+            </button>
+
+        </div>
+
+        <div class="col-3">
+            <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px"
+            (click)="exportTripVechicleList()" >
+                Export Trip
+            </button>
+
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog header="Select Date" [blockScroll]="true" [(visible)]="calenderDisplay" appendTo="body" [modal]="true"
+    [style]="{width: '20vw'}" [draggable]="false" [resizable]="false">
+    <!-- <div class="row"> -->
+    <!-- <div class="col-12"> -->
+
+    <p-calendar  id="{{'cal_'}}" appendTo="body" [minDate]="minDateValue" yearRange="2022:2050" [showIcon]="true"
+        [inline]="true" [maxDate]="maxDateValue" name="{{'cal_name_'}}" selectionMode="multiple" [(ngModel)]="mydate"
+        (onMonthChange)="onChangeMonth($event)" >
+    </p-calendar>
+    <!-- </div> -->
+    <!-- </div> -->
+    <div class="p-footer mt-2">
+        <div class="row">
+            <div class="col-2">
+                <!-- <button class="btn btn-primary " type="button" (click)="updateFutureAttandance()">Save</button> -->
+            </div>
+            <div class="col-6"></div>
+            <div class="col-2">
+                <!-- <button class="btn btn-primary" type="button" (click)="cancel()">Cancel</button> -->
+            </div>
+        </div>
+
+    </div>
+</p-dialog>
+
+<!-- Multi Export Vehicle -->
+
+
+<p-dialog header="Export" [(visible)]="displayVehicleExport" [blockScroll]="true" appendTo="body" [modal]="true"
+    [style]="{width: '50vw'}" [draggable]="false" [resizable]="false">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="">Select Warehouse</label>
+                <p-multiSelect [options]="warehouseList" appendTo="body" placeholder="Select Warehouse" name="whList"
+                    optionLabel="label" optionValue="value" [(ngModel)]="WarehouseIds" filter="true" (ngModelChange)="onChangeWarehouse(WarehouseIds)">
+                </p-multiSelect>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="">Select Vehicle</label>
+                <p-multiSelect [options]="vechicleList" appendTo="body" placeholder="Select Vehicle" name="vechicleList"
+                    optionLabel="VehicleNo" optionValue="Id" [(ngModel)]="vechicleId" filter="true">
+                </p-multiSelect>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group">
+                <label for="projectinput3">Select Date Range<span style="color:red"> *</span></label>
+                <br>
+                <p-calendar name="startDateInputExport" appendTo="body" [(ngModel)]="rangeDates" dateFormat="mm/dd/yy"
+                    selectionMode="range" [readonlyInput]="true" inputId="range" name="startDate" required
+                    [monthNavigator]="true" [yearNavigator]="true" yearRange="2022:2050" yearRange="2022:2050">
+                </p-calendar>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px"
+                (click)="export1()">
+                Export
+            </button>
+        </div>
+    </div>
+</p-dialog>
+
+
+<p-confirmDialog #ab appendTo="body" header="Confirmation">
+    <p-footer>
+        <button class="btn btn-raised cncl mr-1" type="button" (click)="ab.reject()">No</button>
+        <button class="btn btn-raised btn-danger mr-1" type="button" (click)="ab.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+
+
+<p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-toast toast-container></p-toast>

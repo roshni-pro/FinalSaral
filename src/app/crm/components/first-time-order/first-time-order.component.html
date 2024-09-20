@@ -1,0 +1,104 @@
+<div class="container-fluid p-0">
+    <!-- header -->
+    <div class="row p-0 mt-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="header">
+                    <h3 class="">First Time Order Customer</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card shadow p-2">
+                <div class="row p-2">
+                    <!-- <div class="col-lg-6 col-md-12 col-sm-12 p-2 text-center">
+                        <label>Select Start Date and End Date</label> <br>
+                        <p-calendar [(ngModel)]="searchDate" [inline]="true" selectionMode="range" dateFormat="yy/mm/dd" ></p-calendar>
+                    </div> -->
+                    <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                        <label>Start Date</label><br>
+                        <p-calendar [(ngModel)]="startDate" [showIcon]="true"></p-calendar>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 mt-2">
+                        <label>End Date</label><br>
+                        <p-calendar [(ngModel)]="endDate" [showIcon]="true"></p-calendar>
+                    </div>
+                    <!-- <div class="col-lg-12 col-md-12 col-sm-12 p-2"> -->
+                        <div class="col-lg-6 col-md-12 col-sm-12 mt-2">
+                            <label>Select City</label>
+                            <select id="app_type" name="app_type" class="form-control" (change)="getWarehouse($event)">
+                                <option value="">Select a City</option>
+                                <option *ngFor="let city of allCity" value="{{city.Cityid}}">{{city.CityName}}</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-sm-12 mt-2">
+                            <label>Select Warehouse</label>
+                            <select id="app_type1" [disabled]="isNoWarehouse" name="app_type1" class="form-control"
+                                [(ngModel)]="warehouseID">
+                                <option *ngFor="let warehouse of allWarehouse" value="{{warehouse.WarehouseId}}">
+                                    {{warehouse.WarehouseName}} {{warehouse.CityName}}</option>
+                            </select>
+                            <span *ngIf="isNoWarehouse">
+                                <p><strong>note:</strong>this city has no warehouse</p>
+                            </span>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-6 mt-2">
+                            <button id="add" name="add" type="button" class="btn btn-raised btn-primary bt"
+                                style="width: 100%;" (click)="getSearchResults()">Search</button>
+                        </div>
+                        <div *ngIf="isCustomerListAvailable" class="col-lg-6 col-md-6 col-sm-6 mt-2">
+                            <button id="add"  name="add" type="button"
+                                class="btn btn-raised btn-primary bt" (click)="exportExcel()"
+                                style="width: 100%;">Export All Data</button>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 mt-2" *ngIf="!isCustomerListAvailable"><small style="color: brown;">*<u>Customer List is Not Available</u></small></div>
+                    <!-- </div> -->
+
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12" *ngIf="isCustomerListAvailable">
+            <div class="row p-1">
+                <div class="col-12 text-center">
+                    <p-table [value]="allCustomerDetail" [paginator]="true" [rows]="20" [scrollable]="true"
+                        scrollHeight="130vh">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Id</th>
+                                <th>Customer Name </th>
+                                <th>Warehouse Name</th>
+                                <th>City Name</th>
+                                <th>Shop Name</th>
+                                <th>Sk. Code</th>
+                                <th>Mobile Number</th>
+                                <th>Account</th>
+                                <th>Address</th>
+                                <th>Date of Purchase</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                            <tr>
+                                <td>{{rowData.CustomerId}}</td>
+                                <td>{{rowData.CustomerName}}</td>
+                                <td>{{rowData.WarehouseName}}</td>
+                                <td>{{rowData.CityName}}</td>
+                                <td>{{rowData.ShopName}}</td>
+                                <td>{{rowData.Skcode}}</td>
+                                <td>{{rowData.Mobile}}</td>
+                                <td>{{rowData.amount}}</td>
+                                <td>{{rowData.Address}}</td>
+                                <td>{{rowData.DateOfPurchase}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

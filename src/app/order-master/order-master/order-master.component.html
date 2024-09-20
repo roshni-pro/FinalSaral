@@ -1,0 +1,1789 @@
+<p-toast [style]="{marginTop: '50px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>Order Master</b></h3>
+    </div>
+    
+</div>
+<div *ngIf ="alert" class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Please Select atleast one warehouse</strong> 
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <label for="published">Select City</label><br>
+                    <p-multiSelect appendTo="body" [options]="cityList" [(ngModel)]="selectedBuyer" (onPanelHide)="onPanelHide()" (change)="getWarehouseVal($event.target.value)"
+                    name="zone" optionLabel="CityName">
+                    </p-multiSelect>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="published">Select Warehouse</label><br>
+                      <p-multiSelect  appendTo="body"  [options]="regions" [(ngModel)]="selectedWarehouse"  (change)="getWarehouse($event.target.value)" (onPanelHide)="onPanelHideWarehouse()"
+                        name="regions" optionLabel="WarehouseName"  >
+                      </p-multiSelect>
+                      <!-- *ngIf="IsKPP=='false'" -->
+                    </div>
+                  
+                    
+               </div>
+               <div class="col-md-2">
+                <label>Select KPP</label>
+                <select id="region" name="region" class="form-control" (change)="getKPP($event.target.value)"  required="1"
+                >
+                <option value="">--select--</option>
+                <ng-container *ngFor="let city of regions1">
+                <option *ngIf="city.IsKPP" value="{{city.WarehouseId}}">   
+                    {{ city.WarehouseName }}
+                </option>
+                 </ng-container>
+                </select> 
+                 </div>
+                 <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="orderType">Enter OrderId</label>
+                      <input type="tel" id="orderType" name="orderType" class="form-control" placeholder="Search" (change)="getOrderId($event.target.value)" >
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="orderType">OR Skcode</label>
+                      <input type="tel" id="orderType" name="orderType" class="form-control" placeholder="Search" (change)="getSkCode($event.target.value)">
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="orderType">OR ShopName</label>
+                      <input type="tel" id="orderType" name="orderType" class="form-control" placeholder="Search" (change)="getShopName($event.target.value)">
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label for="orderType">OR Mobile</label>
+                      <input type="tel" id="orderType" name="orderType" class="form-control" placeholder="Search" (change)="getMobile($event.target.value)" >
+                    </div>
+                  </div>
+              
+                  
+                  <div class="col-md-2">
+                    <label>Select Status</label>
+                    <select id="Warehouse" name="Warehouse" class="form-control" (change)="getStatusVal($event.target.value)" [(ngModel)]="SelectedWarehouseId">
+                        <option value="0">--Select--</option>
+                        <option value="">Show All</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Ready to Dispatch">Ready to Dispatch</option>
+                        <option value="Issued">Issued</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivery Redispatch">Delivery Redispatch</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Sattled">Sattled</option>
+                        <option value="Partial Settled">Partial Settled</option>
+                        <option value="Account Settled">Account Settled</option>
+                        <option value="Delivery Canceled">Delivery Canceled</option>
+                        <option value="Order Canceled">Order Canceled</option>
+                        <option value="Post Order Canceled">Post Order Canceled</option>
+                        <option value="Failed">Failed</option>
+                        <option value="Payment Pending">Payment Pending</option>
+                        <option value="InTransit">InTransit</option>
+                        <option value="Delivery Canceled Request">Delivery Canceled Request</option>
+                        <option value="ReadyToPick">ReadyToPick</option>
+                    </select>
+                  </div>
+                  <!-- <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="projectinput3">From Date</label>
+                      <br>
+                      <p-calendar name="startDateInput"  [showIcon]="true" [(ngModel)]="data.start"
+                        name="fromDate"  (change)="getStart($event.target.value)"></p-calendar>
+                        <p style="color:red"> Note:'*' select date between 1 month</p>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="projectinput4">To Date</label>
+                      <br>
+                      <p-calendar name="endDateInput" [showIcon]="true" name="toDate" [(ngModel)]="data.end"
+                       (change)="getEnd($event.target.value)">
+
+                      </p-calendar>
+                    </div>
+                  </div> -->
+                  <div class="col-md-2">
+                    <label for="FromDate">StartDate</label>
+                    <input type="datetime-local" id="startDate" name="startDate" class="form-control"
+                        [ngModel]="data.start | date:'MM-dd-yyyyTHH:mm'" (change)="getStart($event.target.value)"
+                        (ngModelChange)="data.start  = $event" />
+                        <p style="color:red"> Note:'*' select date between 1 month</p>
+                </div>
+                <div class="col-md-2">
+                    <label for="FromDate">End Date</label>
+                    <input type="datetime-local" id="endDate" name="endDate" class="form-control"
+                        [ngModel]="data.end | date:'yyyy-MM-ddTHH:mm'" (change)="getEnd($event.target.value)"
+                        (ngModelChange)="data.end = $event" />
+                </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="published">Payment Type</label><br>
+                        <p-multiSelect [style]="{minWidth:'10em'}" appendTo="body"  [options]="paymentOption"  
+                          name="hub" optionLabel="LevelName" [(ngModel)]="selectedPayment" (onPanelHide)="onPanelHidePayment()" (change)="getPaymentType($event.target.value)" >
+                        </p-multiSelect>
+                      </div>
+                  </div>
+                  <!-- <div class="form-group col-md-2">
+                    <label for="site-name">Select Payment Type :</label>
+                    <div ng-dropdown-multiselect="" options="dataselectV" selected-model="examplemodelV" extra-settings="examplesettingsV" style="width:200px"> selected-model="examplemodelV" [(ngModel)]="selectedBuyer"</div>
+                </div>
+                <div class="form-group  col-md-2" style="display:none">
+                  <label for="site-name"> Levels </label><br />
+                  <select class="form-control" ng-model="levelname">
+                      <option value="">--Select--</option>
+                      <option value="{{a.LevelName}}" ng-repeat="a in level" ng-style="{'background-color': a.LevelColour}">{{a.LevelName}} </option>
+                  </select>
+              </div> -->
+                  <div class="col-md-2">
+                    <label>Order Type</label>
+                    <select id="Warehouse" name="Warehouse" class="form-control" (change)="getOrderType($event.target.value)">
+                        <option value="0">--select--</option>
+                        <option value="1">General Order</option>
+                        <option value="2">Bundle Order</option>
+                        <option value="3">Return Order</option>
+                        <option value="4">Distributor Order</option>
+                        <option value="5">Zaruri Order</option>
+                        <option value="6">Damage Order</option>
+                        <option value="7">Rebook Order</option>
+                        <option value="8">Clearance Order</option>
+                        <option value="9">Non-Sellable Order</option>
+                        <option value="10">Non-Revenue Order</option>
+                    </select>
+                  </div>
+                  
+                  <div class="col-md-2">
+                    <label>Sort Direction</label>
+                    <select id="Warehouse" name="Warehouse" class="form-control" (change)="getSort($event.target.value)">
+                      <option value="0">--select--</option>
+                      <option value="DESC">Newest to Oldest</option>
+                      <option value="ASC">Oldest to Newest</option>
+                    </select>
+                  </div>
+                 
+                  <div class="col-md-2">
+                    <label>Customer Type</label>
+                    <select id="Warehouse" name="Warehouse" class="form-control" (change)="getCustomer($event.target.value)">
+                      <option value="0">--select--</option>
+                      <option value="Retailer">Retailor</option>
+                      <option value="Distributor">Distributor</option>
+                      <option value="SKP Owner">SKP Owner</option>
+                      <option value="SKP Retailer">SKP Retailer</option>
+                      <option value="KPP">KPP</option>
+                    </select>
+                  </div>
+            
+     
+                  <div class="col-md-8">
+                <div class="form-group" style="margin-top: 29px;">
+                    <button type="button" (click)="loadfuntion($event)" 
+                        class="btn btn-raised btn-raised btn-success mt">Search</button>    
+                    <button id="btnExport" (click)="ExportExcelOrder()"
+                        class="btn btn-raised btn-raised btn-info mt ml-2">Export to Excel</button>
+                        <button type="button" class="btn btn-raised btn-raised btn-primary "style="margin-left:15px" (click)="exportSelfOrder()">
+                            Export_SelfOrder
+                         </button>
+                         <button type="button" class="btn btn-raised btn-raised btn-warning "style="margin-left:15px" (click)="ExportSale()">
+                            ExportSale
+                         </button> 
+                        <button type="button" class="btn btn-raised btn-raised btn-info "style="margin-left:15px" (click)="clear()">
+                           Refresh
+                        </button>  
+                        
+                </div>
+            </div>
+            <div class="form-group col-md-4">
+              <div>
+                  <div>
+                      <div class="input-color">
+                          <input type="text" value="G: GeneralOrder (0 || 1)" readonly="">
+                          <div class="color-box" style="background-color:green;"></div>
+                      </div>
+                  </div>
+
+                  <div>
+                      <div class="input-color">
+                          <input type="text" value="B: BundleOrder (2)" readonly="">
+                          <div class="color-box" style="background-color:deepskyblue;"></div>
+                      </div>
+                  </div>
+                  <div>
+                      <div class="input-color">
+                          <input type="text" value="R: ReturnOrder (3)" readonly="">
+                          <div class="color-box" style="background-color:red;"></div>
+                      </div>
+                  </div>
+                  <div>
+                      <div class="input-color">
+                          <input type="text" value="D:DistributorOrder (4)" readonly="">
+                          <div class="color-box" style="background-color:darkmagenta;"></div>
+                      </div>
+                  </div>
+                  <div>
+                      <div class="input-color">
+                          <input type="text" value="Z: Zaruri Order (5)" readonly="">
+                          <div class="color-box" style="background-color:violet;"></div>
+                      </div>
+                  </div>
+                  <div>
+                      <div class="input-color">
+                          <input type="text" value="DO:Damage Order (6)" readonly="">
+                          <div class="color-box" style="background-color:#ffb61c;"></div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div  *ngIf="reloadPage">
+                <p-table #dt [globalFilterFields]="cols" (onLazyLoad)="load($event)" [lazy]="true" [rows]="10" [value]="search" [totalRecords]="totalRecords" 
+                    [paginator]="true" scrollDirection="horizontal" [scrollable]="true" scrollHeight="1000vh" text-align: center>
+                    <ng-template pTemplate="caption">
+                        <div style="text-align: right">        
+                            <!-- <i class="fa fa-search" style="margin:4px 4px 0 0"></i> -->
+                            <!-- <input type="text" pInputText size="50" placeholder="Search by Skcode/Order No." (change)="getSearchItem($event.target.value)" (input)="dt.filterGlobal($event.target.value, 'contains')"  style="width:auto"> -->
+                        </div>
+                    </ng-template>    
+                    
+                    <!-- <ng-template pTemplate="header" >
+                        <tr>
+                          <th *ngFor="let col of cols" [pSortableColumn]="col.field"  style="text-align: center; width: 100px;" >
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th>
+                        
+                       
+                        </tr>
+                       
+                      </ng-template> -->
+                      <ng-template pTemplate="header" style="width: 100px;">
+                            
+                        <tr >
+              
+                          <th *ngFor="let col of cols"  style="text-align: center; width: 110px;">                                                        
+                                    {{col.header}}                                                                                                       
+                          </th>
+      
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;" [ngStyle]="{'background-color': item.OrderColor}">
+                            <td *ngFor="let col of cols" style="width: 110px;" >
+                              <span *ngIf="!(col.field=='RemainingTime' || col.field=='Action1'||
+                               col.field=='Trupay'|| col.field=='OrderAmount' || col.field=='reditemavaiableValuestr'|| col.field=='CreatedDate' || 
+                               col.field=='Status' || col.field=='SkCode')">{{item[col.field]}}</span>
+                                <!-- <div ng-bind-html="GetOrderTime(item.RemainingTime)" *ngIf="item.Status=='Pending' || item.Status=='Issued' || item.Status=='Shipped' ||item.Status=='Delivery Redispatch' || item.Status=='Ready to Dispatch' || item.Status=='ReadyToPick'"></div> -->
+                                 <!-- <div *ngIf="col.field=='Distance'"> 
+                                   <span class="badge badge-primary" style="margin: 35px 0px 0px 0px;" *ngIf="item.ParentOrderId != null"> RebookOrder </span> 
+                                   <button *ngIf="(item.OrderStatusOtp!=null && item.OrderStatusOtp!='') && (UserRoleBackend.rolenames.indexOf('HQ Master login')>-1  || UserRoleBackend.rolenames.indexOf('Hub service lead')>-1|| UserRoleBackend.rolenames.indexOf('Hub Cashier')>-1)" class="btn-primary OrderOtpBtn" (click)="showOrderOtp(search.OrderStatusOtp,search.OrderId,search.Status,search.SkCode,search.Customerphonenum)">Get Otp</button> 
+                                  <p style="color:red" class="hidden"  ng-bind-html="search.OrderStatusOtp"></p>-->
+                                   <!-- <br /><span style="color:white;background:{{search.IsPrimeCustomer!=null && search.IsPrimeCustomer ? 'orangered' : 'white'}}">
+                                      {{search.IsPrimeCustomer!=null && search.IsPrimeCustomer?"* Fayda Club ":""}}
+                                  </span>  -->
+                              <!-- </div>  -->
+                              <!-- <div *ngIf="col.field=='Distance'">
+                                
+                                <td>{{item.OrderId}}</td>
+                                <td *ngif="(item.OrderTakenSalesPersonId > 0)">{{item.SalesPerson}}</td>
+                                <td *ngif="(item.OrderTakenSalesPersonId == 0)">{{item.SalesPerson}}</td>
+                                
+                            </div> -->
+                            <div *ngIf="col.field=='Distance'"> 
+                              <span *ngIf="(item.OrderTakenSalesPersonId > 0)">{{item.OrderTakenSalesPerson}}</span>
+                              <span class=" badge badge-danger text-white" *ngIf="(item.OrderTakenSalesPersonId == 0)">{{item.OrderTakenSalesPerson}}</span>
+                              <!-- <td ng-if="(trade.OrderTakenSalesPersonId >0)">Salesperson</td>
+                              <td ng-if="(trade.OrderTakenSalesPersonId == 0)">Self</td> -->
+                              <!-- <span>{{item.SalesPerson}}</span> -->
+                                <!-- <span>{{item.Distance}}</span> -->
+                            </div> 
+                            <div *ngIf="col.field=='Trupay'"> 
+                              <td class="capitalize" *ngIf="item.Trupay=='NA'"></td>
+                              <td class="capitalize" *ngIf="item.Trupay!='NA'">{{item.Trupay}}</td>
+                              
+                            </div> 
+                            
+                            <div *ngIf="col.field=='reditemavaiableValuestr'">
+                              <span [innerHtml]="item[col.field]"></span><br>
+                          
+                          </div>
+                        
+                            <div *ngIf="col.field=='SkCode'">
+                              <b><span>{{item.SkCode}}</span></b><br>
+                              <span >{{item.ShopName}}</span><br>
+                              <span>{{item.CustomerName}}</span><br>
+                              <span>{{item.Customerphonenum}}<br></span>  
+                              <span><b>Customer Type:</b><br><b>{{item.CustomerType}}</b></span>
+                          </div>
+                          <div *ngIf="col.field=='CreatedDate'">
+                            <!-- <span >{{item.SkCode}}</span><br> -->
+                            <span>{{item.CreatedDate | date:'medium'}}</span><br>  
+                            <b>ETA</b><br>
+                            <span><b>{{item.Deliverydate | date:'medium'}}</b></span> 
+                            <!-- <span> 
+                              {{item.OrderAmount+item.WalletAmount +item.BillDiscountAmount | number:0 }}</span> -->
+                         </div>
+                         <div *ngIf="col.field=='OrderAmount'">
+                           <span> {{item?.OrderAmount+item?.WalletAmount +item.BillDiscountAmount | number:0 }}</span>
+                         </div>
+                         <div *ngIf="col.field=='Status'">
+                          <span [ngClass]="(item?.Status == 'Pending'? 'canceled': 
+                          (item?.Status == 'Delivery Redispatch'? 'redispatch':(item?.Status == 'Delivered'? 'delivered' :(item?.Status == 'Delivery Canceled'? 'canceled': ''))))"> {{item?.Status }}</span>
+                        </div>
+                      <div *ngIf="col.field=='Action1'">
+                      
+                          <!--{{item.ParentOrderId}}-->
+                          <span *ngIf="item?.Trupay?.indexOf('Cash')>-1 || item?.Trupay?.indexOf('NA')>-1">
+
+                                  <button id="re{{item.OrderId}}" class="btn-sm btn-primary skedit" *ngIf="(item.Status == 'InTransit' || item.Status == 'Pending' || item.Status == 'Payment Pending' ||item.Status =='Failed')" (click)="edit(item, $event)">
+                                      edit
+                                  </button> {{item.ReasonCancle}}
+                          </span>                   
+                          <span *ngIf="item.Trupay =='Cash'">
+                             <span *ngIf="item.Status == 'Pending' && item.ParentOrderId == null">
+                                  <!--item.Trupay!='Cash' &&-->
+                                  <br />
+                                  <button type="button" class="btn btn-primary" (click)="rebookDetail(item.OrderId, item.WarehouseId)">
+                                      ReBook Order
+                                  </button>
+                              </span>
+                          </span>
+                          <!-- <span *ngIf="item?.Trupay?.indexOf('Cash')>-1 || item?.Trupay?.indexOf('NA')>-1">
+
+                            <button id="re{{item.OrderId}}" class="btn-sm btn-primary skedit" *ngIf="(item.Status == 'InTransit')" (click)="edit(item, $event)">
+                                edit
+                            </button> {{item.ReasonCancle}}
+                    </span>  -->
+                       </div>
+                              <div *ngIf="col.field=='OrderId'">
+                                
+                                <span class="orderType">{{item.OrderTypestr}}</span>
+                                <span>{{item[col.field].OrderId}}</span>
+                                <!-- <button type="button" *ngIf="item.Status == 'Delivery Canceled' || item.Status == 'Post Order Canceled' || item.Status == 'Delivery Canceled Request' || item.Status =='Delivery Redispatch'" Class=" btn btn-raised btn-info mr-1 btn-sm" (click)="getOTP(item, $event)">Get OTP</button> -->
+                                <button type="button" *ngIf="(item.OrderStatusOtp!=null && item.OrderStatusOtp!='')" Class=" btn btn-raised btn-info mr-1 btn-sm" (click)="getOTP(item, $event)">Get OTP</button>
+                                <span class="badge badge-info display-block rebook" *ngIf="item.IsFirstOrder">1st Order</span>
+
+
+                                <!--   
+                                              
+                                <button ng-if="(trade.OrderStatusOtp!=null && trade.OrderStatusOtp!='') && (UserRoleBackend.rolenames.indexOf('HQ Master login')>-1  || UserRoleBackend.rolenames.indexOf('Hub service lead')>-1|| UserRoleBackend.rolenames.indexOf('Hub Cashier')>-1)" class="btn-primary OrderOtpBtn" ng-click="showOrderOtp(trade.OrderStatusOtp,trade.OrderId,trade.Status,trade.SkCode,trade.Customerphonenum)">Get Otp</button> -->
+                                <span class="badge badge-info display-block rebook"  *ngIf="item.ParentOrderId != null"> Rebook Order </span>
+                            </div>
+                              <div *ngIf="col.field=='Action'">
+                                <button type="button"  *ngIf="item.Status == 'Pending' || item.Status =='Order Canceled' || item.Status =='Failed' || item.Status =='Payment Pending' || item.Status =='InTransit' || item.Status =='ReadyToPick' " Class="btn btn-raised btn-info mr-1 btn-sm" (click)="Detail(item.OrderId, item)">Open</button>
+                                <button type="button" *ngIf="!(item.Status == 'Pending'|| item.Status =='ReadyToPick' || item.Status =='Payment Pending' ||item.Status =='Order Canceled' || item.Status =='InTransit' || item.Status =='Failed')" Class=" btn btn-raised btn-info mr-1 btn-sm" (click)="openDetail(item, $event)">Open</button>
+                            </div>
+                                <div *ngIf="col.field=='RemainingTime'">
+                                  <span [innerHTML]="GetOrderTime(item.RemainingTime)" *ngIf="item.Status=='Pending' || item.Status=='Issued' || item.Status=='Shipped' ||item.Status=='Delivery Redispatch' || item.Status=='Ready to Dispatch' || item.Status=='ReadyToPick'">{{item[col.field]}}</span>
+                                  <!-- <span [ngClass]="HIT"  *ngIf="hours >= 0 && hours <= 48)>' + hours + ':' + minutes + ':' + seconds + '"</span> -->
+                                </div>
+                                
+                                <!-- <div *ngIf="col.field=='Action1'">
+                                    <button type="button" *ngIf="item.Status == 'Pending' || item.Status =='Payment Pending' || item.Status =='Failed' || item.Status =='Payment Pending' || item.Status =='InTransit'" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="edit(item, $event)">Edit</button>
+                                    <button type="button" *ngIf="item.Status == 'Pending' && item.ParentOrderId == null" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="rebookDetail(item.OrderId, item.WarehouseId)">Rebook Order</button>
+                                </div> -->
+                                <div *ngIf="col.field=='Action2'">
+                                  <button type="button" *ngIf="!(item.Status=='Pending' || item.Status=='Failed' || item.Status=='Inactive' || item.Status=='Payment Pending')" Class="btn btn-raised btn-danger mr-1 btn-sm" (click)="disHistoryDetail(item.OrderId, $event)">Dis History</button>
+                                  <button type="button" *ngIf="item.Status=='Pending' && item.ParentOrderId != null" Class="btn btn-raised btn-danger mr-1 btn-sm" (click)="disHistoryDetail(item.OrderId, $event)">Dis History</button> 
+                                  <button type="button" *ngIf="!(item.Status=='Pending' || item.Status=='Failed' || item.Status=='Inactive' || item.Status=='Payment Pending')" Class="btn btn-raised btn-success mr-1 btn-sm" (click)="viewHistoryDetail(item, $event)">History</button> 
+                                  <!-- <button type="button" *ngIf="item.Status == 'Order Canceled' ||item.Status == 'Pending' || item.Status =='Payment Pending' || item.Status =='Failed'|| item.Status =='Ready To Dispatch'" Class="btn btn-raised btn-light mr-1 btn-sm" (click)="historyDetail(item.OrderId, $event)">History</button> -->
+                                  <button type="button" *ngIf="item.Status=='Pending' || item.Status=='Failed' || item.Status=='Inactive' || item.Status=='Payment Pending'" Class="btn btn-raised btn-light mr-1 btn-sm" (click)="historyDetail(item.OrderId, $event)">History</button>
+
+                                  <!-- <span ng-hide="trade.Status=='Pending' || trade.Status=='Failed' || trade.Status=='Inactive' || trade.Status=='Payment Pending'">
+                                    <button class="btn btn-danger btn-sm skhistory" data-toggle="modal" data-target="#pricemodel" ng-click="oldHistroy(trade)">Dis History</button><br /><br />
+                                </span>
+                                <span ng-if="trade.Status=='Pending' && trade.ParentOrderId != null">
+                                    <button class="btn btn-danger btn-sm skhistory" data-toggle="modal" data-target="#pricemodel" ng-click="oldHistroy(trade)">Dis History</button><br /><br /> -->
+                                </div>
+                                <!-- <div *ngIf="col.field=='Action2' && statusval == 'Payment Pending'">
+                                    <button type="button" Class="btn btn-raised btn-light mr-1 btn-sm" (click)="historyDetail(item.OrderId, $event)">History</button>
+                                </div>
+                                <div *ngIf="col.field=='Action2' && statusval == 'Failed'">
+                                  <button type="button" Class="btn btn-raised btn-light mr-1 btn-sm" (click)="historyDetail(item.OrderId, $event)">History</button>
+                              </div> -->
+                                <div *ngIf="col.field=='Action3'">                                   
+                                    <button type="button" Class="btn btn-raised btn-danger mr-1 btn-sm" (click)="viewDetail(item.OrderId, $event)">View</button>
+                                </div>
+                                <!-- <div *ngIf="statusval=='Ready to Dispatch'"> -->
+                              
+                                
+                                <!-- </div> -->
+                                <div *ngIf="col.field=='Action5'">                                   
+                                  <button type="button" *ngIf="(item.Status == 'Delivery Canceled')" Class="btn btn-raised btn-danger mr-1 btn-sm" (click)="Detail(item.OrderId, $event)">Return</button>
+                              </div>
+                            </td>
+            
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-md-6 page-num-info">
+              <span>
+                  Show
+                  <select id="entries" name="entries" class="form-control" (change)="onNumPerPageChange($event.target.value)" style="width:20%">
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>//option for no. Items per page //this give no. of items selected to show on page
+                  entries per page
+              </span>
+          </div>
+          </div>
+        </div>
+    </div>
+   
+</div>
+
+<div *ngIf="isHistoryDetail">
+    <p-dialog [header]="'History details'" [(visible)]="isHistoryDetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+        class="testme" [style]="{width: '85%',height: '100%', overflow: 'auto'}">
+        <!-- <p-header> -->
+            <div>
+                <!-- <div class="row">
+                    <div class="col-md-6">
+                        <h2>Damage Order details</h2>
+
+                    </div>                  
+                </div>
+                <div class="col-md-6 text-right ovelFieldForm">
+                    <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                        printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                    <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                        >Close</button>
+                </div> -->
+                <div class="container-fluid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                               
+                            <p-table #dt [globalFilterFields]="coloumns"  [value]="historyData" [totalRecords]="historyData" 
+                            [paginator]="true" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                            <ng-template pTemplate="caption">
+                        <div >        
+                         </div>
+                    </ng-template>    
+                    <ng-template pTemplate="header" >
+                        <tr>
+                       
+                          <th *ngFor="let col of coloumns" [pSortableColumn]="col.field"  style="text-align: center" >
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th>
+                        <!--  <th>Action</th> -->
+                       
+                        </tr>
+                       
+                      </ng-template>
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;">
+                            
+                            <td *ngFor="let col of coloumns" >
+                               
+                                
+                                  <div *ngIf="col.field=='AuditHistory' || col.field=='AuditHistory'|| col.field=='ABCClassification' || col.field=='itemcode'  || col.field=='UnitPrice'||  col.field=='MinOrderQty'|| col.field=='qty'|| col.field=='CurrentStock' || col.field=='ReasonCancle'">
+                                    {{item[col.field]}}
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+                <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+            </div>
+                    </div>
+                  </div>
+                  
+                </div>
+                <div></div>
+            </div>
+        <!-- </p-header> -->
+      
+    </p-dialog>
+</div>
+
+<div *ngIf="isOpenDetail">
+    <p-dialog [header]="'Initial Orders'" [(visible)]="isOpenDetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+        class="testme" [style]="{width: '85%',height: '100%', overflow: 'auto'}">
+        <!-- <p-header> -->
+            <div>
+                <!-- <div class="row">
+                    <div class="col-md-6">
+                        <h2>Damage Order details</h2>
+
+                    </div>                  
+                </div>
+                <div class="col-md-6 text-right ovelFieldForm">
+                    <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                        printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                    <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                        >Close</button>
+                </div> -->
+                <div class="container-fluid">
+                    <div class="card">
+                       <!-- <h4 style="text-align: center;" style="background: rgb(224, 104, 18);"> Order Details</h4> -->
+                       <div class="panel-heading text-center" style="background-color:#ff6a00;color:aliceblue;">
+                        <strong>
+                            <span class="glyphicon glyphicon-th"></span> Order Details 
+                        </strong>
+                    </div> 
+                       <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label>Order ID</label><br>
+                                <input type='text' style="width: 220px;" [value]="getdata?.OrderId" disabled>  
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Invoice ID</label><br>
+                                    <input type='text' style="width: 220px;" [value]="getdata?.invoice_no" disabled>   
+                                </div>
+                                <div class="form-group col-md-3" *ngIf="getdata?.OrderPickerMasterId>0">
+                                  <label for="site-name"> Picker ID  </label><br />
+                                  <input id="site-name" type="text" class="form-control" [(ngModel)]="getdata.OrderPickerMasterId" disabled />
+                              </div>
+                              <div class="form-group col-md-3" *ngIf="getdata?.TripPlannerMasterId>0">
+                                  <label for="site-name"> Trip ID  </label><br />
+                                  <input id="site-name" type="text" class="form-control" [(ngModel)]="getdata.TripPlannerMasterId" disabled />
+                              </div>
+                                <div class="col-md-3">
+                                    <label>Customer Name</label><br>
+                                    <input type='text' style="width: 220px;" [value]="getdata?.CustomerName" disabled>   
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Customer Phone No.</label><br>
+                                    <input type='text' style="width: 220px;" [value]="getdata?.Customerphonenum" disabled>
+                                  </div>
+                                  
+                                  <div class="col-md-3">
+                                    <label>Billing Address</label><br>
+                                    <input type='text' style="width: 220px;" [value]="getdata?.BillingAddress" disabled>
+                                  </div>
+                                  <div class="col-md-3">
+                                    <label>Shipping Address</label><br>
+                                    <input type='text' style="width: 220px;" [value]="getdata?.ShippingAddress" disabled>                        
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Bill Amount</label><br>
+                                    <input type='text' style="width: 220px;" [value]="getdata?.GrossAmount" disabled>
+                                </div>
+                                <div class="col-md-3">
+                                    <label> Delivery Boy</label>
+                                    <select id="region" name="region" class="form-control" [(ngModel)]="dataAdd.DboyId" (change)="getRegionVal($event.target.value)"  required="1" 
+                                    >
+                                    <option value="">--select--</option>
+                                    <option *ngFor="let dboy of dboyList" value="{{dboy.PeopleID}}">
+                                     {{ dboy.DisplayName }}
+                                   </option>
+                                </select> 
+                                </div>
+                               <br>
+                                <div class="form-group col-md-12" *ngIf="(ShowAlartMsg) ">
+                                  <span style="color:red;font-size:20Px"> <b> Awaiting</b> for Remaining Amount For RDS Customer</span>
+                              </div>
+  
+                              <span style="color:red;">
+                                  {{getdata?.IsPrimeCustomer!=null && getdata?.IsPrimeCustomer?"* Fayda Club ":""}}
+                              </span>
+                            <p-table #dt [globalFilterFields]="colmns"  [value]="orderDetails" [totalRecords]="orderDetails" 
+                    [paginator]="false" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="caption">
+                        <div >        
+                         </div>
+                    </ng-template>    
+                    <!-- <ng-template pTemplate="header" >
+                        <tr>
+                       
+                          <th *ngFor="let col of colmns" [pSortableColumn]="col.field"  style="text-align: center" >
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th> -->
+                        <!--  <th>Action</th> -->
+                       
+                        <!-- </tr>
+                       
+                      </ng-template> -->
+                      <ng-template pTemplate="header" style="width: 100%;">
+                            
+                        <tr >
+              
+                          <th *ngFor="let col of colmns"  style="text-align: center;width: 80px;">                                                        
+                                    {{col.header}}                                                                                                       
+                          </th>
+      
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;" [ngClass]="item.qty > item.CurrentStock ? 'FailNew' : ''">
+                            
+                            <td *ngFor="let col of colmns" style="width: 80px;">
+                              <!-- <div *ngIf="col.field=='MinOrderQtyPrice'">
+                                {{item[col.field]  | number : '1.2-2'}}
+                              </div> -->
+                                <div *ngIf="col.field=='MinOrderQtyPrice'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='DefaultUnitPrice'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='price'">
+                                 
+                                    <!-- <input id="number" type="number" value="" style="width: 80px;"  min="0">   -->
+                                    {{item[col.field]  | number : '1.2-2'}} 
+                                </div>
+                                <div *ngIf="col.field=='AmtWithoutTaxDisc'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='TotalAmountAfterTaxDisc'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='AmtWithoutAfterTaxDisc'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='TaxAmmount'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='TotalAmt'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='UnitPrice'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='CurrentStock'">
+                                  {{item[col.field]  | number : '1.2-2'}}
+                                </div>
+                                <div *ngIf="col.field=='ReasonCancle'">
+                                  <!-- <span *ngIf="getDataList.orderDetails.ItemId == freebiesdata.FreeItemId && getDataList.orderDetails.IsFreeItem == true && getDataList.orderDetails.FreeWithParentItemId == manual.ItemId">
+                                    {{reasonedit }}</span> -->
+                                   {{reasonIndex == i ? reasonedit : ''}}
+                                </div>
+                                <div *ngIf="col.field=='itemname'">
+                                  <span>
+                                    {{item.itemname}}
+                                    <span *ngIf="item.IsFreeItem">
+                                        <b style="color:red;">(Free Item)</b>
+                                    </span>
+                                  </span>
+                              </div>
+                                
+                                <div *ngIf="col.field=='Action'">
+                                    <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="Detail(item.DamageOrderId, $event)">Open</button>
+                                </div>
+                                <div *ngIf="col.field=='Action1'">
+                                    <input type="button" id="btnEdit" [disabled]="item.IsBlocked? true:false" class="btn btn-raised btn-warning " value="Edit"
+                                    (click)="EditDboy(item)">
+                                  </div>
+                                  <div *ngIf="col.field=='ItemMultiMRPId' || col.field=='StoreName'|| col.field=='ABCClassification' || col.field=='itemcode'  ||  col.field=='MinOrderQty'|| col.field=='qty' || col.field=='TaxPercentage'">
+                                    {{item[col.field]}}
+                                </div>
+                                <!-- <div *ngIf="col.field=='ActionEdit' && item.qty > item.CurrentStock" >
+                                  <button type="button" Class="btn btn-raised btn-danger mr-1 btn-sm" *ngIf="(item.Status == 'Pending' && (orderDetails.paymentThrough == 'Cash' || orderDetails.paymentThrough == 'Gullak'))" (click)="editManual(item,i, $event)">
+                                    Manual Edit</button>
+                              </div> -->
+                              <div *ngIf="col.field=='ActionEdit' && item.qty > item.CurrentStock">
+                              <div *ngIf="(!(getdata?.OrderType == '2' || getdata?.OrderType == '3' || item?.IsFreeItem==true || item?.CurrentStock > item?.qty) && !(getdata?.paymentMode == 'Online' &&  getdata?.paymentThrough != 'Gullak'))" >
+                                
+                                <button type="button" Class="btn btn-raised btn-danger mr-1 btn-sm"  *ngIf="item.Status == 'Pending'" (click)="editManual(item,i, $event)">
+                                  Manual Edit </button>
+                            </div>
+                           </div>
+                              <!-- <td [hidden]="(OrderData.OrderType == '2' || OrderData.OrderType == '3' || (OrderData.paymentMode == 'Online' &&  PaymentType !='Gullak') || orderDetail.IsFreeItem==true || orderDetail.CurrentStock > orderDetail.qty)">
+                               
+                                <button class="btn-sm btn-danger" ng-show="OrderData.Status == 'Pending'" (click)="editManual(item,i, $event)">Manual Edit</button>
+                            </td> -->
+                            <!-- </td> -->
+                        </tr>
+                        
+                    </ng-template>
+                </p-table>   
+                <div></div>     
+                <td>
+                  <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" *ngIf="getdata?.Status == 'Pending'" (click)="SaveDispatchedOrder(getdata, $event)">Save Dispatched Order</button>
+              </td>
+              <td>
+                <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" *ngIf="getdata?.Status == 'Pending'" (click)="printAllInvoice();">Invoice</button><br>
+                
+            </td>
+            <td>
+              <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="openExport()">Export To Excel</button>
+            </td>
+            <td>
+                <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="excelWayBill(getdata, $event)">Excel EWay Bill</button>
+            </td>
+            <td>
+                <label>Discount</label>
+                <select id="Warehouse" name="Warehouse" class="form-control" (change)="getOrderType($event.target.value)">
+                    <option value="0">--select--</option>
+                    <option value="1"></option>               
+                </select>
+              </td>
+              <td>
+                <label>Reward Point</label>
+                <span class=" badge badge-danger text-white">{{getdata?.RewardPoint}}
+
+                </span>
+            </td>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <td>
+                <label>Post Wallet Amount</label>
+                <span class=" badge badge-danger text-white">{{getdata?.BillDiscountAmount | number : '1.2-2'}}
+                </span>
+            </td>
+                <div>
+                   
+              
+                </div>
+                <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+                <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+            </div>
+                    </div>
+                  </div>
+                  
+                </div>
+                <div></div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-ar btn-primary" (click)="onClose()" >Close</button>
+                  
+              </div>
+            </div>
+        <!-- </p-header> -->
+      
+    </p-dialog>
+</div>
+<div *ngIf="isEWayDetail">
+  <p-dialog [header]="'EWay Bill Details'" [(visible)]="isEWayDetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+      class="testme" [style]="{width: '85%',height: '50%', overflow: 'auto'}">
+      <!-- <p-header> -->
+          <div>
+              <!-- <div class="row">
+                  <div class="col-md-6">
+                      <h2>Damage Order details</h2>
+
+                  </div>                  
+              </div>
+              <div class="col-md-6 text-right ovelFieldForm">
+                  <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                      printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                  <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                      >Close</button>
+              </div> -->
+              <div class="container-fluid">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="form-group col-md-3">
+                                  <label>Ship From Pin Code:</label>
+                              <input type='number' style="width: 220px;"  (change)="getShipFrom($event.target.value)">  
+                              </div>
+                              <div class="col-md-3">
+                                  <label>Ship To Pin Code:</label>
+                                  <input type='number' style="width: 220px;"  (change)="getShipTo($event.target.value)">   
+                              </div>
+                              <div class="col-md-3">
+                                  <label>Distance:</label>
+                                  <input type='number' style="width: 220px;" (change)="getDistance($event.target.value)">   
+                              </div>
+                              <div class="col-md-3">
+                                  <label>Vehicle no.:</label>
+                                  <input type='text' style="width: 220px;"  (change)="getVehicle($event.target.value)">
+                                </div>
+                                
+                                <div class="col-md-3">
+                                  <label>Docket no.:</label>
+                                  <input type='number' style="width: 220px;"  (change)="getDocNo($event.target.value)">
+                                </div>
+                               
+                              <div class="col-md-3">
+                                  <label></label>
+                                  <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm"  (click)="ExportEWayOrder()">Export</button>
+                              </div>                     
+              <div>
+                 
+            
+              </div>
+              <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+              <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+          </div>
+                  </div>
+                </div>
+                
+              </div>
+              <div></div>
+          </div>
+      <!-- </p-header> -->
+    
+  </p-dialog>
+</div>
+<div *ngIf="isManualEdit">
+  <p-dialog [header]="'CHANGE MANUAL QTY IN ITEM DETAIL'" [(visible)]="isManualEdit" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+      class="testme" [style]="{width: '70%',height: '50%', overflow: 'auto'}">
+      <!-- <p-header> -->
+          <div>
+              <!-- <div class="row">
+                  <div class="col-md-6">
+                      <h2>Damage Order details</h2>
+
+                  </div>                  
+              </div>
+              <div class="col-md-6 text-right ovelFieldForm">
+                  <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                      printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                  <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                      >Close</button>
+              </div> -->
+              <div class="container-fluid">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="col-md-8">
+                                <div class="form-group">
+                                  <label for="site-name"> Manual In qty:</label><br />
+                                  <button type="button" (click)="updatelineitem(getDataList)">-</button>
+                                  <input type="number" disabled  (change)="getQty($event.target.value)" [value]="manual.qty" (ngModel)="manual.qty"  />
+                                  <button type="button" (click)="updatelineitem1(getDataList)">+</button>
+                              </div>
+                              <!--<div class="form-group">
+                                  <input id="site-name" class="form-control" rows="3" required="" ng-model="Quantity.QtyChangeReason" placeholder="Enter Reason" />
+                              </div>-->
+                              <div class="form-group">
+                                  <label for="site-name"> Reason For entry:</label><br />
+                                  <select rows="3" class="form-control" id="site-name" (change)="getEditReason($event.target.value)" >
+                                      <option value="">--select--</option>
+                                      <option value="No Change">No Change</option>
+                                      <option value="Wrong order">Wrong order</option>
+                                      <option value="Test order">Test order</option>
+                                      <option value="Price issue">Price issue</option>
+                                      <option value="Payment issue">Payment issue</option>
+                                      <option value="No more required">No more required</option>
+                                      <option value="Delivery delay">Delivery delay</option>
+                                      <option value="Product unavailability">Product unavailability</option>
+                                  </select>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-ar btn-primary" (click)="onManualCanceled()" >Cancel</button>
+                                <!-- <button type="button" class="btn btn-ar btn-primary" ng-click="Putinventory(Quantity)">Save</button>-->
+                                <button type="button" class="btn btn-ar btn-primary" (click)="ok()">Ok</button>
+                            </div>
+                            
+                          </div>
+                                <!-- <div class="form-group">
+                                  <label for="orderType">Manual In qty:</label>
+                                  <input type="number" id="orderType" name="orderType" class="form-control" placeholder="Search" (change)="getQty($event.target.value)" >
+                                </div>
+                              </div>
+                              <br>
+                              <div class="col-md-3">
+                                <label>Reason For entry:</label>
+                                <select id="Warehouse" name="Warehouse" class="form-control" (change)="getEditReason($event.target.value)">
+                                    <option value="0">--select--</option>
+                                    <option value="No Change">No Change</option>
+                                    <option value="Wrong Order">Wrong Order</option>
+                                    <option value="Test Order">Test Order</option>
+                                    <option value="Price issue">Price issue</option>
+                                    <option value="Payment issue">Payment issue</option>
+                                    <option value="No more required">No more required</option>
+                                    <option value="Delivery delay">Delivery delay</option>
+                                    <option value="Product unavailbility">Product unavailbility</option>
+                                </select>
+                                  <div class="form-actions right col-sm-12 p-3">
+                                <button type="submit" class="btn btn-raised btn-primary" (click)="editManual(item)">
+                                  <i class="fa fa-check-square-o"></i> Ok</button>
+                                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCanceled()">
+                                    <i class="ft-x"></i> Cancel
+                                  </button>
+                                </div>  
+                              </div> -->
+                              
+                                               
+              <div>
+                 
+            
+              </div>
+              <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+              <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+          </div>
+                  </div>
+                </div>
+                
+              </div>
+              <div></div>
+          </div>
+      <!-- </p-header> -->
+    
+  </p-dialog>
+</div>
+<div *ngIf="isDetailOpen">
+  <p-dialog [header]="'Order Dispatched'" [(visible)]="isDetailOpen" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+      class="testme" [style]="{width: '85%',height: '100%', overflow: 'auto'}">
+      <!-- <p-header> -->
+          <div>
+              <!-- <div class="row">
+                  <div class="col-md-6">
+                      <h2>Damage Order details</h2>
+
+                  </div>                  
+              </div>
+              <div class="col-md-6 text-right ovelFieldForm">
+                  <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                      printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                  <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                      >Close</button>
+              </div> -->
+              <div class="container-fluid">
+                  <div class="card">
+                     <!-- <h4 style="text-align: center;" style="background: rgb(198, 186, 230);"> Order Details {{getDataList?.Status}}</h4> -->
+                     <div class="panel-heading text-center" style="background-color:#948eee;color:rgb(217, 227, 236);">
+                      <strong>
+                          <span class="glyphicon glyphicon-th"></span> Order Dispatched  {{getDataList?.Status}}
+                      </strong>
+                  </div>
+                     <div class="card-body">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <h5>Orders.. {{getDataList?.Status}}</h5>
+                            </div>
+                              <div class="form-group col-md-3">
+                                  <label>Invoice ID</label><br>
+                              <input type='text' style="width: 220px;" [value]="getDataList?.invoice_no" disabled>  
+                              </div>
+                              <div class="col-md-3">
+                                  <label>Assignment ID</label><br>
+                                  <input type='text' style="width: 220px;" [value]="dispatchMaster?.DeliveryIssuanceIdOrderDeliveryMaster" disabled>   
+                              </div>
+                              <div class="form-group col-md-3" *ngIf="dispatchMaster?.OrderPickerMasterId>0">
+                                <label for="site-name"> Picker ID  </label><br />
+                                <input id="site-name" type="text" class="form-control" [(ngModel)]="dispatchMaster.OrderPickerMasterId" disabled />
+                            </div>
+                            <div class="form-group col-md-3" *ngIf="dispatchMaster?.TripPlannerMasterId>0">
+                                <label for="site-name"> Trip ID  </label><br />
+                                <input id="site-name" type="text" class="form-control" [(ngModel)]="dispatchMaster.TripPlannerMasterId" disabled />
+                            </div>
+                              <div class="col-md-3">
+                                  <label>Customer Name</label><br>
+                                  <input type='text' style="width: 220px;" [value]="getDataList?.CustomerName" disabled>   
+                              </div>
+                              <div class="col-md-3">
+                                  <label>Customer Phone No.</label><br>
+                                  <input type='text' style="width: 220px;" [value]="getDataList?.Customerphonenum" disabled>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                  <label>Billing Address</label><br>
+                                  <input type='text' style="width: 220px;" [value]="getDataList?.BillingAddress" disabled>
+                                </div>
+                                <div class="col-md-3">
+                                  <label>Shipping Address</label><br>
+                                  <input type='text' style="width: 220px;" [value]="getDataList?.ShippingAddress" disabled>                        
+                              </div>
+                              <div class="col-md-3">
+                                  <label>Bill Amount</label><br>
+                                  <input type='text' style="width: 220px;" [value]="dispatchMaster?.GrossAmount" disabled>
+                              </div>
+                              <!-- <div class="col-md-3">
+                                  <label> Select Delivery Boy</label>
+                                  <select id="region" name="region" class="form-control" [(ngModel)]="dataAdd.DboyId" (change)="getDBoyVal($event.target.value)"  required="1" 
+                                  >
+                                  <option value="0">--select--</option>
+                                  <option *ngFor="let dboy of dboyList" value="{{dboy.PeopleID}}">
+                                   {{ dboy.DisplayName }}
+                                 </option>
+                              </select> 
+                              </div> -->
+                              <br>
+                              <div class="col-md-8">
+                                <label>  </label>
+                                
+                                <td></td>
+                              </div>
+                              <br>
+                              <div class="col-md-8">
+                                <label></label>
+                                <button type="button"  *ngIf="getDataList?.Status == 'Ready to Dispatch' ||getDataList?.Status == 'Delivery Canceled' || getDataList?.Status == 'Post Order Canceled' || getDataList?.Status == 'Delivery Canceled Request'" Class="btn btn-raised btn-info mr-1 btn-sm"  (click)="ewayExport(item, $event)">View Sign</button>
+                                 ReDispatch Count:<span class=" badge badge-danger text-white">{{getDataList?.ReDispatchCount}}</span> 
+                                <td></td>
+                              </div>
+                              <div class="col-md-8">
+                                <label></label>
+                                <button type="button"   *ngIf="getDataList?.Status == 'Delivery Canceled' || getDataList?.Status == 'Post Order Canceled'" Class="btn btn-raised btn-danger mr-1 btn-sm"  (click)="canceledImage(getDataList, $event)">View Canceled images</button>
+                                <td></td>
+                              </div>
+                              <div class="col-md-8">
+                                <label>Delivery By</label>  <br>
+                                <h2> {{dispatchMaster?.DboyName}} </h2>
+                              </div>
+                          <p-table #dt [globalFilterFields]="clm"  [value]="dispatcheddetails" [totalRecords]="orderDetails" 
+                  [paginator]="false" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                  <ng-template pTemplate="caption">
+                      <div >        
+                       </div>
+                  </ng-template>    
+                  <ng-template pTemplate="header" >
+                      <tr>
+                     
+                        <th *ngFor="let col of clm" [pSortableColumn]="col.field"  style="text-align: center" >
+                          {{col.header}}
+                          <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>          
+                      </tr>
+                     
+                    </ng-template>
+                  <ng-template pTemplate="body" let-item let-i="rowIndex" >
+                      <tr style="width: 100px;">
+                          
+                          <td *ngFor="let col of clm" >
+                              <div *ngIf="col.field=='MinOrderQtyPrice'">
+                                {{item[col.field]  | number : '1.2-2'}} 
+                              </div>
+                              <div *ngIf="col.field=='DefaultUnitPrice'">
+                                {{item[col.field]  | number : '1.2-2'}}
+                              </div>
+                              <div *ngIf="col.field=='price'">
+                                  <!-- <input id="number" type="number" value="" style="width: 80px;"  min="0">   -->
+                                  {{item[col.field]  | number : '1.2-2'}} 
+                              </div>
+                              <div *ngIf="col.field=='AmtWithoutTaxDisc'">
+                                {{item[col.field]  | number : '1.2-2'}}
+                              </div>
+                              <div *ngIf="col.field=='TotalAmountAfterTaxDisc'">
+                                {{item[col.field]  | number : '1.2-2'}}
+                              </div>
+                              <div *ngIf="col.field=='AmtWithoutAfterTaxDisc'">
+                                {{item[col.field]  | number : '1.2-2'}}
+                              </div>
+                              <div *ngIf="col.field=='TaxAmmount'">
+                                {{item[col.field]  | number : '1.2-2'}}
+                              </div>
+                              <div *ngIf="col.field=='TotalAmt'">
+                                {{item[col.field]  | number : '1.2-2'}}
+                              </div>
+                              <div *ngIf="col.field=='itemname'">
+                                <span>
+                                  {{item.itemname}}
+                                  <span *ngIf="item.IsFreeItem">
+                                      <b style="color:red;">(Free Item)</b>
+                                  </span>
+                                </span>
+                            </div>
+                           
+                              <div *ngIf="col.field=='Action'">
+                                  <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="Detail(item.DamageOrderId, $event)">Open</button>
+                              </div>
+                              <div *ngIf="col.field=='Action1'">
+                                  <input type="button" id="btnEdit" [disabled]="item.IsBlocked? true:false" class="btn btn-raised btn-warning " value="Edit"
+                                  (click)="EditDboy(item)">
+                                </div>
+                                <div *ngIf="col.field=='ItemMultiMRPId' || col.field=='StoreName'|| col.field=='Category' || col.field=='itemcode'  || col.field=='UnitPrice'||  col.field=='MinOrderQty'|| col.field=='qty'|| col.field=='CurrentStock'|| col.field=='TaxPercentage' ">
+                                  {{item[col.field]}}
+                              </div>
+                            
+                          </td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                      <p-table #dt [globalFilterFields]="clm"  [value]="dispatcheddetails" [totalRecords]="orderDetails" 
+                  [paginator]="false" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                  <ng-template pTemplate="caption">
+                      <div >        
+                       </div>
+                  </ng-template>    
+                  <!-- <ng-template pTemplate="header" >
+                      <tr>
+                     
+                        <th *ngFor="let col of clm" [pSortableColumn]="col.field"  style="text-align: center" >
+                          {{col.header}}
+                          <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>          
+                      </tr>
+                     
+                    </ng-template> -->
+                    <ng-template pTemplate="body" let-item let-i="rowIndex" >
+                      
+                      <ng-container *ngIf="i == 0">
+                      <tr >
+                        <td *ngIf="dispatchReturn?.length >0" colspan="8" style="text-align:center;color:#ff0000"><b>Return list</b></td></tr>
+                        
+                     
+                       <tr *ngFor="let dispatch of dispatchReturn" >
+                        
+                          <td *ngIf="dispatchReturn.length >0">{{dispatch?.ItemMultiMRPId}}</td>
+                          <td *ngIf="dispatchReturn.length >0">
+                              {{dispatch.itemname}}
+                              <span *ngIf="dispatch.IsFreeItem">
+                                  <b style="color:red">(Free Item)</b>
+                              </span>
+                          </td>
+                          <td *ngIf="dispatchReturn.length >0">{{dispatch?.itemcode}}</td>
+                          <td *ngIf="dispatchReturn.length >0">{{dispatch.UnitPrice | number : '1.2-2'}}</td>
+                          <td *ngIf="dispatchReturn.length >0">{{dispatch.price}}</td>
+                          <td *ngIf="dispatchReturn.length >0">{{dispatch.MinOrderQty}}</td>
+                          <td *ngIf="dispatchReturn.length >0">{{dispatch.qty}}</td>
+                      
+                        </tr>
+                      </ng-container>
+                        </ng-template>
+                      </p-table>
+                         
+
+                              <!--<td>{{orderDetail.TaxPercentage}}</td>
+                              <td>{{orderDetail.TaxAmmount}}</td>
+                              <td>{{orderDetail.DiscountPercentage}}</td>
+                              <td>{{orderDetail.NetAmmount}}</td>
+                              <td>{{orderDetail.TotalAmt}}</td>-->
+                              <!--<input type="number" value="{{PurchaseorderDetail.PriceRecived}}" ng-model="PurchaseorderDetail.PriceRecived" style="width:60px;" />-->
+                              <!--<td>
+                                  <div class="form-group">
+                                      <img alt="" src="{{orderDetail.Itempic}}" class="img-square img64_64">
+                                  </div>
+                              </td>-->
+                              <!--<td><input id="{{orderDetail.ItemId}}" type="checkbox" value="" class="" ng-model="orderDetail.isDeleted" /></td>
+                              <td>{{orderDetail.CurrentStock}}</td>-->
+                              <!--<td>{{orderDetail.CreatedDate | date:'medium'}}</td>
+                              <td>{{orderDetail.UpdatedDate | date:'medium'}}</td>-->
+<div></div>
+              <div>
+                  <!-- <td>
+                      <button type="button"  Class="btn btn-raised btn-info mr-1 btn-sm">Add Free Item</button>
+                  </td> -->
+                  <!-- *ngIf="col.field=='ItemMultiMRPId'" -->
+                  <td>
+                    <button type="button"  *ngIf="getDataList?.Status == 'Ready to Dispatch'" Class="btn btn-raised btn-info mr-1 btn-sm"  >Add Free Item</button>
+                  </td>
+                  <td >
+                      <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="printInvoiceDispatch()">Invoice Dispatch</button><br>
+                     
+                  </td>
+                  <td>
+                    <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="detailOpenExport()">Export To Excel</button>
+                  </td>
+                  <td>
+                      <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm" (click)="excelWayBill(getDataList, $event)">EWayBillDetails</button>
+                  </td>
+                  <td></td>
+                    <td>
+                      <label>Reward Point</label>
+                      <span class=" badge badge-danger text-white">{{getDataList?.RewardPoint}}
+
+                      </span>
+                  </td>
+                  <!-- <td>
+                      <label>Post Wallet Amount</label>
+                      <span class=" badge badge-danger text-white">{{getDataList.RewardPoint}}
+                      </span>
+                  </td> -->
+              </div>
+              <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+              <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+          </div>
+                  </div>
+                </div>
+                
+              </div>
+              <div></div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-ar btn-primary" (click)="onCloseDetail()" >Close</button>
+                
+            </div>
+            </div>
+      <!-- </p-header> -->
+    
+  </p-dialog>
+</div>
+<div *ngIf="isEditDetail">
+  <p-dialog [header]="'Edit Details'" [(visible)]="isEditDetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+      class="testme" [style]="{width: '50%',height: '50%', overflow: 'auto'}">
+      <!-- <p-header> -->
+          <div>
+              <!-- <div class="row">
+                  <div class="col-md-6">
+                      <h2>Damage Order details</h2>
+
+                  </div>                  
+              </div>
+              <div class="col-md-6 text-right ovelFieldForm">
+                  <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                      printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                  <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                      >Close</button>
+              </div> -->
+              <div class="container-fluid">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="row">
+                              
+                            <div class="col-md-3">
+                              <label>Status</label> 
+                              <select id="Warehouse" name="Warehouse" class="form-control" (change)="getOrderStatus($event.target.value)">
+                                <option value="0">--select--</option>
+                                <option value="Pending">Pending</option>
+                                <option *ngIf="saveData.oldStatus == 'InTransit'" value="InTransit">InTransit</option>
+                                <option *ngIf="saveData.oldStatus != 'InTransit'" value="Order Canceled">Order Canceled</option>
+                            </select>  
+                          </div>
+                          <div class="col-md-3" *ngIf="!(saveData.oldStatus == 'InTransit' && editOrder.status != 'Pending')">
+                            <label>Reason</label>
+                            <select id="Warehouse" name="Warehouse" class="form-control" (change)="getReason($event.target.value)">
+                              <option value="0">--select--</option>
+                              <option value="Other">Other</option>
+                              <option *ngIf="editOrder.status == 'Pending'" value="Order Canceled">Agreed for COD</option>
+                              <option *ngIf="editOrder.status == 'Order Canceled'" value="Wrong Order">Wrong Order</option>                       
+                              <option *ngIf="editOrder.status == 'Order Canceled'" value="Test Order">Test Order</option>                         
+                              <option *ngIf="editOrder.status == 'Order Canceled'" value="Payment Issue">Payment Issue</option>
+                              <option *ngIf="editOrder.status == 'Order Canceled'" value="No more Required">No more Required</option>                            
+                              <option *ngIf="editOrder.status == 'Order Canceled'" value="Delivery delay">Delivery delay</option>                     
+                              <option *ngIf="editOrder.status == 'Order Canceled'" value="Product unavaibility">Product unavaibility</option>                   
+                          </select>  
+                        </div>
+                        <div class="form-actions right col-sm-12 p-3">
+                          <button type="submit" class="btn btn-raised btn-primary" (click)="onSave()">
+                            <i class="fa fa-check-square-o"></i> Save</button>&nbsp;&nbsp;
+                            <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCanceled()">
+                              <i class="ft-x"></i> Cancel
+                            </button>
+                          </div>  
+                              
+                             
+                              
+                          <p-table #dt [globalFilterFields]="colmns"  [value]="orderDetails" [totalRecords]="orderDetails" 
+                  [paginator]="false" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                  <ng-template pTemplate="caption">
+                      <div >        
+                       </div>
+                  </ng-template>    
+                
+                 
+              </p-table>
+              
+              <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+              <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+          </div>
+                  </div>
+                </div>
+                
+              </div>
+              <div></div>
+          </div>
+      <!-- </p-header> -->
+    
+  </p-dialog>
+</div>
+
+<div *ngIf="isrebookDetail">
+  <p-dialog [header]="'Rebook Order'" [(visible)]="isrebookDetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+      class="testme" [style]="{width: '50%',height: '70%', overflow: 'auto'}">
+      <!-- <p-header> -->
+          <div>
+              <!-- <div class="row">
+                  <div class="col-md-6">
+                      <h2>Damage Order details</h2>
+
+                  </div>                  
+              </div>
+              <div class="col-md-6 text-right ovelFieldForm">
+                  <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                      printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                  <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                      >Close</button>
+              </div> -->
+              
+              <div class="container-fluid">
+                  <div class="card">
+                      <div class="card-body">
+                        <div class="modal-header">
+                          <strong>Are you want to ReBook Order? </strong>
+                      </div>
+                      <hr />
+                      <div class="row">
+                          <div class="col-sm-12">
+                              Order #: {{search[0]?.OrderId}} <br />
+                          </div>
+                          <!-- <div class="row">
+                            Are you want to ReBook Order?
+                           
+                          
+                          <br>
+                          <div class="col-md-3">
+                            <label>Order ID</label>
+                        <input type='text' [value]="search[0]?.OrderId" style="width: 220px;"  disabled></div> -->
+                            <div class="col-md-5">
+                              <div class="form-group">
+                                <label for="projectinput3">New Order Date</label>
+                                <br>
+                                <input type="date" id="endDate" name="startDateInput" class="form-control"
+                        [ngModel]="rebookData.NewDate | date:'yyyy-MM-dd'" placeholder="dd-MM-yyyy" (change)="getNewOrderDate($event.target.value)"
+                        (ngModelChange)="rebookData.NewDate = $event" />
+                                <!-- <p-calendar name="startDateInput"  [showIcon]="true" [(ngModel)]="rebookData.NewDate |  date:'dd-mm-yyyy'"
+                                  name="fromDate"  (change)="getNewOrderDate($event.target.value)" placeholder="dd-mm-yyyy" autocomplete="off"></p-calendar> -->
+                              </div>
+                            </div>
+                            <div class="form-actions right col-sm-12 p-3">
+                              <button type="submit" class="btn btn-raised btn-primary" (click)="onSubmit()">
+                                <i class="fa fa-check-square-o"></i> Submit</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                                  <i class="ft-x"></i> Cancel
+                                </button>
+                              </div>
+                          <p-table #dt [globalFilterFields]="colmns"  [value]="orderDetails" [totalRecords]="orderDetails" 
+                  [paginator]="false" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                  <ng-template pTemplate="caption">
+                      <div >        
+                       </div>
+                  </ng-template>    
+                
+                 
+              </p-table>
+              
+              <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+              <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+          </div>
+                  </div>
+                </div>
+                
+              </div>
+              <div></div>
+          </div>
+      <!-- </p-header> -->
+    
+  </p-dialog>
+</div>
+<div *ngIf="isItemdetail">
+    <p-dialog [header]="'Payment Details'" [(visible)]="isItemdetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+        class="testme" [style]="{width: '85%',height: '100%', overflow: 'auto'}">
+        <!-- <p-header> -->
+            <div>
+                <!-- <div class="row">
+                    <div class="col-md-6">
+                        <h2>Damage Order details</h2>
+
+                    </div>                  
+                </div>
+                <div class="col-md-6 text-right ovelFieldForm">
+                    <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                        printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                    <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                        >Close</button>
+                </div> -->
+                <div class="container-fluid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                
+                            <p-table #dt [globalFilterFields]="colomns"  [value]="paymentData" [totalRecords]="paymentData" 
+                    [paginator]="false" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="caption">
+                        <div >        
+                         </div>
+                    </ng-template>    
+                    <ng-template pTemplate="header" >
+                        <tr>
+                            <th>S No.</th>                     
+                          <th *ngFor="let col of colomns"  style="text-align: center" >
+                            {{col.header}}
+                           
+                          </th>
+                        <!--  <th>Action</th> -->
+                       
+                        </tr>
+                       
+                      </ng-template>
+                      <!-- <ng-template pTemplate="header" style="width: 100%;">
+                            
+                        <tr >
+              
+                          <th *ngFor="let col of colmns"  style="text-align: center;width: 80px;">                                                        
+                                    {{col.header}}                                                                                                       
+                          </th>
+      
+                    </ng-template> -->
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;">
+                            <div>{{i+1}}</div>
+                            <td *ngFor="let col of colomns" style="text-align: center">
+                                
+                                <div *ngIf="col.field=='amount'">
+                                    {{item[col.field]  | number : '1.2-2'}}
+                                  </div>
+                                  <div *ngIf="col.field=='ChequeStatusText'">
+                                    <span *ngIf="paymentData.PaymentFrom == 'Cheque'">{{item[col.field]}}</span>
+                                  </div>
+                                <div *ngIf="col.field=='ChequeStatus' || col.field=='CreatedDate' || col.field=='Fine'  || col.field=='PaymentFrom'||  col.field=='PaymentThrough'|| col.field=='status' || col.field=='GatewayTransId'">
+                                    {{item[col.field]}}
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+                <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+            </div>
+                    </div>
+                  </div>
+                  
+                </div>
+                <div></div>
+            </div>
+        <!-- </p-header> -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ar btn-primary" (click)="onClosePayment()" >Close</button>
+          
+      </div>
+    </p-dialog>
+</div>
+<div *ngIf="isViewHistorydetail">
+    <p-dialog [header]="'ORDERDISPATCHEDMASTER HISTORY'" [(visible)]="isViewHistorydetail" [resizable]="true" [modal]="true" appendTo="body" positionTop="10" 
+        class="testme" [style]="{width: '85%',height: '80%', overflow: 'auto'}">
+        <!-- <p-header> -->
+            <div>
+                <!-- <div class="row">
+                    <div class="col-md-6">
+                        <h2>Damage Order details</h2>
+
+                    </div>                  
+                </div>
+                <div class="col-md-6 text-right ovelFieldForm">
+                    <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                        printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                    <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                        >Close</button>
+                </div> -->
+                <div class="container-fluid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                
+                            <p-table #dt [globalFilterFields]="colos"  [value]="viewHistoryData.AuditHistory" [totalRecords]="viewHistoryData.AuditHistory.length" 
+                    [paginator]="true" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="caption">
+                        <div >        
+                         </div>
+                    </ng-template>    
+                    <ng-template pTemplate="header" >
+                        <tr>
+                                                 
+                          <th *ngFor="let col of colos" [pSortableColumn]="col.field"  style="text-align: center" style="width: 100px;" >
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th>
+                        <!--  <th>Action</th> -->
+                       
+                        </tr>
+                       
+                      </ng-template>
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;">
+                            
+                            <td *ngFor="let col of colos" style="width: 100px;">
+                                
+                                <div *ngIf="col.field=='amount'">
+                                    {{item[col.field]  | number : '1.2-2'}}
+                                  </div>
+                                
+                                <div *ngIf="col.field=='ChequeStatus' || col.field=='ChequeStatusText'|| col.field=='CreatedDate' || col.field=='Fine'  || col.field=='PaymentFrom'||  col.field=='PaymentThrough'|| col.field=='status'">
+                                    {{item[col.field]}}
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+                <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+            </div>
+                    </div>
+                  </div>
+                  
+                </div>
+                <div></div>
+            </div>
+        <!-- </p-header> -->
+      
+    </p-dialog>
+    
+</div>
+<div *ngIf="isDisHistorydetail">
+    <p-dialog [header]="'Order History'" [(visible)]="isDisHistorydetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+        class="testme" [style]="{width: '50%',height: '80%', overflow: 'auto'}">
+        <!-- <p-header> -->
+            <div>
+                <!-- <div class="row">
+                    <div class="col-md-6">
+                        <h2>Damage Order details</h2>
+
+                    </div>                  
+                </div>
+                <div class="col-md-6 text-right ovelFieldForm">
+                    <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                        printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                    <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                        >Close</button>
+                </div> -->
+                <div class="container-fluid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label>Order ID</label>
+                                <input type='text' [value]="disHistoryData[0]?.orderid" style="width: 220px;"  disabled>  
+       
+                                </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <div>
+                                    <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm"  (click)="itemHistoryDetail(disHistoryData, $event)">itemHistory</button>
+                                    <!-- (click)="disHistoryDetail(item.OrderId, $event)" -->
+                                </div>
+                            <p-table #dt [globalFilterFields]="colum"  [value]="disHistoryData" [totalRecords]="disHistoryData" 
+                    [paginator]="false" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                    <ng-template pTemplate="caption">
+                        <div >        
+                         </div>
+                    </ng-template>    
+                    <ng-template pTemplate="header" >
+                        <tr>
+                                              
+                          <th *ngFor="let col of colum" [pSortableColumn]="col.field"  style="text-align: center">
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                          </th>
+                        <!--  <th>Action</th> -->
+                       
+                        </tr>
+                       
+                      </ng-template>
+                    <ng-template pTemplate="body" let-item let-i="rowIndex">
+                        <tr style="width: 100px;">
+                      
+                            <td *ngFor="let col of colum"  >
+                                
+                                <div *ngIf="col.field">
+                                    {{item[col.field] }}
+                                  </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+                <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+            </div>
+                    </div>
+                  </div>
+                  
+                </div>
+                <div></div>
+            </div>
+        <!-- </p-header> -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ar btn-primary" (click)="onCloseDisHistory()" >Close</button>
+          
+      </div>
+    </p-dialog>
+   
+</div>
+<div *ngIf="isItemHistorydetail">
+  <p-dialog [header]="'Item History'" [(visible)]="isItemHistorydetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+      class="testme" [style]="{width: '50%',height: '50%', overflow: 'auto'}">
+      <!-- <p-header> -->
+          <div>
+              <!-- <div class="row">
+                  <div class="col-md-6">
+                      <h2>Damage Order details</h2>
+
+                  </div>                  
+              </div>
+              <div class="col-md-6 text-right ovelFieldForm">
+                  <button style="margin-right: 10px;" class="btn btn-raised btn-raised btn-primary"
+                      printSectionId="print-section" ngxPrint *ngIf="generatedpickerList">Print</button>
+                  <button class="btn btn-raised btn-raised btn-primary" (click)="Close()"
+                      >Close</button>
+              </div> -->
+              <div class="container-fluid">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="row">
+                              <!-- <div class="form-group col-md-3">
+                                  <label>OrderId ID</label>
+                              <input type='text' style="width: 220px;" [value]="disHistoryData.orderid" disabled>  
+     
+                              </div>
+                              <div>
+                                  <button type="button" Class="btn btn-raised btn-info mr-1 btn-sm"  (click)="itemHistoryDetail(item.OrderId, $event)">itemHistory</button>
+                                  (click)="disHistoryDetail(item.OrderId, $event)"
+                              </div> -->
+                          <p-table #dt [globalFilterFields]="colu"  [value]="itemHistoryData" [totalRecords]="itemHistoryData" 
+                  [paginator]="true" [rows]="200" [scrollable]="true" scrollHeight="130vh" text-align: center>
+                  <ng-template pTemplate="caption">
+                      <div >        
+                       </div>
+                  </ng-template>    
+                  <ng-template pTemplate="header" >
+                      <tr>
+                                            
+                        <th *ngFor="let col of colu" [pSortableColumn]="col.field"  style="text-align: center" >
+                          {{col.header}}
+                          <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                      <!--  <th>Action</th> -->
+                     
+                      </tr>
+                     
+                    </ng-template>
+                  <ng-template pTemplate="body" let-item let-i="rowIndex">
+                      <tr style="width: 100px;">
+                    
+                          <td *ngFor="let col of colu" >
+                              
+                              <div *ngIf="col.field">
+                                  {{item[col.field] }}
+                                </div>
+                          </td>
+                      </tr>
+                  </ng-template>
+              </p-table>
+              <!-- <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs col-xs-2" (click)="Detail(item.DamageOrderId, $event)">Invoice</button>
+              <button type="button" Class="btn btn-raised btn-info mr-1 btn-xs" (click)="Detail(item.DamageOrderId, $event)">Ready to Dispatch</button>            -->
+          </div>
+                  </div>
+                </div>
+                
+              </div>
+              <div></div>
+          </div>
+      <!-- </p-header> -->
+    
+  </p-dialog>
+</div>
+<div *ngIf="getOtpDetail">
+  <p-dialog [header]="'Order Delivery OTP'" [(visible)]="getOtpDetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+      class="testme" [style]="{width: '30%',height: '40%', overflow: 'auto'}">
+      <!-- <p-header> -->
+          <div>
+              
+              <div class="container-fluid">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="row">
+                             
+                         <div class=col-md-6>
+                          OrderId # {{getotp.OrderId}}
+                          OTP {{getotp.OrderStatusOtp}}
+                         </div>
+             
+          </div>
+                  </div>
+                </div>
+                
+              </div>
+              <div></div>
+          </div>
+      <!-- </p-header> -->
+    
+  </p-dialog>
+</div>
+<div *ngIf="orderInvoiceImageDetail">
+  <p-dialog [header]="'Image Upload'" [(visible)]="orderInvoiceImageDetail" [resizable]="false" [modal]="true" appendTo="body" positionTop="10" 
+      class="testme" [style]="{width: '85%',height: '100%', overflow: 'auto'}">
+      <!-- <p-header> -->
+          <div>
+              
+              <div class="container-fluid">
+                  <div class="card">
+                      <div class="card-body">
+                          <div class="row">
+                         <div class=col-md-8>
+                           <label>Order Invoice Image</label><br>
+                           <span >
+                            <img [src]="'https://uat.shopkirana.in/images/DeliveryCancelledDraft/' + canceledPic?.OrderInvoiceImage" width="500" height="1000" />
+                        </span>
+                         </div>
+                         <div class=col-md-8>
+                          <label>Order Item Image</label><br>
+                          <span >
+                            <img [src]="'https://uat.shopkirana.in/images/DeliveryCancelledDraft/' + canceledPic?.OrderItemImage" width="500" height="1000" />
+                        </span>
+                        </div>
+             
+          </div>
+                  </div>
+                </div>
+                
+              </div>
+              <div></div>
+          </div>
+      <!-- </p-header> -->
+    
+  </p-dialog>
+</div>
+<div  *ngIf="isReportDetail" >
+  <h6 style="text-align: center;font-family: Arial, Helvetica, sans-serif; color: crimson;"><b>Invoice Details</b></h6>
+  <br/>    
+  <div class="position-relative"style="height: 300px;" >
+          <p-table  [value]="detailList" 
+                  dataKey="RawDetailId"  [scrollable]="true" scrollHeight="60vh" text-align: center>
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th *ngFor="let d of detailField" style="text-align: center">
+                          {{d.header}}
+                      </th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData>
+                  <tr>
+                      <td *ngFor="let d of detailField" style="text-align: center">
+                          {{rowData[d.field]}}
+                      </td>
+                  </tr>
+              </ng-template>
+          </p-table>
+    
+  </div>
+  </div>
+  <div *ngIf="orderListTrue" >
+    <p-dialog [(visible)]="orderListTrue" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+    [style]="{width: '83%',height: '90%', overflow: 'auto', top: '30px'}">
+    <app-invoice  [AllOrderList]="AllOrderList" [dispatchMaster]="dispatchMaster" [allData]="invoiceDetails" (close)="closeAllPrintList()"></app-invoice>
+    </p-dialog>  
+  </div>
+  <div *ngIf="dispatchorderListTrue" >
+    <p-dialog [(visible)]="dispatchorderListTrue" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+    [style]="{width: '83%',height: '90%', overflow: 'auto', top: '05px'}">
+    <app-invoice-dispatch   [dispatchMaster]="dispatchMaster" [dMaster] ="dMaster" [allData]="invoiceDetails" (close)="closeAllInvoicedispatchPrintList()"></app-invoice-dispatch>
+    </p-dialog>  
+  </div>
+    <p-confirmDialog appendTo="body" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+    
+    
+    <div id="history" *ngIf="popupOpen" >
+      <p-dialog [(visible)]="popupOpen" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+        <p-header>
+          History
+        </p-header>
+        <app-history [entity]="entity" [id]="rowDataV1.OrderDispatchedMasterId" ></app-history>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ar btn-primary" (click)="onCloseHistory()" >Close</button>
+          
+      </div>
+    </p-dialog>
+    </div>
+    <div id="history" *ngIf="popupOpen1" >
+      <p-dialog [(visible)]="popupOpen1" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+        <p-header>
+          History
+        </p-header>
+        <app-history [entity]="entity1" [id]="rowDataV2.OrderId" ></app-history>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ar btn-primary" (click)="onCloseHistory1()" >Close</button>
+          
+      </div>
+    </p-dialog>
+    </div>
+    
+    <!-- [warehouse]="warehouse" -->

@@ -1,0 +1,301 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="customer-master">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="m-2"> Add Sale Incentive</h3>
+    </div>
+    <div>
+      <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-bottom: 0;"
+      (click)="back()">
+      <i class="btn-primary"></i> Back </button>
+    </div>
+  </div>
+
+      <!-- <div class="px-3"> -->
+      <form class="form" #modalForm="ngForm">
+        <div class="form-body">
+          <div class="row">
+              <div class="col-md-3">
+                <div class="form-group" > 
+                  <label for="projectinput3">City</label>
+                  <br>
+                  <select id="city" name="city" class="form-control" [(ngModel)]="searchModel.cityId" 
+                  (ngModelChange)="onChange(searchModel.cityId)" required="1" #city="ngModel">
+                    <option value="">--select--</option>
+                    <option *ngFor="let city of allcity" [ngValue]="city.Cityid">
+                      {{ city.CityName }}
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !city.valid && city.errors.required">
+                    <code>city is Required</code>
+                </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group" > 
+                  <label for="Warehouse">Warehouse</label>
+                  <br>
+                  <select id="Warehouse" name="Warehouse" class="form-control"
+                   [(ngModel)]="searchModel.WarehouseId" required="1"
+                   (ngModelChange)="onChangeWareouse(searchModel.WarehouseId)"  #Warehouse="ngModel">
+                    <option value="">--select--</option>
+                    <option *ngFor="let ware of warehouselist" [ngValue]="ware.WareHouseId">
+                      {{ ware.WareHouseName }}
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !Warehouse.valid && Warehouse.errors.required">
+                    <code>Warehouse Name is required</code>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group" > 
+                  <label for="Store">Store</label>
+                  <br>
+                  <select id="Store" name="Store" class="form-control"
+                   [(ngModel)]="searchModel.StoreId" required="1"
+                   (ngModelChange)="onChangestore(searchModel.StoreId)"  #Store="ngModel">
+                    <option value="">--select--</option>
+                    <option *ngFor="let st of store" [ngValue]="st.Id">
+                      {{ st.Name }}
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !Store.valid && Store.errors.required">
+                    <code>store  is required</code>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group" > 
+                  <label for="Incentives">Sales Incentive Planner</label>
+                  <br>
+                  <select id="Incentives" name="Incentives" class="form-control"
+                   [(ngModel)]="searchModel.CommissionCatMasterId" required="1"
+                    (ngModelChange)="getEventList(searchModel.CommissionCatMasterId)" #Incentives="ngModel">
+                    <option value="">--select--</option>
+                    <option *ngFor="let Commission  of salesCommissionCatMasterList" [ngValue]="Commission.Id">
+                      {{ Commission.CategoryName }}
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !Incentives.valid && Incentives.errors.required">
+                    <code>Sales Incentive Planner is Required</code>
+                </div>
+                </div>
+              </div>
+              <div class="col-md-3" >
+                <div class="form-group" > 
+                  <label for="Event">Event Type</label>
+                  <br>
+                  <select  id="Event" name="Event" class="form-control" [(ngModel)]="searchModel.EventMasterId" required="1"
+                   #Event="ngModel" [disabled]="disable">
+                    <option value="">--select--</option>
+                    <option *ngFor="let Event of SalesCommissionEventMasterList" [ngValue]="Event.Id">
+                      {{ Event.EventCatName }}-({{ Event.EventName }})
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !Event.valid && Event.errors.required">
+                    <code>Event Type is Required</code>
+                </div>
+                </div>
+              </div>
+              <div class="col-md-3" *ngIf="nameCheck">
+                <div class="form-group" > 
+                  <label for="Cross">Company</label>
+                  <br>
+                  <input id="Cross" name="Cross" class="form-control" required="1"  #Cross="ngModel"  placeholder="Enter Company Cross Customer" type="number" [(ngModel)]="searchModel.CrossCustomer" />                  
+                </div>
+                <div *ngIf="isInvalid && !Cross.valid && Cross.errors.required"style="color:rgb(255, 0, 212); ">       
+                  Company Cross Customer is Required
+                </div>
+              </div>  
+              <div class="col-md-3" *ngIf="nameCheck">
+                <div class="form-group" > 
+                  <label for="Customers">Customers</label>
+                  <br>
+                  <input id="Customers" name="Customers"  class="form-control"  required="1"  #Customers="ngModel"   placeholder="Enter Customers"  type="number" [(ngModel)]="searchModel.Customers"/>                  
+                </div>
+                <div *ngIf="isInvalid && !Customers.valid && Customers.errors.required" style="color: rgb(255, 0, 212);">              
+                  Customers is Required
+                </div>
+              </div>
+              <!-- <div class="col-md-3">
+                  <label for="Executive">Sales Executive</label>
+                  <p-multiSelect id="Executive" name="Executive" class="form-control"  [options]="subCatList"
+                  [(ngModel)]="selectedExecutiveName"  (onClick)="getSubCatList(selectedSubCat)"
+                  [panelStyle]="{minWidth:'25em'}"   required="1"  #Executive="ngModel"
+                  optionLabel="ExecutiveName" >
+                  </p-multiSelect>
+                   <select id="Executive" name="Executive" class="form-control" [(ngModel)]="searchModel.ExecutiveId"
+                  required="1" (ngModelChange)="getSubCatList()" #Executive="ngModel">
+                    <option value="">--select--</option>
+                    <option *ngFor="let ex of excutiveList" [ngValue]="ex.ExecutiveId">
+                      {{ ex.ExecutiveName }}
+                    </option>
+                  </select> 
+                  <div *ngIf="isInvalid && !Executive.valid && Executive.errors.required">
+                    <code>Sales Executive is Required</code>
+                </div>
+              </div>    -->
+              <div class="col-md-3">
+                <label for="Executive">Sales Executive</label>
+                <p-multiSelect id="Executive" name="Executive" [options]="excutiveList"
+                [(ngModel)]="selectedExecutiveName" 
+                [panelStyle]="{minWidth:'25em'}"  
+                optionLabel="ExecutiveName" >
+                </p-multiSelect>
+                <!-- <div *ngIf="isInvalid && !Executive.valid && Executive.errors.required">
+                  <code>Sales Executive is Required</code>  required="1"  #Executive="ngModel"
+              </div> -->
+              </div>
+              <!-- (onClick)="onChangesubCategory(selectedSubCat)" -->
+              <div class="col-md-3">
+                <label for="ware"> Subcategory Company:</label>
+                <p-multiSelect id="SubcategoryName" name="SubcategoryName" [options]="subCatList"
+                [(ngModel)]="selectedSubCat"  
+                [panelStyle]="{minWidth:'25em'}"   required="1"  #SubcategoryName="ngModel"
+                optionLabel="SubcategoryName" >
+                </p-multiSelect>
+                <div *ngIf="isInvalid && !SubcategoryName.valid && SubcategoryName.errors.required">
+                  <code>Company is Required</code>
+              </div>
+              </div>
+              <!-- <div class="col-md-3"  *ngIf="searchModel.CommissionCatMasterId ==2">
+                <label for="ware">Category:</label>
+                <p-multiSelect id="Category" name="Category" [options]="CategoryList"
+                  [(ngModel)]="selectedCatregory" [panelStyle]="{minWidth:'25em'}"   required="1"  #Category="ngModel"
+                   (onClick)="getBrandsnew(selectedCatregory)"
+                   optionLabel="CategoryName">
+                </p-multiSelect>
+                <div *ngIf="isInvalid && !Category.valid && Category.errors.required">
+                  <code>Category is Required</code>
+              </div>
+              </div>
+              <div class="col-md-3"  *ngIf="searchModel.CommissionCatMasterId ==2">
+                <label for="ware">Sub SubCategory/Brand:</label>
+                <p-multiSelect id="Brand" name="Brand" [options]="brandList" [(ngModel)]="selectedSubsubCatregory"
+                  [panelStyle]="{minWidth:'25em'}" required="1"  #Brand="ngModel"
+                   (onClick)="getitemlist(selectedSubsubCatregory,searchModel.WarehouseId)" optionLabel="BrandName">
+                </p-multiSelect>
+                <div *ngIf="isInvalid && !Brand.valid && Brand.errors.required">
+                  <code>Brand is Required</code>
+              </div>
+              </div>
+              <div class="col-md-3"  *ngIf="searchModel.CommissionCatMasterId ==2">
+                <label for="Item">Item list</label>
+                <p-multiSelect id="Item" name="Item" [options]="itemList" [(ngModel)]="selectedItem"
+                required="1"  #Item="ngModel"
+                  [panelStyle]="{minWidth:'25em'}" optionLabel="itemname">
+                </p-multiSelect>
+                <div *ngIf="isInvalid && !Item.valid && Item.errors.required">
+                  <code>Item is Required</code>
+              </div>
+              </div> -->
+              <div class="col-md-3">
+                <div class="form-group" > 
+                  <label for="Bookedalue" *ngIf="!hide">Booked Value/Target</label>
+                  <label for="Bookedalue" *ngIf="busnicess =='Business Commission'">Delivered Target Value </label>
+                  <label for="Bookedalue" *ngIf="busnicess =='ShopKirana Premier League'">Booked Value/Target</label>
+                  <label for="Bookedalue" *ngIf="busnicess =='Monthly Activities Incentive' && searchModel.EventMasterId == 1">Target In %</label>
+                  <label for="Bookedalue" *ngIf="busnicess =='Monthly Activities Incentive' && searchModel.EventMasterId != 1">Target In Count</label>
+                  <br> 
+                  <input id="Bookedvalue" name="Bookedvalue" placeholder="Enter Target value"
+                   class="form-control" type="number" [(ngModel)]="searchModel.BookedValue"  required="1"  #Bookedvalue="ngModel"/>
+                   <div *ngIf="isInvalid && !Bookedvalue.valid && Bookedvalue.errors.required">
+                    <code>Booked Value is Required</code>
+                </div>
+                </div>             
+              </div>
+              <div class="col-md-3">
+                <div class="form-group" > 
+                  <label for="IncentiveType">Incentive Type</label>
+                  <br>
+                  <select id="IncentiveType" name="IncentiveType" class="form-control" 
+                  [(ngModel)]="searchModel.IncentiveType" required="1"  #IncentiveType="ngModel"  (ngModelChange)="clearValue(searchModel)">
+                    <option value="">--select--</option>
+                    <option value="0" *ngIf="busnicess !='Business Commission'">Amount</option>
+                    <option value="1">Percantage</option>
+                  </select>
+                  <div *ngIf="isInvalid && !IncentiveType.valid && IncentiveType.errors.required">
+                    <code>Incentive Type is Required</code>
+                </div>
+                </div>
+              </div>   
+              <div class="col-md-3" *ngIf="searchModel.IncentiveType == '0'">
+                <div class="form-group" > 
+                  <label for="Amount">Incentive Amount</label>
+                  <br>
+                  <!-- (keyup)="addvalidateNegative($event.target.value, searchModel) " -->
+                  <input id="Amount" name="Amount" class="form-control" required="1"  #Amount="ngModel"  placeholder="Enter Incentive Amount" type="number" [(ngModel)]="searchModel.IncentiveValue" />                  
+                </div>
+                <div *ngIf="isInvalid && !Amount.valid && Amount.errors.required"style="color: red;">       
+                  Amount is Required
+                </div>
+              </div>  
+              <div class="col-md-3" *ngIf="searchModel.IncentiveType == '1'">
+                <div class="form-group" > 
+                  <label for="Percantage">Incentive Percantage</label>
+                  <br>
+                  <!-- (blur)="onKeypressEvent($event)" -->
+                  <input id="Percantage" name="Percantage"  class="form-control"  required="1"  #Percantage="ngModel"   placeholder="Enter Incentive Percantage"  type="number" [(ngModel)]="searchModel.IncentiveValue" #IncentiveAmount="ngModel"/>                  
+                </div>
+                <div *ngIf="isInvalid && !Percantage.valid && Percantage.errors.required" style="color: red;">              
+                  Percantage is Required
+                </div>
+                <div *ngIf="percentageValidation" style="color: red;">                  
+                  value is out of range
+                </div>
+              </div>            
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="projectinput3">Start Date</label>
+                  <br>
+                  <p-calendar name="startDateInput"  [showTime]="true"  hourFormat="12"  [(ngModel)]="searchModel.StartDate" [showIcon]="true" 
+                    name="fromDate" required="1"   inputId="min-max" appendTo="body"  #startDateInput="ngModel" ></p-calendar>
+                    <div *ngIf="isInvalid && !startDateInput.valid && startDateInput.errors.required">
+                      <code>start Date Type is Required</code>
+                  </div>
+                  <!-- <div [hidden]="!(isInvalid && !fromDate.valid)">
+                    <code>Required!</code>
+                  </div> -->
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="ToDate">End Date</label>
+                  <br>
+                  <p-calendar name="endDateInput" [showTime]="true"  hourFormat="12"
+                  [maxDate]="maxDate" inputId="min-max" [(ngModel)]="searchModel.EndDate" appendTo="body" [showIcon]="true" name="toDate"
+                  required="1"  #endDateInput="ngModel" ></p-calendar>
+                    <div *ngIf="isInvalid && !endDateInput.valid && endDateInput.errors.required">
+                      <code>End Date Type is Required</code>
+                  </div>
+                  <!-- <div [hidden]="!(isInvalid && !toDate.valid)">
+                    <code>Required!</code>
+                  </div> -->
+                </div>
+              </div>
+             
+              <div class="col-md-3" style="padding-top: 30px">
+                <div class="form-group">
+                  <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="submit(searchModel,modalForm)">submit</button>
+                  <button type="button" class="btn btn-raised btn-raised btn-primary "style="margin-left:15px" (click)="clear()">
+                     Clear
+                  </button>  
+                </div>
+              </div>
+            
+            </div>
+          </div>
+
+
+      </form>
+      <!-- </div> -->
+ 
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  <!-- <div class="row" *ngIf="isResultFalse">
+    <h4 style="margin-left: 25px"><b>No Data Found</b></h4>
+  </div> -->
+</section>

@@ -1,0 +1,2248 @@
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2"><b>Delivery Assignment</b></h3>
+    </div>
+    <!-- <div>
+        <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-top: 10px;"
+            (click)="add()"> <i class="fa fa-plus-circle"></i>  ADD ASSIGNMENT
+        </button>
+    </div> -->
+</div>
+
+<div class="mt-0">
+    <div class="ui-fluid p-3 shadow m-2 bg-white rounded table table-hover">
+        <!-- =======Top Filter Search Section Start here======== -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <form class="form">
+                    <!-- ========Status Hint section Satrt here======= -->
+                    <div class="status-Hint row">
+                        <h3>Status Type Hint</h3>
+                        <div class="col-md-3 col-sm-6 col-12">
+                            <div>
+                                <div class="input-color">
+                                    <input type="text" value="SavedAsDraft" readonly="">
+                                    <div class="color-box" style="background-color: navy;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="input-color">
+                                    <input type="text" value="Assigned" readonly="">
+                                    <div class="color-box" style="background-color: #FF33F0;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="input-color">
+                                    <input type="text" value="Accepted" readonly="">
+                                    <div class="color-box" style="background-color: Highlight;"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-12">
+                            <div>
+                                <div class="input-color">
+                                    <input type="text" value="Rejected" readonly="">
+                                    <div class="color-box" style="background-color: darkred;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="input-color">
+                                    <input type="text" value="Pending(Inprogress)" readonly="">
+                                    <div class="color-box" style="background-color: #DDE525;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="input-color">
+                                    <input type="text" value="Submitted" readonly="">
+                                    <div class="color-box" style="background-color: #3336FF;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-12">
+                            <div>
+                                <div class="input-color">
+                                    <input type="text" value="Payment Accepted" readonly="">
+                                    <div class="color-box" style="background-color: #FF002A;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="input-color">
+                                    <input type="text" value="Payment Submitted" readonly="">
+                                    <div class="color-box" style="background-color:#00BFFF;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="input-color">
+                                    <input type="text" value="Freezed" readonly="">
+                                    <div class="color-box" style="background-color: darkgreen;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-12 text-right text-align-end">
+                            <button class="btn mr-2" (click)="exportFileData()" style="
+                            background-color: green;border-color: green;color: white;margin-top: -15px">Export</button>
+                            <button class="btn btn-primary mr-2" (click)="getReport()">Report</button>
+                        </div>
+                    </div>
+                    <!-- ========Status Hint section ENd here======= -->
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="projectinput3">Select Warehouse</label>
+                                <select placeholder="Select Warehouse" id="whereHouse" name="whereHouse"
+                                    class="form-control" [(ngModel)]="serachData.WarehouseId"
+                                    (change)="getWhereHouseId()">
+                                    <option value="" disabled>Select Warehouse</option>
+                                    <option *ngFor="let list of WarehouseList" [ngValue]="list.WarehouseId">
+                                        {{list.WarehouseName}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="statusId">Status</label>
+                                <select placeholder="Select Status" id="statusId" name="statusId" class="form-control"
+                                    [(ngModel)]="serachData.StatusId" (change)="getStatusUpdate(serachData.StatusId)">
+                                    <option value="" disabled>Select Status</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">InActive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="DBoyId">All Delivery boys</label>
+                                <select placeholder="Select Delivery boy" id="DBoyId" name="DBoyId" class="form-control"
+                                    [(ngModel)]="serachData.DBoy" (change)="getdborders()">
+                                    <option value="" disabled>Select Delivery boy</option>
+                                    <option *ngFor="let list of dBoyAllList" [ngValue]="list">
+                                        {{list.DisplayName}}- ({{list.Active}})
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="startdateValNew"><b>Start Date: </b></label><br>
+                                <p-calendar [showIcon]="true" id="startdateValNew"
+                                    (ngModelChange)="startDateUpdate($event)" [(ngModel)]="startDateSearch"
+                                    name="startdateValNew" [readonlyInput]="true" #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="endDate"><b>End Date: </b></label><br>
+                                <p-calendar [showIcon]="true" id="endDate" (ngModelChange)="endDateVal($event)"
+                                    [(ngModel)]="end" name="EndDate" [readonlyInput]="true" #dateRangeListInput>
+                                </p-calendar>
+                            </div>
+                        </div>
+                        <div class="col-md-2" style="margin-top: 28px;">
+                            <div class="form-group">
+                                <label for="projectinput3"></label>
+                                <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="Search()">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+
+
+                        <!-- ========Bottom Search Section Start here======= -->
+                        <div class="row">
+                            <!-- <div class="col-md-3">
+                                <div class="form-group">
+                                    <input type="text" id="CurrentSearchId" name="CurrentSearchId"
+                                        placeholder="search in current result" class="form-control"
+                                        [(ngModel)]="serachData.search" (keyup)="getSearchData($event.target.value)">
+                                </div>
+                            </div> -->
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <input type="text" id="CurrentAssignmentIds" name="CurrentAssignmentIds"
+                                        placeholder="search by AssignmentId 12345,123455 ..... etc" class="form-control"
+                                        [(ngModel)]="serachData.AssignmentIds"
+                                        (change)="getAssignmntId($event.target.value)">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-raised btn-primary"
+                                    (click)="SearchAssignmentByIds()">Search 
+                                </button>
+                                <button type="button" class="btn btn-outline-primary ml-2" (click)="clearSearch()" 
+                                style="background-color: #008e91;border-color: #008e91;color: white;">
+                                    Clear
+                                </button>
+
+                            </div>
+                        </div>
+                        <!-- ========Bottom Search Section ENd here======= -->
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- =======Top Filter Search Section End here======== -->
+
+
+        <p-table #dt [value]="currentPageStores" [totalRecords]="total_count" (onLazyLoad)="load($event)" [lazy]="true"
+            [paginator]="true" [rows]="rows" [(first)]="first">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>AssignmentId</th>
+                    <th>Assignment Date</th>
+                    <!-- <th>Warehouse Name</th> -->
+                    <th>Assignment Amt</th>
+                    <th>DName</th>
+                    <th>Status</th>
+                    <th>Products Types</th>
+                    <th>Product List</th>
+                    <th>ShortItems & Finalize</th>
+                    <th>Summary</th>
+                    <th>Assignment Copy</th>
+                    <th>Details</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr>
+                    <td>
+                        <span class="label label-default ng-binding">{{rowData.DeliveryIssuanceId}}</span><br>
+                        <button class="btn-primary"
+                            (click)="GetDirection(rowData.DeliveryIssuanceId)">Direction</button>
+                    </td>
+                    <td>{{rowData.CreatedDate|date:'medium'}}</td>
+                    <td><span class="labelAssignmentNumber">{{rowData.TotalAssignmentAmount}}</span></td>
+                    <td>{{rowData.DisplayName}}</td>
+                    <td>
+                        <span *ngIf="rowData.Status=='Pending'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" value="Pending(Inprogress)"
+                                    readonly="">
+                                <div class="color-box-modify" style="background-color: #DDE525;"></div>
+                            </div>
+                        </span>
+                        <span *ngIf="rowData.Status=='Freezed'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" [(ngModel)]="rowData.Status"
+                                    value="Freezed" readonly="">
+                                <div class="color-box-modify" style="background-color: darkgreen;"></div>
+                            </div>
+                        </span>
+                        <span *ngIf="rowData.Status=='SavedAsDraft'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" value="SavedAsDraft"
+                                    readonly="">
+                                <div class="color-box-modify" style="background-color: navy;"></div>
+                            </div>
+                        </span>
+                        <span *ngIf="rowData.Status=='Finalization'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" value="Finalization"
+                                    readonly="">
+                                <div class="color-box-modify" style="background-color: #FF850A;"></div>
+                            </div>
+                        </span>
+                        <span *ngIf="rowData.Status=='Assigned'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" value="Assigned"
+                                    readonly="">
+                                <div class="color-box-modify" style="background-color: #FF33F0;"></div>
+                            </div>
+                        </span>
+                        <span *ngIf="rowData.Status=='Submitted'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" value="Submitted"
+                                    readonly="">
+                                <div class="color-box-modify" style="background-color: #3336FF;"></div>
+                            </div>
+                        </span>
+                        <span *ngIf="rowData.Status=='Payment Accepted'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" value="Payment Accepted"
+                                    readonly="">
+                                <div class="color-box-modify" style="background-color: #FF002A;"></div>
+                            </div>
+                        </span>
+                        <span *ngIf="rowData.Status=='Payment Submitted'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" value="Payment Submitted"
+                                    [(ngModel)]="rowData.Status" readonly="">
+                                <div class="color-box-modify" style="background-color: #00BFFF;"></div>
+                            </div>
+                        </span>
+                        <span *ngIf="rowData.Status=='Accepted'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" value="Accepted"
+                                    readonly="">
+                                <div class="color-box-modify" style="background-color: Highlight;"></div>
+                            </div>
+                        </span>
+                        <span *ngIf="rowData.Status=='Rejected'">
+                            <div class="input-color-modify">
+                                <input type="text" style="border: none;pointer-events:none" value="Rejected"
+                                    readonly="">
+                                <div class="color-box-modify" style="background-color: darkred;"></div>
+                            </div>
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <span class="label label-default ng-binding">{{rowData.details?.length}} </span>
+                        <!-- <span class="label ng-binding">LineUp Item : {{rowData.details?.length}} </span>
+                        <span class="label ng-binding">Total Order : {{rowData.totalOrderIdLength}} </span> -->
+                    </td>
+                    <td>
+                        <button class="assign_btn" (click)="prodetails(rowData)">Assignment Product List</button>
+                    </td>
+                    <td>
+                        <button class="sort_finalize" (click)="AddShortItems(rowData)"> <span
+                                class="glyphicon glyphicon-edit">Short & Finalize</span>
+                            </button>
+                    </td>
+                    <td>
+                        <span
+                            *ngIf="(rowData.Status == 'Submitted' || rowData.Status == 'Payment Accepted'|| rowData.Status == 'Freezed' ||rowData.Status=='Accepted' || rowData.Status=='Payment Submitted')">
+                            <button
+                            (click)="saveRowdData(rowData, 'summery')"
+                            class="summary">
+                                
+                            <!-- <a class="" target="_blank"
+                            (click)="viewAssignmnt(rowData, 'summery')">Summary</a> -->
+                            <!-- <a class="" style="color: white;" target="_blank" routerLink="/layout/delivery/DeliveryOrderAssignmentChange/{{rowData.DeliveryIssuanceId}}"
+                             >Summary</a> -->
+                             Summary
+                            </button>
+                            
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngIf="rowData.UploadedFileName!=null">
+                            <a href="{{hostUrl}}/images/AssigmentImages/{{rowData.UploadedFileName}}"
+                                target="_blank">
+                                <img src='{{hostUrl}}/images/AssigmentImages/{{rowData.UploadedFileName}}'
+                                    class="img-square img80_80 no-print"
+                                    onError="this.onerror = null; this.src = '../../img/logoicon.png';" />
+                            </a>
+                        </span>
+                    </td>
+                    <td><button class="details" (click)="viewDetails(rowData)">Details </button></td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+<div class="main-popup" *ngIf="listAllDataPop">
+    <p-dialog [(visible)]="listAllDataPop" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}">
+        <p-header>View More Details</p-header>
+        <table class="table popupTable">
+            <thead>
+                <tr>
+                    <!-- <th>Product List</th>
+                    <th>ShortItems & Finalize</th> -->
+                    <th>View(Assignment)</th>
+                    <!-- <th>Summary</th>
+                    <th>AssignmentCopy</th> -->
+                    <th>History</th>
+                    <th>Ic Upload</th>
+                    <th>Download data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <!-- <td><button class="btn-sm btn-primary" (click)="prodetails(listAllData)">Assignment Product List
+                        </button>
+                    </td>
+                    <td><button class="btn-sm btn-warning" (click)="AddShortItems(listAllData)"> <span
+                                class="glyphicon glyphicon-edit"></span>
+                            Short&Finalize</button>
+                    </td> -->
+                    <td><button class="btn-sm btn-info" (click)="viewAssignmnt(listAllData, 'viewAssign')"> <span
+                                class="glyphicon glyphicon-eye-open"></span>View</button>
+                    </td>
+                    <!-- <td>
+                        <span
+                            *ngIf="(listAllData.Status == 'Submitted' || listAllData.Status == 'Payment Accepted'|| listAllData.Status == 'Freezed' ||listAllData.Status=='Accepted' || listAllData.Status=='Payment Submitted')">
+                            <a class="btn-sm btn-primary" target="_blank"
+                                (click)="viewAssignmnt(listAllData, 'summery')">Summary</a>
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngIf="listAllData.UploadedFileName!=null">
+                            <a href="{{hostUrl}}/images/AssigmentImages/{{listAllData.UploadedFileName}}"
+                                target="_blank">
+                                <img src='{{hostUrl}}/images/AssigmentImages/{{listAllData.UploadedFileName}}'
+                                    class="img-square img80_80 no-print"
+                                    onError="this.onerror = null; this.src = '../../img/logoicon.png';" />
+                            </a>
+                        </span>
+                    </td> -->
+                    <td><button class="btn-sm btn-primary" data-toggle="modal" data-target="#Assignmodel"
+                            (click)="DeliveryHistroy(listAllData)">History</button></td>
+                    <td>
+                        <span *ngIf="listAllData.Status=='Freezed' || listAllData.IsIcVerified == '1'">
+                            <button class="btn-sm btn-success"
+                                (click)="UploadIc(listAllData.DeliveryIssuanceId,listAllData.UploadedFileName,listAllData.IsIcVerified,listAllData.IsPhysicallyVerified)"
+                                *ngIf="listAllData.IsIcVerified == '0'">
+                                Is IC Verified
+                            </button>
+                        </span><br>
+                        <span *ngIf="listAllData.IsIcVerified == true" class="color-box"
+                            style="background-color: whitesmoke;">Verified</span>
+                        <span *ngIf="listAllData.IsIcVerified == false" class="color-box"
+                            style="background-color: seashell;">Not Verified</span>
+                    </td>
+                    <td>
+                        <span *ngIf="listAllData.IcUploadedFile !=null">
+                            <a href="{{hostUrl}}/images/AssigmentIcImages/{{listAllData.IcUploadedFile}}"
+                                target="_blank">
+                                <img src='{{hostUrl}}/images/AssigmentIcImages/{{listAllData.IcUploadedFile}}'
+                                    class="img-square img80_80 no-print"
+                                    onError="this.onerror = null; this.src = '../../img/logoicon.png';" />
+                            </a>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </p-dialog>
+</div>
+
+<div *ngIf="icePopup">
+    <p-dialog [(visible)]="icePopup" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}">
+        <p-header>ASSIGNMENT IC CONFIRMATION</p-header>
+        <form>
+            <span *ngIf="AssignmentsInfo.IcUploadedFile !=null">
+                <a href="{{hostUrl}}/images/AssigmentIcImages/{{AssignmentsInfo.IcUploadedFile}}" target="_blank">
+                    <img src='{{hostUrl}}/images/AssigmentIcImages/{{AssignmentsInfo.IcUploadedFile}}'
+                        class="img-square img80_80 no-print"
+                        onError="this.onerror = null; this.src = '../../img/logoicon.png';" />
+                </a>
+            </span>
+            <div class="form-group">
+                <label for="site-name">Is IC Verify :</label><br />
+                <input id="site-name" name="site-name" type="checkbox" class="form-control"
+                    [(ngModel)]="AssignmentsInfo.IsIcVerified" />
+            </div>
+
+            <div class="form-group">
+                <label for="site-name1">Is Physically Verify :</label><br />
+                <input id="site-name1" name="site-name1" type="checkbox" class="form-control"
+                    [(ngModel)]="AssignmentsInfo.IsPhysicallyVerified" />
+            </div>
+
+            <div class="form-group">
+                <label for="site-name2">Comment :</label><br />
+                <input id="site-name2" name="site-name2" type="text" class="form-control"
+                    [(ngModel)]="AssignmentsInfo.RejectionComment" />
+            </div>
+            <hr>
+            <button type="button" class="btn btn-ar btn-primary" (click)="PutImage(AssignmentsInfo)">Save</button>
+
+        </form>
+    </p-dialog>
+</div>
+
+<div id="history" *ngIf="historyPopup">
+    <p-dialog [(visible)]="historyPopup" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}">
+        <p-header>History</p-header>
+        <div class="table-responsive" *ngIf="dataDeliveryHistroy?.length != 0">
+            <table class="table">
+                <thead>
+
+                    <tr class="w1-red">
+                        <th>Id</th>
+                        <th>Status</th>
+                        <th>DeliveryIssuanceId</th>
+                        <th>DeliveryBoy Name</th>
+                        <th>UpdatedBy </th>
+                        <th>UpdatedDate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let trade of dataDeliveryHistroy; index as i">
+                        <td>{{i+1}}</td>
+                        <td>{{trade.Status}}</td>
+                        <td>{{trade.DeliveryIssuanceId}}</td>
+                        <td>{{trade.DisplayName}}</td>
+                        <td>{{trade.UpdatedBy}}</td>
+                        <td>{{trade.UpdatedDate | date:'medium'}}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="recordnot_fount" *ngIf="dataDeliveryHistroy?.length == 0">
+            Record not found
+        </div>
+    </p-dialog>
+</div>
+
+<div id="assignmentFinal" *ngIf="assignmentFinalPop">
+    <p-dialog [(visible)]="assignmentFinalPop" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}">
+        <p-header>ASSIGNMENT FINALIZE</p-header>
+
+        <div class="recordnot_fount">
+            Create Short Item of Assignment => (AssignmentID: {{getListAllData.DeliveryIssuanceId}})
+        </div><br>
+        <div class="table-responsive" *ngIf="GetShortItemsListData?.length != 0">
+            <table class="table">
+                <thead>
+
+                    <tr class="w1-red">
+                        <th>S.No</th>
+                        <th>Order Id</th>
+                        <th>Product Name</th>
+                        <th>OrderQty </th>
+                        <th>TotalShort </th>
+                        <th>DamageStock</th>
+                        <th>NotInStock </th>
+                        <th>Damage</th>
+                        <th>NotInStock</th>
+                        <th>CreatedDate </th>
+                        <th>CreatedBy </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let apd of GetShortItemsListData; index as i">
+                        <td>{{ i+1 }}</td>
+                        <td>{{apd.OrderId}}</td>
+                        <td>{{apd.itemname}}</td>
+                        <td>{{apd.Orderqty}}</td>
+                        <td>{{apd.DamageStockQty + apd.NotinStockQty}}</td>
+                        <td>
+                            <span>
+                                {{apd.DamageStockQty}}
+                            </span>
+                        </td>
+                        <td>
+                            <span>
+                                {{apd.NotinStockQty}}
+                            </span>
+                        </td>
+                        <td>
+                            <p href="#" data-toggle="tooltip" data-placement="top" title="{{apd.DamageComment}}">
+                                <span class="glyphicon glyphicon-info-sign"></span>
+                            </p>
+
+                        </td>
+                        <td>
+                            <p href="#" data-toggle="tooltip" data-placement="top" title="{{apd.NotInStockComment}}">
+                                <span class="glyphicon glyphicon-info-sign"></span>
+                            </p>
+                        </td>
+                        <td>{{apd.CreatedDate|date:'medium'}}</td>
+                        <td>{{apd.CreatedBy}}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
+        <div class="recordnot_fount" *ngIf="GetShortItemsListData?.length == 0">
+            Record not found
+        </div><br>
+
+        <button type="button" *ngIf="getListAllData.Status=='SavedAsDraft'" id="FinalizationAssignment"
+            class="btn btn-primary float-right" (click)="Finalization()">Finalization</button>
+
+    </p-dialog>
+</div>
+
+<div class="main-popup" *ngIf="viewAssignmentPop">
+    <p-dialog [(visible)]="viewAssignmentPop" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '90%'}">
+        <p-header>DELIVERY VEHICLE ASSISSMENT SUMMARY</p-header>
+
+        <div class="topHeader">
+            <p style="text-align:left;color: black;font-weight:bold">
+                Assignment Id: {{getListAllData.DeliveryIssuanceId}}
+            </p>
+            <p style="text-align:left;">
+                Total Order &nbsp;<span style="color: black;font-weight:bold"> {{TotalDeliveredOrder
+                    +TotalCancelOrder+TotalRedispatchOrder}} /- </span>
+            </p>
+        </div>
+        <div class="summerySubHeader"
+            style="display: block; border-bottom: 1px solid #eee;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <span>Total Delivered Order : {{TotalDeliveredOrder}}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <span>Total Cancelled Order : {{TotalCancelOrder}}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <span>Total ReDispatch Order : {{TotalRedispatchOrder}}</span>
+                    </div>
+                    <div class="col-md-3">
+                        <span>Total Under Shippment Order : {{shippedData?.length}}</span>
+                    </div>   
+                </div>
+        </div>
+        <p-accordion>
+            <p-accordionTab header="Delivered Order">
+                <h4 class="totalCount">Total Delivered <span
+                        class="badge badge-danger ml-2">{{TotalDeliveredOrder}}</span></h4>
+                <div class="table-responsive" *ngIf="delivereddata?.length != 0">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>OrderId</th>
+                                <th>Skcode</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let trade of delivereddata">
+                                <td>{{trade?.OrderId}}</td>
+                                <td>{{trade?.Skcode}}</td>
+                                <td>{{trade?.GrossAmount}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="recordnot_fount" *ngIf="delivereddata?.length == 0">
+                    Record not found
+                </div>
+            </p-accordionTab>
+            <p-accordionTab header="Canceled">
+                <h4 class="totalCount">Total canceld order <span
+                        class="badge badge-danger ml-2">{{TotalCancelOrder}}</span></h4>
+
+                <div class="table-responsive" *ngIf="allproducts?.length != 0">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Orders and QTYs</th>
+                                <th>Item Name</th>
+                                <th>Total quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let trade of allproducts">
+                                <td>{{trade.OrderQty}}</td>
+                                <td>{{trade.itemname}}</td>
+                                <td>{{trade.qty}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="recordnot_fount" *ngIf="allproducts?.length == 0">
+                    Record not found
+                </div>
+            </p-accordionTab>
+            <p-accordionTab header="ReDispatch">
+                <h4 class="totalCount">Total ReDispatch Order <span
+                        class="badge badge-danger ml-2">{{TotalRedispatchOrder}}</span></h4>
+                <div class="table-responsive" *ngIf="allproductredispatched?.length != 0">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Orders and QTYs</th>
+                                <th>Item Name</th>
+                                <th>Total quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let trade of allproductredispatched">
+                                <td>{{trade.OrderQty}}</td>
+                                <td>{{trade.itemname}}</td>
+                                <td>{{trade.qty}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="recordnot_fount" *ngIf="allproductredispatched?.length == 0">
+                    Record not found
+                </div>
+            </p-accordionTab>
+            <p-accordionTab header="Under Shippment">
+                <div class="table-responsive borderTableChange" *ngIf="shippedData?.length != 0">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>S. No.</th>
+                                <th>Orders</th>
+                                <th>Sk Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let trade of shippedData; index as i">
+                                <td>{{i + 1}}</td>
+                                <td>{{trade?.OrderId}}</td>
+                                <td>{{trade?.Skcode}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h6 class="noshowpage">*This is a computer-generated document. No signature is required.</h6>
+
+                </div>
+                <div class="recordnot_fount" *ngIf="shippedData?.length == 0">
+                    Record not found
+                </div>
+
+            </p-accordionTab>
+        </p-accordion>
+    </p-dialog>
+</div>
+
+<div class="main-popup" *ngIf="productiveAssignmnetPop">
+    <p-dialog [(visible)]="productiveAssignmnetPop" [resizable]="true" [modal]="true" appendTo="body"
+        [style]="{width: '80%'}">
+        <p-header>Products Assignment View Details</p-header>
+        <div class="product_list">
+            <div class="text-right text-align-end mt-2 mb-4">
+
+                <button class="print_btn mr-2 mb-2" style="background: #e1480e; margin: 7px 0px 0px 1px;"
+                    printSectionId="printItemAssignment" ngxPrint styleSheetFile="../src/style.css"
+                    [printStyle]="{hiddenDiv : {'opacity': '100%', 'display':'block'}}">Print
+                    Product List</button>
+
+                <button [disabled]="getListAllData.Status=='SavedAsDraft'"
+                    class="print_btn mr-2 mb-2" style="background: #db1872; margin: 7px 0px 0px 12px;"
+                    printSectionId="divtoPrintbtnPrintAll"
+                    [printStyle]="{hiddenDiv : {'opacity': '100%', 'display':'block'}}" ngxPrint
+                    styleSheetFile="../src/style.css">Print All
+                    Invoice</button>
+
+                <button printSectionId="printDetailId" ngxPrint class="print_btn mb-2"
+                    style="background: #4848c5; margin: 7px 0px 0px 7px;">Print
+                    Current
+                    Page</button>
+            </div>
+
+            <div class="popup-padding">
+                <div id="printDetailId">
+                    <h4 class="noshowpage" style="font-size: 15px;">Products Assignment Details</h4>
+                    <h6 class="noshowpage" style="font-size: 13px;">Date: {{getListAllData.CreatedDate|date:'medium'}}</h6>
+                    <hr class="noshowpage">
+                    <table class="mb-2" style="border: 1px solid black; text-align: center; width: 100%;border-collapse: collapse;">
+                        <thead>
+                            <th style="border: 1px solid black">Assignment Id</th>
+                            <th style="border: 1px solid black">Delivery Boy</th>
+                            <th style="border: 1px solid black">Total Assignment Amount</th>
+                        </thead>
+                        <tbody>
+                            <td style="border: 1px solid black; color: black;"><strong>{{getListAllData.DeliveryIssuanceId}}</strong></td>
+                            <td style="border: 1px solid black; color: red;">{{getListAllData.DisplayName}}</td>
+                            <td style="border: 1px solid black; color: black;"><strong>{{getListAllData.TotalAssignmentAmount}}</strong></td>
+                        </tbody>
+                    </table><br>
+                    <table style="border: 1px solid black; text-align: center; width: 100%;border-collapse: collapse;">
+                        <thead>
+                                <th style="border: 1px solid black ">S.No</th>
+                                <th style="border: 1px solid black ">Order Id</th>
+                                <th style="border: 1px solid black">ShopName</th>
+                                <th style="border: 1px solid black">Gross Amount</th>
+                        </thead>
+                        <tbody *ngFor="let dds of GetShortAssignmentListData; index as i">
+                                <td style="border: 1px solid black">{{i + 1}}</td>
+                                <td style="border: 1px solid black ">{{dds.orderid}}</td>
+                                <td style="border: 1px solid black ">{{dds.ShopName}}</td>
+                                <td style="border: 1px solid black ">{{dds.amount}}</td>
+                        </tbody>
+                    </table>
+                    
+                    <div class="printInvoice mb-4 mt-4">
+                        <div class="row">
+                            <div class="col-md-6 col-12">
+                                <h6 class="no-print" style="color:red; font-weight: 500;font-size: 13px;">*You can not take
+                                    Invoice
+                                    print till
+                                    assignment finalized.
+                                </h6>
+                                <h6 class="noshowpage" style="color:red; font-weight: 500;font-size: 13px;">*This is a
+                                    computer-generated document.
+                                    No signature is required.</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="printItemAssignment">
+                    <div class="hiddenDiv">
+                        <div class="printBanner">
+                            <p style="text-align:left;font-size: 14px;" class="noshowpage">
+                                <strong>Delivery Assignment (Products List)</strong>
+                                <span style="float:right" *ngIf="getListAllData.AssignmentBarcodeImage!=null">
+                                    <img src="data:image/png;base64,{{getListAllData.AssignmentBarcodeImage}}"
+                                        style="width:60%;float: right;">
+                                </span><br /><br />
+
+                                <span style="float: left;">Warehouse :<strong> {{printWarehouseName}}</strong>
+                                </span>
+                                <br />
+                                <span style="float:left">
+                                    <span style="float: right;color:black;font-weight:bold">Assignment Id:
+                                        {{getListAllData.DeliveryIssuanceId}} </span>
+                                </span>
+                                <br />
+                                <span>
+                                    <span style="float: left;">Date : {{getListAllData.CreatedDate| date :"medium"}}</span>
+                                </span><br />
+                            </p>
+                            <hr>
+                            <p style="text-align:left;font-size: 14px;" class="noshowpage">
+                                Delivery Boy: &nbsp;<span style="color: black;font-weight:bold">
+                                    {{getListAllData.DisplayName}}&nbsp; </span>
+                                <span style="float:right;">Total Price of Items: <strong>
+                                        {{getListAllData.TotalAssignmentAmount| number :
+                                        '1.2-2'}} /-</strong></span>
+                            </p>
+                            <hr>
+                        </div>
+                    </div>
+                    <div style="margin-top: 5px;">
+                        <h4 class="totalCount">New Order Products List</h4>
+                        <!-- <div class="table-responsive borderTable" *ngIf="orderdetails?.length != 0"> -->
+                        <div class="table-responsive" *ngIf="orderdetails?.length != 0">
+                            <table class="mb-1" style="border: 1px solid black; width: 100%; text-align: center; border-collapse: collapse;">
+                                <thead>
+                                    <!-- <tr> -->
+                                        <th
+                                            style="border: 1px solid black;">
+                                            S.No</th>
+                                        <th
+                                            style="border: 1px solid black;">
+                                            Product Name</th>
+                                        <th
+                                            style="border: 1px solid black;">
+                                            QTY</th>
+                                        <th
+                                            style="border: 1px solid black;">
+                                            Boxes and Piece</th>
+                                        <th
+                                            style="border: 1px solid black;">
+                                            Orders and QTYs</th>
+                                    <!-- </tr> -->
+                                </thead>
+                                <tbody *ngFor="let pd of orderdetails; index as i" 
+                                [ngStyle]="{'color': (pd.IsFreeItem==true) ? 'red':'black','font-weight':(pd.IsFreeItem==true) ? 'bold':''}">
+                                    <!-- <tr *ngFor="let pd of orderdetails; index as i"> -->
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{i+1 }}</td>
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{pd.SellingUnitName}}&nbsp;<span *ngIf="pd.IsFreeItem==true" style="color :darkgreen;font-weight: bold;">(Free Item)</span>
+                                        </td>
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{pd.qty}}</td>
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{pd.Boxes}}:Box
+                                            <span *ngIf="pd.piece != 0">& {{pd.piece}}:piece</span>
+                                        </td>
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{pd.orderIds}}</td>
+                                    <!-- </tr> -->
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="recordnot_fount" *ngIf="orderdetails?.length == 0">
+                            Record not found
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 5px;">
+                        <h4 class="totalCount">Redispatched Order Products List</h4>
+                        <div class="table-responsive" *ngIf="IsReDispatchedData?.length != 0">
+                            <table class="mb-1" style="border: 1px solid black; width: 100%; text-align: center; border-collapse: collapse;">
+                                <thead>
+                                    <!-- <tr> -->
+                                        <th
+                                            style="border: 1px solid black;">
+                                            S.No</th>
+                                        <th
+                                            style="border: 1px solid black;">
+                                            Product Name</th>
+                                        <th
+                                            style="border: 1px solid black;">
+                                            QTY</th>
+                                        <th
+                                            style="border: 1px solid black;">
+                                            Boxes and Piece</th>
+                                        <th
+                                            style="border: 1px solid black;">
+                                            Orders and QTYs</th>
+                                    <!-- </tr> -->
+                                </thead>
+                                <tbody *ngFor="let pd of IsReDispatchedData; index as i">
+                                    <!-- <tr *ngFor="let pd of IsReDispatchedData; index as i"> -->
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{i+1 }}</td>
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{pd.SellingUnitName}}</td>
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{pd.qty}}</td>
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{pd.Boxes}}:Box
+                                            <span *ngIf="pd.piece != 0">& {{pd.piece}}:piece</span>
+                                        </td>
+                                        <td
+                                            style="border: 1px solid black;">
+                                            {{pd.orderIds}}</td>
+                                    <!-- </tr> -->
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="recordnot_fount" *ngIf="IsReDispatchedData?.length == 0">
+                            Record not found
+                        </div>
+                    </div>
+                </div>
+
+                <div id="divtoPrintbtnPrintAll">
+                    <!-- <div *ngFor="let OrderData1 of AssOrder "> -->
+                    <hr>
+                    <div class="mt-5 hiddenDiv" *ngFor="let OrderData1 of AssOrder">
+                        <!-- <div class="mt-5" *ngFor="let OrderData1 of AssOrder"> -->
+                        <div>
+                            <h3 class="text-align:center">TAX INVOICE </h3>
+                            <table class="table hideBoxTable"
+                                style="width: 100%;border: 1px solid black; margin-bottom: 5px !important;">
+                                <tbody>
+                                    <tr>
+                                        <td >
+                                            <div class="">
+                                                <div style="text-align:left;padding-left:10px">
+
+                                                    <strong style="font-size: 18px;">ShopKirana E Trading Pvt.
+                                                        Ltd.</strong>
+                                                    <br />
+                                                    <span style="font-size: 14px;"><b>CIN:
+                                                        </b></span>U51109MP2014PTC033534<br />
+                                                    <span style="font-size: 14px;"><b>GSTN Number:
+                                                        </b></span>23AAVCS1981Q1ZE <br />
+                                                    <span style="font-size: 14px;"><b>FASSI Number:
+                                                        </b></span>Indore1 FSSAI 001111 <br />
+                                                    <span style="font-size: 14px;"><b>Address :
+                                                    </b></span>LNG-3, GODOWN NO-3, OPPOSITE ANAAJ MANDI ,<br>CHOTA BANGARDA, LAXMIBAI NAGAR, INDORE-452005 MP ,<br>India<br />
+                                                    <span style="font-size: 14px;"><b>Contact Number : </b>
+                                                        7312386122</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div *ngIf="OrderData1?.InvoiceBarcodeImage != null">
+                                                <div
+                                                    style="text-align:center;">
+                                                    Bar Code <br>
+                                                    <img src="data:image/png;base64,{{OrderData1?.InvoiceBarcodeImage}}"
+                                                        width="150" height="150" />
+                                                        
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>            
+                                            <div
+                                                *ngIf="(!(OrderData1?.IRNQRCodeUrl==null || OrderData1?.IRNQRCodeUrl==undefined ||  OrderData1?.IRNQRCodeUrl=='') || !(OrderData1?.POCIRNQRCodeURL==null || OrderData1?.POCIRNQRCodeURL==undefined ||  OrderData1?.POCIRNQRCodeURL==''))">
+                                                <div style="font-size: 14px;"
+                                                    *ngIf="(!(OrderData1?.IRNQRCodeUrl==null || OrderData1?.IRNQRCodeUrl==undefined ||  OrderData1?.IRNQRCodeUrl=='') || !(OrderData1?.POCIRNQRCodeURL==null || OrderData1?.POCIRNQRCodeURL==undefined ||  OrderData1?.POCIRNQRCodeURL==''))">
+                                                    <div style="text-align:center"
+                                                        *ngIf="!(OrderData1?.IRNQRCodeUrl==null || OrderData1?.IRNQRCodeUrl==undefined ||  OrderData1?.IRNQRCodeUrl=='') && (OrderData1?.POCIRNQRCodeURL==null || OrderData1?.POCIRNQRCodeURL==undefined ||  OrderData1?.POCIRNQRCodeURL=='')">
+                                                        IRN QR Code
+                                                    </div>
+                                                    <span
+                                                        *ngIf="!(OrderData1?.IRNQRCodeUrl==null || OrderData1?.IRNQRCodeUrl==undefined ||  OrderData1?.IRNQRCodeUrl=='') && (OrderData1?.POCIRNQRCodeURL==null || OrderData1?.POCIRNQRCodeURL==undefined ||  OrderData1?.POCIRNQRCodeURL=='')">
+                                                        <img src="{{hostUrl}}{{OrderData1?.IRNQRCodeUrl}}"
+                                                            width="150" height="150" />
+                                                    </span>
+                                                </div>
+                                                <div style="font-size: 14px;"
+                                                    *ngIf="!(OrderData1?.POCIRNQRCodeURL==null || OrderData1?.POCIRNQRCodeURL==undefined ||  OrderData1?.POCIRNQRCodeURL=='')">
+                                                    <div style="text-align:center">
+                                                        POC IRN QR Code
+                                                    </div>
+                                                    <span
+                                                        *ngIf="!(OrderData1?.POCIRNQRCodeURL==null || OrderData1?.POCIRNQRCodeURL==undefined ||  OrderData1?.POCIRNQRCodeURL=='')">
+                                                        <img src="{{hostUrl}}{{OrderData1?.POCIRNQRCodeURL}}"
+                                                            width="150" height="150" />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        *ngIf="!(OrderData1?.IRNNo==null || OrderData1?.IRNNo==undefined ||  OrderData1?.IRNNo=='') && (OrderData1?.POCIRNNo==null || OrderData1?.POCIRNNo==undefined ||  OrderData1?.POCIRNNo=='')">
+                                        <td style="padding:15px;" >
+                                            <b>IRN No.:</b><strong> {{OrderData1?.IRNNo}}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        *ngIf="!(OrderData1?.POCIRNNo==null || OrderData1?.POCIRNNo==undefined ||  OrderData1?.POCIRNNo=='')">
+                                        <td style="padding:15px">
+                                            <b>POC IRN No.:</b><strong> {{OrderData1?.POCIRNNo}}</strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table hideBoxTable"
+                            style="border: 1px solid black; width: 100%;border-collapse: collapse;">
+                                <tr>
+                                    <td style="border: 1px solid black; text-align:left;padding-left:10px;vertical-align:top; width:25%;">
+                                        <strong style="font-size: 14px;">Bill To:</strong>
+                                        <br />
+                                        <strong style="font-size: 12px;"><b>Shop Name :</b>
+                                            {{OrderData1?.ShopName}}</strong><br />
+                                        <span style="font-size: 14px;"><b>Address : </b>
+                                            {{OrderData1?.BillingAddress}}</span><br />
+                                        <span style="font-size: 14px;"><b>GSTN Number :</b>
+                                            {{OrderData1?.Tin_No}}</span><br />
+                                        <span style="font-size: 14px;"><b>Customer Name :
+                                            </b>{{OrderData1?.CustomerName}}</span><br />
+                                        <span style="font-size: 14px;"><b>SKCode :</b>
+                                            <strong>{{OrderData1?.Skcode}}</strong></span><br />
+                                        <span style="font-size: 14px;"><b>Mobile :
+                                            </b>{{OrderData1?.Customerphonenum}}</span><br />
+                                        <span style="font-size: 14px;"><b>Place to Supply :
+                                            </b>{{OrderData1.BillingStateName}}</span><br/>
+                                        <span style="font-size: 14px;"><b>Code :
+                                            </b>{{OrderData1.BillingStateCode}}</span><br/>
+                                        <!-- <span style="color:red;">
+                                            {{OrderData1?.IsPrimeCustomer!=null && OrderData1?.IsPrimeCustomer?"* Fayda
+                                            Club ":""}}
+                                        </span> -->
+                                        <span *ngIf="OrderData1.IsFirstOrder"> 
+                                            <strong style="font-size: 14px;">* 1st Order</strong> 
+                                        </span>
+                                    </td>
+                                    <td style="border: 1px solid black; text-align:left;padding-left:10px;vertical-align:top; width:25%;">
+                                        <strong style="font-size: 14px;">Ship To:</strong>
+                                        <br />
+                                        <span style="font-size: 14px;"><b>Address : </b>
+                                            {{OrderData1?.ShippingAddress}}</span><br/>
+                                        <span style="font-size: 14px;"><b>Place to Supply :
+                                            </b>{{OrderData1.shippingStateName}}</span><br/>
+                                        <span style="font-size: 14px;"><b>Code :
+                                            </b>{{OrderData1.shippingStateCode}}</span><br/>    
+                                    </td>
+                                    <td style="border: 1px solid black; text-align:left;padding-left:10px;vertical-align:top; width:25%;">
+                                        <span style="font-size: 14px;"><b>Invoice No.:</b><strong>
+                                                {{OrderData1?.invoice_no}}</strong></span><br />
+                                        <span style="font-size: 14px;"><b>Invoice Date :
+                                            </b>{{OrderData1?.CreatedDate|date}}</span><br />
+                                        <span style="font-size: 14px;"><b>Order Id:
+                                            </b>{{OrderData1?.OrderId}}</span><br />
+                                        <span style="font-size: 14px;"><b>Order Date :
+                                            </b>{{OrderData1?.OrderedDate|date}}</span><br />
+                                        <span style="font-size: 14px;"><b>Eway Bill Number :
+                                            </b>{{OrderData1?.EwayBillNumber}}</span><br />
+                                        <span style="font-size: 14px;" *ngIf="OrderData1?.PocCreditNoteNumber"><b>Credit
+                                                note
+                                                No.:</b><strong>
+                                                {{OrderData1?.PocCreditNoteNumber}}</strong></span><br />
+                                        <span style="font-size: 14px;" *ngIf="OrderData1?.PocCreditNoteDate"><b>Credit
+                                                note
+                                                Date.:</b><strong> {{OrderData1?.PocCreditNoteDate
+                                                |date}}</strong></span>
+                                    </td>
+
+                                    <td style="border: 1px solid black; text-align:left;padding-left:10px;vertical-align:top; width:25%;">
+
+                                        <span style="font-size: 14px;"><b>Executive :</b><strong>
+                                                {{OrderData1?.SalesPerson}}</strong> </span><br />
+                                        <span style="font-size: 14px;"><b>Mob.No. :</b><strong>
+                                                {{OrderData1?.SalesMobile}}</strong></span><br />
+                                        <span style="font-size: 14px;"><b>DeliveryBoy : </b><strong>
+                                                {{OrderData1?.DboyName}}</strong></span><br>
+                                        <span style="font-size: 14px;">
+                                            <b>Assig. No. :</b><strong>
+                                                {{OrderData1?.DeliveryIssuanceIdOrderDeliveryMaster}}</strong><br />
+                                        </span>
+                                        <!--<span style="font-size: 14px;">offertype  : {{OrderData1?.offertype}} </span><br/>-->
+                                        <span style="font-size: 14px;"
+                                            *ngIf="(OrderData1?.OrderType == '1'|| OrderData1?.OrderType == '0')"><b>OrderType:</b>
+                                            General Order</span>
+                                        <span style="font-size: 14px;"
+                                            *ngIf="(OrderData1?.OrderType =='2')"><b>OrderType:</b>Bundle
+                                            Order </span>
+                                        <span style="font-size: 14px;"
+                                            *ngIf="(OrderData1?.OrderType == '3')"><b>OrderType:</b>
+                                            Return Order </span>
+                                        <span style="font-size: 14px;"
+                                            *ngIf="(OrderData1?.OrderType =='4')"><b>OrderType:</b>Distributer
+                                            Order</span>
+                                        <span style="font-size: 14px;"
+                                            *ngIf="(OrderData1?.OrderType !='0') || (OrderData1?.OrderType !='1') || (OrderData1?.OrderType !='2') || (OrderData1?.OrderType !='3') || (OrderData1?.OrderType !='4')"><b>OrderType:</b>
+                                            Order</span>
+                                        <span style="font-size: 14px;"
+                                            *ngIf="(OrderData1?.OrderType =='6')"><b>OrderType:</b>Damage
+                                            Order</span>
+                                    </td>
+                                </tr>
+                                
+                            </table>
+
+                            <div class="hideBoxTable"
+                                style="margin-bottom: 0px !important;width: 100%;border: 1px solid black">
+                                <table class="table">
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="table-responsive">
+                                                <table style="border: 1px solid black; text-align: center; width: 100%;border-collapse: collapse;">
+                                                    <thead>
+                                                        <tr>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>S.no.</strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>Item Name</strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>MRP</strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>Unit Price</strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>MOQ</strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>Peti/Out/Qty</strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>Total Qty(pcs)</strong>
+                                                            </td>
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "><strong>Discount%</strong></td>-->
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "><strong>DiscountAmount</strong></td>-->
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>AWOTD</strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>HSNCode</strong>
+                                                            </td>
+                                                            <!--<td style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "><strong>Tax%</strong></td>-->
+                                                            <!--<td style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "><strong>Tax</strong></td>-->
+                                                            <!--New-->
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== true)">
+                                                                <strong>IGST%</strong>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== true)">
+                                                                <strong>IGST</strong>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <strong>SGST%</strong>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <strong>SGST</strong>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <strong>CGST%</strong>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <strong>CGST</strong>
+                                                            </td>
+                                                            <!--//cess-->
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.HideCessColumn == true && OrderData1?.IsIgstInvoice== false)">
+                                                                <strong>Cess%</strong>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.HideCessColumn == true && OrderData1?.IsIgstInvoice== false)">
+                                                                <strong>Cess</strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                TotalAmt (Inc. Tax)</td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody
+                                                        >
+                                                        <tr
+                                                            *ngFor="let orderDetail of OrderData1?.orderDetails; index as i">
+
+                                                            <td style="border: 1px solid black;" *ngIf="orderDetail.UnitPrice!=0">
+                                                                {{i+ 1}}
+                                                            </td>
+                                                            <!--<td *ngIf="orderDetail.UnitPrice==0.0001 || orderDetail.UnitPrice==0.01">
+                                                                                                Free Item
+                                                                                            </td>-->
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{orderDetail.itemname}}
+                                                                <span *ngIf="orderDetail?.IsFreeItem">
+                                                                    <b style="color:red">(Free Item)</b>
+                                                                </span>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{orderDetail.price}}</td>
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">{{orderDetail.UnitPrice| number : 2}}</td>-->
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{(orderDetail.UnitPrice==0.0001 ||
+                                                                orderDetail.UnitPrice==0.01)?
+                                                                (orderDetail.UnitPrice| number : '1.2-2') :
+                                                                (orderDetail.UnitPrice| number : '1.2-2')}}</td>
+
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{orderDetail.MinOrderQty}}</td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{orderDetail.qty/orderDetail.MinOrderQty| number :
+                                                                '1.2-2'}}
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{orderDetail.Noqty}}</td>
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">{{orderDetail.DiscountPercentage}}</td>-->
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">{{orderDetail.DiscountAmmount | number : 2}}</td>-->
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{orderDetail.AmtWithoutTaxDisc| number : '1.2-2'}}</td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{orderDetail.HSNCode}}</td>
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">{{orderDetail.TaxPercentage + orderDetail.TotalCessPercentage}}</td>-->
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">{{(orderDetail.TaxAmmount + orderDetail.CessTaxAmount)| number : '1.2-2'}}</td>-->
+                                                            <!--//new column in Igst-->
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== true)">
+                                                                {{orderDetail.TaxPercentage +
+                                                                orderDetail.TotalCessPercentage}}
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== true)">
+                                                                {{(orderDetail.TaxAmmount
+                                                                + orderDetail.CessTaxAmount)| number : '1.2-2'}} </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                {{orderDetail.SGSTTaxPercentage}}</td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                {{orderDetail.SGSTTaxAmmount| number : '1.2-2'}}</td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                {{orderDetail.CGSTTaxPercentage}}</td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                {{orderDetail.CGSTTaxAmmount| number : '1.2-2'}}</td>
+                                                            <!--//cess-->
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.HideCessColumn == true  && OrderData1?.IsIgstInvoice== false)">
+                                                                {{orderDetail.TotalCessPercentage}}</td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.HideCessColumn == true  && OrderData1?.IsIgstInvoice== false)">
+                                                                {{orderDetail.CessTaxAmount| number : '1.2-2'}}</td>
+                                                            <td
+                                                                style="border: 1px solid black;">
+                                                                {{orderDetail.TotalAmt}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                            </td>
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "></td>-->
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>Total: </strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <b>{{getTotalQty(OrderData1?.orderDetails)}}</b>
+                                                            </td>
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "></td>-->
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "></td>-->
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <b>{{getTotalAWOTD(OrderData1?.orderDetails)| number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                            </td>
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "></td>-->
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "><b>{{getTotalTax(OrderData1?.orderDetails)| number : '1.2-2'}}</b></td>-->
+                                                            <!--New-->
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)"></td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <b>{{getTotalCGST(OrderData1?.orderDetails) | number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)"></td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <b>{{getTotalSGST(OrderData1?.orderDetails) | number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== true)"></td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== true)">
+                                                                <b>{{getTotalIGST(OrderData1?.orderDetails) | number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                            <!--//cess-->
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.HideCessColumn == true && OrderData1?.IsIgstInvoice== false)">
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.HideCessColumn == true && OrderData1?.IsIgstInvoice== false)">
+                                                                <b>{{getTotalCess(OrderData1?.orderDetails)| number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                            <td
+                                                                style="border: 1px solid black;">
+                                                                <b>{{getTotalAmtIncTaxes(OrderData1?.orderDetails)| number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br>
+                                <table style="font-size:12px!important;border:1px" width="100%">
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="table-responsive">
+                                                <table style="border: 1px solid black; text-align: center; width: 100%;border-collapse: collapse;">
+                                                    <thead>
+                                                        <tr>
+                                                            <td
+                                                                style="border: 1px solid black;">
+                                                                <strong>HSN Summary</strong>
+                                                            </td>
+                                                            <td
+                                                                style="border: 1px solid black;">
+                                                                <strong>Taxable Value</strong>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <strong>CGST</strong>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <strong>SGST</strong>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== true)">
+                                                                <strong>IGST</strong>
+                                                            </td>
+                                                            <!--//cess-->
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.HideCessColumn == true && OrderData1?.IsIgstInvoice== false)">
+                                                                <strong>Cess</strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong>Total</strong>
+                                                            </td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody
+                                                        >
+                                                        <!--<tr data-*ngFor="orderDetail in OrderData| filter: RemoveZeroQtyItemInvoice('Noqty', 0)">-->
+                                                        <tr *ngFor="let orderDetail of OrderData1?.orderDetails">
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{orderDetail.HSNCode}}</td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{orderDetail.AmtWithoutTaxDisc| number : '1.2-2'}}</td>
+                                                            <!--<td  style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">{{(orderDetail.TaxAmmount + orderDetail.CessTaxAmount)| number : '1.2-2'}}</td>-->
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== true)">
+                                                                {{(orderDetail.TaxAmmount
+                                                                + orderDetail.CessTaxAmount)| number : '1.2-2'}} </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                {{orderDetail.CGSTTaxAmmount| number : '1.2-2'}}</td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                {{orderDetail.SGSTTaxAmmount| number : '1.2-2'}}</td>
+                                                            <!--//cess-->
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.HideCessColumn == true  && OrderData1?.IsIgstInvoice== false)">
+                                                                {{orderDetail.CessTaxAmount| number : '1.2-2'}}</td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                {{(orderDetail.AmtWithoutTaxDisc +
+                                                                orderDetail.SGSTTaxAmmount+orderDetail.CGSTTaxAmmount+orderDetail.CessTaxAmount)|
+                                                                number : '1.2-2'}} </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <strong> Total : </strong>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <b>{{getTotalTaxableValue(OrderData1?.orderDetails)|
+                                                                    number
+                                                                    : '1.2-2'}}</b>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== true)">
+                                                                <b>{{getTotalIGST(OrderData1?.orderDetails)| number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <b>{{getTotalCGST(OrderData1?.orderDetails)| number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.IsIgstInvoice== false)">
+                                                                <b>{{getTotalSGST(OrderData1?.orderDetails)| number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                            <td style="border: 1px solid black;"
+                                                                *ngIf="(OrderData1?.HideCessColumn == true  && OrderData1?.IsIgstInvoice== false)">
+                                                                <b>{{getTotalCess(OrderData1?.orderDetails)| number :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                            <td
+                                                            style="border: 1px solid black;">
+                                                                <b>{{getTotalIOverall(OrderData1?.orderDetails)| number
+                                                                    :
+                                                                    '1.2-2'}}</b>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <br>
+
+                            <table class="hideBoxTable"
+                                style="width: 100%;border: 1px solid black; margin-bottom: 0px !important;">
+                                <tr>
+                                    <td style="text-align:left;padding-left:10px;vertical-align:top;width:100%;">
+                                        <span style="font-size: 14px;" *ngIf="OrderData1.deliveryCharge>0">
+                                            <b>Delivery Charge:</b> {{OrderData1?.deliveryCharge | number : '1.2-2'}}&nbsp;₹
+                                            /-
+                                        </span> <br *ngIf="OrderData1?.deliveryCharge>0" />
+                                        <span style="font-size: 14px;" *ngIf="OrderData1.WalletAmount>0">
+                                            <b>Wallet Amount: </b>{{OrderData1.WalletAmount | number : '1.2-2'}}&nbsp;₹ /-
+                                        </span><br *ngIf="OrderData1?.WalletAmount>0" />
+                                        <span style="font-size: 14px;" *ngIf="OrderData1?.BillDiscountAmount>0"><b>Bill
+                                                Discount Amount:
+                                            </b>{{OrderData1.BillDiscountAmount | number : '1.2-2'}}&nbsp;<i
+                                                class="fa fa-inr"></i></span><br *ngIf="OrderData1?.BillDiscountAmount>0" />
+                                        <span style="font-size: 14px;" *ngIf="OrderData1?.BillDiscountAmount>0"><b>Offer
+                                                Code:</b>
+                                            {{OrderData1.offertype }}</span><br *ngIf="OrderData1.BillDiscountAmount>0" />
+                                        <span style="font-size: 14px;" *ngIf="InvoiceOrderOffer?.BillDiscountAmount>0 ">
+                                            <b>Post Offer Code:
+                                            </b>{{InvoiceOrderOffer.OfferCode }}</span><br
+                                            *ngIf="InvoiceOrderOffer?.BillDiscountAmount>0 " />
+                                        <span style="font-size: 14px;"
+                                            *ngIf="InvoiceOrderOffer?.BillDiscountAmount>0 "><b>Post Wallet Amount</b> :
+                                            {{InvoiceOrderOffer?.BillDiscountAmount | number : '1.2-2'}}<i
+                                                class="fa fa-inr"></i></span><br
+                                            *ngIf="InvoiceOrderOffer?.BillDiscountAmount>0 " />
+                                        <span style="font-size: 14px;" *ngIf="OrderData1?.TCSAmount>0">
+                                            <b>TCS Charge ({{TCSPercent}}%):</b> : {{OrderData1?.TCSAmount | number :
+                                            '1.2-2'}}<i class="fa fa-inr"></i>
+                                        </span><br *ngIf="OrderData1?.TCSAmount>0" />
+                                        <span style="font-size: 14px;">
+                                            <b>Invoice Amount:</b> ₹ {{OrderData1?.GrossAmount -
+                                            (OrderData1?.DiscountAmount?OrderData1?.DiscountAmount:0) | number :
+                                            '1.2-2'}}&nbsp;/-
+                                            &nbsp; &nbsp;&nbsp;<b>({{OrderData1?.InvoiceAmountInWord}})</b>
+                                        </span>
+                                        <span *ngIf="paymentdetail?.length>0">
+                                            <span style="font-size: 14px;">
+                                                <b> Payment Mode:</b>
+                                                <span data-ng-repeat="Pd in paymentdetail">
+                                                    <span>{{Pd.PaymentFrom}}</span>
+                                                    <span>&nbsp;&nbsp;</span>
+                                                    <span>
+                                                        {{Pd.amount}}&nbsp;₹ /-
+                                                    </span>
+                                                    <span>&nbsp;&nbsp;</span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <hr>
+                                <tr style="border-top: 1px solid black">
+                                    <td style="text-align:left">
+                                        <span style="font-size: 14px;text-align:left;margin-left:11px;"><strong><b><u>Terms
+                                                        & conditions</u></b>
+                                            </strong></span> <span
+                                            style="font-size: 12px; margin-right:5px;">&nbsp;&nbsp;&nbsp;<b>1).</b> Post
+                                            WalletPoint will be
+                                            credited after order delivered</span><br />
+                                        <span style="font-size: 12px; margin-right:5px;color:red">
+                                            &nbsp;&nbsp;&nbsp;<b>2).</b>* All Amount in Rupee(₹ )
+                                        </span>
+
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <div class="hideBoxTable" style="padding: 10px; border: 1px solid black; text-align: center;">
+                                <span style="text-align: center;">This is computer generated invoice no signature
+                                    required.
+                                </span>
+                                <hr>
+                                <span>
+                                    * The courts at Indore alone will have jurisdiction in respect of all disputes arising
+                                    with
+                                    regard
+                                    to the goods
+                                    sold under this invoice.
+                                    <br>
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <br>
+                        <br>
+                        <footer style="page-break-before: always;"></footer>
+                    </div>
+                </div>
+
+                <!-- <table class="table">
+                    <tr>
+                        <td style="text-align:left;padding-left:10px;vertical-align:top;width:100%;">
+                            <span style="font-size: 14px;">Delivery Charge: {{AssOrder[0]?.deliveryCharge| number :
+                                '1.2-2'}}&nbsp;<i class="fa fa-inr"></i></span><br />
+                            <span style="font-size: 14px;">Discount: {{AssOrder[0]?.DiscountAmount | number :
+                                '1.2-2'}}&nbsp;<i class="fa fa-inr"></i><br /></span>
+                            <span style="font-size: 14px;">Wallet Amount: {{AssOrder[0]?.WalletAmount | number :
+                                '1.2-2'}}&nbsp;<i class="fa fa-inr"></i><br /></span>
+                            <span style="font-size: 14px;"
+                                *ngIf="AssOrder[0]?.BillDiscountAmount && AssOrder[0]?.BillDiscountAmount>0">Bill
+                                Discount
+                                Amount:
+                                {{AssOrder[0]?.BillDiscountAmount | number : '1.2-2'}}&nbsp;<i
+                                    class="fa fa-inr"></i><br /></span>
+                            <span style="font-size: 14px;"
+                                *ngIf="AssOrder[0]?.BillDiscountAmount && AssOrder[0]?.BillDiscountAmount>0">Offer
+                                Code:
+                                {{AssOrder[0]?.offertype}}<br /></span>
+                            <span style="font-size: 14px;"
+                                *ngIf="InvoiceOrderOffer?.BillDiscountAmount && InvoiceOrderOffer?.BillDiscountAmount>0 ">
+                                Post Offer
+                                Code:
+                                {{InvoiceOrderOffer?.OfferCode }}<br /></span>
+                            <span style="font-size: 14px;"
+                                *ngIf="InvoiceOrderOffer?.BillDiscountAmount && InvoiceOrderOffer?.BillDiscountAmount>0 ">Post
+                                Wallet
+                                Amount :
+                                {{InvoiceOrderOffer?.BillDiscountAmount| number : '1.2-2'}}<i class="fa fa-inr"></i></span>
+                            <span>Total Amount Inc.Tax: {{totalfilterprice| number : '1.2-2'}}&nbsp;<i
+                                    class="fa fa-inr">/-</i></span><br />
+                            <span style="font-size: 14px;">Total Tax: {{AssOrder[0]?.TaxAmount| number :
+                                '1.2-2'}}&nbsp;<i class="fa fa-inr">/-</i></span><br />
+                            <span style="font-size: 14px;">Saving Amount: {{AssOrder[0]?.Savingamount}}&nbsp;<i
+                                    class="fa fa-inr">/-</i></span><br /><br />
+                            Net Amount:<strong style="font-size: 16px;">{{AssOrder[0]?.GrossAmount -
+                                (AssOrder[0]?.DiscountAmount? AssOrder[0]?.DiscountAmount : 0) | number :
+                                '1.2-2'}}&nbsp;<i class="fa fa-inr">
+                                    /-</i></strong><br />
+                            <strong style="font-size: 16px" *ngIf="AssOrder[0]?.Status=='Partial receiving -Bounce'">Account
+                                Status ::
+                                {{AssOrder[0]?.Status}}</strong>
+                    <tr style="border:none;border-bottom:none">
+                    <tr style="border:none;border-bottom:none">
+                        <br />
+                        <td
+                            style="text-align:left;padding-left:10px;vertical-align:top;width:100%;border:none;border-bottom:none">
+                            <div *ngIf="paymentdetail?.length>0">
+                                <table class="no-border">
+                                    <thead style="border:none;border-bottom:none">
+                                        <tr>
+                                            <th>
+                                                Payment Mode
+                                            </th>
+                                            <th>
+                                                Amount
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let Pd of paymentdetail">
+                                            <td>{{Pd.PaymentFrom}} </td>
+                                            <td>{{Pd.amount}}</td>
+                                        <tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div *ngIf="paymentdetail?.length==0">
+                                <span *ngIf="OrderData1?.CashAmount>0">Cash Amount : {{OrderData1?.CashAmount |
+                                    number:0}}&nbsp;<i class="fa fa-inr"></i></span><br />
+                                <span *ngIf="OrderData1?.CheckAmount>0">Cheque Amount : {{OrderData1?.CheckAmount |
+                                    number:0}}&nbsp;<i class="fa fa-inr"></i></span><br />
+                                <span *ngIf="OrderData1?.ElectronicAmount>0">Online Amount :
+                                    {{OrderData1?.ElectronicAmount |
+                                    number:0}}&nbsp;<i class="fa fa-inr"></i></span><br />
+                            </div>
+                            Payment received:<strong style="font-size: 16px;">{{OrderData1?.GrossAmount | number :
+                                '1.2-2'}}&nbsp;<i class="fa fa-inr">/-</i></strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" style="text-align:left">
+                            <span style="font-size: 12px;">Others Comments</span>
+                            <div>
+                                <span style="font-size: 12px; margin-right:5px;">1). Payment to be made by cash on
+                                    delivery
+                                    or
+                                    Cheque(Same day only)</span><br>
+                                <span style="font-size: 12px; margin-right:5px;">2). Cheques Payable to ShopKirana E
+                                    Trading
+                                    Pvt.
+                                    Ltd.</span><br>
+                                <span style="font-size: 12px; margin-right:5px;">3). Only same day cheques are
+                                    accepted.</span><br>
+                                <span style="font-size: 12px; margin-right:5px;">4). Cheques retrun charges Rs.200
+                                    to
+                                    Rs.400</span><br>
+                                <span style="font-size: 12px; margin-right:5px;">4). Cheques Bounce Charges: Cheque
+                                    Amount
+                                    5,000/- to
+                                    9999/-; Bounce Charges: INR 300/- For Cheque Amount =>10,000/-& Above; Bounce
+                                    Charges:
+                                    INR
+                                    500/-</span><br>
+                                <span style="font-size: 12px; margin-right:5px;">5). Cheques are accepted above
+                                    5,000.00
+                                    only.</span><br>
+
+                            </div>
+                        </td>
+                    </tr>
+                </table> -->
+                <!-- <div class="clss">
+                    <span>This is computer generated invoice no signature required.</span><br><br>
+                    <hr>
+                    <span>
+                        * The courts at Indore alone will have jurisdiction in respect of all disputes arising with
+                        regard
+                        to the goods
+                        sold under this invoice.
+                        <br>
+                    </span>
+                </div> -->
+            </div>
+        </div>
+    </p-dialog>
+</div>
+
+<div *ngIf="summryViewPopup">
+    <p-dialog [(visible)]="summryViewPopup" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}">
+        <p-header>DELIVERY ASSIGNMENT SUMMARY</p-header>
+        <div class="ovelFieldForm" id="print-section" style="padding:10px 15px; position: relative;z-index: 9;">
+
+            <div class="summeryHeader"
+                style="display: block; border-bottom: 1px solid #eee; margin-top: 20px; margin-bottom: 20px;">
+                <div class="hiddenDiv"><strong>DELIVERY ASSIGNMENT SUMMARY</strong></div>
+                <div class="row">
+                    <div class="col-md-6 col-sm-6 col-12">
+                        <span style="display: block; margin-bottom: 10px;"><strong>ASSIGNMENT ID : </strong>
+                            {{getListAllData.DeliveryIssuanceId}}</span>
+                        <span style="display: block; margin-bottom: 10px;"><strong>Delivery Boy : </strong>
+                            {{getListAllData.DisplayName}}</span>
+                        <span style="display: block; margin-bottom: 10px;"><strong>TOTAL AMOUNT: RS :
+                            </strong>{{TotalAssignmentAmount}}/-</span>
+                        <!-- <span *ngIf="getListAllData.UploadedFileName!=null">
+                            <img src='{{hostUrl}}/images/AssigmentImages/{{getListAllData.UploadedFileName}}' />
+                        </span> -->
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-12 text-align-end text-right">
+                        <div class="hiddenDiv text-align-end text-right float-right"
+                            style="width:250px;height: 150px; text-align: right;float: right;margin-top: -100px;">
+                            <span class="text-align-end text-right" *ngIf="AssignmentBarcodeImage!=null"
+                                style="width:250px;height: 150px; text-align: right;float: right;">
+                                <img src="data:image/png;base64,{{AssignmentBarcodeImage}}"
+                                    style="width:250px;height: 150px; text-align: right;">
+                            </span><br /><br /><br />
+                        </div>
+                        <div class="text-align-end text-right float-right">
+                            <span style="display: block; margin-bottom: 10px;">Date:
+                                {{getListAllData.CreatedDate|date:'medium'}}</span>
+                            <span style="display: block; margin-bottom: 10px;">Mobile : {{DboyMobileNo}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 5px;">
+                <h4 class="totalCount"> Delivered Count({{TotalDeliveredOrder}}) Amount: {{TotalDeliveredOrderAmount}}/-
+                </h4>
+                <h4 class="totalCount">Delivered <span class="badge badge-danger ml-2">{{TotalDeliveredOrder}}</span>
+                </h4>
+                <div class="table-responsive borderTable" *ngIf="delivereddata?.length != 0">
+                    <table class="table" width="100%">
+                        <thead>
+                            <tr>
+                                <!-- <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    S No.</th> -->
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    OrderId</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Skcode</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Cash Amount <span
+                                        class="badge badge-primary ml-2">{{TotalDeliveredCashAmount}}</span></th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Cheque Amount <span
+                                        class="badge badge-info ml-2">{{TotalDeliveredChequeAmount}}</span></th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Cheque No</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Online Amount <span
+                                        class="badge badge-success ml-2">{{TotalDeliveredElectronicAmount}}</span>
+                                </th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Gullak Amount <span class="badge badge-success ml-2">{{TotalDeliveredGullak}}</span>
+                                </th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    mPos <span class="badge badge-success ml-2">{{TotalDeliveredmPos}}</span></th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    EpayLater Amount <span
+                                        class="badge badge-success ml-2">{{TotalDeliveredEpayLater}}</span></th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Comment</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Total <span class="badge badge-danger ml-2">{{TotalDeliveredOrderAmount}}</span>
+                                </th>
+                                <th class="noprint"
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let trade of delivereddata; index as i">
+                                <!-- <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{i + 1}}</td> -->
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trade.OrderId}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trade.Skcode}}</td>
+                                <!--//nerw  payment-->
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <span class="badge badge-success ml-2">{{trade.CashAmount}}</span>
+                                </td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <span class="badge badge-success ml-2">{{trade.ChequeAmount}} </span>
+                                </td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trade.ChequeNo}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <span class="badge badge-success ml-2">{{trade.ElectronicAmount}} </span>
+                                    ({{trade.ElectronicTransId}})
+                                </td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <span class="badge badge-success ml-2">{{trade.GullakAmount}}</span>
+                                    ({{trade.GatewayOrderId}})
+                                </td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <span class="badge badge-success ml-2">{{trade.mPosAmount}}</span>
+                                    ({{trade.mPosTransId}})
+                                </td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <span class="badge badge-success ml-2">{{trade.EpayLaterAmount}}
+                                    </span>({{trade.EpayLaterTransId}})
+                                </td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trade.comments}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trade.GrossAmount}}</td>
+                                <td class="noprint" *ngIf="DeliveryIssuanceStatus=='Submitted'"
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <button *ngIf="trade.OrderRejectStatus!=true" class="btn-sm btn-primary"
+                                        style="float:right; margin-right: 15px;"
+                                        (click)="orderStatusUpdate(trade,1)">Reject</button>
+                                    <button *ngIf="trade.OrderRejectStatus==true" class="btn-sm btn-primary"
+                                        style="float:right; margin-right: 15px;"
+                                        (click)="orderStatusUpdate(trade,0)">Accept</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="recordnot_fount" *ngIf="delivereddata?.length == 0">
+                    Record not found
+                </div>
+            </div>
+
+            <div style="margin-top: 5px;">
+                <h4 class="totalCount">Cancelled Count({{TotalCanceledOrder}}) Amount:
+                    {{TotalCanceledOrderAmount}}/-
+                </h4>
+
+                <div class="table-responsive borderTable" *ngIf="cancelddata?.length != 0">
+                    <table class="table" width="100%">
+                        <thead>
+                            <tr>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Total canceld order<span class="badge badge-danger ml-2">
+                                        {{TotalCancelOrder}}</span></td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Total canceld Qty {{TotalCanceledOrderqty}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Total canceld Amount {{TotalCanceledOrderAmount}} </td>
+                            </tr>
+                            <tr>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    S.No</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    OrderId</th>
+
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Skcode</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Status</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Comments</th>
+                                <th class="noprint" *ngIf="DeliveryIssuanceStatus=='Submitted'"
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <div class="th">
+                                        ChangeStatus
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let trades of cancelddata; index as i">
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{i +1}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trades.OrderId}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trades.Skcode}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trades.Status}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trades.comments}}</td>
+                                <td class="noprint"
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "
+                                    *ngIf="DeliveryIssuanceStatus=='Submitted'">
+                                    <button *ngIf="trades.OrderRejectStatus!=true" class="btn-sm btn-primary"
+                                        style="float:right; margin-right: 15px;"
+                                        (click)="orderStatusUpdate(trades,1)">Reject</button>
+                                    <button *ngIf="trades.OrderRejectStatus==true" class="btn-sm btn-primary"
+                                        style="float:right; margin-right: 15px;"
+                                        (click)="orderStatusUpdate(trades,0)">Accept</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="recordnot_fount" *ngIf="cancelddata?.length == 0">
+                    Record not found
+                </div>
+
+            </div>
+
+            <div style="margin-top: 5px;">
+                <h4 class="totalCount">Delivery Canceled Request Count({{TotalDeliveryCanceledRequestOrder}}) Amount:
+                    {{TotalDeliveryCanceledRequestAmount}}/-
+                </h4>
+                <div class="table-responsive borderTable" *ngIf="DeliveryCanceledRequest?.length != 0">
+                    <table class="table" width="100%">
+                        <thead>
+                            <tr>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Total canceld order<span class="badge badge-danger ml-2">
+                                        {{TotalCancelOrder}}</span></td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Total canceld Qty {{TotalCanceledOrderqty}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Total canceld Amount {{TotalDeliveryCanceledRequestAmount}} </td>
+                            </tr>
+                            <tr>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    S.No</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    OrderId</th>
+
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Skcode</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Status</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Comments</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    DCR Comment</th>
+                                <th class="noprint" *ngIf="DeliveryIssuanceStatus=='Submitted'"
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <div class="th">
+                                        ChangeStatus
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let trades of DeliveryCanceledRequest; index as i">
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{i +1}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trades.OrderId}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trades.Skcode}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trades.Status}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trades.comments}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{trades.DeliveryCanceledComments}}</td>
+                                <td class="noprint"
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "
+                                    *ngIf="DeliveryIssuanceStatus=='Submitted'">
+                                    <button *ngIf="trades.OrderRejectStatus!=true" class="btn-sm btn-primary"
+                                        style="float:right; margin-right: 15px;"
+                                        (click)="orderStatusUpdate(trades,1)">Reject</button>
+                                    <button *ngIf="trades.OrderRejectStatus==true" class="btn-sm btn-primary"
+                                        style="float:right; margin-right: 15px;"
+                                        (click)="orderStatusUpdate(trades,0)">Accept</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="recordnot_fount" *ngIf="DeliveryCanceledRequest?.length == 0">
+                    Record not found
+                </div>
+            </div>
+
+            <div style="margin-top: 5px;">
+                <h4 class="totalCount">ReDispatch Count({{TotalRedispatchOrder}}) Amount:
+                    {{TotalRedispatchOrderAmount}}/-
+                </h4>
+                <div class="table-responsive borderTable" *ngIf="redispatcheddata?.length != 0">
+                    <table class="table" width="100%">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    S.No</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    OrderId</th>
+
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Skcode</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Status</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Comments</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    RD Comment</th>
+
+                                <th class="noprint" *ngIf="DeliveryIssuanceStatus=='Submitted'"
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    <div class="th">
+                                        ChangeStatus
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let r of redispatcheddata; index as i">
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{i +1}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{r.OrderId}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{r.Skcode}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{r.Status}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{r.comments}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{r.DeliveryCanceledComments}}</td>
+                                <td class="no-print"
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important "
+                                    *ngIf="DeliveryIssuanceStatus=='Submitted'">
+                                    <button *ngIf="r.OrderRejectStatus!=true" class="btn-sm btn-primary"
+                                        style="float:right; margin-right: 15px;"
+                                        (click)="orderStatusUpdate(r,1)">Reject</button>
+                                    <button *ngIf="r.OrderRejectStatus==true" class="btn-sm btn-primary"
+                                        style="float:right; margin-right: 15px;"
+                                        (click)="orderStatusUpdate(r,0)">Accept</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="recordnot_fount" *ngIf="redispatcheddata?.length == 0">
+                    Record not found
+                </div>
+            </div>
+
+            <div style="margin-top: 5px;">
+                <h4 class="totalCount">UNDER SHIPPMENT ORDER</h4>
+                <div class="table-responsive borderTable" *ngIf="shippedData?.length != 0">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    S.No</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    OrderId</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    Skcode</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let r of shippedData; index as i">
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{i +1}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{r.OrderId}}</td>
+                                <td
+                                    style="padding:5px 15px; margin: 0px; text-align: center;border:1px solid rgb(107, 107, 107) !important ">
+                                    {{r.Skcode}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="recordnot_fount" *ngIf="shippedData?.length == 0">
+                    Record not found
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3"
+            *ngIf="DeliveryIssuanceStatus=='Freezed' || DeliveryIssuanceStatus=='Payment Accepted' || DeliveryIssuanceStatus=='Payment Submitted' ">
+            <!-- <button printSectionId="print-section" ngxPrint class="btn-sm btn-primary">Print</button> -->
+            <button class="btn btn-raised btn-raised btn-primary" printSectionId="print-section" ngxPrint
+                [printStyle]="{hiddenDiv : {'opacity': '100%', 'display':'block'}}">Print</button>
+        </div>
+
+        <div class="recordnot_fount mt-3 commonMargin">
+            <h3 *ngIf="DeliveryIssuanceStatus!='Freezed' || DeliveryIssuanceStatus!='Payment Accepted' ||DeliveryIssuanceStatus!='Payment Submitted'"
+                class="no-print" style="color:green; font-size: 15px;font-weight: 500;">Print Button will available
+                after click Assignment Payment button
+                or Freezed
+                Status</h3>
+            <h3 class="no-print" style="color:red; font-size: 15px;">*If you do any change in status of Assignment
+                order
+                then final
+                Changes in
+                ordermaster will be reflected after clicking on Assignment Payment button.</h3>
+        </div>
+        <button *ngIf="(DeliveryIssuanceStatus=='Submitted') && AssignmentPaymentEnable==true" type="button"
+            id="AssignmentPayment" class="btn btn-primary" style="float: right;margin-right: 15px;"
+            (click)="AssignmentPayment(DeliveryIssuanceId)">Assignment
+            Payment</button>
+
+    </p-dialog>
+</div>
+
+<div *ngIf="directOnPop">
+    <p-dialog [(visible)]="directOnPop" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '80%'}">
+        <p-header>ASSIGNMENT DIRECTION</p-header>
+        <div class="row">
+            <div class="col-md-8 col-sm-8 col-12">
+                <div id="details-map" class="w-100 h-75 overview-tab-content">
+                    <div class="w-100 h-100 m-3 overflow-hidden rounded shadow">
+                        <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [zoomControl]="true"
+                            [fullscreenControl]="true" [disableDefaultUI]="false" [zoomControl]="false"
+                            [style.height.px]="myInnerHeight">
+                            <agm-direction [origin]="origin" [destination]="origin" [waypoints]="expectedWaypoints"
+                                [markerOptions]="markerOptions">
+                            </agm-direction>
+                            <agm-marker *ngFor="let wp of expectedWaypoints; let i = index;" label="{{i+1}}"
+                                label="Updated" [latitude]="wp.location.lat" [longitude]="wp.location.lng"
+                                (dragEnd)="markerDragEnd(latitude, longitude, $event)" [markerDraggable]="true">
+                                <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                    <div>
+                                        {{wp.location.lat}}
+                                    </div>
+                                </agm-info-window>
+                            </agm-marker>
+
+                            <!-- <agm-marker label="Current" [latitude]="origin.lat" [longitude]="origin.lng"
+                                            [iconUrl]="waypointMarker">
+                                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                                <div>
+                
+                                                </div>
+                                            </agm-info-window>
+                                        </agm-marker> -->
+                        </agm-map>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-12 mt-3">
+                <div>
+                    <table width="100%" style="font-size:16px">
+                        <tr style="padding:10px 10px 10px 10px">
+                            <td> <b>Assignment #:</b></td>
+                            <td> {{directionAssignmentsInfo?.AssignmentId}}</td>
+                        </tr>
+                        <tr style="padding:10px 10px 10px 10px">
+                            <td> <b>Total Distance:</b></td>
+                            <td> {{(directionAssignmentsInfo?.AssignmentDistance/1000)}} KM</td>
+                        </tr>
+                        <tr style="padding:10px 10px 10px 10px">
+                            <td> <b>Return Distance:</b></td>
+                            <td> {{(directionAssignmentsInfo?.ReturnDistance/1000)}} KM </td>
+                        </tr>
+                        <tr style="padding:10px 10px 10px 10px">
+                            <td> <b>Assignment Duration:</b></td>
+                            <td> {{directionAssignmentsInfo?.AssignmentDuration | date : 'hh:mm:ss'}} Hrs. </td>
+                        </tr>
+                        <tr style="padding:10px 10px 10px 10px">
+                            <td> <b>Return Duration:</b></td>
+                            <td> {{directionAssignmentsInfo?.ReturnDuration | date : 'hh:mm:ss'}} Hrs. </td>
+                        </tr>
+                        <tr style="padding:10px 10px 10px 10px">
+                            <td> <b>Unloading Duration:</b></td>
+                            <td> {{directionAssignmentsInfo?.TotalUnloadingDuration | date : 'hh:mm:ss'}} Hrs. </td>
+                        </tr>
+                        <tr>
+                            <td class="routeBox mt-3" colspan="2">
+                                <br> <b>Route</b>
+                                <div id="directions-panel" *ngFor="let address of addresses; index as i">
+                                    <small>
+                                        <b>{{i + 1}} )</b>
+                                        <span>{{address?.start}}</span>
+                                        <strong>To</strong>
+                                        <span>{{address?.end}}</span>
+                                        <span><b>Distance : </b>{{address?.distance}}</span>
+                                    </small>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>

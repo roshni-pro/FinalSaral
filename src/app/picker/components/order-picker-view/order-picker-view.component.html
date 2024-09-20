@@ -1,0 +1,576 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<div class="ui-fluid">
+    <section id="basic-form-layouts">
+        <html>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <script src="https://www.w3schools.com/lib/w3.js"></script>
+
+        <body>
+            <div class="w3-container w3-center w3-animate-left">
+                <h1><b>Order Picker Master</b></h1>
+            </div>
+            <div class="shadow bg-white py-2">
+                <form class="ovelFieldForm form" name="form" #whclForm="ngForm" style="padding:0px 15px;">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="projectinput3"><b>&nbsp;&nbsp;&nbsp;&nbsp;Warehouse<span style="color:red">
+                                        *</span></b></label>
+                            <select id="des" name="warehouse" [(ngModel)]="WarehouseId" class="form-control"
+                                (change)="getClusterlist(WarehouseId)" #warehouse="ngModel" required="1">
+                                <option value="">Select Warehouse </option>
+                                <option *ngFor="let wh of warehouseList;" [value]="wh.WarehouseId">
+                                    {{wh.WarehouseName}}-{{wh.CityName}}</option>
+                            </select>
+                            <div *ngIf="isInvalid && !warehouse.valid && warehouse.errors.required">
+                                <code>Warehouse Name is required</code>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="projectinput3"><b>&nbsp;&nbsp;&nbsp;&nbsp;Cluster<span style="color:red">
+                                        *</span></b></label>
+                            <select id="des" name="cluster" [(ngModel)]="ClusterId" class="form-control"
+                                #cluster="ngModel" required="1">
+                                <option value="">Select Cluster </option>
+                                <option *ngFor="let cl of clusterList;" [value]="cl.ClusterId">{{cl.ClusterName}}
+                                </option>
+                            </select>
+                            <div class="ui-g"></div>
+                            <div *ngIf="isInvalid && !cluster.valid && cluster.errors.required">
+                                <code>Cluster Name is required</code>
+                            </div>
+                        </div>
+                      
+
+                        <div class="col-md-1 text-right">
+                            <button class="btn btn-raised btn-raised btn-primary" style="margin-top: 41px;"
+                                (click)="filter(whclForm,ClusterId,IsComplted)">Search </button>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="projectinput3"><b>&nbsp;&nbsp;&nbsp;&nbsp;Status</b></label>
+                            <select id="comp" name="comp" [(ngModel)]="IsComplted" class="form-control" (change)="statusfilter(IsComplted)">
+                                <option value="null">Select Satus</option>
+                                <option value="All">All</option>
+                                <option value="New Request">New</option>
+                                <option value="Submitted">Submitted</option>
+                                <option value="InProgress">InProgress</option>
+                                <option value="Cancelled">Cancelled</option>
+                                <option value="Approved">Approved</option>
+                                <option value="RePicked">RePicked</option>
+                                <option value="Assignment Created">Assignment Created</option>
+                            </select>
+                            <!-- <input name="firstname" type="text" class="form-control" value="Pending" disabled /> -->
+                        </div>
+                        <div class="col-md-2 searchField" style="text-align: right">
+                            <label for=""><b>&nbsp;</b></label>
+                            <input type="text" (keyup)="OrderIdfilter($event)">
+                            <i class="fa fa-search"></i>
+                        </div>
+
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="row">
+                            <div class="row">
+                                <div class="input-color" style="margin-right: 10px;">
+                                    <input type="text" value="N: New" readonly="">
+                                    <div class="color-box" style="background-color:#f1adf1;"></div>
+                                </div>
+                                <div class="input-color" style="margin-right: 10px;">
+                                    <input type="text" value="I: InProgress" readonly="">
+                                    <div class="color-box" style="background-color:#b1dfee;"></div>
+                                </div>
+                                <div class="input-color" style="margin-right: 10px;">
+                                    <input type="text" value="S: Submitted (Maker)" readonly="">
+                                    <div class="color-box" style="background-color:#a7f5a7;"></div>
+                                </div>  
+                                <div class="input-color" style="margin-right: 10px;">
+                                    <!-- <input type="text" value="D:Dispatched" readonly=""> -->
+                                    <input type="text" value="A:Approved(Checker)" readonly="">
+                                    <div class="color-box" style="background-color:#03af1d;"></div>
+                                </div>
+                                <div class="input-color" style="margin-right: 10px;">
+                                    <input type="text" value="C: Cancelled" readonly="">
+                                    <div class="color-box" style="background-color:#e28888;"></div>
+                                </div>
+                                <div class="input-color" style="margin-right: 10px;">
+                                    <input type="text" value="RE:RePicked" readonly="">
+                                    <div class="color-box" style="background-color:#f8cf78;"></div>
+                                </div>
+                                <div class="input-color" style="margin-right: 10px;">
+                                    <input type="text" value="A:Assignment Created" readonly="">
+                                    <div class="color-box" style="background-color:#a0c2a5;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-left" style="margin-top: -2%;">
+                        <div class="col-md-12">
+                            <div class="card noneHoverRow">
+                                <p-table #dt [value]="pickerList" [paginator]="true" [rows]="20" [scrollable]="true"
+                                    scrollHeight="130vh" text-align: center>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Picker Number</th>
+                                            <th>Picker Person Name</th>
+                                            <!-- <th>Start Time</th>
+                                            <th>End Time</th>
+                                            <th>Is Dispatched</th> -->
+                                            <th>No. Of Orders</th>
+                                            <th>Line-item Quantity</th>
+                                            <th>Status</th>
+                                            <th>Created Date</th>
+                                            <!-- <th>Difference Hours</th> -->
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-ir>
+                                        <!-- <tr (click)="openitem(ir,$event,WarehouseId)" [ngStyle]="(ir.IsComplted == true)?{'background-color': '#CDF4B8'}:{'background-color':'white'} || (ir.IsComplted == false)?{'background-color': '#F1C3B9'}:{'background-color':'white'} || (ir.CurrentStatus == 'Not Started')?{'background-color': '#B6DAA3'}:{'background-color':'#EF9A06'} || (ir.CurrentStatus == 'Not Completed')?{'background-color': '#B6DAA3'}:{'background-color':'#EF9A06'} || (ir.CurrentStatus == 'Ready To dispatched')?{'background-color': '#57F4F7'}:{'background-color':'#EF9A06'} || (ir.CurrentStatus == 'Completed not dispatched')?{'background-color': '#ECD936'}:{'background-color':'#EF9A06'}">                                                     -->
+                                        <tr (click)="openitem(ir,$event,WarehouseId)" [ngStyle]="
+                                            (ir.CurrentStatus == 'Assignment Created')?{'background-color': '#a0c2a5'}:{'background-color':'white'}
+                                             && 
+                                            (ir.CurrentStatus == 'Cancelled')?{'background-color': '#e28888'}:{'background-color':'white'} 
+                                            && 
+                                            (ir.CurrentStatus == 'New Request')?{'background-color': '#f1adf1'}:{'background-color':'white'} 
+                                            && 
+                                            (ir.CurrentStatus == 'InProgress')?{'background-color': '#b1dfee'}:{'background-color':'white'} 
+                                            && 
+                                            (ir.CurrentStatus == 'RePicked')?{'background-color': '#f8cf78'}:{'background-color':'white'} 
+                                            && 
+                                            (ir.CurrentStatus == 'Submitted')?{'background-color': '#a7f5a7'}:{'background-color':'white'} 
+                                           
+                                            ">
+                                            <td>{{ir.Id}}</td>
+                                            <td>{{ir.PickerPersonName}}</td>
+                                            <!-- <td >{{ir.StartTime | date:'medium'}}</td>
+                                            <td>{{ir.EndTime |  date:'medium'}}</td>
+                                            <td>{{ir.IsDispatched}}</td> -->
+                                            <td>{{ir.orderpickercount}}</td>
+                                            <td>{{ir.orderpickercountitem}}</td>
+                                            <td>{{ir.CurrentStatus}}</td>
+                                            <td>{{ir.CreatedDate |  date:'medium'}}</td>
+                                            <!-- <td>{{ir.differenceHrs}}</td> -->
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <p-blockUI [blocked]="blocked"></p-blockUI>
+            <p-progressSpinner *ngIf="blocked"
+                [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+                fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+        </body>
+
+        </html>
+    </section>
+</div>
+
+
+<p-dialog [(visible)]="isOpenPopupPayments" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+    [style]="{width: '83%',height: '90%', overflow: 'auto', top: '30px'}">
+    <p-header>
+        <div *ngIf="Editable" class="hideCloseHeader">
+            <h2
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                Generated Picker List</h2>
+        </div>
+        <div *ngIf="!Editable">
+            <h2
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                Generated Picker List</h2>
+        </div>
+    </p-header>
+
+    <div class="position-relative" style="padding:0px 15px;">
+        <!-- <div *ngIf="IsSelectOrder.IsDispatched == true" class="text-center cs">
+            <h5>It is Dispatched</h5>
+        </div> -->
+        <div *ngIf="IsSelectOrder.IsCanceled == true" class="text-center cs">
+            <h5><b>Cancelled By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+        </div>
+        <div *ngIf="IsSelectOrder.Status == 5" class="text-center cs">
+            <h5><b>Repicked By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+        </div>
+        <div *ngIf="IsSelectOrder.Status == 3" class="text-center cs">
+            <h5><b>Dispatched By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+        </div>
+        <!-- <div *ngIf="IsSelectOrder.Status == 2" class="text-center cs">
+            <h5><b>Dispatched By : {{selectedRowDetails.ModifiedBy}}</b></h5>
+        </div> -->
+        <!-- <div *ngIf="disp" class="text-center cs">
+            <h5>Dispatch Qty Should Be Less then Or Equal to Qty Please Check the DispatchedQty And Qty Again </h5>
+            <br />
+            <h5> डिस्पैच मात्रा कम होनी चाहिए मूल मात्रा से या डिस्पैच मात्रा बराबर होनी चाहिए मूल मात्रा से | कृपया
+                डिस्पैच मात्रा और मूल मात्रा फिर से जांचें</h5>
+        </div> -->
+        <p-toast [style]="{marginTop: '80px'}"></p-toast>
+        <form class="ovelFieldForm form" name="form" #deliveryboy="ngForm">
+            <!-- <div style="text-align: center;">
+                <img src="assets/img/logo/Logo.png">
+            </div> -->
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <!-- <div style="margin-top: 7px; float: left; text-align: left;" *ngIf="!Isdispatch"> -->
+                    <!-- <div style="margin-top: 7px; float: left; text-align: left;" *ngIf="RTD && ReadyToDispatch && IsSelectOrder.IsApproved == true"> -->
+                    <!-- <div style="margin-top: 7px; float: left; text-align: left;" *ngIf="RTD == true && IsSelectOrder.IsApproved == true">
+                        <label for="projectinput3"><b>&nbsp;&nbsp;&nbsp;&nbsp;Delivery Boy<span style="color:red"> *</span></b></label>
+                            <select style="max-width: 300px; display: inline-block;" id="des" name="peoples" [(ngModel)]="PeopleID" class="form-control"  #peoples="ngModel" required="1">
+                                <option value="null">Select Delivery Boy </option>
+                                <option *ngFor="let people of getPeople;" [value]="people.PeopleID"> {{people.DisplayName}}</option>
+                            </select>
+                            <div *ngIf="isInvalid && !peoples.valid && peoples.errors.required">
+                                <code>Delivery Boy Name is required</code>
+                            </div>
+                        </div> -->
+
+                    <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;"
+                        printSectionId="print-section" *ngIf="Data == true" ngxPrint>Print</button>
+                    <!-- <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;" (click)="readyTodispatch(data,pickerId,PeopleID,deliveryboy)" *ngIf="Isdispatch == false && Iscomplete == true && Data == true">ReadyToDispatch</button> -->
+                    <!-- <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;" (click)="readyTodispatch(data,pickerId,PeopleID,deliveryboy)" *ngIf="RTD == true && IsSelectOrder.IsApproved == true">ReadyToDispatch</button> -->
+                    <!-- <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;" (click)="EditMode(data)"  *ngIf="Isdispatch == false && Iscomplete == true">Edit</button> -->
+                    <!-- <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right; margin-left: 300px;" (click)="SaveMode(pickerId,data)" *ngIf="Editable && save"  >Save</button> -->
+                    <!-- <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right; margin-left: 300px;" (click)="CancelMode()" *ngIf="Editable" >Cancel</button> -->
+                    <!-- <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;" (click)="Declined(Id)" *ngIf="IsSelectOrder.IsDispatched == false && IsSelectOrder.IsComplted == true  && IsSelectOrder.IsApproved == false">Reject</button>
+                    <button class="btn btn-raised btn-raised btn-primary" style="margin:7px 0px 0px 7px; float: right;" (click)="Approved(Id)" *ngIf="IsSelectOrder.IsDispatched == false && IsSelectOrder.IsComplted == true  && IsSelectOrder.IsApproved == false" >Approved</button> -->
+                </div>
+
+                <!-- <div class="co-md-4 text-right">
+                <button class="btn btn-raised btn-raised btn-primary aa" (click)="readyToPick(data,pickerId)" *ngIf="Isdispatch == false && Iscomplete == true">ReadyToPick</button>
+            </div> -->
+            </div>
+        </form>
+        <form class="ovelFieldForm form form-inline" name="form" #orderForm="ngForm"
+            style="position: relative;z-index: 9;">
+            <div id="print-section" style="padding:10px 15px; position: relative;z-index: 9;">
+                <div class="waterMark"
+                    style="width: 50%;position: absolute;top: 50%;left: 45%;transform: skew(23deg, -36deg);height: 390px;margin-top: -345px;margin-left: -18%; opacity: 0.4;z-index: -1;">
+                    <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+                </div>
+                <div style="position: absolute; right: 15px; margin-top: 40px;">
+                    <img src="assets/img/logo/Logo.png" width="200px">
+                </div>
+                <div class="row" style="border-bottom: 1px solid #eee;">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div style="display: inline-block;width: 20%;vertical-align: top; font-weight: 600;">
+                                <b>Picker Number</b><br>
+                                <b>Picker Name</b><br>
+                                <b>Warehouse </b><br>
+                                <b>CreatedDate</b><br>
+                                <b>CreatedBy</b><br>
+                                <!-- <b>Picker Start Time</b> <br>
+                        <b>Picker End Time</b> <br> -->
+                                <!-- <b *ngIf="selectedRowDetails.IsCanceled">Cancelled By</b> <br>  -->
+                                <!-- <b *ngIf="Isdispatch">Delivery Boy</b> <br>          -->
+                            </div>
+                            <div style="display: inline-block;width:10%;vertical-align: top; font-weight: 600;">
+                                <b> :</b><br>
+                                <b>:</b><br>
+                                <b>: </b><br>
+                                <b>:</b><br>
+                                <b>:</b><br>
+                                <!-- <b>:</b> <br>
+                        <b>:</b> <br> -->
+                                <!-- <b *ngIf="Isdispatch">:</b> <br>          -->
+                            </div>
+                            <div style="display: inline-block;width: 25%;vertical-align: top;">
+                                {{Id}} <br />
+                                {{DisplayName}} <br />
+                                {{whname}} <br />
+                                {{CreatedDate | date:'medium'}} <br />
+                                {{CreatedName}} <br />
+                                <!-- {{StartTime | date:'medium'}} <br />
+                        {{EndTime | date:'medium'}}<br /> -->
+                                <!-- {{DeliveryBoy}} <br /> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="borderTable" *ngIf="Data">
+                    <h2 style="text-align: center;">Generated Picker List </h2>
+                    <p-table #dt [value]="datalist" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <ng-template pTemplate="header" style="width:100%;">
+                            <tr>
+                                <!-- <th style="padding:5px 15px; margin: 0px; min-width:450px; text-align: center; border-top:1px solid #000 !important">Id</th> -->
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Order Id</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important">
+                                    Item Name</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                    ItemMultiMRPId</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">
+                                    MRP</th>
+                                <!-- <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">Order Details Id</th> -->
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Qty</th>
+                                <!-- <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">Dispatched Qty</th> -->
+                                <!-- <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">Comment</th> -->
+                                <!-- <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">Is Free Item</th> -->
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Status</th>
+                                <th
+                                  style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                  History
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir>
+                            <tr [ngStyle]="(ir.IsFreeItem == true)?{'background-color': '#EB564F'}:{'background-color':'white'} ">
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.OrderId}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    <span *ngIf="ir.IsFreeItem == 'Free'" style="color:red"> * </span>{{ir.ItemName}}
+                                    <span *ngIf="ir.IsFreeItem == 'Free'" style="color:red"> (Free)</span>
+                                </td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                    {{ir.ItemMultiMrpId}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:150px; border:1px solid #000 !important">
+                                    {{ir.MRP}}</td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Qty}}</td>
+                                
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Status}}
+                                </td>
+                                <td style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                <a class="view" (click)="openHistory(ir,$event)" href="javascript:void(0)">
+                                    <i class="fa fa-history fa-2x" aria-hidden="true"></i>
+                                  </a>
+                                </td>                                
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+                    <h2 style="text-align: center;">Picker Timer Summary </h2>
+                    <p-table #dt [value]="picktimelist" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <ng-template pTemplate="header" style="width:100%;">
+                            <tr>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                   Id</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Start Date</th>
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    End Date</th>
+                                    <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Difference Hours
+                                </th>                                
+                                <th
+                                    style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">
+                                    Created By</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir>
+                            <tr>
+                                <td
+                                    style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.Id}}</td>
+                                <td
+                                    style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.StartTime | date : 'medium'}}</td>
+                                <td
+                                    style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.EndTime | date : 'medium'}}</td>
+                                    <td
+                                    style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{[ir.differenceHrs.hours(), ir.differenceHrs.minutes(), ir.differenceHrs.seconds()].join(':')}}
+                                </td>
+                                <td
+                                    style="padding:5px 15px; text-align: center; margin: 0px; min-width:100px; border:1px solid #000 !important">
+                                    {{ir.CreatedBy}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <!-- <div class="col-md-5" >
+                        <div class="ui-g-12">
+                            <table class="table table-stripped table-hover table-sm " style="border: 1px solid #000 !important;">
+                                <thead>
+                                    <th>Picker Number</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>CreatedBy</th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of picktimelist">
+                                        <td>{{row.OrderPickerMasterId}}</td>
+                                        <td>{{row.StartTime | date : 'medium'}}</td>
+                                        <td>{{row.EndTime | date : 'medium'}}</td>
+                                        <td>{{row.CreatedBy}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> -->
+                    
+                    
+                    <!-- <span style="color:red; font-size: large; font-weight: 600;"> <b>* Default Value is 0.</b></span>
+                <span style="color:black; font-size: large; font-weight: 600;"> <b>(डिफ़ॉल्ट मान 0 है |)</b></span><br/>
+                <span style="color:red; font-size: large; font-weight: 600;"> <b>* When Maker Accept value is 1.</b> </span>
+                <span style="color:black; font-size: large; font-weight: 600;"> <b>(जब निर्माता स्वीकार करते हैं,मान 1 है|)</b></span><br/> 
+                <span style="color:red; font-size: large; font-weight: 600;"> <b>* When Maker Reject value is 3.</b> </span>
+                <span style="color:black; font-size: large; font-weight: 600;"> <b>(जब निर्माता अस्वीकार करते हैं,मान 1 है|)</b></span><br/>
+                <span style="color:red; font-size: large; font-weight: 600;"> <b>* When Approver Approvered value is 2.</b> </span>
+                <span style="color:black; font-size: large; font-weight: 600;"> <b>(जब चेकर ने स्वीकृति दे दी,मान 2 है|)</b> </span><br/>
+                <span style="color:red; font-size: large;font-weight: 600;"><b> * When Approver ApproverReject  value is 4. </b></span>
+                <span style="color:black; font-size: large;font-weight: 600;"><b> (जब चेकर रिजेक्ट कर देता है,मान 4 है|) </b></span> -->
+                    <!-- <div class="col-md-4" *ngIf = "selectedRowDetails.CurrentStatus == 'New Request' && selectedRowDetails.Status == 0 && selectedRowDetails.IsCanceled == 0" > -->
+                    <div class="col-md-4"
+                        *ngIf="selectedRowDetails.CurrentStatus == 'New Request' && selectedRowDetails.Status == 0 && selectedRowDetails.IsCanceled == 0">
+                        <div class="row">
+                            <div class="col-sm-2" *ngIf="cancelHide == false && CancelBtn == true">
+                                <!-- <div class="col-sm-2" *ngIf ="datalist.Status == 'No Action'"> -->
+                                <div class="form-group">
+                                    <label class="col-sm-12"><b>&nbsp;</b></label>
+                                    <button class="btn btn-raised btn-raised btn-primary"
+                                        (click)="updatecancelorder()">PickerOrderCancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               
+                <!-- <div  class="borderTable" *ngIf="Editable">
+                    <h2 style="text-align: center;">Generated Picker List </h2>
+                <p-table #dt [value]="data" width="100%" border="0" cellspacing="0" cellpadding="0" >
+                    <ng-template pTemplate="header" style="width:100%;">
+                        <tr>
+                            <th style="padding:5px 15px; margin: 0px; min-width:450px; text-align: center; border-top:1px solid #000 !important">Id</th>
+                            <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">Order Id</th>
+                            <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important">Item Name</th>
+                            <th style="padding:5px 15px; margin: 0px; min-width:150px; text-align: center; border:1px solid #000 !important">ItemMultiMRPId</th>
+                            <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">Qty</th>
+                            <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important "> Picker Dispatched Qty</th>
+                            <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">New Dispatched Qty</th>
+                            <th style="padding:5px 15px; margin: 0px; min-width:100px; text-align: center; border:1px solid #000 !important ">Comment</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ir>
+                        <tr>
+                            <td style="padding:5px 15px; margin: 0px; min-width:450px; border:1px solid #000 !important">{{ir.id}}</td>
+                            <td style="padding:5px 15px; margin: 0px; min-width:100px; border:1px solid #000 !important">{{ir.OrderId}}</td>
+                            <td style="padding:5px 15px; margin: 0px; min-width:100px; border:1px solid #000 !important">{{ir.ItemName}}</td>
+                            <td style="padding:5px 15px; margin: 0px; min-width:150px; border:1px solid #000 !important">{{ir.ItemMultiMrpId}}</td>   
+                            <td style="padding:5px 15px; margin: 0px; min-width:100px; border:1px solid #000 !important">{{ir.Qty}}</td>
+                            <td style="padding:5px 15px; margin: 0px; min-width:100px; border:1px solid #000 !important">{{ir.DispatchedQty}}</td>
+                            <td style="padding:5px 15px; margin: 0px; min-width:100px; border:1px solid #000 !important"><b><input id="dispatched" name="dispatched" [(ngModel)]="ir.EditDispatchedQty" min="1" max="1"  (ngModelChange)="savee(data)" /></b></td>
+                            
+                            <td style="padding:5px 15px; margin: 0px; min-width:100px; border:1px solid #000 !important">{{ir.Comment}}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>               
+            </div> -->
+            </div>
+        </form>
+    </div>
+    <p-footer></p-footer>
+</p-dialog>
+
+<div *ngIf="HistoryView">
+    <p-dialog [(visible)]="HistoryView" [resizable]="false" [modal]="true" appendTo="body" positionTop="50"
+      [style]="{width: '83%',height: '90%', left : '11px', overflow: 'center'}">
+      <p-header>
+        <!-- <h5></h5> -->
+        <h4
+          style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+          <b>History </b>
+  
+          <!-- <button type="button" class="btn btn-raised btn-raised btn-info btn-primary float-right align-self-end"
+            style="margin-top: -8px;" (click)="exportTransaction()">
+            Export
+          </button> -->
+        </h4>
+  
+      </p-header>
+      <app-history [entity]="entity" [id]="historyDetail.id"></app-history> 
+    </p-dialog>
+  </div>
+
+<div *ngIf="Commentpopup">
+    <p-dialog [(visible)]="Commentpopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+       [style]="{width: '50%',height: '50%', overflow: 'auto'}">
+        <p-header>
+            <h4
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                <b>View Data </b></h4>
+        </p-header>
+        <!-- <div class="borderTable" style="padding:10px 15px; position: relative;z-index: 9;" >
+        <div class="waterMark" style="width: 50%;position: absolute;top: 50%;left: 40%;transform: skew(23deg, -36deg);height: 390px;margin-top: -225px;margin-left: -18%;z-index: -1;">
+            <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+        </div>
+        <div style="position: absolute; right: 15px; margin-top: 40px;">
+            <img src="assets/img/logo/Logo.png" width="200px">
+        </div> -->
+        <form class="ovelFieldForm form" name="form" #commentform="ngForm" style="padding:0px 15px;">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <label for="projectinput3"><b>&nbsp;&nbsp;&nbsp;&nbsp;Comment:<span style="color:red">
+                                *</span></b></label>
+                    <textarea id="Comment" rows="4" cols="50" name="Comment" [(ngModel)]="Comment"></textarea>
+                    <!-- <div class="ui-g"></div>
+                    <div *ngIf="isInvalid && !Comment.valid && Comment.errors.required">
+                        <code>Comment is required</code>
+                    </div> -->
+                </div>
+                <div class="col-md-3"><button class="btn btn-raised btn-raised btn-primary"
+                        style="margin:7px 0px 0px 7px; float: right; margin-left: 300px;"
+                        (click)="RejectSave(commentform,Id,Comment)">Save</button></div>
+            </div>
+
+
+        </form>
+    </p-dialog>
+</div>
+<p-dialog [(visible)]="pickerCancelOrder" [resizable]="false" positionTop="100" [modal]="true" appendTo="body"
+    [style]="{width: '50%',height: '50%', overflow: 'auto'}">
+    <p-header>
+        <div class="hideCloseHeader">
+            <h2
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                Cancel Picker Order</h2>
+        </div>
+    </p-header>
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="orderType" class="font">Comments</label>
+                    <input type="comments" id="comments" name="comments" class="form-control"
+                        placeholder="Enter your comments" [(ngModel)]="comments">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label class="col-sm-12"><b>&nbsp;</b></label>
+                    <button class="btn btn-raised btn-raised btn-primary"
+                        (click)="updatecomments(comments)">PickerOrderCancel</button>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label class="col-sm-12"><b>&nbsp;</b></label>
+                    <button class="btn btn-raised btn-raised btn-primary" style=" margin-left: 75px;"
+                        (click)="cancel()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>

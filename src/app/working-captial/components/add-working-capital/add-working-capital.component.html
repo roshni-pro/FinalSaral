@@ -1,0 +1,105 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+
+  <section>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="content-header">Add Working Capital</div>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <div class="form-group col-md-2">
+        <label for="region">Region Name:</label>
+        <select id="region" name="region" class="form-control" [(ngModel)]="RegionId" placeholder="Select Region Name"
+          required="1" (change)=onRegionChange(RegionId) #RegionName="ngModel">
+          <option *ngFor="let region of regionList" [ngValue]="region.RegionId">
+            {{ region.RegionName }}
+          </option>
+        </select>
+      </div>
+      <div class=" col-md-2">
+        <label for="name">Select Warehouse</label>
+        <select id="ware" name="ware" class="form-control" [(ngModel)]="data.WarehouseId" placeholder="Select Region Name">
+          <option *ngFor="let ware of warehouseList" [ngValue]="ware.WarehouseId">
+            {{ ware.WarehouseName }}
+          </option>
+        </select>
+      </div>
+      <div class="col-sm-2">
+        <label for="validfrom">Date</label>
+        <p-calendar name="StartDate" placeholder="Start Date" [(ngModel)]="data.StartDate" [showIcon]="true"
+          name="StartDate" ></p-calendar> <!--[minDate]="mindays" [maxDate]="maxdays"-->
+
+      </div>
+
+      <div class=" col-md-2">
+        <label>&nbsp;</label>
+        <div></div>
+        <button type="button" class="btn btn-raised btn-primary" (click)="onSearch()">Search</button>
+      </div>
+
+    </div>
+
+    <div class="row" *ngIf="workingcapital">
+
+      <div class="card">
+        <div class="card-header pb-2">
+        </div>
+        <div class="card-content">
+          <div>
+            <form class="form form-inline" name="form" #warehouseForm="ngForm" autocomplete="off">
+              <!-- <input autocomplete="false" name="hidden" type="text" style="display:none;"> -->
+              <div class="form-body">
+                <!-- <h4 class="form-section"><i class="ft-user"></i> Warehouse Info</h4> -->
+                <div class="row">
+
+                  <div class="col-md-6">
+                    <div class="form-group m-2 ">
+                      <label for="fname" class="col-md-6"> Cheque Bounce</label>
+                      <input type="number" id="fname" class="form-control col-md-6" name="fname"
+                        [(ngModel)]="workingcapital.ChequeBounce"  />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group m-2">
+                      <label for="alias" class="col-md-6"> Agent Dues</label>
+                      <input type="number" id="alias" class="form-control col-md-6" name="alias"
+                        [(ngModel)]="workingcapital.AgentDues" />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group m-2">
+                      <label for="gst" class="col-md-6"> Supplier Credit</label>
+                      <input type="number" id="gst" class="form-control col-md-6" name="gst"
+                        [(ngModel)]="workingcapital.SupplierCredit" />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group m-2">
+                      <label for="SupplierAdvances" class="col-md-6"> Supplier Advance</label>
+                      <input type="number" id="SupplierAdvances" class="form-control col-md-6" name="SupplierAdvances"
+                        [(ngModel)]="workingcapital.SupplierAdvances" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-actions right col-sm-12 p-3">
+                <!-- <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                  <i class="ft-x"></i> Cancel
+                </button> -->
+                <button type="button" class="btn btn-raised btn-primary"  style="margin-right: 10px;" (click)="onCancel()">
+                  <i class="fa fa-check-square-o"></i> Cancel
+                </button> 
+                <button type="button" class="btn btn-raised btn-primary"  (click)="onSave()">
+                  <i class="fa fa-check-square-o"></i> Save
+                </button> 
+               
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

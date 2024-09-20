@@ -1,0 +1,94 @@
+<h3 class=" heading mt-4 abb" >Target Dashboard</h3>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row mt-2">
+        <div class="col-md-2">
+            <label><b>City:</b></label>
+            <p-multiSelect id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="CityObj" (onChange)="GetWarehouse(CityObj)" [filter]="true"
+            optionLabel="label" optionValue="Cityid" placeholder="--Select City--" > 
+            </p-multiSelect>
+            <!-- <p-dropdown  [options]="cityList" placeholder="--Select a City--" [(ngModel)]="CityObj" [filter]="true" 
+            optionLabel="CityName"  id="Cityid" name="CityName" optionValue="Cityid" (onChange)="GetWarehouse(CityObj)"></p-dropdown> -->
+        </div>
+        <div class="col-md-2">
+            <label><b>Warehouse:</b></label>
+            <p-multiSelect id="WarehouseId" name="WarehouseName"  [options]="WareHouseList"   [filter]="true" (onChange)="GetSkCode(warehouseObj)"
+            [(ngModel)]="warehouseObj" optionLabel="label" optionValue="value" placeholder="--Select Warehouse--">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-3">
+            <label><b>Sk Code:</b></label>
+            <!-- <p-multiSelect id="skcodeId" name="skcodeName"  [options]="SkCodeList"   [filter]="true" (onChange)="checkSkCode(skcodeObj)"
+            [(ngModel)]="skcodeObj" optionLabel="skcode" placeholder="--Select Skcode--">
+            </p-multiSelect> -->
+            <span class="p-fluid">
+                <p-autoComplete [(ngModel)]="skcodeObj" [suggestions]="filteredSkCodes"  [minLength]="3" (onSelect)="checkSkCode(skcodeObj)" (onUnselect)="checkSkCode(skcodeObj)" 
+                (completeMethod)="filterSkcode($event)" field="skcode" [multiple]="true" id="skcodeId" name="skcodeName">
+                </p-autoComplete>
+            </span>
+        </div>
+        <div class="col-md-2" style="height: 45px;">
+            <label><b>Enter Month:</b></label>
+            <p-calendar [(ngModel)]="dateValue" view="month" dateFormat="mm/yy" (keydown)="space($event)"></p-calendar>
+        </div>      
+        <div class="col-md-3">
+            <div class="text-right">
+                <button class="btn btn-primary" style="margin-top: 30px;" (click)="Search()" >Search</button>&nbsp;&nbsp;
+                <button class="btn btn-primary" style="margin-top: 30px;" (click)="Clear()" >Clear</button>&nbsp;&nbsp;
+                <button class="btn btn-success" style="margin-top: 30px;" (click)="Export()" >Export</button>&nbsp;&nbsp;
+                <button class="btn btn-success" style="margin-top: 30px;" (click)="ExportAll()" >Export All</button>&nbsp;&nbsp;
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <p-table #dt [value]="GetTargetData"  [showCurrentPageReport]="true" [(first)]="first" [paginator]="true" [rows]="10" [scrollable]="true" [lazy]="true"
+    (onLazyLoad)="load($event)"  [totalRecords]="TotalRecords"  >
+       <ng-template pTemplate="header" >
+           <tr >
+            <!-- Skcode,Target, OfferDesc,MaxDiscount,MOVMultiplier,Achievement, reward  -->
+               <th scope="col" style=" width:60px"><b> S.n</b></th>
+               <th><b> SK Code </b></th>
+               <th><b> Target Amount</b></th>
+               <th><b>Total Purchase Amount </b></th>
+                <th><b> Target Line Item </b></th>
+               <th><b> Current Line Item</b></th> 
+               <!-- <th><b> Achievement</b></th> -->
+               <th style="width:190px"><b> Reward </b></th>
+               <!-- <th   ><b> TotalPurchaseAmount</b></th>
+               <th   ><b> TotalPendingPurchaseAmount</b></th>
+               <th   ><b> AchivePercent</b></th>
+               <th   ><b> LeftDays</b></th>
+               <th   ><b> ConditionText</b></th>
+               <th   ><b> Message</b></th> -->
+           </tr>
+       </ng-template>
+       <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+           <tr>
+               <td style="width:60px">{{rowIndex+1}}</td>               
+               <td >{{rowData.SKCode!=null? rowData.SKCode:'--'}}</td>
+               <td >{{rowData.TargetAmount !=null ? rowData.TargetAmount : 0}}</td>
+               <td >{{rowData.TotalPurchaseAmount!=null?rowData.TotalPurchaseAmount:0}}</td>
+               <td >{{rowData.TargetLineItem  !=null ? rowData.TargetLineItem : 0}}</td>
+               <td >{{rowData.CurrentLineItem  !=null ? rowData.CurrentLineItem : 0}}</td>
+               <td style="width:190px"><b>
+                {{rowData.RewardType  !=null ? rowData.RewardType : ''}}</b> <span *ngIf="rowData.RewardType!=null"><br></span>
+                {{rowData.RewardValue!=null?rowData.RewardValue:''}}<span *ngIf="rowData.RewardValue>0"><br></span>
+                {{rowData.RewardDescription.length<21 ?rowData.RewardDescription:rowData.RewardDescription.substr(0, 20)}}
+               </td>
+               <!-- <td >{{rowData.TotalPurchaseAmount }}</td>
+               <td >{{rowData.TotalPendingPurchaseAmount }}</td>
+               <td >{{rowData.AchivePercent }}</td>
+               <td >{{rowData.LeftDays }}</td>
+               <td >{{rowData.targetConditions[rowIndex].ConditionText }}</td>
+               <td >{{rowData.targetConditions[rowIndex].Message }}</td> -->
+           </tr>
+       </ng-template>
+   </p-table>
+</div>
+<p-toast></p-toast>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,411 @@
+<p-toast></p-toast>
+
+<div >
+
+    <div class="row m-0">
+        <div class="col-12">
+            <!-- Kick start -->
+            <div id="kick-start" class="kick-start card">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="card-title">My Assigned Tickets</h4>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label> Search Ticket:</label>
+                                    <div>
+                                        <input type="text" class="form-control" placeholder="Search Ticket"
+                                            [(ngModel)]="filterTicket.SearchString">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <div class="form-group">
+
+                                    <div>
+                                        <label for="startdate"><b>Start Date: </b></label><br>
+                                        <p-calendar [showIcon]="true" [(ngModel)]="filterTicket.StartDate"
+                                            name="startDate" required="1" [readonlyInput]="true" required
+                                            #dateRangeListInput>
+                                        </p-calendar>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label> Expiry Date:</label>
+                                    <div>
+                                        <p-calendar [showIcon]="true" [(ngModel)]="filterTicket.EndDate" name="EndDate"
+                                            required="1" [readonlyInput]="true" required #dateRangeListInput>
+                                        </p-calendar>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label> Status:</label>
+                                    <div>
+                                        <select id="vcht" name="vcht" class="form-control"
+                                            [(ngModel)]="filterTicket.Status">
+                                            <option *ngFor="let at of statusList" [ngValue]="at.level">
+                                                {{ at.Name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label> Severity:</label>
+                                    <div>
+                                        <select id="vcht" name="vcht" class="form-control"
+                                            [(ngModel)]="filterTicket.Severity">
+                                            <option *ngFor="let at of severityList" [ngValue]="at.level">
+                                                {{ at.Name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="vcht">Select Type</label>
+                                    <select id="vcsht" name="vcsht" class="form-control"
+                                        [(ngModel)]="filterTicket.Type">
+                                        <option *ngFor="let at of types" [ngValue]="at.id">
+                                            {{ at.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label> Search:</label>
+                                    <div>
+                                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                            (click)="filterTicket.Skip = 0; filterTicket.Take = 10; GetAllAssignedTickets();"
+                                            label="Search"></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label> Reset:</label>
+                                    <div>
+                                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                            (click)="filterTicket.Skip = 0; filterTicket.Take = 10; reset(); GetAllAssignedTickets();"
+                                            label="Reset"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p-table *ngIf="assignedTicketsList && assignedTicketsList.length" [paginator]="true" [rows]="10"
+        [value]="assignedTicketsList" [lazy]="true" [columns]="columns" [totalRecords]="TotalRecords"
+        (onLazyLoad)="load($event)" [paginator]="true" [scrollable]="true" scrollHeight="70vh" text-align: center>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>
+                    S.no
+                </th>
+                <th>
+                    Ticket No.
+                </th>
+                <!-- <th>
+                Description
+            </th> -->
+                <th>
+                    Category
+                </th>
+                <th>
+                    Department
+                </th>
+
+                <th>
+                    Status
+                </th>
+                <th>
+                    Applied By
+                </th>
+                <th>
+                    Generated By
+                </th>
+                <th>
+                    Severity
+                </th>
+                <th>
+                    Created On
+
+                </th>
+                <th>
+                    View Details
+                </th>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex" let-columns="columns">
+            <tr>
+                <td>
+                    {{i+1}}
+                </td>
+                <td>
+                    {{rowData.Id}}
+                </td>
+                <!-- <td>
+                {{rowData.Description}}
+            </td> -->
+                <td>
+                    {{getCategory(rowData.CategoryId)}}
+                </td>
+                <td>
+                    {{rowData.DepartmentName}}
+                    <!-- {{getDepartment(rowData.DepartmentId)}} -->
+                </td>
+                <td>
+                    <ng-container *ngIf="rowData.Status == 0">
+                        Pending
+                    </ng-container>
+                    <ng-container *ngIf="rowData.Status == 4">
+                        On Hold
+                    </ng-container>
+                    <ng-container *ngIf="rowData.Status == 1">
+                        Open
+                    </ng-container>
+                    <ng-container *ngIf="rowData.Status == 2">
+                        Closed
+                    </ng-container>
+                </td>
+                <td>
+                    {{(rowData.CreatedBy < 0) ? rowData.CustomerName : getModifiedByPerson(rowData.CreatedBy) }}
+                    <!-- {{rowData.CustomerName}} -->
+
+                </td>
+                <td>
+                    {{getModifiedBy(rowData.GeneratedBy)}}
+                </td>
+
+                <td>
+                    {{getSeverityName(rowData.severity)}}
+                </td>
+                <td>
+                    {{rowData.CreatedDate | date}}
+                </td>
+                <td>
+                    <button type="button" (click)="viewActivityLog(rowData)" class="btn btn-raised btn-primary">
+                        View
+                    </button>
+                </td>
+
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <div class="card-content">
+        <div class="card-body">
+            <p-dialog [header]="'Generate Ticket'" *ngIf="display" [(visible)]="display"
+                [style]="{width: '50vw',height: '70vw'}" [baseZIndex]="100" appendTo="body">
+                <div class="card-content">
+                    <div class="row">
+                        <form class="form" name="form" #ticketForm="ngForm">
+                            <div class="form-body">
+                                <h4 class="form-section"><i class="ft-user"></i> Generate Ticket</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="vcht">Select Type</label>
+                                            <select id="vcht" name="vcht" class="form-control"
+                                                [(ngModel)]="ticket.type">
+                                                <option [value]="0">
+                                                    --- Please Select Type ---
+                                                </option>
+                                                <option [value]="1">
+                                                    People
+                                                </option>
+                                                <option [value]="2">
+                                                    Customer
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="dssdds">Search Person</label>
+                                            <br>
+                                            <p-autoComplete *ngIf="ticket.type == 0" id="partyLedgearNamssse"
+                                                name="partyLsseaadgerName">
+                                            </p-autoComplete>
+
+                                            <p-autoComplete *ngIf="ticket.type == 1"
+                                                (completeMethod)="searchPeople($event)" [suggestions]="pplfiltered"
+                                                field="DisplayName" (onSelect)="onSelectPeople($event)"
+                                                id="partyLedgearName" name="partyLeaadgerName" required>
+                                            </p-autoComplete>
+
+
+                                            <p-autoComplete *ngIf="ticket.type == 2" [suggestions]="customerList"
+                                                field="Name" (onSelect)="onSelectParty($event)"
+                                                (completeMethod)="searchCustomers($event)" id="partyLedgerName"
+                                                name="partyLedgerName" required>
+                                            </p-autoComplete>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="vcht">Select Category</label>
+                                            <select id="vcht" name="vcht" class="form-control"
+                                                [(ngModel)]="ticket.CategoryId">
+                                                <option *ngFor="let at of ticketCategoryList" [ngValue]="at.Id">
+                                                    {{ at.Name }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="date"> Select Department</label>
+                                            <select id="vcht" name="vcht" class="form-control"
+                                                [(ngModel)]="ticket.DepartmentId">
+                                                <option *ngFor="let at of departmentList" [ngValue]="at.DepId">
+                                                    {{ at.DepName }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="pert"> Description</label>
+                                            <textarea type="text" id="pert" class="form-control" name="pert"
+                                                [(ngModel)]="ticket.Description" placeholder="Enter Description"
+                                                required #perticular="ngModel"></textarea>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div>
+                                            <label for="vchno"> Select Severity</label>
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <select id="vcht" name="vcht" class="form-control"
+                                                [(ngModel)]="ticket.severity">
+                                                <option *ngFor="let at of severityList" [ngValue]="at.level">
+                                                    {{ at.Name }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-actions  right col-sm-12">
+                                <button type="button" (click)="save(ticketForm)" class="btn btn-raised btn-primary">
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </p-dialog>
+
+        </div>
+
+
+        <p-dialog [header]="'Assign Ticket'" *ngIf="displayassign" [(visible)]="displayassign" [style]="{width: '50vw'}"
+            [baseZIndex]="100" appendTo="body">
+            <div class="card-content">
+                <div class="row">
+                    <form class="form" name="form" #ticketForm="ngForm">
+                        <div class="form-body" style="margin-left: 100px;">
+                            <h4 class="form-section"><i class="ft-user"></i> Assign Ticket</h4>
+                            <div class="row">
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="dssdds">Search Person</label>
+                                        <br>
+                                        <select id="dssdds" name="dssddsss" class="form-control"
+                                            [(ngModel)]="ticketLog.CreatedBy">
+                                            <!-- <ng-container *ngIf="ticket.type == 1"> -->
+                                            <ng-container>
+                                                <option [value]="0">
+                                                    --- Assign To ---
+                                                </option>
+                                                <option *ngFor="let ss of peopleList" [value]="ss.PeopleID">
+                                                    {{ ss.DisplayName }}
+                                                </option>
+                                            </ng-container>
+
+
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="pert"> Comment</label>
+                                        <textarea type="text" id="pert" class="form-control" name="pert"
+                                            [(ngModel)]="ticketLog.Comment" placeholder="Enter Comment" required
+                                            #perticular="ngModel"></textarea>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="form-actions  right col-sm-12">
+                            <button type="button" (click)="assignTicket()" class="btn btn-raised btn-primary">
+                                Assign Ticket
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </p-dialog>
+
+    </div>
+
+    <br />
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+
+</div>
+
+
+
+
+<div>
+    <!-- <p-dialog header="Ticket Number:  {{log.Ticket.Id}}" *ngIf="displayLog" [(visible)]="displayLog"
+        [style]="{width: '100vw', height: '100vw'}" appendTo="body"> -->
+    <br>
+
+   
+</div>

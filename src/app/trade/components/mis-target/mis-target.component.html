@@ -1,0 +1,136 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="header">
+    <h3>Add Trade kirana Global Targets <i class="fa fa-plus-square" style="font-size:36px;"></i> </h3>
+</div>
+
+<div class="card">
+    <div class="p-2">
+        <form class="form mb-3" name="form" #TargetAddForm="ngForm">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="Category">Category Name*</label>
+                        <select id="Category" name="Category" class="form-control" [(ngModel)]="FinalData.CategoryName" required="1" maxlength="50" minlength="2"
+                            #Category="ngModel">
+                            <div *ngIf="isInvalid && !Category.valid && Category.errors.required">
+                                <code class="padding">city is required</code>
+                            </div>
+                            <option value="">Select</option>
+                            <option *ngFor="let Category of CategoryName" [ngValue]="Category">
+                                {{ Category }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="city">city*</label>
+                        <select id="city" name="city" class="form-control" [(ngModel)]="FinalData.City"
+                            required="1" maxlength="50" minlength="2" #city="ngModel">
+                            <div *ngIf="isInvalid && !city.valid && city.errors.required">
+                                <code class="padding">city is required</code>
+                            </div>
+                            <option value="">Select</option>
+                            <option *ngFor="let city of cityList" [ngValue]="city">
+                                {{ city }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="Category">years*</label>
+                        <select id="years" name="years" [(ngModel)]="FinalData.Year" class="form-control"
+                            required="1" maxlength="50" minlength="2" #yearss="ngModel">
+                            <div *ngIf="isInvalid && !yearss.valid && yearss.errors.required">
+                                <code class="padding">years is required</code>
+                            </div>
+                            <option value="">Select</option>
+                            <option *ngFor="let year of years" [ngValue]="year">
+                                {{year}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="name">Month*</label>
+                        <select class="form-control" id="Month" name="Month" [(ngModel)]="FinalData.Month"
+                            required="1" maxlength="50" minlength="2" #Months="ngModel">
+                            <div *ngIf="isInvalid && !Months.valid && Months.errors.required">
+                                <code class="padding">Month is required</code>
+                            </div>
+                            <option value="">Select</option>
+                            <option [ngValue]="1">January</option>
+                            <option [ngValue]="2">February</option>
+                            <option [ngValue]="3">March</option>
+                            <option [ngValue]="4">April</option>
+                            <option [ngValue]="5">May</option>
+                            <option [ngValue]="6">June</option>
+                            <option [ngValue]="7">July</option>
+                            <option [ngValue]="8">August</option>
+                            <option [ngValue]="9">September</option>
+                            <option [ngValue]="10">October</option>
+                            <option [ngValue]="11">November</option>
+                            <option [ngValue]="12">December</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="orderType">Target </label>
+                        <span class="ui-inputgroup-addon"> ₹</span>
+                        <input type="number" id="Target" name="target" [(ngModel)]="FinalData.Target"
+                            placeholder="Enter Target" class="form-control" required="1" maxlength="50"
+                            minlength="2" #target="ngModel">
+                        <div *ngIf="isInvalid && !target.valid && target.errors.required">
+                            <code>Target is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !target.valid && target.errors.minlength">
+                            <code>Minlength 2</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button type="button" class="mar-btn btn btn-raised btn-raised btn-primary "
+                            style="margin-left:15px" (click)="onSave(TargetAddForm,FinalData)">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <p-table [value]="allTargetList" [paginator]="true" [rows]="10" dataKey="Id" [scrollable]="true" scrollHeight="65vh" text-align: center>
+            <ng-template pTemplate="header">         
+                <tr style="text-align: center">
+                    <th> SNo. </th>
+                    <th> Category Name. </th>
+                    <th>City.</th>
+                    <th>Month</th>
+                    <th>Year</th>
+                    <th>Target ₹</th>
+                    <th>Created Date</th>              
+                </tr>
+        
+            </ng-template>
+            <ng-template pTemplate="body" let-pageData let-rowIndex="rowIndex">
+                <tr style="text-align: center">
+                    <td>{{rowIndex -- 1}}</td>
+                    <td>{{pageData.CategoryName}}</td>
+                    <td>{{pageData.City}}</td>
+                    <td>{{pageData.Month}}</td>
+                    <td>{{pageData.Year}}</td>
+                    <td>{{pageData.Target | currency:'INR':true }}</td>
+                    <td>{{pageData.CreatedDate | date}} </td>               
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

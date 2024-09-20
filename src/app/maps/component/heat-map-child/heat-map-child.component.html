@@ -1,0 +1,159 @@
+<div class="row" *ngIf="showMap">
+  <div class="mp-op col-md-12">
+    <agm-map [latitude]="lat" [longitude]="lng" (mapReady)="onMapLoad($event)" [style.height.px]="myInnerHeight"
+      [zoom]="zoom" opacity="1" dissipating="false" mapTypeId="roadmap" [zoomControl]="true"
+      [fullscreenControlOptions]="options" [zoomControl]="false"
+      [fullscreenControl]="fullscreenControl">
+      <div *ngIf="!ShowToolTip">
+        <!-- <agm-marker *ngFor="let m of pointList; let i = index" [latitude]="m.lat" [longitude]="m.lng">
+        </agm-marker> -->
+      </div>
+      <div *ngIf="ShowToolTip">
+        <agm-marker *ngFor="let m of pointList; let i = index" [latitude]="m.lat" [longitude]="m.lng" [iconUrl]="m.icon" 
+        (mouseOver)="onMouseOver(infoWindow, $event)" (mouseOut)="onMouseOut(infoWindow, $event)">
+          <agm-info-window #infoWindow >
+            <div style="text-align: center;">
+              <strong >{{m.Skcode}}</strong>
+            </div>
+          </agm-info-window>
+        </agm-marker>
+      </div>      
+      <agm-polygon [fillColor]="item.fillColor" *ngFor="let item of zonesPath; let i=index" [polyDraggable]="false"
+        [paths]="item.ZonePaths" (polyMouseOver)="polyMouseUp(item, polygon, infoWindow, true)"
+        (polyMouseOut)="polyMouseUp(item, polygon, infoWindow, false)" fillOpacity="0.2" strokeOpacity="0.1">
+      </agm-polygon>
+    </agm-map>
+  </div>
+  <div [ngClass]="{'ovr-lay': true, 'ovr-lay-op': true, 'ovr-lay-hght': showOverlay}">
+    <div class="ovrr">
+      <p-inputSwitch [(ngModel)]="showOverlay"></p-inputSwitch>
+    </div>
+    <div *ngIf="showOverlay">
+      <div class="row">
+        <div class="col-sm-12">
+          <fieldset class="form-group">
+            <select class="form-control" [(ngModel)]="selectedDataType" (ngModelChange)="onChangeSelectionData()">
+              <option value="TotalOrder">Total Orders</option>
+              <option value="FreqOfOrders">Order Frequency</option>
+              <option value="KisanKiranaSales">KK Sales</option>
+              <option value="OrderRetailers">Order Retailers</option>
+              <option value="OrderedBrands">Ordered Brands</option>
+              <option value="TotalSales">TotalSales</option>
+            </select>
+          </fieldset>
+        </div>
+
+      </div>
+      <div class="row" *ngIf="totalSummary && totalSummary.length > 0">
+        <div class="col-sm-12">
+          <table class="tbl-new">
+            <tr class="thea">
+              <th>
+                #
+              </th>
+              <th>
+                Warehouse/Cluster
+              </th>
+              <th>
+                <span *ngIf="selectedDataType == 'TotalOrder'">
+                  Total Orders
+                </span>
+                <span *ngIf="selectedDataType == 'FreqOfOrders'">
+                  Frequency
+                </span>
+                <span *ngIf="selectedDataType == 'KisanKiranaSales'">
+                  KK Sales
+                </span>
+                <span *ngIf="selectedDataType == 'OrderRetailers'">
+                  Retailers
+                </span>
+                <span *ngIf="selectedDataType == 'OrderedBrands'">
+                  Brands
+                </span>
+                <span *ngIf="selectedDataType == 'TotalSales'">
+                  Total Sales
+                </span>               
+              </th>
+            </tr>
+            <tr *ngFor="let summary of totalSummary; let i = index;" class="bdy">
+              <td>
+                {{i+1}}
+              </td>
+              <td>
+                {{summary.WarehouseName}} / {{summary.ClusterName}}
+              </td>
+              <td>
+                <span *ngIf="selectedDataType == 'TotalOrder'">
+                  {{summary.TotalOrders}}
+                </span>
+                <span *ngIf="selectedDataType == 'FreqOfOrders'">
+                  {{summary.TotalFrequence}}
+                </span>
+                <span *ngIf="selectedDataType == 'KisanKiranaSales'">
+                  {{summary.KisanKiranaSales}}
+                </span>
+                <span *ngIf="selectedDataType == 'OrderRetailers'">
+                  {{summary.OrderRetailers}}
+                </span>
+                <span *ngIf="selectedDataType == 'OrderedBrands'">
+                  {{summary.OrderedBrands}}
+                </span>
+                <span *ngIf="selectedDataType == 'TotalSales'">
+                  {{summary.TotalSales}}
+                </span>             
+              </td>
+            </tr>
+
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tooltip-a" *ngIf="isOpenToolTip">
+    <div class="row">
+      <div class="col-sm-12" *ngIf="toolTipContent">
+        <table class="tbl-new nse">
+          <tr>
+            <td colspan="2" class="clu">
+              {{toolTipContent.WarehouseName}} / {{toolTipContent.ClusterName}}
+            </td>
+          </tr>
+          <tr>
+            <td>Total Orders</td>
+            <td>{{toolTipContent.TotalOrders}}</td>
+          </tr>
+          <tr>
+            <td>Frequence</td>
+            <td> {{toolTipContent.TotalFrequence}}</td>
+          </tr>
+          <tr>
+            <td>KK Sales</td>
+            <td> {{toolTipContent.KisanKiranaSales}}</td>
+          </tr>
+          <tr>
+            <td>Retailers</td>
+            <td> {{toolTipContent.OrderRetailers}}</td>
+          </tr>
+          <tr>
+            <td>Brands</td>
+            <td> {{toolTipContent.OrderedBrands}}</td>
+          </tr>
+          <tr>
+            <td>Sales</td>
+            <td> {{toolTipContent.TotalSales}}</td>
+          </tr>
+          <!-- <tr>
+            <td>Skcode</td>
+            <td> {{toolTipContent.Skcode}}</td>
+          </tr> -->
+        </table>
+      </div>
+      <div class="col-sm-12" *ngIf="!toolTipContent">
+        <span>Data not found!</span>
+      </div>
+    </div>
+  </div>
+  <div class="mp-nm" *ngIf="mapName">
+    <h4> {{mapName}}</h4>
+  </div>
+</div>

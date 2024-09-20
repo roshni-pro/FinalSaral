@@ -1,0 +1,135 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+
+<div class="header"><h3 class="m-2">App Startup Popup List <i class="fa fa-plus-square" style="margin:5px 10px;font-size:36px;"></i> </h3></div>
+
+<div class="row ">
+  <div class="col-sm-12">
+    <form class="form" #TargetAddForm="ngForm">
+      <div class="form-body">
+        <div class="row p-3">
+          <div class="col-xl-2 col-lg-3 col-md-3 col-sm-6">
+            <div class="form-group">
+              <label for="tradeproject">City:</label>
+              <br>
+              <select id="desg" name="city" class="form-control" [(ngModel)]="popuplist.Id">
+                <option value="undefined">--select--</option>
+                <option *ngFor="let city of cityList" [ngValue]="city.Id">
+                  {{ city.City }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-xl-2 col-lg-3 col-md-3 col-sm-6">
+            <div class="form-group smallInput">
+              <label for="startdate"><b>Date Selector: </b></label>
+              <p-calendar [minDate]="minDateValue" [showIcon]="true" [(ngModel)]="rangeDates" name="dateRangeInput"
+                selectionMode="range" [readonlyInput]="true" required #dateRangeListInput>
+              </p-calendar>
+              <!-- <div *ngIf="!dateRangeListInput.value || dateRangeListInput.value.length < 1)">
+                <code>Date is required!</code>
+              </div>-->
+            </div>
+          </div>
+         
+          <div class="col-xl-2 col-lg-3 col-md-3 col-sm-4">
+            <div class="form-group">
+              <label for="b"><b>Upload Image: </b></label><br>
+              <input class="btn btn-primary btn-raised" id="file" type="file" accept="image/*"
+                (change)="uploadItem($event.target.files)" /><br>
+              <div *ngIf="ImageRelativePath">
+                <img [src]="ImageRelativePath" style="height: 75px;width: 75px;" class="wcr">
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-1 col-lg-2 col-md-2 col-sm-3" style="padding-top: 10px">
+            <div class="form-group">
+              <label for="b"></label><br>
+              <button type="button" class="btn btn-raised btn-primary" (click)="uploaderItem()">
+                Upload
+              </button>
+
+            </div>
+          </div>         
+          <div class="col-xl-1 col-lg-2 col-md-2 col-sm-2">
+            <label for="b"><b>Active: </b></label><br>
+            <p-checkbox name="popuplist.IsActive" value="{{popuplist.IsActive}}" [(ngModel)]="popuplist.IsActive"
+              binary="true"></p-checkbox>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-3 col-sm-3">
+            <div class="form-group">
+              <label for="urllink"><b>Url Link: </b></label><br>
+              <input id="link" type="text" name="urllink" class="form-control" 
+              [(ngModel)]="popuplist.urlPath" placeholder="Enter Url"  maxlength="60" minlength="2"/>                          
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-3 col-sm-6" style="padding-top: 30px;">
+            <div class="form-group">
+              <button type="button" class="btn btn-raised btn-primary " style="margin-left:15px;width: 100px;"
+                (click)="onSave(popuplist)" [disabled]="isAdd">
+                Add List
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div>
+  <p-table [value]="tradepopuplist" [paginator]="true" [rows]="10" text-align: center>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="text-align: center">
+          SNo.
+        </th>
+        <th style="text-align: center">
+          City
+        </th>
+        <th style="text-align: center">
+          Start Date.
+        </th>
+        <th style="text-align: center">
+          End Date.
+        </th>
+        <th style="text-align: center">
+          Image
+        </th>
+        <th style="text-align: center">
+          URL
+        </th>
+        <th style="text-align: center">
+          Active
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-pageData let-rowIndex="rowIndex">
+      <tr>
+        <td style="text-align: center">{{rowIndex -- 1}}</td>
+        <td style="text-align: center">{{pageData.City}}</td>
+        <td style="text-align: center">{{pageData.StartDate | date}}</td>
+        <td style="text-align: center">{{pageData.EndDate | date}}</td>
+        <td style="text-align: center">
+          <a href="{{pageData.ImageRelativePath}}" target="_blank">
+            <img *ngIf="pageData.ImageRelativePath" src="{{pageData.ImageRelativePath}}"
+              style="height: 75px;width: 75px;" class="wcr">
+          </a>
+        </td>
+        <td style="text-align: center">{{pageData.URL}}</td>
+        <td style="text-align: center">
+          <p-inputSwitch name="isPublished" [(ngModel)]="pageData.IsActive" (ngModelChange)="activepopup(pageData)">
+          </p-inputSwitch>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

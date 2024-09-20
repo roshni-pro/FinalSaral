@@ -1,0 +1,97 @@
+<div class="card">
+    <div class="header">
+        <h3 class="m-2">GDN Detail</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-2 OTPInput">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">OTP</label>
+                    <input type="text" class="form-control" name="OTP" ngModel required #OTP="ngModel">
+                    <span *ngIf="OTP.invalid && (OTP.dirty || OTP.touched)" class="">Enter OTP</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button id="btnSubmti" name="submit" [disabled]="!OTP.valid"
+                    class="btn btn-raised btn-raised btn-primary" (click)="OtpSubmit(OTP)">Submit</button>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid table-bordered">
+        <div class="container-fluid">
+            <div class="row" *ngIf=IsGDNListShow>
+                <table class="table table-bordered" style="font-size: 14px !important;" width="100">
+                    <tbody class="border" ng-repeat="gdn in GdnMaster">
+
+                        <tr>
+                            <td height="60" width="33%"> <img src="assets/img/logo/Logo.png" height="100px"
+                                    width="200px" style="padding-bottom: 20px;" /> <br /></td>
+
+                            <td height="60" width="33%">
+                                <p style="padding: 3px;">
+                                    <span style="float: left">WarehouseId: {{ItemList[0].WarehouseName}} <strong> </strong></span><br />
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p>
+                                    <span style="float: left">Vendor Name: {{ItemList[0].suppliername}} </span> <br />
+                                    <span style="float: left">Inoice No: {{ItemList[0].InvoiceNumber}}</span> <br />
+                                </p>
+                            </td>
+                            <td>
+                                <p style="padding: 3px;">
+                                    <span style="float: left">No.: </span><br />
+                                    <span ng-show="PurchaseOrderData.IsCashPurchase" style="float:left">Date: {{ItemList[0].InvoiceDate}}
+                                    </span><br />
+                                    <span style="float: left">P. O. No: {{ItemList[0].PurchaseOrderId}} </span><br />
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row ml-0" style="width:100%">
+                    <p-table #dt [value]="ItemList" [paginator]="false" [lazy]="true" [rows]="20" [scrollable]="true"
+                        [totalRecords]="totalRecords" (onLazyLoad)="load($event)" scrollHeight="130vh" text-align:
+                        center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>SNo.</th>
+                                <th>SKU Description</th>
+                                <th>Return Qty</th>
+                                <th>Cost Price</th>
+                                <th>GST</th>
+                                <th>Total</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                            <tr>
+                                <td>{{rowIndex+1}}</td>
+                                <td>{{item.SKUDescription}}</td>
+                                <td>{{item.ReturnQty}}</td>
+                                <td>{{item.CostPrice}}</td>
+                                <td>{{item.Tax}}</td>
+                                <td>{{item.Total}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <div class="col-md 12" >
+                    <hr>
+                    <div class="row" style="height:60px;">
+                       
+                    <div class="col-md 4 text-left"><span>
+                            <dt>Vendor Name & Signature:</dt>
+                        </span></div>
+                    <div class="col-md 4 text-center"><span>
+                            <dt>Receiver Signature :</dt>
+                        </span></div>
+                    <div class="col-md 4 text-right"><span>
+                            <dt>Security Seal & Signature:</dt>
+                        </span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

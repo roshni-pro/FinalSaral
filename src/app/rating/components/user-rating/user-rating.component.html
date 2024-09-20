@@ -1,0 +1,127 @@
+<!-- <h4>User Rating List Page</h4> -->
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="mt-4 d-flex justify-content-between align-items-center">
+                <div class="header">
+                    <h3 class="">User Rating List</h3>
+                </div>
+                <div *ngIf="ratingList">
+                    <button type="button" class="btn btn-raised float-right align-self-end btn-primary add-btn" (click)="exportExcel()">
+                        <i class="fa fa-download"></i> Excel Download
+                      </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-content p-2">
+
+                    <div class="row">
+
+                        <div class="col-lg-5  col-md-6 col-sm-12">
+                            <label> Type</label>
+                            <select id="app_type" name="app_type" class="form-control" [(ngModel)]="AppType">
+                                <option value="">Select  Type</option>
+                                <option value="3">Retailer Rating</option>
+                                <option value="2">Delivery Rating</option>                                
+                                <option value="1">Sales Rating</option>
+                            </select>
+                        </div>
+
+                        <div class="col-lg-5 col-md-6 col-sm-12">
+                            <label>Search</label>
+                            <input *ngIf="AppType != 3" id="search_filter" name="search_filter" class="form-control" [(ngModel)]="Keyword"
+                                placeholder="Search By OrderId,User Name,Mobile">
+                            <input *ngIf="AppType == 3" id="search_filter" name="search_filter" class="form-control" [(ngModel)]="Keyword"
+                                placeholder="Search By OrderId,User Name,Mobile,Skcode">
+                        </div>
+
+                        <div class="col-lg-2 col-md-12 col-sm-12">
+                            <button id="add" name="add" type="button" class="btn btn-raised btn-primary bt"
+                                (click)="Search()" style="width: 100%;"><i class="pi pi-search">  </i> Search</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow" *ngIf="ratingList">                
+                <div class="card-content p-0 text-center">
+                    <p-table #dt [value]="ratingList" [totalRecords]="totalcount" (onLazyLoad)="load($event)" [lazy]="true"
+                     [paginator]="true" [rows]="20" [scrollable]="true" [(first)]="first"
+                     scrollHeight="130vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>S.No.</th>
+                                <th>User Name</th>
+                                <th>Type</th>
+                                <th>Rating</th>
+                                <th>
+                                    <span *ngIf="AppType != 3">Order Id</span>
+                                    <span *ngIf="AppType == 3">Trip Id</span>
+                                </th>
+                                <th>Shop Visited</th>
+                                <th>Created Date</th>
+                                <th>Detail</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                            <tr>
+                                <td>{{i+1}}</td>
+                                <td>{{ir.UserName}}</td>
+                                <td>{{ir.AppTypeName}}</td>
+                                <td>{{ir.Rating}}</td>
+                                <td>{{ir.OrderId}}</td>
+                                <td>{{ir.ShopVisited}}</td>
+                                <td>{{ir.CreatedDate | date : 'dd/MM/yyyy hh:mm a'}}</td>
+                                <td>
+                                    <button id="open" name="open" type="button" class="btn btn-raised btn-primary bt"
+                                        (click)="openDetail(ir)">Detail</button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <h5>* Data Not Found</h5>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div *ngIf="isOpenRatingDetail">
+            <p-dialog [(visible)]="isOpenRatingDetail" [resizable]="false" positionTop="top" [modal]="true"
+                appendTo="body" [style]="{width: '90%', overflow: 'auto'}">
+                <p-header>
+                    <!-- <h2>Edit List</h2> -->
+                </p-header>
+                <app-add-rating [UserRatingDetails]="selectedDetail" [isUserRating]="true"
+                    (close)="closeRatingDetailPopup()">
+                </app-add-rating>
+            </p-dialog>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,198 @@
+<div class="ui-fluid">
+  <div class="my-2 justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="mt-3">SMS Template</h3>
+    </div>
+  </div>
+  <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded">
+    <div class="card-content">
+      <div class="mr-12">
+        <div class="row">
+          <div class="col-md-3">
+            <!-- <label for="city"><b>App Type :</b></label> -->
+            <p-dropdown [options]="AppEnum" placeholder="Select App" optionLabel="Type" [(ngModel)]="selectedAppType"
+              (ngModelChange)="getList(selectedAppType)"></p-dropdown>
+          </div>
+          <div class="col-md-1">
+            <button class="btn btn-primary" (click)="AddDialoag()">Add</button> &nbsp;
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded ">
+  <p-table #dt [globalFilterFields]="['AppTypeName','TemplateType','Template','IsActive']" [value]="AppTypeList" [paginator]="true" [rows]="10" [scrollable]="true" class="center">
+    <ng-template pTemplate="caption">
+      <div style="text-align: right">
+        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+        <input type="text" pInputText size="50" placeholder="Global Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 9%; ">App Name </th>
+        <th style="width: 13%;"> Template Type </th>
+        <th style="width: 28%;"> Message </th>
+        <th style="width: 6%;"> Status </th>
+        <th style="width: 10%;"> Created Date </th>
+        <!-- <th> Modified Date </th> -->
+        <th style="width: 12%;"> Actions </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData>
+      <tr>
+        <td style="width: 9%; font-weight: bold;">{{rowData.AppTypeName}}</td>
+        <td style="width: 13%;">{{rowData.TemplateType}}</td>
+        <td style="width: 28%;">{{rowData.Template}}</td>
+        <td style="width: 6%;">
+          <span *ngIf="rowData.IsActive == true"><p style="font-weight: bold;color: green;">True</p></span>
+          <span *ngIf="rowData.IsActive == false"><p style="font-weight: bold;color: Red;">False</p></span>
+        </td>
+        <td style="width: 10%;">{{rowData.CreatedDate | date:'medium' }}</td>
+        <!-- <td>{{rowData.ModifiedDate | date:'medium' }}</td> -->
+        <td style="width: 12%;">
+          <button class="btn editbtn" (click)="EditDialoag(rowData.Id)">Edit</button>
+          <button class="btn delbtn ml-2" (click)="DeleteRecord(rowData.Id)">Delete</button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <h5>Data Not Found</h5>
+  </ng-template>
+  </p-table>
+</div>
+
+<!-- add Record --Start -->
+<p-dialog header="Add Record" [(visible)]="display" appendTo="body" positionTop="50" [style]="{width: '40%'}"
+   modal="true">
+  <div class="container p-3">
+    <div class="mt-0">
+      <div class="col-12">
+        <label for="city" style="font-weight: revert;"><b>App Type :</b></label>
+        <span *ngIf="disabledVal == true">
+          <p-dropdown [options]="AppEnum" placeholder="--Select app Type--" optionLabel="Type" [(ngModel)]="PopAppt" disabled>
+          </p-dropdown>
+        </span>
+        <span *ngIf="disabledVal == false">
+          <p-dropdown [options]="AppEnum" placeholder="--Select app Type--" optionLabel="Type" [(ngModel)]="PopAppt">
+          </p-dropdown>
+        </span>
+      </div>
+
+      <div class="col-12 mt-4">
+        <label for="city"><b>Template Type :</b></label>
+        <p-dropdown [options]="templateList" placeholder="-Select template Type-" optionLabel="TemplateName"
+          [(ngModel)]="PopTempt"></p-dropdown>
+        <!-- [disabled]="disableDropdown==false" -->
+      </div>
+    </div>
+    <div class="">
+      <div class="col-12 mt-4">
+        <label for="city"><b>DLTID :</b></label>
+        <input [(ngModel)]="addDLTID" class="form-control" placeholder="Enter DLTID" (keypress)="omit_special_char_and_text($event)">
+      </div>
+
+      <div class="col-12 mt-4">
+        <label for="city"><b>Template Description :</b></label>
+        <textarea id="float-input" placeholder="Write Here.." [(ngModel)]="msg" class="form-control" (keydown)="space($event)" (keypress)="omit_special_char($event)"></textarea>
+      </div>
+      <div class="col-12 mt-4">
+        <!-- <label for="city"><b>App Status :</b></label> -->
+        <div class="row ml-1">
+          <div class="field-radiobutton">
+            <!-- <p-radioButton name="city" [value]=true [(ngModel)]="IsActive"></p-radioButton> -->
+            <p-checkbox binary="true"  name="city" [(ngModel)]="IsActive" (onChange)="chkStatus($event)"></p-checkbox>
+              <label *ngIf="activeLabelStatus == true">&nbsp;&nbsp;Active</label>
+              <label *ngIf="activeLabelStatus == false">&nbsp;&nbsp;IsActive</label>
+          </div>
+          <!-- <div class="field-radiobutton ml-4">
+            <p-radioButton name="city" [value]=false [(ngModel)]="IsActive"></p-radioButton>
+            <label for="city2">&nbsp;Inactive</label>
+          </div> -->
+        </div>
+
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <div class="col-12">
+        <button class="btn btn-primary" (click)="Save()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- <p-toast position="top-center"></p-toast> -->
+</p-dialog>
+<!-- add Record --End -->
+
+<!-- edit Record --Start -->
+<p-dialog header="Edit Record" [(visible)]="editDisplay" appendTo="body" positionTop="50" [style]="{width: '40%'}"
+   modal="true">
+  <div class="container p-3">
+    <div class="mt-0">
+      <div class="col-12">
+        <label for="city" style="font-weight: revert;"><b>App Type :</b></label>
+          <p-dropdown [options]="AppEnum" placeholder="--Select app Type--" optionLabel="Type" [(ngModel)]="editPopAppt" disabled>
+          </p-dropdown>
+      </div>
+
+      <div class="col-12 mt-4">
+        <label for="city"><b>Template Type :</b></label>
+        <span *ngIf="editPopTempt != undefined">
+          <p-dropdown [options]="templateList" placeholder="-Select template Type-" optionLabel="TemplateName"
+          [(ngModel)]="editPopTempt" disabled></p-dropdown>
+        </span>
+        <span *ngIf="editPopTempt == undefined">
+          <p-dropdown [options]="templateList" placeholder="-Select template Type-" optionLabel="TemplateName"
+          [(ngModel)]="editPopTempt"></p-dropdown>
+        </span>
+        
+      </div>
+    </div>
+    <div class="">
+      <div class="col-12 mt-4">
+        <label for="city"><b>DLTID :</b></label>
+        <input [(ngModel)]="editDLTID" class="form-control" placeholder="Enter DLTID"  (keypress)="omit_special_char_and_text($event)">
+      </div>
+
+      <div class="col-12 mt-4">
+        <label for="city"><b>Template Description :</b></label>
+        <textarea id="float-input" placeholder="Write Here.." [(ngModel)]="editmsg" class="form-control" (keydown)="space($event)" (keypress)="omit_special_char($event)"></textarea>
+      </div>
+      <div class="col-12 mt-4">
+        <!-- <label for="city"><b>App Status :</b></label> -->
+        <div class="row ml-1">
+          <div class="field-radiobutton">
+            <!-- <p-radioButton name="city" [value]=true [(ngModel)]="IsActive"></p-radioButton> -->
+            <p-checkbox binary="true"  name="city" [(ngModel)]="editIsActive" (onChange)="chkStatus($event)"></p-checkbox>
+              <label *ngIf="editIsActive == true">&nbsp;&nbsp;Active</label>
+              <label *ngIf="editIsActive == false">&nbsp;&nbsp;IsActive</label>
+          </div>
+          <!-- <div class="field-radiobutton ml-4">
+            <p-radioButton name="city" [value]=false [(ngModel)]="IsActive"></p-radioButton>
+            <label for="city2">&nbsp;Inactive</label>
+          </div> -->
+        </div>
+
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <div class="col-12">
+        <button class="btn editbtn" (click)="Update()">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- <p-toast position="top-center"></p-toast> -->
+</p-dialog>
+<!-- edit Record --End -->
+
+
+
+<p-confirmDialog appendTo="body" header="Confirmation" [style]="{width: '40vw'}" [baseZIndex]="10000"></p-confirmDialog>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

@@ -1,0 +1,75 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="offer">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2"><b>Freebies Upload</b></h3>
+        </div>
+    </div>
+    <div class="card p-round cardText">
+        <h3>Freebies Uploader</h3>
+        <div class="uploader_file">
+            <div class="row">
+                <div class="col-md-6 col-6 pl-0">
+                    <div class="row p-3 pt-0">
+                        <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                        (uploadHandler)="uploadFile($event)" #uploadCustom>
+                        <code>*</code>
+                        </p-fileUpload>
+                    </div>
+                    <!-- <input type="file" accept=".xlsx, .xls" placeholder="Upload File" (change)="getEventFile($event.target.files)">
+                    <button type="button" class="btn btn-raised btn-raised mt-3 btn-primary uploadBtn mt-2"
+                        (click)="uploadFile()">
+                        Upload Excel
+                    </button> -->
+                </div>
+                <div class="col-md-6  col-6 text-right mt-4">
+                        <a class="btn btn-danger" style=" background-color: #119150;color: white;" href="{{apiURL}}/ExcelGeneratePath//freeBiesSampleFile1.xlsx" download="">
+                           Download Sample
+                        </a>
+                        <button type="button" class="btn btn-raised btn-raised btn-primary ml-2" (click)="refreshPage()">
+                            Refresh
+                        </button>   
+                        <button type="button" class="btn btn-raised btn-raised btn-primary ml-2" (click)="back()">
+                            Back
+                        </button>                  
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card p-round cardText">
+        <h3>Error Item List</h3>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive" *ngIf="getList?.length != 0">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>ItemName</th>
+                                <th>Itemnumber</th>
+                                <th>MRP</th>
+                                <th>WareHouseName</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tdd of getList; let i =index;">
+                                <td>{{i+1}}</td>
+                                <td>{{tdd.ItemName}}</td>
+                                <td>{{tdd.Itemnumber}}</td>
+                                <td>{{tdd.MRP}}</td>
+                                <td>{{tdd.WareHouseName}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="getList?.length == 0" class="recordnot_fount">
+                    Record not found
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,151 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<!-- <div class="row text-left"> -->
+<div class="col-md-12">
+  <div class="card pt-2">
+    <div class="card-content">
+      <div class="px-3">
+        <form class="form form-inline" name="form" #testForm="ngForm" autocomplete="off">
+          <input autocomplete="false" name="hidden" type="text" style="display:none;">
+          <div class="form-body col-12">
+            <!-- General -->
+            <h5 class="m-1 ml-2"><strong>Murli Images or Audio </strong></h5>
+            <hr>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="Wh" class="col-md-6"> Select Warehouse:</label>
+                  <select id="wh" name="wh" class="form-control col-md-6" [(ngModel)]="MurliAudioImageDc.WarehouseId"
+                    placeholder="Select Warehouse" required="1" maxlength="50" minlength="2" #WarehouseId="ngModel">
+                    <div class="col-md-6"></div>
+                    <div *ngIf="isInvalid && !WarehouseId.valid && WarehouseId.errors.required">
+                      <code>Warehouse is required</code>
+                    </div>
+                    <option value="">--Select--</option>
+                    <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+                      {{ wh.WarehouseName }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6">Title *</label>
+                  <input type="text" id="a" class="form-control col-md-6" [(ngModel)]="MurliAudioImageDc.Title" name="a"
+                    required="1" maxlength="50" minlength="2" #Title="ngModel" />
+                  <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !Title.valid && Title.errors.required">
+                    <code> Title is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !Title.valid && Title.errors.minlength">
+                    <code>Minlength 2</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-2 bg-grey50 border-top border-top-2 border-top-primary">
+              <ngb-tabset type="pills">
+                <ngb-tab title="Images/file Upload">
+                  <ng-template ngbTabContent>
+                    <form name="formV1" #testFormV1="ngForm">
+                      <div class="row">
+                        <div class="col-4" style="background-color:#aaa;">
+                          <h2>Walk</h2>
+
+                          <div class="col-md-3">
+                            <div class="form-group m-2">
+                              <label for="b">Upload Brand Image</label>
+                              <input class="btn btn-primary" id="file" type="file"
+                                (change)="uploadWalk($event.target.files)" />
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                            <div class="form-group m-1">
+                              <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploaderWalk()">
+                                Upload
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-4" style="background-color:#bbb;">
+                          <h2>Speak</h2>
+
+                          <div class="col-md-3">
+                            <div class="form-group m-2">
+                              <label for="b">Upload Speak</label>
+                              <input class="btn btn-primary" id="file" type="file"
+                                (change)="uploadSpeak($event.target.files)" />
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                            <div class="form-group m-1">
+                              <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploaderSpeak()">
+                                Upload
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-4" style="background-color:#ccc;">
+                          <h2>Buy</h2>
+
+                          <div class="col-md-3">
+                            <div class="form-group m-2">
+                              <label for="b">Upload Buy</label>
+                              <input class="btn btn-primary" id="file" type="file"
+                                (change)="uploadBuy($event.target.files)" />
+                            </div>
+                          </div>
+                          <div class="col-md-3">
+                            <div class="form-group m-1">
+                              <button type="button" class="btn btn-raised btn-primary m-1" (click)="uploaderBuy()">
+                                Upload
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-4">
+                          <h2>Walk Image</h2>
+
+
+                          <div *ngIf="walkList.ImagePath" class="ui-g-12">
+                            <img title="Walk Image" [src]="walkImage" class="wcr">
+                          </div>
+
+                        </div>
+                        <div class="col-4">
+                          <h2>Speak Image</h2>
+
+                          <div *ngIf="speakList.ImagePath" class="ui-g-12">
+                            <img title="Walk image" [src]="speakImage" class="wcr">
+                          </div>
+
+                        </div>
+                        <div class="col-4">
+                          <h2>Buy Image</h2>
+                          <div *ngIf="buyList.ImagePath" class="ui-g-12">
+                            <img title="Buy image" [src]="buyImage" class="wcr">
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </ng-template>
+                </ngb-tab>
+              </ngb-tabset>
+            </div>
+            <div class="form-actions right col-sm-12 p-3">
+              <button type="button" class="btn btn-raised btn-warning mr-2" (click)="onCancel()">
+                <i class="ft-x"></i> Cancel
+              </button>
+              <button type="submit" class="btn btn-raised btn-primary" (click)="onSave(testForm)">
+                <i class="fa fa-check-square-o"></i> Save
+              </button>
+            </div>
+            <div class="form-footer m-2">Fields with * sign are mandatory to fill</div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

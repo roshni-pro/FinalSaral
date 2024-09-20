@@ -1,0 +1,110 @@
+
+
+<div class="card">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+          <h3 class="m-2">Customer Notify Item</h3>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="form-group">
+                <label for="ware"><b>Warehouse:</b></label>
+                <select name="" value="" class="form-control col md-3"  [(ngModel)]="selectedWarehouseId" (change)="onSelect()">
+                    <option [ngValue]="0">All</option>
+                    <option *ngFor="let item of masterwarehouseList" [ngValue]="item.WarehouseId">{{item.WarehouseName}}</option>
+                </select>
+            </div>
+            <div class="form-group date">
+                <label for="ware"><b>From Date:</b></label><br>
+              <!-- <input type="date" name="FromDate" class="form-control col md-3" [(ngModel)]="FromDate"> -->
+              <p-calendar [(ngModel)]="FromDate" [showIcon]="true" name="fromDate" ></p-calendar>
+            </div>
+            <div class="form-group date">
+                <label for="ware"><b>To Date:</b></label><br>
+                <!-- <input type="date" name="ToDate" class="form-control col md-3" [(ngModel)]="ToDate"> -->
+                <p-calendar [(ngModel)]="ToDate" [showIcon]="true" name="ToDate" ></p-calendar>
+            </div>
+            <div class="form-group srch">
+                <button type="button" class="btn btn-raised btn-raised btn-success" (click)="search(FromDate,ToDate)">Search</button>
+                <button id="btnRefresh" (click)="Refresh()" class="btn btn-raised btn-raised btn-danger ml-1" >Refresh</button>              
+            </div>
+            <div class="form-group">
+                <button id="btnExport" (click)="Export()" class="btn btn-raised btn-raised btn-warning" style="margin: 28px;">Export</button>              
+            </div>
+            <div class="col md-9"></div>
+            </div>
+            <p-table #dt [value]="ItemList" [paginator]="true"  [lazy]="true" [rows]="20" [scrollable]="true"
+            [totalRecords]="totalRecords" (onLazyLoad)="load($event)" 
+                scrollHeight="130vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                    <th>Sr.No.</th>
+                    <th>Warehouse Name</th>
+                    <th>Item No.</th>
+                    <th>Item Brand</th>
+                    <th>Item Name</th>
+                    <th>No. of Person Required</th>
+                    <th>Last Updated</th>
+                    <th>Person Detail</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                    <tr>
+                        <td >{{rowIndex+1}}</td>
+                    <td>{{item.WarehoueName}}</td>
+                    <td>{{item.ItemNumber}}</td>
+                    <td>{{item.BrandName}}</td>
+                    <td>{{item.ItemName}}</td>
+                    <td>{{item.ItemRequireCount}}</td>
+                    <td>{{item.LastUpdated | date:'dd-MM-yyyy'}}</td>
+                    <td><button id="btndetail" (click)="openDetails(item)" class="btn btn-primary">Detail</button></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            
+              <div *ngIf="isOpenPopup">
+                <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+                  [style]="{width: '65%',height: '80%', overflow: 'auto',left: '323px'}">
+                  <p-header>
+                  Customer Details
+                  </p-header>
+                  <div class="ui-fluid">
+                   
+                      <div class="ui-g">
+                        <div class="ui-g-12">
+                         
+                            <div class="ui-g" >
+                              <div class="ui-g-12">
+                                <p-table #dt [value]="selectedRowDetailList" [scrollable]="true"
+                                [totalRecords]="totalRecords" scrollHeight="130vh" text-align: center>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th scope="col">SK Code</th>
+                                            <th scope="col">Shop Name</th>
+                                            <th scope="col">Created Date</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-m>
+                                        <tr>
+                                            <td>{{m.Skcode}}</td>
+                                            <td>{{m.CustomerName}}</td>
+                                            <td>{{m.CreatedDate | date:'dd-MM-yyyy'}}</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                              </div>
+                            </div>
+                        </div>
+                      </div>
+                   
+                  </div>
+                </p-dialog>
+              </div>
+    </div>
+  </div>
+
+
+  
+  
+  

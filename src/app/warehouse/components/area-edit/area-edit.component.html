@@ -1,0 +1,99 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form-inline" name="form" #areaEditForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i> Edit Area Category</h4>
+                  <div class="row flex" *ngIf="area">
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="AreaName" class="col-md-6">Area Name:</label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="AreaName" class="form-control col-md-6" name="name"
+                          [(ngModel)]="area.AreaName" placeholder="Area Name" required="1" maxlength="50" minlength="2"
+                          #firstName="ngModel" />
+                          <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                          <code> Area Name is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                          <!-- <code class="padding">Minlength 2</code> -->
+                          <code >Minlength 2</code>
+                          <code>Minlength 2</code>
+                        </div>
+                        <!-- </div> -->
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-md-6">
+                    <div class="form-group form-inline m-2">
+                    <label for="cname" class="col-md-6">City Name:</label>       
+                    <div class="col-md-6">                 
+                    <input type="text" id="cname" class="form-control" name="cname"placeholder="City Name" [(ngModel)]="area.CityName" required="1" maxlength="50" minlength="2"
+                    #CityName="ngModel" />
+                  <div *ngIf="isInvalid && !CityName.valid && CityName.errors.required">
+                    <code>City Name is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !CityName.valid && CityName.errors.minlength">
+                      <code>Minlength 2</code>
+                    </div>                   
+                  </div>
+                </div>
+                </div> -->
+
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="cname" class="col-md-6"> Select City Name:</label>
+                        <!-- <div class="col-md-6"> -->
+                        <select id="cname" name="cname" class="form-control col-md-6" [(ngModel)]="area.CityId"
+                          placeholder="Select City" required="1" maxlength="50" minlength="2" #city="ngModel">
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !city.valid && city.errors.required">
+                            <code class="padding">City is required</code>
+                          </div>
+                          <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                            {{ city.CityName }}
+                          </option>
+                        </select>
+                      </div>
+                      <!-- </div> -->
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="aname" class="col-md-6">Active:</label>
+                        <!-- <div class="col-md-6"> -->
+                        <input type="text" id="aname" class="form-control col-md-6" name="aname"
+                          placeholder="Active Status" [(ngModel)]="area.Active">
+                        <!-- </div> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions right col-sm-12 p-3">
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    Cancel
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="onclick(areaEditForm)">
+                    Save
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

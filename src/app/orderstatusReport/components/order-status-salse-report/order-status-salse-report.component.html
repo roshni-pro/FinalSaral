@@ -1,0 +1,137 @@
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+    <section>
+      <!-- *ngIf="!isDetails" -->
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="content-header">Order Status Sales Report</div>
+        </div>
+      </div>
+  <br/>
+      <div class="row">
+          <div class="col-md-2">
+        <div class="form-group">
+          <label for="region">Warehouse Name:</label>
+          <p-multiSelect [options]="warehouseList" name="WarehouseName" [(ngModel)]="SelectedWarehouse"
+            [panelStyle]="{minWidth:'20em'}" optionLabel="label" (onChange)="onSelectedWarehouseChange()"(onPanelHide)="onSelectWarehouseList()" [filter]="true" placeholder="---select---" >
+          </p-multiSelect>
+          <!-- <label for="published"><b>Warehouses:</b></label><br>
+          <select id="ware" class="form-control" name="ware" [(ngModel)]="data.Warehouseid" (change)="onWarehouseChange(data.Warehouseid)" required="1"
+          #Material="ngModel">
+          <option value="">--Select--</option>
+          <option *ngFor="let s of warehouseList" [ngValue]="s.WarehouseId">
+              {{ s.WarehouseName }}
+          </option> -->
+
+      <!-- </select> -->
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="published"><b>Clusters:</b></label><br>
+            <p-multiSelect [options]="clusterList" name="ClusterName" [(ngModel)]="SelectedCluster"
+              [panelStyle]="{minWidth:'20em'}" optionLabel="ClusterName" (onChange)="onSelectedClusterChange()">
+            </p-multiSelect> 
+            <!-- <select id="cluster" class="form-control" name="cluster" [(ngModel)]="data.Clusterid" required="1"
+            #Material="ngModel">
+            <option value="">--Select--</option>
+            <option *ngFor="let s of clusterList" [ngValue]="s.ClusterId">
+                {{ s.ClusterName }}
+            </option> 
+  
+         </select>-->
+          </div>
+  
+        </div>
+        <!-- <div class="col-sm-2">
+          <label for="validfrom">Start Date</label>
+          <p-calendar  name="StartDate" placeholder="Start Date" [(ngModel)]="data.StartDate" [showIcon]="true"  name="StartDate" dateFormat="yy/mm/dd" ></p-calendar>
+  
+        </div> -->
+  
+        <div class="col-sm-2">
+          <label for="validto">Date</label>
+          <p-calendar  name="EndDate" placeholder="End Date" [(ngModel)]="data.EndDate" [showIcon]="true"  name="EndDate" dateFormat="yy/mm/dd" ></p-calendar>
+        </div>
+  
+        <div class="col-md-2" style="margin-top:2%;">
+          <button type="button" class="btn btn-raised btn-primary" (click)="search(data)">Search </button>
+  
+        </div>
+
+        <div class="col-md-2" style="margin-top:2%;">
+          <button type="button" class="btn btn-raised" style="background-color: black;" (click)="Export()">Export Data </button>
+  
+        </div>
+        <!-- <div class="col-md-2">
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <div></div>
+            <button type="button" style="text-align:left;" class="btn btn-raised btn-raised btn-primary" (click)="export()">
+              Export
+            </button>
+          </div>
+        </div>
+           &nbsp;
+    <br /><br />
+    <br /> <br/>
+    <br/> -->
+  
+      <div class="position-relative" *ngIf="isReport" >
+        <p-table #dt [globalFilterFields]="cols" [value]="orderStatusReport" [paginator]="true" [rows]="20"
+            dataKey="ClusterId" [scrollable]="true" scrollHeight="60vh" text-align: center>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th rowspan="2"></th>
+                    <th rowspan="2"></th>
+                    <th rowspan="2"></th>
+                </tr>
+                  <tr style="text-align: center;">
+                    <th colspan="2">Panding</th>
+                    <th colspan="2">Ready to Dispatch</th>
+                    <th colspan="2">In Transit &nbsp;&nbsp; <span (click)="OnShowHeader()">></span> </th>
+                    <th colspan="2" *ngIf="showInTransit">Shipped </th>
+                    <th colspan="2" *ngIf="showInTransit">Issued </th>                  
+                    <th colspan="2" *ngIf="showInTransit">Delivery Re-dispatch</th>
+                    <th colspan="2">Delivered</th>
+                  </tr>
+                <tr  style="text-align: center;">
+                  <th>Warehouse Name</th>
+                  <th>Cluster  Name</th>
+                  <th>Agent  Name</th>
+                  <th>Count</th>
+                  <th>Value</th>
+                  <th>Count</th>
+                  <th>Value</th>
+                  <th>Count</th>
+                  <th>Value</th>
+                  <th *ngIf="showInTransit">Count</th>
+                  <th *ngIf="showInTransit">Value</th>
+                  <th *ngIf="showInTransit">Count</th>
+                  <th *ngIf="showInTransit">Value</th>
+                  <th *ngIf="showInTransit">Count</th>
+                  <th *ngIf="showInTransit">Value</th>
+                  <th>Count</th>
+                  <th>Value</th>
+              </tr>  
+                  <!-- <tr>
+                        <th *ngFor="let col of cols" style="text-align: center">
+                            {{col.header}}
+                    </tr> -->
+                </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+  
+              <tr>
+                <td *ngFor="let col of cols"               
+                style="text-align: center">
+                    {{rowData[col.field]}}
+                </td>
+              </tr>
+            </ng-template>
+        
+          </p-table>
+          
+        </div> 
+      </div>
+    </section>

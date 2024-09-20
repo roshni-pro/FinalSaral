@@ -1,0 +1,68 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div *ngIf="isShowExpenseDetail"></div>
+<p-dialog  [style]="{width: '70vw'}" [closable]="false" [(visible)]="isShowExpenseDetail">
+  
+  <p-header>
+    <h3>Add/Edit Credit Account</h3>
+  </p-header>
+  <form class="form" #addexpensedetailsdatafrom="ngForm">
+
+  <div class="row"> 
+  
+      
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="debitledgertype">Credit Expense Type</label>
+            
+            <select class="form-control" id="CreditExpenseTypeId" name="CreditExpenseTypeId" 
+            #CreditExpenseTypeId="ngModel"  [(ngModel)]="expenseDetails.CreditLedgerTypeId"  required="1" (change)="creditLedgerChange()">
+                  <option [ngValue]="null">select</option>
+                  <option [ngValue]="opt.ID" *ngFor="let opt of expenseLedgerTypeList;">{{opt.Name}}</option>
+              </select>
+              <div *ngIf="isInvalid && !CreditExpenseTypeId.valid && CreditExpenseTypeId.errors.required">
+                <code> Credit Expense Type is required</code>
+            </div>
+            </div>
+        </div> 
+      
+      <div class="col-md-2">
+          <div class="form-group">
+              <label for="Name">Is Fixed Credit </label><br>
+              <p-inputSwitch id="IsFixedCreditexpense" name="IsFixedCreditexpense"
+                  [(ngModel)]="expenseDetails.IsFixedCreditLedgerId">
+               </p-inputSwitch>
+          </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-group">
+            <label for="Name">Is Master Ledger </label><br>
+            <p-inputSwitch id="IsMasterLedgerInput" name="IsMasterLedgerInput"
+                [(ngModel)]="expenseDetails.IsMasterLedger">
+             </p-inputSwitch>
+        </div>
+    </div>
+      <div class="col-md-4">
+          <div class="form-group" *ngIf="expenseDetails.IsFixedCreditLedgerId">
+              <label for="Name">Credit Expense</label><br>
+              <p-autoComplete id="selectedDebitExpense" name="selectedDebitExpense"
+                  [(ngModel)]="selectedCreditExpense" [suggestions]="expenseCreditList" field="Name" [dataKey]="ID"
+                  (completeMethod)="searchLedger(expenseDetails.CreditLedgerTypeId, $event)"
+                  (onSelect)="onSelectCredit($event, expenseDetails)"></p-autoComplete>
+                 
+          </div>
+      </div>
+      
+      
+  </div>
+  
+
+  <p-footer>
+    <div class="text-right">
+      <button type="button" (click)="add(addexpensedetailsdatafrom)" class="btn mr-1 btn-raised btn-primary">Add </button>
+      <button type="button" (click)="close()" class="btn mr-1 btn-raised btn-primary">Close </button>
+
+    </div>
+  </p-footer>
+</form>
+</p-dialog>
+

@@ -1,0 +1,125 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+
+<div class="ui-fluid">
+    <section id="basic-form-layouts">
+        <h2 class="m-2">IR Outstanding View</h2>
+        <div class="shadow bg-white py-2">
+            <div class="ui-g">
+                <div class="ui-g-2">
+                    <label for="projectinput3">Search option</label>
+                    <input class="form-control" [(ngModel)]="paginator.Search">
+                </div>
+                <div class="ui-g-2">
+                    <label for="projectinput3">Warehouse</label>
+                    <select [(ngModel)]="paginator.WarehouseId" class="form-control">
+                        <option [value]="null">select </option>
+                        <option *ngFor="let wh of warehouseList;" [value]="wh.WarehouseId">{{wh.WarehouseName}}</option>
+                    </select>
+                </div>
+                <div class="ui-g-2">
+                    <label for="projectinput9">Buyers</label>
+                    <select [(ngModel)]="paginator.BuyerId" class="form-control">
+                        <option [value]="null">select </option>
+                        <option *ngFor="let buy of buyerList;" [value]="buy.PeopleId">{{buy.DisplayName}}</option>
+                    </select>
+                </div>
+                <div class="ui-g-2">
+                    <label for="projectinput11">IRStatus</label>
+                    <select [(ngModel)]="paginator.Status" class="form-control">
+                        <option  value=null>select </option>
+                        <option  value="IR Uploaded">IR Uploaded </option>
+                        <option  value="IR Posted as a Draft">IR Posted as a Draft </option>
+                        <option  value="Pending from Buyer side">Pending from Buyer side </option>
+                        <option  value="Rejected from Buyer side">Rejected from Buyer side </option>
+                        <option  value="Approved from Buyer side">Approved from Buyer side </option>
+
+                    </select>
+                </div>
+                <div class="ui-g-2">
+                    <label for="projectinput3">From Date</label>
+                <p-calendar name="startDateInput" [(ngModel)]="paginator.StartDate" dateFormat="dd/mm/yy"  [showIcon]="true"
+                                 [monthNavigator]="true" [yearNavigator]="true"
+                                 [yearRange]="yearRangeForCalender"></p-calendar>
+                    
+                    <!-- <p-calendar [(ngModel)]="paginator.StartDate" [showIcon]="true"></p-calendar> -->
+                </div>
+                <div class="ui-g-2">
+                    <label for="projectinput3">To Date</label>
+                     <p-calendar name="endDateInput" [(ngModel)]="paginator.EndDate" dateFormat="dd/mm/yy"  [showIcon]="true"
+                                 [monthNavigator]="true" [yearNavigator]="true"
+                                 [yearRange]="yearRangeForCalender"></p-calendar>
+                   
+                    <!-- <p-calendar [(ngModel)]="paginator.EndDate" [showIcon]="true"></p-calendar> -->
+                </div>
+                <div class="ui-g-2">
+                    <button class="btn btn-raised btn-raised btn-primary " (click)="filter()">Search </button>
+                </div>
+          
+                <div class="ui-g-12" *ngIf="paginator">
+                    <p-table [value]="list" [paginator]="true" [rows]="paginator.Take" [lazy]="true"
+                        [totalRecords]="totalCount" (onLazyLoad)="loadLazy($event)">
+                        <ng-template pTemplate="header">
+                            <tr>
+                         
+                                <th>Supplier Name</th>
+                                <th>PurchaseOrderId</th>
+                                <th>InvoiceNumber</th>
+                                 <th>TotalAmount</th>
+                                <th>IRStatus</th>
+                                <th>Days</th>
+                                <th>GRNDueDate&Days</th>
+                                <th>InvoiceDueDate&Days</th>
+                                <th>DueDate&Days</th>
+                                <!-- <th>Delayed</th>
+                                <th>After App. Delayed Days</th>
+                                <th>After GRN Delayed Days</th> -->
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ir>
+                              <tr>
+                                <td>{{ir.SupplierName}} ({{ir.SupplierCode}})</td>
+                                <td>{{ir.PurchaseOrderId}}</td>
+                                <td>{{ir.InvoiceNumber |date:'dd-MM-yyyy'}}</td>
+                                <td >{{ir.TotalAmount| number: '1.2-2'}}</td>
+                                <td>{{ir.IRStatus}}</td>
+                                <td>{{ir.DueDays}}</td>
+                                <td *ngIf="ir.GRNDate && ir.DifInHoursForGRN>=0">{{ir.GRNDate |date:'dd-MM-yyyy'}} <br>
+                                    <b>{{ir.DifInHoursForGRN | number: '1.0-0'}}  Days</b>
+                                </td>
+                                <td *ngIf="ir.GRNDate && 0> ir.DifInHoursForGRN">{{ir.GRNDate |date:'dd-MM-yyyy'}} <br>
+                                    <b>After: {{(-ir.DifInHoursForGRN) | number: '1.0-0'}}  Days</b>
+                                </td>
+                                <td *ngIf="ir.InvoiceDateToShow && ir.DifInHours>=0">{{ir.InvoiceDateToShow |date:'dd-MM-yyyy'}}<br>
+                                   <b> {{ir.DifInHours| number: '1.0-0'}} Days</b>
+                                </td>
+                                <td *ngIf="ir.InvoiceDateToShow && 0> ir.DifInHours ">{{ir.InvoiceDateToShow |date:'dd-MM-yyyy'}}<br>
+                                    <b> After: {{(-ir.DifInHours)| number: '1.0-0'}} Days</b>
+                                 </td>
+                                <td *ngIf="ir.IRApprovedDate && ir.DifInHoursForApproval>=0 ">{{ir.IRApprovedDate |date:'dd-MM-yyyy'}} <br>
+                                   <b> {{ir.DifInHoursForApproval| number: '1.0-0'}} </b>
+                                </td>
+                                <td *ngIf="ir.IRApprovedDate && 0>ir.DifInHoursForApproval ">{{ir.IRApprovedDate |date:'dd-MM-yyyy'}} <br>
+                                    <b>After: {{(-ir.DifInHoursForApproval)| number: '1.0-0'}} Days </b>
+                                 </td>
+                                <td *ngIf="ir.IRStatus!='Approved from Buyer side'">
+                                    Not Approved
+                                 </td>
+                                <!-- <td>{{((ir.DifInHours / 24)-ir.DueDays)| number: '1.0-0'}} Days </td>
+                                <td>{{ir.DifInHoursForApproval| number: '1.0-0'}}  </td>
+                                <td>{{ir.DifInHoursForGRN| number: '1.0-0'}}  </td> -->
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</div>
+
+
+
+
+

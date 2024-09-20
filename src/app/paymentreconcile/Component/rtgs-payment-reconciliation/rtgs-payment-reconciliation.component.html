@@ -1,0 +1,174 @@
+<!-- <p>rtgs-payment-reconciliation works!</p> -->
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">RTGS Payment Reconciliation</h3>
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row ">
+        <div class="col-12">
+            <div class="row">
+
+                <div class="col-sm-3  mt-2">
+                    <label> <b> Sk Code/Reference No. </b> </label>
+                    <input type="text" placeholder="SKcode/Reference NO" class="form-control" [(ngModel)]="keyword">
+                </div>
+
+                <div class="col-sm-3  mt-2">
+                    <label> <b>Warehouse</b> </label>
+                    <p-multiSelect [options]="allWarehouses" [(ngModel)]="selectedWarehouse"
+                        optionLabel="WarehouseName"></p-multiSelect>
+                </div>
+
+                <!-- <div class="col-sm-6 mt-2">
+                    <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                        (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+                        <code>*</code>
+                    </p-fileUpload>
+                </div> -->
+                <div class="col-md-2 mt-2">
+                    <label><b>From Date: </b></label>
+                    <p-calendar [showIcon]="true" name="startdateValNew" [(ngModel)]="startDate" [readonlyInput]="true">
+                    </p-calendar>
+                </div>
+
+                <div class="col-md-2 mt-2">
+                    <label><b>To Date: </b></label>
+                    <p-calendar [showIcon]="true" name="startdateValNew" [(ngModel)]="endDate" [readonlyInput]="true">
+                    </p-calendar>
+                </div>
+
+                <div class="col-md-2 mt-2">
+                    <button type="button" class="btn btn-raised btn-danger" (click)="searchResult()"
+                        style="margin-top: 27px; ">
+                        Search
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+
+        <!-- <div class="col-md-6 mt-2">
+            <button type="button" class="btn btn-raised btn-danger" (click)="searchResult()" style="margin-top: 27px; ">
+                Search
+            </button>
+        </div> -->
+
+        <div class="col-sm-6 col-lg-4 mt-2">
+            <p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+                (uploadHandler)="onUpload($event, uploadCustom)" #uploadCustom>
+                <code>*</code>
+            </p-fileUpload>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover text-center">
+
+    <p-table [value]="paymentReconcilationlist" [scrollable]="false" [totalRecords]="totalRecords"
+        (onLazyLoad)="load($event)" [lazy]="true" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Date</th>
+                <th>WareHouse</th>
+                <th>SK Code</th>
+
+                <th>Client Code</th>
+                <th>Reference Number</th>
+                <th>User Reference Number</th>
+                <th>Added Amount</th>
+
+                <th>Reconciled Amount</th>
+                <th>Transaction Amount</th>
+                <th>Details</th>
+                <th>Status</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr [ngClass]="rowData.Status">
+                <td>{{rowData.CreatedDate | date: 'dd-MM-yyyy , h:mm:ss a' }}</td>
+                <td>{{rowData.WarehouseName}}</td>
+                <td>{{rowData.Skcode}}</td>
+
+                <td>{{rowData.BenefDetails2}}</td>
+                <td>{{rowData.AlertSequenceNo}}</td>
+                <td>{{rowData.UserReferenceNumber}}</td>
+                <td>{{rowData.Amount }}</td>
+
+                <td>{{rowData.ReconciledAmount}}</td>
+                <td>{{rowData.TxnAmount}}
+                </td>
+                <td>
+                    <button type="button" (click)="detailPop(rowData.Id)" class="btn btn-primary">Detail</button>
+                </td>
+                <td>{{rowData.Status}}</td>
+
+            </tr>
+        </ng-template>
+
+    </p-table>
+</div>
+
+<p-dialog header="Details" [modal]="true" appendTo="body" positionTop="0vh" [(visible)]="PopDetails"
+    [style]="{width: '70vw', left: '440px', height: '70%'}" [draggable]="false">
+
+    <!-- <i *ngIf="detailsLoader" class="pi pi-spin pi-spinner" style="font-size: 2rem"></i> -->
+
+    <h2 *ngIf="subVANTransactionList.length == 0"> No record Found</h2>
+
+    <div class="row m-2 pt-2">
+        <div class="col-12 text-center">
+            <p-table *ngIf="subVANTransactionList.length > 0" [value]="subVANTransactionList" [paginator]="true"
+                [rows]="5" [style]="{height: 'auto'}" [scrollable]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Date</th>
+                        <th>Assignment ID</th>
+                        <th>Order ID</th>
+                        <th>Order Amount</th>
+                        <th>Transaction Amount</th>
+                        <th>Status</th>
+                        <th>Uploaded File Status</th>
+                        <th>Reference ID</th>
+                        <th>Refund Amount</th>
+                        <th>Refunded</th>
+
+                        <!-- <th>Action</th> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+                    <tr>
+                        <td>{{rowData.CreatedDate | date: 'dd-MM-yyyy , h:mm:ss a'}}</td>
+                        <td>{{rowData.AssignmentId}}</td>
+                        <td>{{rowData.OrderId}}</td>
+
+                        <td>{{rowData.GrossAmount}}</td>
+                        <td>{{rowData.TxnAmount}}</td>
+
+                        <td>{{rowData.Status}}</td>
+                        <td>{{rowData.FileUploadStatus}}</td>
+
+                        <td>{{rowData.GatewayTransId}}</td>
+                        <td>{{rowData.refundamount}}</td>
+                        <td>{{rowData.IsRefund}}</td>
+                        <!-- <td><button type="button" class="btn btn-primary" (click)="removeFromList(rowIndex)">Remove From
+                                List</button></td> -->
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <!-- <p-footer>
+        <div>
+            
+        </div>
+    </p-footer> -->
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</p-dialog>

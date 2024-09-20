@@ -1,0 +1,393 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2">Sequence</h3>
+    </div>
+</div>
+<!-- //customer Detail Start -->
+<div class="container-fluid">
+<div class="ui-fluid shadow mb-2 bg-white rounded">
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+        (click)="toggleSearch()">
+        <h5 class="m-0">Customer Detail</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div>
+    <div id="search-content p-2" *ngIf="isSearch">
+        <div class="row mr">
+            <div class="col-3">
+                <label>Customer Name</label>
+                <div class="vl">{{rowData?.CustomerName}}</div>
+            </div>
+            <div class="col-3">
+                <label>SkCode</label>
+                <div class="vl">{{rowData?.SkCode}}</div>
+            </div>
+            <div class="col-3">
+                <label>Screen Name</label>
+                <div class="vl">{{rowData?.ScreenName}}</div>
+            </div>
+            <div class="col-3">
+                <label>loan_app_id</label>
+                <div class="vl">{{rowData?.loan_app_id}}</div>
+            </div>
+        </div>
+        <div class="row mr ">
+            <div class="col-3">
+                <label>borrower id</label>
+                <div class="vl">{{rowData?.borrower_id}}</div>
+            </div>
+            <div class="col-3">
+                <label>partner loan app id</label>
+                <div class="vl">{{rowData?.partner_loan_app_id}}</div>
+            </div>
+            <div class="col-3">
+                <label>partner borrower id</label>
+                <div class="vl">{{rowData?.partner_borrower_id}}</div>
+            </div>
+            <div class="col-3" >
+                <label>loan_id</label>
+                <div class="vl" *ngIf="rowData?.loan_id">{{rowData?.loan_id}}</div>
+            </div>
+            <!-- <div class="col-3 "> <button class="btn btn-primary text-right" (click)="generateLoan()">Generate Loan</button></div> -->
+        </div>
+        <div class="row mr "></div>
+        <div class="row mr " *ngIf="rowData?.SequenceNo == 9">
+            <div class="col-3">
+                <label>Loan Offer Amount</label>
+                <div class="vl">{{rowData?.loan_amount}}</div>
+            </div>
+            <div class="col-3">
+                <label>Rate Of Interest</label>
+                <div class="vl">{{rowData?.pricing}}</div>
+            </div>
+        </div>
+       
+    </div>
+</div>
+</div>
+<!-- //customer Detail End -->
+
+<div class="container-fluid">
+
+    <!-- <div class="row">
+        <div class="col-12"> -->
+            <div class="card shadow">
+                <div class="card-content p-2">
+                    <!-- <div class="col-12 text-right">
+                        <button class="btn btn-primary text-right" (click)="onBack()">Back</button>
+                    </div> -->
+                    <!-- <p-tabView (onChange)="onTabChange($event)" [activeIndex]="indexNo" [controlClose]="true" (activeIndexChange)="onTabChange($event)" (onChange)="handleClose($event)"></p-tabView> -->
+            <p-tabView (onChange)="onTabChange($event)" [activeIndex]="indexNo" [controlClose]="true" (activeIndexChange)="onTabChange($event)" (onChange)="handleClose($event)" >
+                <!-- =========PAN Task Section Start here=========== -->
+                <p-tabPanel header="PAN Detail" [rightIcon]="sequenceData?.panDetailsDc && sequenceData?.panDetailsDc[0]?.IsComplete==true && (sequenceData?.panDetailsDc[0]?.IsApprove ==0 ||sequenceData?.panDetailsDc[0]?.IsApprove ==1 ) ? 'pi pi-check' : 'pi pi-times'" [selected]="true">
+                   <div *ngIf="sequenceData && !isVerified && !isRejected">
+                    <app-pan-data [panDetailsDc]="sequenceData.panDetailsDc[0]" [Id]="Id" [loanPosted]="loanPosted"  [isRejected]="isRejected" (onApprovePANInfo)="onApproved($event)" (onRejectPANInfo)="onReject($event)"  (OnhistoryClick)="onHistory($event)"></app-pan-data>
+                   </div>
+                   <div *ngIf="!sequenceData">
+                    <app-pan-data ></app-pan-data>
+                   </div>
+                   <div *ngIf="isVerified || isRejected">
+                    <app-pan-data [panDetailsDc]="sequenceData.panDetailsDc[0]" [Id]="Id" [loanPosted]="loanPosted"  [isRejected]="isRejected" (onApprovePANInfo)="onApproved($event)"  (onRejectPANInfo)="onReject($event)"  (OnhistoryClick)="onHistory($event)"></app-pan-data>
+
+                    <!-- <app-selfie-image [selfieDetailsDcs]="sequenceData.selfieDetailsDcs[0]" [rowData]="rowData" [isRejected]="isRejected" [Id]="Id" (onApprovedSelfie)="onApproved($event)" (onRejectSelfie)="onReject($event)" [isVerified]="isVerified"></app-selfie-image> -->
+                </div>
+                </p-tabPanel>   
+                <!-- =========PAN Task Section End here=========== -->
+    
+                <!-- =========PAN Task Section Start here=========== -->
+                <p-tabPanel header="Selfie"  [rightIcon]="sequenceData?.selfieDetailsDcs && sequenceData?.selfieDetailsDcs[0]?.IsComplete==true && (sequenceData?.selfieDetailsDcs[0]?.IsApprove ==0 ||sequenceData?.selfieDetailsDcs[0]?.IsApprove ==1 )  ? 'pi pi-check' : 'pi pi-times'">
+                    <div *ngIf="sequenceData && !isVerified && !isRejected">
+                     <app-selfie-image [selfieDetailsDcs]="sequenceData.selfieDetailsDcs[0]" [loanPosted]="loanPosted"  [rowData]="rowData" [isRejected]="isRejected" [Id]="Id" (onApprovedSelfie)="onApproved($event)" (onRejectSelfie)="onReject($event)" (OnhistoryClick)="onHistory($event)"></app-selfie-image>
+                    </div>
+                    <div *ngIf="!sequenceData">
+                     <!-- <app-selfie-image ></app-selfie-image> -->
+                    </div>
+                    <div *ngIf="isVerified || isRejected">
+                        <app-selfie-image [selfieDetailsDcs]="sequenceData.selfieDetailsDcs[0]" [loanPosted]="loanPosted"  [rowData]="rowData" [isRejected]="isRejected" [Id]="Id" (onApprovedSelfie)="onApproved($event)" (onRejectSelfie)="onReject($event)" [isVerified]="isVerified" (OnhistoryClick)="onHistory($event)"></app-selfie-image>
+                    </div>
+                 </p-tabPanel>
+                 <!-- =========PAN Task Section End here=========== -->
+
+                <!-- =========Aadhar Card Detail Section Start here=========== -->
+    
+                <p-tabPanel header="Aadhar Card Detail" [rightIcon]="sequenceData?.AadharDetailDcs && sequenceData?.AadharDetailDcs[0]?.IsComplete==true && (sequenceData?.AadharDetailDcs[0]?.IsApprove ==0 ||sequenceData?.AadharDetailDcs[0]?.IsApprove ==1 ) ? 'pi pi-check' : 'pi pi-times'">
+                    <div *ngIf="sequenceData && !isVerified && !isRejected">
+                        <app-aadhar-card-detail [AadharDetailDcs]="sequenceData.AadharDetailDcs[0]" [loanPosted]="loanPosted" [rowData]="rowData" [isRejected]="isRejected" [isFrontUpload]="isFrontUpload" [isBackUpload]="isBackUpload" [Id]="Id" (onApproveAadhar)="onApproved($event)" (onRejectAadhar)="onReject($event)" (OnhistoryClick)="onHistory($event)"></app-aadhar-card-detail>
+                    </div>
+                    <div *ngIf="!sequenceData">
+                        <!-- <app-aadhar-card-detail ></app-aadhar-card-detail> -->
+                    </div>
+                    <div *ngIf="isVerified || isRejected">
+                        <app-aadhar-card-detail [AadharDetailDcs]="sequenceData.AadharDetailDcs[0]" [loanPosted]="loanPosted"  [rowData]="rowData" [isRejected]="isRejected" [Id]="Id" (onApproveAadhar)="onApproved($event)" (onRejectAadhar)="onReject($event)" [isVerified]="isVerified" (OnhistoryClick)="onHistory($event)"></app-aadhar-card-detail>
+                    </div>
+                </p-tabPanel>
+                <!-- =========Aadhar Card Detail Section End here=========== -->
+                <!-- =========Aadhar Verification Task Section Start here=========== -->
+                <!-- <p-tabPanel header="Aadhar Verification">
+                    <app-aadhar-verification></app-aadhar-verification>
+                </p-tabPanel> -->
+                <!-- =========Aadhar Verification Section End here=========== -->
+    
+                <!-- =========Personal Info Section Start here=========== -->
+                <!-- <div *ngIf="RejectDoc == 'Personal Info'"> -->
+                <p-tabPanel header="Personal Info" [rightIcon]="sequenceData?.customerPersonalSDetailsDc && sequenceData?.customerPersonalSDetailsDc[0]?.IsComplete==true && (sequenceData?.customerPersonalSDetailsDc[0]?.IsApprove ==0 ||sequenceData?.customerPersonalSDetailsDc[0]?.IsApprove ==1 )  ? 'pi pi-check' : 'pi pi-times'">
+                    <div *ngIf="sequenceData  && !isVerified && !isRejected">
+                        <app-personal-info [customerPersonalSDetailsDc]="sequenceData.customerPersonalSDetailsDc[0]" [loanPosted]="loanPosted"   [rowData]="rowData" [LeadMasterId]="Id" (onApprovePersonalInfo)="onApproved($event)" (onRejectPersonalInfo)="onReject($event)" (OnhistoryClick)="onHistory($event)"></app-personal-info>
+                    </div>
+                    <div *ngIf="!sequenceData">
+                        <app-personal-info></app-personal-info>
+                    </div>
+                    <div *ngIf="isVerified || isRejected">
+                        <app-personal-info [customerPersonalSDetailsDc]="sequenceData.customerPersonalSDetailsDc[0]" [loanPosted]="loanPosted"   [rowData]="rowData" [LeadMasterId]="Id" (onApprovePersonalInfo)="onApproved($event)" (onRejectPersonalInfo)="onReject($event)" (OnhistoryClick)="onHistory($event)"></app-personal-info>
+                    </div>
+                    <!-- <div *ngIf="RejectDoc == 'Personal Info'">
+                        <app-personal-info [customerPersonalSDetailsDc]="sequenceData.customerPersonalSDetailsDc[0]"  [rowData]="rowData" [LeadMasterId]="Id" (onApprovePersonalInfo)="onApproved($event)" (onRejectPersonalInfo)="onReject($event)"></app-personal-info>
+                    </div> -->
+                </p-tabPanel>
+                <!-- </div> -->
+                <!-- <div *ngIf="RejectDoc != 'Personal Info'">
+                    <p-tabPanel header="Personal Info" [selected]="false" [rightIcon]="sequenceData?.customerPersonalSDetailsDc && sequenceData?.customerPersonalSDetailsDc[0]?.IsComplete==true && (sequenceData?.customerPersonalSDetailsDc[0]?.IsApprove ==0 ||sequenceData?.customerPersonalSDetailsDc[0]?.IsApprove ==1 )  ? 'pi pi-check' : 'pi pi-times'">
+                        <div *ngIf="sequenceData  && !isVerified && !isRejected">
+                            <app-personal-info [customerPersonalSDetailsDc]="sequenceData.customerPersonalSDetailsDc[0]"  [rowData]="rowData" [LeadMasterId]="Id" (onApprovePersonalInfo)="onApproved($event)" (onRejectPersonalInfo)="onReject($event)"></app-personal-info>
+                        </div>
+                        <div *ngIf="!sequenceData">
+                            <app-personal-info></app-personal-info>
+                        </div>
+                        <div *ngIf="isVerified || isRejected">
+                            <app-personal-info [customerPersonalSDetailsDc]="sequenceData.customerPersonalSDetailsDc[0]"  [rowData]="rowData" [LeadMasterId]="Id" (onApprovePersonalInfo)="onApproved($event)" (onRejectPersonalInfo)="onReject($event)"></app-personal-info>
+                        </div>
+                    </p-tabPanel>
+                    </div> -->
+                <!-- =========Personal Info Section End here=========== -->
+
+                <!-- =========Phone Verification Section Start here=========== -->
+                <!-- <p-tabPanel header="Phone Verification">
+                    <app-phone-verification></app-phone-verification>
+                </p-tabPanel> -->
+                <!-- =========Phone Verification Section End here=========== -->
+    
+                <!-- =========Buisness Info Section Start here=========== -->
+    
+                <p-tabPanel header="Buisness Info" [rightIcon]="sequenceData?.businessDetailDc && sequenceData?.businessDetailDc[0]?.IsComplete==true && (sequenceData?.businessDetailDc[0]?.IsApprove ==0 ||sequenceData?.businessDetailDc[0]?.IsApprove ==1 )  ? 'pi pi-check' : 'pi pi-times'">
+                    <div *ngIf="sequenceData && !isVerified && !isRejected">
+                        <app-buisness-info [businessDetailDc]="sequenceData.businessDetailDc[0]"  [loanPosted]="loanPosted"  [rowData]="rowData" [LeadMasterId]="Id" (onApproveBuisnessInfo)="onApproved($event)" (onRejectBuisnessInfo)="onReject($event)" (OnhistoryClick)="onHistory($event)"></app-buisness-info>
+                    </div>
+                    <div *ngIf="!sequenceData">
+                        <app-buisness-info></app-buisness-info>
+                    </div>
+                    <div *ngIf="isVerified || isRejected">
+                        <app-buisness-info [businessDetailDc]="sequenceData.businessDetailDc[0]" [loanPosted]="loanPosted"  [rowData]="rowData" [LeadMasterId]="Id" (onApproveBuisnessInfo)="onApproved($event)" (onRejectBuisnessInfo)="onReject($event)" (OnhistoryClick)="onHistory($event)"></app-buisness-info>
+                    </div>
+                </p-tabPanel>
+                <!-- =========Buisness Info Section End here=========== -->
+                    <!-- =========Bank Detail Section Start here=========== -->
+                    <p-tabPanel header="Bank Detail" [rightIcon]="sequenceData?.bankDetailsDc && sequenceData?.bankDetailsDc[0]?.IsComplete==true && (sequenceData?.bankDetailsDc[0]?.IsApprove ==0 ||sequenceData?.bankDetailsDc[0]?.IsApprove ==1 ) ? 'pi pi-check' : 'pi pi-times'">
+                        <div *ngIf="sequenceData && !isVerified && !isRejected">
+                            <app-bank-details [bankDetailsDc]="sequenceData.bankDetailsDc[0]" [BankStatementDc]="sequenceData?.BankStatementDcs" [loanPosted]="loanPosted"   [rowData]="rowData" [LeadMasterId]="Id" (onApproveBankStmt)="onApproved($event)" (onRejectBankStmt)="onReject($event)" (OnhistoryClick)="onHistory($event)"></app-bank-details>
+                        </div>
+                        <div *ngIf="!sequenceData ">
+                            <!-- <app-bank-details></app-bank-details> -->
+                        </div>
+                        <div *ngIf="isVerified || isRejected">
+                            <app-bank-details [bankDetailsDc]="sequenceData.bankDetailsDc[0]" [BankStatementDc]="sequenceData?.BankStatementDcs" [loanPosted]="loanPosted"  [rowData]="rowData" [LeadMasterId]="Id" (onApproveBankStmt)="onApproved($event)" (onRejectBankStmt)="onReject($event)" [isVerified]="isVerified" (OnhistoryClick)="onHistory($event)"></app-bank-details>
+                        </div>
+    
+                    </p-tabPanel>
+                    <!-- =========Bank Detail Section End here=========== -->
+                 <!-- =========MSME Cerrificate Section Start here=========== -->
+    
+                 <p-tabPanel header="MSME Certificate" [rightIcon]="sequenceData?.MsMeDataDcs && sequenceData?.MsMeDataDcs[0]?.IsComplete==true && (sequenceData?.MsMeDataDcs[0]?.IsApprove ==0 ||sequenceData?.MsMeDataDcs[0]?.IsApprove ==1 )  ? 'pi pi-check' : 'pi pi-times'">
+                    <div *ngIf="sequenceData && !isVerified && !isRejected">
+                        <app-msme-certification [MsMeDataDcs]="sequenceData.MsMeDataDcs[0]" [loanPosted]="loanPosted"  [rowData]="rowData" [isRejected]="isRejected"  [LeadMasterId]="Id" (onApproveMSME)="onApproved($event)" (onRejectMSME)="onReject($event)" (OnhistoryClick)="onHistory($event)"></app-msme-certification>
+                    </div>
+                    <div *ngIf="!sequenceData">
+                        <app-msme-certification></app-msme-certification>
+                    </div>      
+                    <div *ngIf="isVerified || isRejected">
+                        <app-msme-certification [MsMeDataDcs]="sequenceData.MsMeDataDcs[0]" [loanPosted]="loanPosted"  [rowData]="rowData" [isRejected]="isRejected"  [LeadMasterId]="Id" (onApproveMSME)="onApproved($event)" (onRejectMSME)="onReject($event)" (OnhistoryClick)="onHistory($event)"></app-msme-certification>
+                    </div>              
+                </p-tabPanel>
+                <!-- =========MSME Cerrificate Section End here=========== -->
+
+                  <!-- =========Phone Verification Section Start here=========== -->
+                  <div *ngIf="isPageReload">
+                    <p-tabPanel header="Lead Process" [rightIcon]="(rowData?.loan_amount>0 && rowData?.pricing>0 ) ? 'pi pi-check' : 'pi pi-times'">
+                    
+                        <div *ngIf="!isReload">
+                            <app-approve-or-reject [rowData]="rowData" [ButtonActive]="rowData?.ButtonActive" [sequenceDc]="sequenceData" [LeadMasterId]="Id"  [Msg]="rowData?.Msg" (closeLeadProcess)="onReload()" (onSelectedDocReject)="onReject($event)" (IsloanPost)="IsloanPosted($event)" ></app-approve-or-reject>
+    
+                        </div>  
+                        <div *ngIf="isReload">
+                            <app-approve-or-reject [rowData]="rowData" [sequenceDc]="sequenceData" [isReload]="isReload" [LeadMasterId]="Id"  [ButtonActive]="rowData?.ButtonActive" [Msg]="rowData?.Msg" [loan_app_id]="rowData?.loan_app_id" (closeLeadProcess)="onReload()" (onSelectedDocReject)="onReject($event)" (IsloanPost)="IsloanPosted($event)"></app-approve-or-reject>
+                        </div>  
+                    </p-tabPanel>
+                </div>
+                  <div *ngIf="!isPageReload">
+                    <p-tabPanel header="Lead Process"  [selected]="true" [rightIcon]="(rowData?.loan_amount>0 && rowData?.pricing>0 ) ? 'pi pi-check' : 'pi pi-times'">
+                    
+                        <div *ngIf="!isReload">
+                            <app-approve-or-reject [rowData]="rowData" [ButtonActive]="rowData?.ButtonActive" [sequenceDc]="sequenceData" [LeadMasterId]="Id"  [Msg]="rowData?.Msg" (closeLeadProcess)="onReload()" (onSelectedDocReject)="onReject($event)"></app-approve-or-reject>
+    
+                        </div>  
+                        <div *ngIf="isReload">
+                            <app-approve-or-reject [rowData]="rowData" [sequenceDc]="sequenceData" [isReload]="isReload" [LeadMasterId]="Id"  [ButtonActive]="rowData?.ButtonActive" [Msg]="rowData?.Msg" [loan_app_id]="rowData?.loan_app_id" (closeLeadProcess)="onReload()" (onSelectedDocReject)="onReject($event)"></app-approve-or-reject>
+                        </div>  
+                    </p-tabPanel>
+                </div>
+                <!-- <div *ngIf="RejectDoc == 'Personal Info'">
+                  <p-tabPanel header="Lead Process" [selected]="false" [closable]="true">
+                    
+                    <div *ngIf="!isReload">
+                        <app-approve-or-reject [rowData]="rowData" [ButtonActive]="rowData?.ButtonActive" [sequenceDc]="sequenceData" [LeadMasterId]="Id"  [Msg]="rowData?.Msg" (closeLeadProcess)="onReload()" (onSelectedDocReject)="onReject($event)"></app-approve-or-reject>
+
+                    </div>  
+                    <div *ngIf="isReload">
+                        <app-approve-or-reject [rowData]="rowData" [sequenceDc]="sequenceData" [isReload]="isReload" [LeadMasterId]="Id"  [ButtonActive]="rowData?.ButtonActive" [Msg]="rowData?.Msg" [loan_app_id]="rowData?.loan_app_id" (closeLeadProcess)="onReload()" (onSelectedDocReject)="onReject($event)"></app-approve-or-reject>
+                    </div>  
+                </p-tabPanel>
+                
+            </div> -->
+                <!-- =========Phone Verification Section End here=========== -->
+
+
+                <!-- =========LoanOfferRepaymentSchedule Section Start here=========== -->
+    
+                <p-tabPanel header="Loan Offer Repayment Schedule" >
+                    <app-loan-offer-repayment-schedule *ngIf="isLoanOffer"  [rowData]="rowData"  [LeadMasterId]="Id" (refreshParent)="onRefreshParent()"></app-loan-offer-repayment-schedule>
+                </p-tabPanel>
+                <!-- =========LoanOfferRepaymentSchedule Section End here=========== -->
+
+                <!-- =========EAgreement Section Start here=========== -->
+                <p-tabPanel header="EAgreement" [rightIcon]="sequenceData?.eagreementDcs && sequenceData?.eagreementDcs[0]?.IsComplete==true ? 'pi pi-check' : 'pi pi-times'">
+                    <app-e-agreement *ngIf="isEAgreement"  [LeadMasterId]="Id" ></app-e-agreement>
+                </p-tabPanel>
+                <!-- =========EAgreement Section End here=========== -->
+                
+                                    <!-- =========Emandet Section Start here=========== -->
+
+                                    <p-tabPanel header="e-Mandate" >
+                                        <app-emandet-details *ngIf="isEmendet" [LeadMasterId]="Id" ></app-emandet-details>
+                                    </p-tabPanel>
+                                    <!-- =========Emandet Section End here=========== -->
+    <!-- Activity Histroy Section -->
+    <p-tabPanel header="Activity Histroy" >
+        <app-activity-histroy *ngIf="isActivityhistory"  [activityHistoryData]="sequenceData?.LeadActivityProgressesHistDcs" ></app-activity-histroy>
+    </p-tabPanel>
+
+            </p-tabView>
+            </div>
+            </div>
+        <!-- </div>
+    </div> -->
+</div>
+
+<div class="container-fluid" *ngIf="loanDetails && loanDetails.length > 0">
+    <div class="card shadow">
+        <div class="card-content p-2">
+            <p-tabView>
+                <p-tabPanel header="Loan Detail" [selected]="true" >
+                     <p-table   [columns]="scrollableCols" [value]="loanDetails" [scrollable]="true" scrollHeight="400px" >
+                        <ng-template pTemplate="header" let-columns>
+                            <tr >
+                                <th *ngFor="let col of LeadDetailheader" style="width: 110px;" >
+                                    {{col}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData  let-i="rowIndex">
+                            <tr>
+                                <td *ngFor="let col of LeadDetailheader"  style="width: 110px;"  >
+                                        {{rowData[col]}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <h5>* Data Not Found</h5>
+                        </ng-template>
+                    </p-table> 
+                </p-tabPanel>
+            </p-tabView>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="ui-fluid shadow mb-2 bg-white rounded">
+        <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+            (click)="toggleBackgroundSearch()">
+            <h5 class="m-0">Background Run</h5>
+            <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+        </div>
+        <div id="search-content p-2" *ngIf="isOpenBackgroundRun">
+            <p-table #dt [value]="backgroundRunAPIList" 
+            [paginator]="true" [rows]="20" [scrollable]="true"
+            scrollHeight="130vh" text-align: center>
+               <ng-template pTemplate="header">
+                   <tr>
+                    <!-- <th>Screen Name</th>  -->
+                       <th>API Name</th>  
+                       <th>Type/Created Date</th>
+                       <th>Request/Response</th>                                                   
+                       <!-- <th>Created Date</th> -->
+                       <th>Status</th>
+                       <!-- <th>Action</th> -->
+                   </tr>
+               </ng-template>
+               <ng-template pTemplate="body" let-ir let-i="rowIndex">
+                   <tr>
+                       <td>{{ir.ScreenName}}</td>          
+                       <td>{{ir.JsonType}} /<br/>
+                         {{ir.CreatedDate | date: 'medium'}}
+                       </td>                               
+                       <td>
+                        <strong *ngIf="ir.JsonType == 'Request'"><a class="bl ul" href="javascript:void(0);" (click)="onOpenReqJson(ir,ir.ResJson)">Request Data</a></strong>                        
+                        <!-- </td>
+                       <td> -->
+                        <!-- {{ir.ResJson}} -->
+                        <strong *ngIf="ir.JsonType == 'Response'"><a class="rl ul" href="javascript:void(0);" (click)="onOpenResJson(ir,ir.ResJson)">Response Data</a></strong>                        
+                       </td>
+                       <!-- <td>{{ir.CreatedDate | date: 'medium'}}</td>     -->
+                       <td>{{ir.Status}}</td>
+                       <!-- <td>
+                        <button class="btn btn-primary" id="retry" name="retry" (click)="onClickRetry(ir)">Retry</button>
+                       </td> -->
+                   </tr>
+               </ng-template>
+               <ng-template pTemplate="emptymessage">
+                   <h5>* Data Not Found</h5>
+               </ng-template>
+           </p-table>
+        </div>
+    </div>
+    </div>
+
+    <div *ngIf="isOpenJsonPopup">
+        <p-dialog [(visible)]="isOpenJsonPopup" [resizable]="false" positionTop="50" [modal]="true" appendTo="body"
+        [style]="{width: '83%', overflow: 'auto', top: '30px'}">
+        <p-header>
+            <div>
+                <h2
+                    style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                    JSON DATA</h2>
+            </div>
+        </p-header>    
+        <div class="position-relative" style="padding:0px 15px;">  
+            <h4>
+                    <a class="rl" href="javascript:void(0);"> {{jsonData | json}}</a>
+            </h4>
+        </div>
+        <!-- <p-footer></p-footer> -->
+    </p-dialog>
+    </div>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,183 @@
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h4>App Store</h4>
+            <hr style="background-color: white;">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-2">
+                    <label for="City">City</label><br>
+                    <p-multiSelect [style]="{minWidth:''}" id="Cityid" name="CityName" [options]="cityList"
+                        [(ngModel)]="dataset.cityid" (onChange)="GetCityWarehouse(dataset.cityid)"
+                        [panelStyle]="{minWidth:'25em'}" optionLabel="CityName" appendTo="body">
+                    </p-multiSelect>
+                </div>
+
+
+                <div class="col-sm-2">
+                    <label>Select Hub</label><br>
+                    <p-multiSelect [style]="{minWidth:''}" id="warehouse" name="warehouse" [options]="warehouseList"
+                        [(ngModel)]="selectedwarehouse" [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName">
+                    </p-multiSelect>
+
+                </div>
+                <div class="col-sm-2">
+                    <label for="FromDate">Status</label>
+                    <select name="" value="" [(ngModel)]="searchdata.StatusValue" class="form-control">
+                        <option value="All">All</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Accept">Accept</option>
+                        <option value="Reject">Reject</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <label for="FromDate">StartDate</label>
+                    <input type="datetime-local" id="startDate" name="startDate" class="form-control"
+                        [ngModel]="searchdata.startDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="searchdata.startDate  = $event" />
+                </div>
+                <div class="col-sm-2">
+                    <label for="FromDate">ToDate</label>
+                    <input type="datetime-local" id="endDate" name="endDate" class="form-control"
+                        [ngModel]="searchdata.endDate | date:'yyyy-MM-ddTHH:mm'"
+                        (ngModelChange)="searchdata.endDate = $event" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <br>
+            <button (click)="getbrandstorelList(searchdata)" class="btn btn-primary">search</button>
+        </div>
+    </div>
+    <div>
+        <p-table #dt [value]="brandStoreRequestList" [totalRecords]="totalRecords" [lazy]="true"
+            (onLazyLoad)="load($event)" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="130vh"
+            text-align: center>
+
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Sr No</th>
+                    <th>Warehouse</th>
+                    <th>Status</th>
+                    <th>Seller</th>
+                    <th>StartDate</th>
+                    <th>EndDate</th>
+                    <th>Action</th>
+                    <th>IsApproved</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowIndex="rowIndex" let-list>
+                <tr>
+                    <td>{{rowIndex+1}}</td>
+                    <td>{{list.Warehouse}}</td>
+                    <td>{{list.Status}}</td>
+                    <td>{{list.SubCatName}}</td>
+                    <td>{{list.StartDate | date:'medium'}}</td>
+                    <td>{{list.EndDate | date:'medium'}}</td>
+
+                    <td>
+                        <button class="btn btn-primary" (click)="edit(list)">
+                            Details
+                        </button>
+                    </td>
+                    <td>{{list.IsApproved}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+
+<div *ngIf="brandStoreRequestDetails">
+    <p-dialog header="Brand Store Details" [(visible)]="opendetailspopup" [resizable]="false" [modal]="true"
+        appendTo="body" positionTop="10" [style]="{width: '80%',height: '88%',top: '45px'}">
+
+        <div class="row">
+            <div class="col-md-3">
+                <label>WarehouseName</label>
+                <input class="form-control" [(ngModel)]="brandStoreRequestDetails.Warehouse" disabled>
+            </div>
+            <div class="col-md-3">
+                <label>Category</label>
+                <input class="form-control" [(ngModel)]="brandStoreRequestDetails.CategoryName" disabled>
+            </div>
+            <div class="col-md-3">
+                <label>Sub Category</label>
+                <input class="form-control" [(ngModel)]="brandStoreRequestDetails.SubCatName" disabled>
+            </div>
+            <div class="col-md-3">
+                <label>Comment</label>
+                <textarea class="form-control" [(ngModel)]="brandStoreRequestDetails.Comment"></textarea>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-3">
+                <label>StartDate</label>
+                <input class="form-control" [(ngModel)]="brandStoreRequestDetails.StartDate" disabled>
+            </div>
+            <div class="col-md-3">
+                <label>EndDate</label>
+                <input class="form-control" [(ngModel)]="brandStoreRequestDetails.EndDate" disabled>
+            </div>
+            <div class="col-md-3">
+                <label>Status</label>
+                <span *ngIf="brandStoreRequestDetails.IsApproved">
+                    <input class="form-control" [(ngModel)]="brandStoreRequestDetails.Status" disabled>
+                </span>
+                <span *ngIf="!brandStoreRequestDetails.IsApproved"><select class="form-control" name="sa" id="sa"
+                        [(ngModel)]="brandStoreRequestDetails.Status">
+                        <option value="Pending">Pending</option>
+                        <option value="Accept">Accept</option>
+                        <option value="Reject">Reject</option>
+                    </select></span>
+            </div>
+            <div class="col-md-3">
+                <label>Image</label>
+                <br>
+                <div class="form-group" (click)="openImage(brandStoreRequestDetails.ImageUrl)">
+                    <img src="{{baseURL}}{{brandStoreRequestDetails.ImageUrl}}" height="150px" width="150px">
+                </div>
+            </div>
+        </div>
+
+
+        <br>
+        <div class="row">
+
+        </div>
+        <div class="row">
+            <div class="form-actions right col-sm-12 p-3">
+                <span
+                    *ngIf="brandStoreRequestDetails.Status=='Accept' && brandStoreRequestDetails.IsApproved==false && brandStoreRequestDetails.IsActive==true">
+                    <button type="submit" class="btn btn-raised btn-primary"
+                        (click)="Approve(brandStoreRequestDetails)">
+                        <i class="fa fa-check-square-o"></i> Approve</button>
+                </span>
+                <span
+                    *ngIf="!brandStoreRequestDetails.IsActive && brandStoreRequestDetails.IsApproved==false && brandStoreRequestDetails.Status!='Pending' ">
+                    <button type="submit" class="btn btn-raised btn-primary"
+                        (click)="UpdateStatus(brandStoreRequestDetails)">
+                        <i class="fa fa-check-square-o"></i> Update</button>
+                </span>
+            </div>
+        </div>
+    </p-dialog>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>

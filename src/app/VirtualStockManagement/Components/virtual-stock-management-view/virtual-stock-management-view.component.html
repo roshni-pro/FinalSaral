@@ -1,0 +1,216 @@
+<div>
+    <p-toast [style]="{marginTop: '80px'}"></p-toast>
+    <p-blockUI [blocked]="isLoading"></p-blockUI>
+
+  
+    <p-progressSpinner *ngIf="isLoading"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+    <div *ngIf="stocksettle == false">
+
+        <div id="kick-start" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="card-title">Virtual Stock Management View</h6>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-raised btn-raised btn-primary pull-right"
+                            (click)="navToVirtualStockDetailsList()">
+                            View Transactions
+                        </button>
+                       </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <form #itemAutoCompleteForm="ngForm">
+                                <app-item-auto-complete id="cusAuto" name="customerAutoComplete"
+                                    #customerValue="ngModel" [(ngModel)]="itemValue" (setInitialTrue)="initial = false"
+                                    (outputItem)="getStocksList($event)" required>
+                                </app-item-auto-complete>
+                            </form>
+                        </div>
+                        <div class="col-md-1">
+                            <a *ngIf="itemValue"
+                                class="rfsh pull-right" href="javascript:void(0);" (click)="getStocksList(null)">
+                                <i class="fa fa-retweet fa-2x" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12" *ngIf="initial">
+            <div class="row">
+                <div class="col-md-12" style="border: 1px solid black;">
+                    <div>
+                        <h1 style="text-align: center;">View Stocks</h1>
+                        <hr>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-4"  id="DamagedStocks">
+                                    <div  id="DamagedStocks">
+                                        <ul class="list-group borderDiv header" 
+                                             id="DamagedStocks">
+                                            <h4 class="card-title" 
+                                                id="DamagedStocks">
+                                                Damaged Stock</h4>
+                                            <div class="list-group-item" 
+                                                id="DamagedStocks" style="color: black;">
+                                                {{DamagedStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 " id="InReceivedStocks">
+                                    <div id="InReceivedStocks">
+                                        <ul class="list-group borderDiv header" id="InReceivedStocks">
+                                            <h4 class="card-title" id="InReceivedStocks">
+                                                In-received Stock</h4>
+                                            <div class="list-group-item" style="color: black;" id="InReceivedStocks">
+                                                {{InReceivedStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4"  id="ExpiredStocks">
+                                    <div  id="ExpiredStocks">
+                                        <ul class="list-group borderDiv header" 
+                                             id="ExpiredStocks">
+                                            <h4 class="card-title" 
+                                                id="ExpiredStocks">
+                                                Expired Stock</h4>
+                                            <div class="list-group-item" 
+                                                id="ExpiredStocks" style="color: black;">
+                                                {{ExpiredStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-4 " id="DeliveredStocks">
+                                    <div id="DeliveredStocks">
+                                        <ul class="list-group borderDiv header" id="DeliveredStocks">
+                                            <h4 class="card-title" id="DeliveredStocks">
+                                                Delivered Stocks</h4>
+                                            <div class="list-group-item" style="color: black;" id="DeliveredStocks">
+                                                {{DeliveredStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" id="VirtualStocks" >
+                                    <div id="VirtualStocks" >
+                                        <ul class="list-group borderDiv virtualStockHeader"  id="VirtualStocks" >
+                                            <h4 class="card-title" id="VirtualStocks" >
+                                                Virtual Stock</h4>
+                                            <div class="list-group-item" id="VirtualStocks"  style="color: black;">
+                                                {{VirtualStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 "  id="ReservedStocks">
+                                    <div  id="ReservedStocks">
+                                        <ul class="list-group borderDiv header"                                            id="ReservedStocks">
+                                            <h4 class="card-title" 
+                                                id="ReservedStocks">
+                                                Reserved Stock</h4>
+                                            <div  id="ReservedStocks"
+                                                style="color: black;" class="list-group-item">
+                                                {{ReservedStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-4"  id="FreeStocks">
+                                    <div  id="FreeStocks">
+                                        <ul class="list-group borderDiv header" 
+                                             id="FreeStocks">
+                                            <h4 class="card-title"  id="FreeStocks">
+                                                Free Stock</h4>
+                                            <div  id="FreeStocks"
+                                                class="list-group-item" style="color: black;">
+                                                {{FreeStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 " id="InTransitStocks">
+                                    <div id="InTransitStocks">
+                                        <ul class="list-group borderDiv header" id="InTransitStocks">
+                                            <h4 class="card-title" id="InTransitStocks">
+                                                In-Transit Stock</h4>
+                                            <div class="list-group-item" style="color: black;" id="InTransitStocks">
+                                                {{InTransitStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4"  id="RTVStocks">
+                                    <div  id="RTVStocks">
+                                        <ul class="list-group borderDiv header" 
+                                             id="RTVStocks">
+                                            <h4 class="card-title"  id="RTVStocks">
+                                                Rtv
+                                                Stock</h4>
+                                            <div  id="RTVStocks"
+                                                class="list-group-item" style="color: black;">
+                                                {{RTVStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-4" id="RTDStocks">
+                                    <div id="RTDStocks">
+                                        <ul class="list-group borderDiv header" id="RTDStocks">
+                                            <h4 class="card-title" id="RTDStocks">RTD Stock</h4>
+                                            <div id="RTDStocks" class="list-group-item" style="color: black;">
+                                                {{RTDStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                </div>
+                                <div class="col-md-4"  id="CurrentStocks">
+                                    <div  id="CurrentStocks">
+                                        <ul class="list-group borderDiv header"                                             id="CurrentStocks">
+                                            <h4 class="card-title" 
+                                                id="CurrentStocks">
+                                                Current Stocks
+                                            </h4>
+                                            <div  id="CurrentStocks"
+                                                class="list-group-item" style="color: black;">
+                                                {{CurrentStocks.quantity}}
+                                            </div>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                      
+                    </div>
+                </div>
+              
+            </div>
+        </div>
+    </div>
+
+</div>
+

@@ -1,0 +1,30 @@
+export interface LMDVehicle {
+    VehicleNo: string;
+    VehicleType: string;
+    CreatedDate: string;
+    HubName: string;
+    TransportName: string;
+    NumberOfTrips: number;
+    TripNos: string;
+    ThresholdOrderCount: number;
+    OrderCount: number;
+    UtilizationPercentageOnOrderCount: number;
+    ThresholdOrderAmount: number;
+    OrderValue: number;
+    UtilizationPercentageOnOrderValue: number;
+    InProcessOrderCount: number;
+    InProcessOrderAmount: number;
+    DeliverdCount: number;
+    ThresholdVSDeliveryPercentageOnOrderCount: number;
+    CarriedVSDeliveryPercentageOnOrderCount: number;
+    DeliverdValue: number;
+    RedispatchCount: number;
+    RedispatchValue: number;
+    DCCount: number;
+    DCValue: number;
+    ReattemptCount: number;
+    ReattemptValue: number;
+    WorkingDuration: string;
+    Assignments: string;
+    TotalKmExcludingRunningTrip: number;
+}

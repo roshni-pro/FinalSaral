@@ -1,0 +1,115 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+
+<!-- <div class="card-header">
+    <h1 class="h11"> CP Matrix<i class="fa fa-th-large"></i></h1>
+</div>-->
+<br>
+<br> 
+<div class="row ">
+    <div class="col-sm-12">
+        <form class="form">
+            <div class="form-body">
+                <form class="form " name="form">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="name"><b>Month</b></label>
+                                <select class="form-control" id="Month" name="Month" [(ngModel)]="FinalData.Month">
+                                    <option value="">Select</option>
+                                    <option [ngValue]="1">January</option>
+                                    <option [ngValue]="2">February</option>
+                                    <option [ngValue]="3">March</option>
+                                    <option [ngValue]="4">April</option>
+                                    <option [ngValue]="5">May</option>
+                                    <option [ngValue]="6">June</option>
+                                    <option [ngValue]="7">July</option>
+                                    <option [ngValue]="8">August</option>
+                                    <option [ngValue]="9">September</option>
+                                    <option [ngValue]="10">October</option>
+                                    <option [ngValue]="11">November</option>
+                                    <option [ngValue]="12">December</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="Year"><b>Year</b></label>
+                                <select id="years" name="years" [(ngModel)]="FinalData.Year" class="form-control">
+                                    <option *ngFor="let year of years" [ngValue]="year">
+                                        {{year}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2" style="padding-top: 30px">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary "
+                                    style="margin-left:15px" (click)="Search(FinalData)">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-2" style="padding-top: 30px">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-raised btn-primary" >Export</button>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </form>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- <br>
+<br>
+ -->
+
+<div class="ui-g ex1-cpmtrx" *ngIf="cpmatrixList && columnList">
+    <div class="ui-g-12">
+        <!-- <table class="table table-striped"> -->
+        <div class="position-relative">
+            <p-table class="cpmatrixListTable" #dt [value]="cpmatrixList" [paginator]="true" [rows]="20" [scrollable]="true" scrollHeight="70vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <!-- <th class="tde"><b>#</b></th> -->
+                        <th class="tdb" style="min-width: 300px; width:300px"><b>Item</b></th>
+                        <th *ngFor="let col of columnList" class="tdc"><b>{{col}}</b></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row let-rowIndex="rowIndex" >
+                    <tr class="ex1">
+                        <!-- <td class="tde">
+                            <b>{{rowIndex +1}}.</b>
+                        </td> -->
+                        <td class="tdb" style="min-width: 300px; width:300px">
+                            <!-- {{row.ItemName}} -->
+                            <b> {{row.ItemName}}</b>
+                        </td>
+                        <td *ngFor="let col of columnList" class="tdc {{row.columnList[col].class}}">
+                            &nbsp;&nbsp;<b>P:</b>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <!-- <b>OrderAmount:</b>{{row.columnList[col].OrderAmount? row.columnList[col].OrderAmount: '-'}} -->
+                            {{row.columnList[col].OrderAmount? row.columnList[col].OrderAmount: '0'}}
+                            <br>   
+                            <span class="tde">&nbsp;<b>C:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{row.columnList[col].Delta? row.columnList[col].Delta: '00000.00'}}</span>
+                            <!-- [ngStyle]="(row.columnList[col].Delta != 0)?{'background-color': 'lime'}:{'background-color':'white'}" -->
+                            <br>
+                               <span class="tde">&nbsp;<b><ins><span>&#916;</span></ins>
+                                    : </b>&nbsp;&nbsp;&nbsp;{{row.columnList[col].difference? row.columnList[col].difference: '0'}}</span>
+                                <br>               
+                          
+                            <!-- <span class="tde"><b>%
+                                    : </b>{{row.columnList[col].percentage? row.columnList[col].percentage: '0'}}</span> -->
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".10s"></p-progressSpinner>

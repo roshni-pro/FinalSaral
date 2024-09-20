@@ -1,0 +1,198 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+<div class="row m-0">
+  <div class="col-12">
+    <!-- Kick start -->
+    <div id="kick-start" class="card">
+      <div class="card-header">
+        <h4 class="card-title">Expenses</h4>
+       
+        
+
+      <p-confirmDialog #cd appendTo="body" header="Confirmation">
+        <p-footer>
+          <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+          <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+        </p-footer>
+      </p-confirmDialog>
+     
+      </div>
+      
+      <div class="card-content" *ngIf="expense">
+        <div class="card-body">
+          <div class="px-3">
+            <form class="form" #addexpensedatafrom="ngForm">
+              <div class="form-body">
+                <div class="row">
+                  <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                    <fieldset class="form-group">
+                      <label for="basicInput">Name</label>
+                      <input type="text" class="form-control" id="basicInput" name="expenseName" [(ngModel)]="expense.Name" required="1"  #expenseName="ngModel">
+                      <div *ngIf="isInvalid && !expenseName.valid && expenseName.errors.required">
+                        <code> Name is required</code>
+                    </div>
+                    </fieldset>
+                  </div>
+                
+                  <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                    <fieldset class="form-group">
+                      <label for="debitledgertype">Debit Ledger Type</label>
+                      <select class="form-control" id="expCreditLedgerTypeId" name="expCreditLedgerTypeId" 
+                      #expensedebitLedgerTypeId="ngModel"  [(ngModel)]="expense.DebitLedgerTypeId" (change)="debitLedgerChange()" required="1" >
+                            <option [value]="null">select</option>
+                            <option [value]="opt.ID" *ngFor="let opt of expenseLedgerTypeList;">{{opt.Name}}</option>
+                        </select>
+                        <div *ngIf="isInvalid && !expensedebitLedgerTypeId.valid && expensedebitLedgerTypeId.errors.required">
+                          <code> Debit Ledger Type is required</code>
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                    <fieldset class="form-group">
+                      <label for="helpInputTop">Debit Ledger</label>
+                      <p-autoComplete id="expenseSelectedCreditLedgerId" name="expenseSelectedCreditLedgerId"
+                            [(ngModel)]="expenseSelectedCreditLedger" [suggestions]="expenseLedgerList" field="Name" 
+                            (completeMethod)="expenseSearchLedger(expense.DebitLedgerTypeId, $event)"  #expensedebitLedger="ngModel" required="1"
+                            (onSelect)="onSelectDebitExpense($event, expense)"
+                           ></p-autoComplete>
+                           <div *ngIf="isInvalid && !expensedebitLedger.valid && expensedebitLedger.errors.required">
+                            <code> Debit Ledger is required</code>
+                        </div>
+                    </fieldset>
+                  </div>
+
+                </div>
+                <div class="row">
+                  <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                    <fieldset class="form-group">
+                      <label for="Checker">Select Checker</label>
+                        <p-autoComplete id="checkIdInput" name="checkIdInput"
+                        [(ngModel)]="expenseCheckerId" [suggestions]="checkerList" field="Name" 
+                        (completeMethod)="getCheckerList($event)"  #checkIdInputModal="ngModel" required="1"
+                        (onSelect)="onSelectChecker($event, expense)"
+                        ></p-autoComplete>                         
+                       <div *ngIf="isInvalid && !checkIdInputModal.valid && checkIdInputModal.errors.required">
+                          <code> Checker is required</code>
+                      </div>
+                    </fieldset>
+                  </div>
+                
+                  <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                    <div class="form-group">
+                        <label for="Name">Is TDS Applied </label><br>
+                        <p-inputSwitch id="IsTDSAppliedinput" name="IsTDSAppliedinput"
+                            [(ngModel)]="expense.IsTDSApplied">
+                        </p-inputSwitch>
+                    </div>
+                </div>
+                  <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
+                    <div class="form-group">
+                        <label for="Name">Is GST Applied </label><br>
+                        <p-inputSwitch id="IsGSTAppliedInput" name="IsGSTAppliedInput"
+                            [(ngModel)]="expense.IsGSTApplied">
+                         </p-inputSwitch>
+                    </div>
+                </div>
+
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <div class="text-right">
+                      <button type="button" (click)="openAddNewCreditAccount()"
+                        class="btn mr-1 btn-raised btn-primary" *ngIf="expense.Id>0" >Add New Credit Account </button>
+                          <button type="button" (click)="save(addexpensedatafrom)" class="btn mr-1 btn-raised btn-primary" *ngIf="expense.Id==null" >Save </button>
+                          <button type="button" (click)="save(addexpensedatafrom)" class="btn mr-1 btn-raised btn-primary" *ngIf="expense.Id>0" >Update </button>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="row">
+
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isShowExpenseDetail">
+<app-expense-details [expenseDetails]="editableExpenseDetails" [isShowExpenseDetail]="isShowExpenseDetail" (closeDetails)="closeExpenseDetails($event)" (getDetailsLists)="getExpenseDetailsLists($event)" >
+</app-expense-details>
+</div>
+<!-- For show the List data  -->
+
+<div class="position-relative">
+  <div class="position-relative">
+    <p-table #dt  [value]="expenseDetailsList" >
+      <ng-template pTemplate="header">
+        <tr>
+          <th >
+            Id
+          </th>
+          <th >
+            Name
+          </th>
+          <th >
+            ExpenseID
+          </th>
+          <th >
+            CreditLedgerTypeName
+          </th>
+          <th >
+            IsFixedCreditLedgerId
+          </th>
+          <th >
+            IsMasterLedger
+          </th>
+          <th>
+            CreditLedgerName
+          </th>
+          <th>
+          Action
+          </th>
+       
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr >
+         
+          <td >
+            {{rowData.Id}}
+          </td>
+          <td >
+            {{rowData.Name}}
+          </td>
+          <td >
+            {{rowData.ExpenseID}}
+          </td>
+          <td >
+            {{rowData.CreditLedgerTypeName}}
+          </td>
+          <td >
+            {{rowData.IsFixedCreditLedgerId}}
+          </td>
+          <td >
+            {{rowData.IsMasterLedger}}
+          </td>
+          <td >
+            {{rowData.CreditLedgerName}}
+          </td>
+          <td>
+            <button type="button" (click)="removeExpenseDetails(rowData.Id)" class="btn mr-1 btn-raised btn-primary"  > <i
+              class="pi pi-trash"></i></button>
+              <button type="button" (click)="editExpenseDetails(rowData)" class="btn mr-1 btn-raised btn-primary"  > <i
+                class="fa fa-edit"></i></button>
+        
+          </td>
+          
+        </tr>
+      </ng-template>
+    </p-table>
+    <br><br>
+  </div>
+</div>
+</div>

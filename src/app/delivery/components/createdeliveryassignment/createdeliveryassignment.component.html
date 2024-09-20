@@ -1,0 +1,313 @@
+<div class="ui-fluid">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+      <div class="header">
+        <h3 class="m-2">Create Assignment</h3>
+      </div>
+    </div>
+    <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded ">
+      <div class="card-content">
+        <div class="mr-12">
+          <form #heatMapForm="ngForm">
+              <div class="row">                
+                  <div class="col-sm-2">
+                    <div class="form-group">
+                      <label for="warehouse"><b>Select Warehouse:</b></label>
+                      <select id="city" name="city" class="form-control" [(ngModel)]="WarehouseId" (change)="onsearch(WarehouseId)">
+                        <option value="">--Select Warehouse--</option>
+                        <option *ngFor="let wh of warehouseList"  [ngValue]="wh.WarehouseId">
+                          {{ wh.WarehouseName }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>         
+                  <div class="col-sm-2">
+                    <div class="form-group">
+                      <label for="dboy"><b>Select Delivery Boy:</b></label>
+                      <select placeholder="select" id="dboy" name="dboy" class="form-control" [(ngModel)]="deliveryBoy" (change)="onsearchAgent(deliveryBoy)">
+                        <option value="">--Select Delivery Boy--</option>
+                        <option *ngFor="let dboy of DeliveryBoyList" [ngValue]="dboy">
+                          {{ dboy.DisplayName }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-2">
+                    <div class="form-group">
+                      <label for="Agent"><b>Select Agent:</b></label>
+                      <select name="Agent" class="form-control" [(ngModel)]="selectedAgentId" (ngModelChange)="getdata()">
+                        <option value="">--Select Agent--</option>
+                        <option *ngFor="let Agent of AgentList" [ngValue]="Agent.AgentCode">
+                          {{Agent.DisplayName}}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+              </div>   
+          </form> 
+        </div>          
+      </div>           
+    </div>
+ 
+    
+    <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded">
+      <div class="text-right">
+          <button class="btn btn-primary"  (click)="assignorders()" *ngIf="assignBtn==true">Assign Orders</button>
+          <button class="btn btn-primary" style="margin-right: 30PX;" *ngIf="assignBtn==false" disabled>Assign Orders</button>
+          <button class="btn btn-warning" (click)="issuance()" *ngIf="finalizebtn==true" style="background-color: #1b48cf; color: #ffffff; border: aliceblue;" >Finalize Order</button>
+      </div>
+      <h3 class="m-2" style="font-weight: 500;" >New Order</h3>
+      <div class="table">
+        <p-table [value]="DBoyOrdersNew">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width:180px">Select Order</th>
+              <th style="width:80px">Order Id</th>
+              <th style="width:180px">Order details</th>
+              <th style="width:230px">Customer Info</th>
+              <th style="width:130px">Cluster Name</th>
+              <th>Delivery Address</th>
+              <th>Delivery Date</th>                       
+              <th>Product Details</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData>
+            <tr>
+              <td style="width:180px">
+                  <span *ngIf="rowData.OrderType<5">
+                      <span *ngIf="rowData.IsGenerateIRN==false">
+                          <span *ngIf="(rowData.EwayBillNumber==null && rowData.GrossAmount >=50000) ">
+                              <label style="color:red;"> <b> awaiting</b> <br />for EwayBillNumber :<br /> ({{rowData.Distance}} : KM)</label>
+                          </span>
+                          <span *ngIf="(rowData.OrderType==4 && rowData.IsNotCreateAssingment==true) ">
+                              <label style="color:red;"> <b> awaiting</b> <br />for Remainning Amonut <br /> For RDS Customer</label>
+                          </span>
+                          <span *ngIf="( (rowData.GrossAmount <=50000)  || (  rowData.EwayBillNumber!=null )  || (  rowData.EwayBillNumber==null && rowData.GrossAmount < 50000 ) ) &&  rowData.IsNotCreateAssingment==false && !rowData.IsClusterStoppedManualAssignment">
+                            <p-checkbox class="11" (onChange)="checkbox($event,rowData)"></p-checkbox>
+                          </span>
+                      </span>
+                      <span *ngIf="rowData.IsGenerateIRN==true">
+                          <span *ngIf="(rowData.IRNNo==null || rowData.IRNNo==undefined ||  rowData.IRNNo=='')">
+                              <label style="color:red;"> <b> awaiting</b> <br />for IRN Number<br />  Generation</label>
+                          </span>
+                          <span *ngIf="(rowData.EwayBillNumber==null && rowData.GrossAmount >=50000)">
+                              <label style="color:red;"> <b> awaiting</b> <br />for EwayBillNumber :<br /> ({{rowData.Distance}} : KM)</label>
+                          </span>
+                          <span *ngIf="(rowData.OrderType==4 && rowData.IsNotCreateAssingment==true)">
+                              <label style="color:red;"> <b> awaiting</b> <br />for Remainning Amonut <br /> For RDS Customer</label>
+                          </span>
+                          <span *ngIf="((rowData.GrossAmount <=50000) || ( rowData.EwayBillNumber!=null )  || (rowData.EwayBillNumber==null && rowData.GrossAmount < 50000 ) ) &&  rowData.IsNotCreateAssingment==false && !rowData.IsClusterStoppedManualAssignment && !(rowData.IRNNo==null || rowData.IRNNo==undefined ||  rowData.IRNNo=='')">
+                            <p-checkbox class="12" (onChange)="checkbox($event,rowData)"></p-checkbox>
+                          </span>
+                      </span>
+                      <span *ngIf="rowData.IsClusterStoppedManualAssignment">
+                          <label style="color:mediumblue;"> <b> Manual Assignment</b> <br /> stopped at Warehouse level.</label>
+                      </span>
+                  </span>
+                  <span *ngIf="rowData.OrderType==5">
+                      <p-checkbox class="13" (onChange)="checkbox($event,rowData)"></p-checkbox>
+                  </span>
+              </td>
+              <td style="width:80px">{{rowData.OrderId}}</td>
+              <td style="width:180px">Amount:<span style="font-weight: bold;">&nbsp;{{rowData.GrossAmount}}</span><br> Invoice_No: {{rowData.invoice_no}}</td>
+              <td style="width:230px"><span style="font-weight: bold;">{{rowData.Skcode}}</span><br>{{rowData.ShopName}}-{{rowData.CustomerName}}<br>{{rowData.Customerphonenum}}<br>Customer Type:{{rowData.CustomerType}}<br><span style="color: red;">({{rowData.Distance}}:KM)</span></td>
+              <td style="width:130px">{{rowData.ClusterName}}</td>
+              <td>{{rowData.BillingAddress }}</td>
+              <td>{{rowData.Deliverydate | date:'medium' }}</td>
+              <td>
+                <button type="button" class="btn btn-raised btn-raised btn-warning mr-1" (click)="getOrderDetails(rowData)"
+                data-toggle="modal" data-target="#exampleModal">
+                  Details
+                </button>
+            </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div> 
+
+    <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table">
+      <h3 class="m-2" style="font-weight: 500;">Redispatched Order</h3>
+      <p-table [value]="DBoyOrdersRedipatch">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width:150px">Select Order</th>
+            <th style="width:80px">Order Id</th>
+            <th>Order details</th>
+            <th style="width:230px">Customer Info</th>
+            <th>Cluster Name</th>
+            <th>Delivery Address</th>
+            <th>Delivery Date</th> 
+            <th>Delivery Charge</th>
+            <th style="width:130px">Redispatch count</th>                      
+            <th style="width:130px">Product Details</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr>
+            <td style="width:150px" *ngIf="rowData.IsApproved == false">
+                <span *ngIf="(rowData.IsCreateAssingmentReDispatched==true && rowData.isCallbackCheck == false)">
+                  <label *ngIf="rowData.IsClusterStoppedManualAssignment" style="color:mediumblue;"> <b> Manual Assignment</b> <br /> stopped at Warehouse level.</label>
+                  <span *ngIf="!rowData.IsClusterStoppedManualAssignment">
+                    <p-checkbox  *ngIf="rowData.ReDispatchCount<2" (onChange)="checkbox($event,rowData)"></p-checkbox>
+                  </span>
+                  <label *ngIf="rowData.ReDispatchCount==2" disabled style="color:red;"> Waiting For Regional OutBound Lead Approval </label>
+                  <label *ngIf="rowData.ReDispatchCount==3" disabled style="color:red;"> Waiting For Zonal OutBound Lead Approval</label>
+              </span>
+              <span *ngIf="(rowData.IsNotCreateAssingmentAwaitingReDispatchedOrderId==true)">
+                  <label style="color:red;"> <b> awaiting</b> <br />for Customer confrim <br /> the Redispatched Order <br />({{rowData.ConformationDate | date :'dd/MM/yyyy'}})</label>
+              </span>
+              <span *ngIf="(rowData.isCallbackCheck == true)">
+                  <label style="color:red;"><b> awaiting for</b> <br /> <b> Customer Delight </b> <br />Team Response</label>
+              </span>
+              <span *ngIf="(rowData.IsNotCreateAssingmentAwaitingReDispatchedOrderId==false && rowData.IsCreateAssingmentReDispatched==false && rowData.isCallbackCheck == false)">
+                  <label *ngIf="rowData.IsClusterStoppedManualAssignment" style="color:mediumblue;"> <b> Manual Assignment</b> <br /> stopped at Warehouse level.</label>
+
+                  <span *ngIf="!rowData.IsClusterStoppedManualAssignment">
+                    <p-checkbox  *ngIf="rowData.ReDispatchCount<2" (onChange)="checkbox($event,rowData)"></p-checkbox>
+                  </span>
+                  <label *ngIf="rowData.ReDispatchCount==2" disabled style="color:red;"> Waiting For Regional OutBound Lead Approval </label>
+                  <label *ngIf="rowData.ReDispatchCount==3" disabled style="color:red;"> Waiting For Zonal OutBound Lead Approval</label>
+              </span>
+            </td>
+            <td *ngIf="rowData.IsApproved == true">
+              <label *ngIf="rowData.IsClusterStoppedManualAssignment" style="color:mediumblue;"> <b> Manual Assignment</b> <br /> stopped at Warehouse level.</label>
+                <span *ngIf="!rowData.IsClusterStoppedManualAssignment">
+                  <p-checkbox  (onChange)="checkbox($event,rowData)"></p-checkbox>
+                </span>
+            </td>
+            <td>{{rowData.OrderId}} <br>
+              <span style="color:red;">
+                {{rowData.IsPrimeCustomer!=null && rowData.IsPrimeCustomer?"* Fayda Club ":""}}
+              </span>
+            </td>
+            <td style="width:80px">Amount:<span style="font-weight: bold;">&nbsp;{{rowData.GrossAmount}}</span><br> Invoice_No: {{rowData.invoice_no}}</td>
+            <td style="width:230px"><span style="font-weight: bold;">{{rowData.Skcode}}</span><br>{{rowData.ShopName}}-{{rowData.CustomerName}}<br>{{rowData.Customerphonenum}}<br>Customer Type:{{rowData.CustomerType}}</td>
+            <td>{{rowData.ClusterName}}</td>
+            <td>{{rowData.BillingAddress}}</td>
+            <td>{{rowData.Deliverydate | date:'medium' }}</td>
+            <td style="width:130px">{{rowData.deliveryCharge}}</td>
+            <td style="width:130px">{{rowData.ReDispatchCount}}</td>
+            <td>
+              <button type="button" class="btn btn-raised btn-raised btn-warning mr-1" (click)="getOrderDetails(rowData)"
+                data-toggle="modal" data-target="#exampleModal">
+                Details
+              </button>
+            </td>
+            <td>          
+              <button *ngIf="rowData.IsApproved == false && rowData.ReDispatchCount>=2 && rowData.SendApproval == false" type="button" class="btn btn-info sendBtn" (click)="sendapproval(rowData)">Send Approval
+              </button>
+              <button *ngIf="rowData.IsApproved == false && rowData.ReDispatchCount>=2 && rowData.SendApproval == true" type="button" class="btn btn-info appBtn" [disabled]="rowData.SendApproval == true">Sent Approval
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>  
+
+    <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table ">
+      <!-- <div class="text-right">
+        <button class="btn btn-warning" (click)="issuance()" *ngIf="finalizebtn==true" style="background-color: #1b48cf; color: #ffffff; border: aliceblue;" >Finalize Order</button>
+    </div> -->
+      <h5 class="m-2" style="font-weight: 500;">New Assignment Product List</h5>
+          <p-table [value]="allproducts"  
+          [scrollable]="true" scrollHeight="70vh" class="center" >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width:110px">S.No</th>
+            <th  style="width:250px">Brand Name</th>
+            <th>Product Name</th>
+            <th  style="width:200px">QTY</th>
+            <th>Orders And QTYs</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" >
+          <tr>
+            <td style="width:110px">{{rowIndex+1}}</td>
+            <td  style="width:250px">{{rowData.SubsubcategoryName}}</td>
+            <td>{{rowData.itemname}}</td>
+            <td  style="width:200px">{{rowData.qty}}</td>
+            <td>{{rowData.OrderQty}}</td>
+          </tr>
+        </ng-template>
+        </p-table>
+       <div class="mt-3">
+        <h5 class="m-2"  style="font-weight: 500;">Redispatch Assignment Product List</h5>
+        <p-table [value]="allproductsRedispatch"  
+        [scrollable]="true" scrollHeight="70vh" class="center" >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:110px">S.No</th>
+          <th style="width:250px">Brand Name</th>
+          <th>Product Name</th>
+          <th style="width:200px">QTY</th>
+          <th>Orders And QTYs</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" >
+        <tr>
+          <td style="width:110px">{{rowIndex+1}}</td>
+          <td style="width:250px">{{rowData.SubsubcategoryName}}</td>
+          <td>{{rowData.itemname}}</td>
+          <td style="width:200px">{{rowData.qty}}</td>
+          <td>{{rowData.OrderQty}}</td>
+        </tr>
+      </ng-template>
+        </p-table>
+       </div>     
+        <label class="mt-4" style="font-weight: bold;font-size: 150%;">Total Price of Items:  {{totalAmount | number : '1.0-2' }}/-</label>
+    </div>  
+</div> 
+
+<p-dialog [(visible)]="display" appendTo="body" positionTop="50vh"  [style]="{width: '60vw'}" modal="true">
+    <h4><span style="font-weight: bold;">Order Details</span></h4>
+    <p-table [value]="orderData"  
+      [scrollable]="true" scrollHeight="70vh" class="center" >
+    <ng-template pTemplate="header">
+      <tr>
+        <th  style="width:300px">Product Name</th>
+        <th>Item Numer</th>
+        <th >QTY</th>
+        <th>Unit Price</th>
+        <th>Total Amount</th>
+        <th>Size Per Unit</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData >
+      <tr>
+        <td  style="width:300px">{{rowData.itemname}}</td>
+        <td>{{rowData.itemNumber}}</td>
+        <td>{{rowData.qty}}</td>
+        <td>{{rowData.UnitPrice}}</td>
+        <td>{{rowData.TotalAmt}}</td>
+        <td>{{rowData.SizePerUnit}}</td>
+      </tr>
+    </ng-template>
+    </p-table> 
+    <div *ngIf="freeItemStatus">
+      <h4 class="mt-4"><span style="font-weight: bold;">Free Item</span></h4>
+    <p-table [value]="tableDetails"  
+      [scrollable]="true" scrollHeight="70vh" class="center" >
+      <ng-template pTemplate="header">
+        <tr>
+        <th>Product Name</th>
+        <th>Free Quantity</th>
+        <th>Item MRP</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData >
+        <tr>
+        <td>{{rowData.FreeItemName}}</td>
+        <td>{{rowData.NoOffreeQuantity}}</td>
+        <td>{{rowData.FreeItemMRP}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    </div>   
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

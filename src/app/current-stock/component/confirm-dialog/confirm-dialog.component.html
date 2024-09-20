@@ -1,0 +1,41 @@
+<div *ngIf="confirmModel && confirmModel.show">
+    <div id="alert-blk-ui">
+        <p-blockUI [blocked]="confirmModel.show"></p-blockUI>
+    </div>
+
+    <p-dialog contentStyleClass="abc" [(visible)]="confirmModel.show" [positionTop]="0"  appendTo="body" [blockScroll]="true" [closable]="false"
+        [style]="{width: '75vw'}">
+        <div class="hrd cntr">
+            
+        </div>
+        <div class="cntr bddt">
+            <p-table [value]="currentStockBatchMasterList" [paginator]="true" [rows]="10" [scrollable]="true"
+            scrollHeight="65vh">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>BatchCode</th>
+                    <th>Qty</th>
+                    <!-- <th>CreatedDate</th> -->
+                    <th>ExpiryDate</th>
+                    <th>MFGDate</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData>
+                <tr class="classForHoverEffect">
+                    <td>{{rowData.BatchCode}}</td>
+                    <td>{{rowData.Qty}}</td>
+                    <!-- <td>{{rowData.CreatedDate | date : 'medium'}}</td> -->
+                    <td>{{rowData.ExpiryDate | date : 'mediumDate'}}</td>
+                    <td>{{rowData.MFGDate | date : 'mediumDate'}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        </div>
+
+        <p-footer>
+            <div class="cntr">
+                <button class="btn btn-raised btn-primary m-2 shadow"  id="nBtn" (click)="onDismiss()">Close</button>
+            </div>
+        </p-footer>
+    </p-dialog>
+</div>

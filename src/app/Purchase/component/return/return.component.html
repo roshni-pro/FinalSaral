@@ -1,0 +1,465 @@
+<div class="ui-fluid">
+    <div style="margin-top: 70px;">
+        <p-header>
+            <h1>Apply Cancel Request</h1>
+        </p-header>
+        <br>
+    </div>
+    <div class="ui-g">
+
+        <p-accordion *ngIf="PurchaseOrderData">
+            <p-accordionTab *ngIf="PurchaseOrderDetails && PurchaseOrderDetails.length">
+                <p-header>
+                    <span style=" display: inline-block;" class="index"> Purchase Order Details </span>
+                </p-header>
+                <ng-container>
+                    <div class="page page-table" *ngIf="PurchaseOrderData">
+                        <section id="divtoPrint" class="panel panel-default table-dynamic">
+                            <div class="panel-body">
+                                <!-- <div style="height: 52px;">
+                                    <a style="float: right;color: red;" (click)="deletePoGrIr(PurchaseOrderData.PurchaseOrderId, 'PO')">
+                                        Delete &nbsp;
+                                        <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                    </a>
+                                </div> -->
+                                <form name="form_constraints" id="divtoPrint"
+                                    class="form-validation ng-pristine ng-invalid ng-invalid-required ng-invalid-equal">
+                                    <br>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="form-group col-md-3">
+                                                <label for="site-name"> Invoice </label><br />
+                                                <input id="site-name" type="text" class="form-control"
+                                                    name="poInviceNumber" disabled
+                                                    [(ngModel)]="PurchaseOrderData.PoInvoiceNo" />
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label for="site-name"> Purchase order Id </label><br />
+                                                <input id="site-name" type="text" class="form-control"
+                                                    name="prchaseOrderId" disabled
+                                                    [(ngModel)]="PurchaseOrderData.PurchaseOrderId" />
+                                            </div>
+
+                                            <div class="form-group col-md-3">
+                                                <label for="site-name"> Suplier Name</label><br />
+                                                <input id="site-name" type="text" class="form-control" name="supplrname"
+                                                    disabled [(ngModel)]="PurchaseOrderData.SupplierName" />
+                                            </div>
+
+                                            <div class="form-group col-md-3">
+                                                <label for="site-name"> Depo Name</label><br />
+                                                <input id="site-name" type="text" class="form-control" name="deponame"
+                                                    disabled [(ngModel)]="PurchaseOrderData.DepoName" />
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label for="site-name">Status</label><br />
+                                                <input id="site-name" type="text" class="form-control"
+                                                    name="prchaseordrdate" disabled
+                                                    [(ngModel)]="PurchaseOrderData.Status" />
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label for="site-name"> Created Date</label><br />
+                                                <input id="site-name" type="text" class="form-control" name="crtdDate"
+                                                    disabled [ngModel]="PurchaseOrderData.CreationDate | date" />
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label for="site-name"> PO Type </label><br />
+                                                <input id="site-name" type="text" class="form-control" name="ptype"
+                                                    disabled [(ngModel)]="PurchaseOrderData.PoType" />
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label for="site-name">Level</label><br />
+                                                <input id="site-name" type="text" class="form-control"
+                                                    [(ngModel)]="PurchaseOrderData.Level" name="level" disabled />
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label for="site-name">Created by</label><br />
+                                                <input id="site-name" type="text" class="form-control" name="crtdBy"
+                                                    disabled [(ngModel)]="PurchaseOrderData.CreatedBy" />
+                                            </div>
+                                            <p-table [value]="PurchaseOrderDetails">
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                        <th>
+                                                            <div class="th">
+                                                                Purchase Order Id
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                SupplierId
+
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                Warehouse Name
+
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                Supplier Name
+
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                Item Name
+
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                Total Quantity
+
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                Progress
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                Status
+
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                Purchase Sku
+
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                Purchase Name
+
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th">
+                                                                Creation Date
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-Row>
+                                                    <tr>
+                                                        <td>{{Row.PurchaseOrderId}}</td>
+                                                        <td>{{Row.SupplierId}}</td>
+                                                        <td>{{Row.WarehouseName}}</td>
+                                                        <td>{{Row.SupplierName}}</td>
+                                                        <td>{{Row.ItemName}}</td>
+                                                        <td>{{Row.TotalQuantity}}</td>
+                                                        <td>FIELD NOT AVAILABLE</td>
+                                                        <td>{{Row.Status}}</td>
+                                                        <td>{{Row.PurchaseSku}}</td>
+                                                        <td>{{Row.PurchaseName}}</td>
+                                                        <td>{{Row.CreationDate | date}}</td>
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                </ng-container>
+            </p-accordionTab>
+            <p-accordionTab *ngIf="GRGroup && GRGroup.length">
+                <p-header>
+                    <span class="index">GR Received Detail </span>
+                </p-header>
+
+                <ng-container>
+                    <div class="page page-table" *ngIf="PurchaseOrderData">
+                        <section id="divtoPrint" class="panel panel-default table-dynamic">
+                            <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span>
+
+                                </strong>
+                            </div>
+
+                            <div *ngFor="let GR of  GRGroup">
+                                <div style="border:grey solid 2px;">
+                                    <form name="form_constraints" id="divtoPrint"
+                                        class="form-validation ng-pristine ng-invalid ng-invalid-required ng-invalid-equal">
+                                        <br>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="form-group col-md-3">
+                                                    <label for="site-name"> Serial Number </label><br />
+                                                    <input id="site-name" type="text" class="form-control"
+                                                        name="poInviceNumber" disabled [(ngModel)]="GR.serionNumber" />
+                                                </div>
+                                                <div class="form-group col-md-3">
+                                                    <label for="site-name"> Status </label><br />
+                                                    <input id="site-name" type="text" class="form-control"
+                                                        name="prchaseOrderId" disabled
+                                                        [(ngModel)]="GR.list[0].Status" />
+                                                </div>
+                                                <div class="form-group col-md-3">
+                                                    <label for="site-name"> VehicleType</label><br />
+                                                    <input id="site-name" type="text" class="form-control"
+                                                        name="supplrname" disabled
+                                                        [(ngModel)]="GR.list[0].VehicleType" />
+                                                </div>
+                                                <div class="form-group col-md-2">
+                                                    <label for="site-name"> VehicleNumber</label><br />
+                                                    <input id="site-name" type="text" class="form-control"
+                                                        name="supplrname" disabled
+                                                        [(ngModel)]="GR.list[0].VehicleNumber" />
+                                                </div>
+                                                <div class="form-group col-md-1">
+                                                    <br />
+                                                    <!-- <a style="color: red;"
+                                                        (click)="deletePoGrIr(GR.serionNumber, 'GR')">
+                                                        <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                        Delete &nbsp;
+                                                    </a> -->
+
+                                                </div>
+                                                <div class="form-group col-md-3">
+                                                    <label for="site-name">Is Approved</label><br />
+                                                    <input id="site-name" type="text" class="form-control"
+                                                        name="supplrname" disabled
+                                                        [value]="GR.list[0].POReturnRequestApprovedDate != null ? 'Yes' : 'No'">
+                                                </div>
+                                                <ng-container *ngIf="GR.list[0].POReturnRequestApprovedDate">
+                                                    <div class="form-group col-md-3">
+                                                        <label for="site-name"> Approved By</label><br />
+                                                        <input id="site-name" type="text" class="form-control"
+                                                            name="supplrname" disabled
+                                                            [(ngModel)]="GR.list[0].POReturnRequestApprovedBy" />
+                                                    </div>
+                                                    <div class="form-group col-md-3">
+                                                        <label for="site-name"> Approved Date</label><br />
+                                                        <input id="site-name" type="text" class="form-control"
+                                                            name="supplrname" disabled
+                                                            [ngModel]="GR.list[0].POReturnRequestApprovedDate | date" />
+                                                    </div>
+                                                </ng-container>
+                                                <div style="padding: 7px;">
+                                                    <div style=" border: 1px solid black;">
+                                                        <p-table [value]=" GR.list">
+                                                            <ng-template pTemplate="header">
+                                                                <tr>
+                                                                    <th>
+                                                                        <div class="th">
+                                                                            Item Multi MRP Id
+                                                                        </div>
+                                                                    </th>
+                                                                    <th>
+                                                                        <div class="th">
+                                                                            Item Name
+
+                                                                        </div>
+                                                                    </th>
+                                                                    <th>
+                                                                        <div class="th">
+                                                                            Unit Price
+
+                                                                        </div>
+                                                                    </th>
+                                                                    <th>
+                                                                        <div class="th">
+                                                                            Quantity
+
+                                                                        </div>
+                                                                    </th>
+                                                                    <th>
+                                                                        <div class="th">
+                                                                            Total Amount
+                                                                        </div>
+                                                                    </th>
+                                                                </tr>
+                                                            </ng-template>
+                                                            <ng-template pTemplate="body" let-Row>
+                                                                <tr>
+                                                                    <td>{{Row.ItemMultiMRPId}}</td>
+                                                                    <td>{{Row.ItemName}}</td>
+                                                                    <td>{{Row.Price}}</td>
+                                                                    <td>{{Row.Qty}}</td>
+                                                                    <td>{{Row.Price * Row.Qty | number : '1.2-2'}}</td>
+                                                                </tr>
+
+                                                            </ng-template>
+                                                        </p-table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <hr>
+                                <br>
+                            </div>
+
+                        </section>
+                    </div>
+                </ng-container>
+            </p-accordionTab>
+            <p-accordionTab *ngIf="IRGroup && IRGroup.length">
+                <p-header>
+                    <span class="index">Invoice Receipt Detail </span>
+                </p-header>
+
+                <ng-container>
+                    <div class="page page-table" *ngIf="PurchaseOrderData">
+                        <section id="divtoPrint" class="panel panel-default table-dynamic">
+                            <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span>
+
+                                </strong>
+                            </div>
+                            <div class="panel-body">
+                                <div>
+                                    <div *ngFor="let IR of IRGroup">
+                                        <div style="border:grey solid 2px;">
+                                            <form name="form_constraints" id="divtoPrint"
+                                                class="form-validation ng-pristine ng-invalid ng-invalid-required ng-invalid-equal">
+                                                <br>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="form-group col-md-3">
+                                                            <label for="site-name"> IR Master ID </label><br />
+                                                            <input id="site-name" type="text" class="form-control"
+                                                                name="poInviceNumber" disabled
+                                                                [(ngModel)]="IR.IRMasterId" />
+                                                        </div>
+                                                       
+                                                        <div class="form-group col-md-3">
+                                                            <label for="site-name"> Status </label><br />
+                                                            <input id="site-name" type="text" class="form-control"
+                                                                name="IRStatus" disabled
+                                                                [(ngModel)]="IR.list[0].IRStatus" />
+                                                        </div>
+                                                     
+                                                        <div class="col-md-3">
+                                                            <label for="site-name"> Invoice ID </label><br />
+                                                            <input id="site-name" type="text" class="form-control"
+                                                                name="InvoiceNumber" [(ngModel)]="IR.list[0].IRID" disabled />
+                                                        </div>
+                                                       
+                                                        <div class="col-md-2">
+                                                            <label for="site-name"> Invoice Date </label><br />
+                                                            <input id="site-name" type="text" class="form-control"
+                                                                name="InvoiceDate" [(ngModel)]="IR.list[0].InvoiceDate" disabled />
+                                                        </div>
+
+                                                        <div class="form-group col-md-1">
+                                                            <br />
+                                                            <a style="color: red;"
+                                                                *ngIf="IR.list[0].POReturnRequestStatus !='Pending'"
+                                                                (click)="deletePoGrIr(IR.IRMasterId, 'IR')">
+                                                                <i class="fa fa-trash fa-lg" aria-hidden="true"></i>
+                                                                Delete &nbsp;
+                                                            </a>
+                                                            <code *ngIf="IR.list[0].POReturnRequestStatus =='Pending'">Already Requested</code>
+                                                        </div>
+                                                        <div class="form-group col-md-3">
+                                                            <label for="site-name">Request Status</label><br />
+                                                            <input id="site-name" type="text" class="form-control"
+                                                                name="supplrname" disabled
+                                                                [value]="IR.list[0].POReturnRequestStatus">
+                                                        </div>
+                                                        <div class="form-group col-md-3">
+                                                            <label for="site-name">PoId</label><br />
+                                                            <input id="site-name" type="text" class="form-control"
+                                                                name="supplrname" disabled
+                                                                [value]="IR.list[0].PurchaseOrderId">
+                                                        </div>
+                                                        <div class="form-group col-md-3">
+                                                            <label for="site-name">Warehouse Name</label><br />
+                                                            <input id="site-name" type="text" class="form-control"
+                                                                name="supplrname" disabled
+                                                                [value]="IR.list[0].WarehouseName">
+                                                        </div>
+                                                        <ng-container *ngIf="IR.list[0].POReturnRequestApprovedDate">
+                                                            <div class="form-group col-md-3">
+                                                                <label for="approvedBy"> Approved By</label><br />
+                                                                <input id="approvedBy" type="text" class="form-control"
+                                                                    name="approvedBy" disabled
+                                                                    [(ngModel)]="IR.list[0].POReturnRequestApprovedBy" />
+                                                            </div>
+                                                            <div class="form-group col-md-3">
+                                                                <label for="site-name"> Approved Date</label><br />
+                                                                <input id="site-name" type="text" class="form-control"
+                                                                    name="supplrname" disabled
+                                                                    [ngModel]="IR.list[0].POReturnRequestApprovedDate | date" />
+                                                            </div>
+                                                        </ng-container>
+                                                        <div style="padding: 7px;">
+                                                            <div style=" border: 1px solid black;">
+                                                                <p-table [value]=" IR.list">
+                                                                    <ng-template pTemplate="header">
+                                                                        <tr>
+                                                                            <th>
+                                                                                <div class="th">
+                                                                                    Item MultiMRP Id
+                                                                                </div>
+                                                                            </th>
+                                                                            <th>
+                                                                                <div class="th">
+                                                                                    Item Name
+                                                                                </div>
+                                                                            </th>
+                                                                            <th>
+                                                                                <div class="th">
+                                                                                    Unit Price
+
+                                                                                </div>
+                                                                            </th>
+                                                                            <th>
+                                                                                <div class="th">
+                                                                                    Quantity
+
+                                                                                </div>
+                                                                            </th>
+                                                                            <th>
+                                                                                <div class="th">
+                                                                                    Total Amount
+                                                                                </div>
+                                                                            </th>
+                                                                        </tr>
+                                                                    </ng-template>
+                                                                    <ng-template pTemplate="body" let-Row>
+                                                                        <tr>
+                                                                            <td>{{Row.ItemMultiMRPId}}</td>
+                                                                            <td>{{Row.ItemName}}</td>
+                                                                            <td>{{Row.Price}}</td>
+                                                                            <td>{{Row.IRQuantity}}</td>
+                                                                            <td>{{(Row.Price * Row.IRQuantity)+Row.GSTAmount | number : '1.2-2'}}
+                                                                            </td>
+                                                                        </tr>
+                                                                    </ng-template>
+                                                                </p-table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <hr>
+                                        <br>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </section>
+                    </div>
+                </ng-container>
+            </p-accordionTab>
+        </p-accordion>
+    </div>
+</div>
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<p-confirmDialog appendTo="body" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

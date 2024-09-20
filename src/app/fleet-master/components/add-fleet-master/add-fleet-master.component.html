@@ -1,0 +1,492 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section>
+    <div class="my-2 d-flex justify-content-between header">
+        <h3 class="m-2" *ngIf="!isEditOpen"><b>Add Fleet master</b></h3>
+        <h3  class="m-2" *ngIf="isEditOpen">Edit Fleet master</h3>
+        <button type="button" class="btn btn-raised btn-warning mr-1" (click)="backToListPage()">
+          Back
+        </button>
+    </div>
+
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+        <!-- <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+        (click)="toggleSearch()">
+        <h5 >Fleet Master</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div> -->
+    <!-- <h5 style="color: orangered;"><b><u>Fleet Master</u></b></h5> -->
+        <form class="form " name="form" #fleetForm="ngForm">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group" > 
+                  <label for="CityId">City</label>
+                  <br>
+                  <select id="CityId" name="CityId" class="form-control" [(ngModel)]="data.CityId"
+                  #CityId="ngModel"  (change)="getWarehouse(data.CityId)">
+                    <option value="" disabled>--select--</option>
+                    <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                      {{ city.CityName }}
+                    </option>
+                  </select>
+                  <div *ngIf="isInvalid && !CityId.valid && CityId.errors.required">
+                    <code>City is required</code>
+                  </div>
+                  <div class="col-md-4"></div> 
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="projectinput3">Warehouse</label>
+                  <br>
+                  <select id="Warehouseid" name="Warehouseid" class="form-control"
+                  [(ngModel)]="data.Warehouseid"  required="1"
+                  #Warehouseid="ngModel">
+                  <option value="" disabled>--Select--</option>
+                  <option *ngFor="let w of warehouseList" [ngValue]="w.WareHouseId">
+                    {{ w.WareHouseName }}
+                  </option>
+                </select>
+                <div *ngIf="isInvalid && !Warehouseid.valid && Warehouseid.errors.required">
+                  <code>Warehouse is required</code>
+                </div>
+                  <div class="col-md-4"></div>
+                </div>
+              </div>
+                <div class="col-md-3 form-group">
+                    <label for="lbFleettype">Fleet Type</label>
+                    <select id="fleetType" name="fleetType" class="form-control" [(ngModel)]="data.FleetType "
+                    placeholder="Select Fleet Type" required = "1" maxlength="50"
+                    #fleetType="ngModel">
+                    <option value="">-----Select-----</option>   
+                    <option value="SK-Fix">SK-Fix</option>   
+                    <option value="SK-Adhoc">SK-Adhoc</option>   
+                    <option value="Agent">Agent</option>                     
+                </select>
+                <div *ngIf="isInvalid && !fleetType.valid && fleetType.errors.required">
+                    <code>Fleet Type is required</code>
+                </div>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="lbchannel">Channel</label>
+                <select id="channel" name="channel" class="form-control selectType" [(ngModel)]="data.Channel "
+                placeholder="Select Channel" required = "1"
+                #channel="ngModel">
+                <option value="">-----Select-----</option>
+                <option value="KPP">KPP</option>
+                <option value="City">City</option>                    
+              </select>
+              <div class="col-md-4"></div> 
+              <div *ngIf="isInvalid && !channel.valid && channel.errors.required">
+                <code>Channel is required</code>
+              </div>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="lboperatedBy">Operated By</label>
+                <select id="operatedBy" name="operatedBy" class="form-control selectType" [(ngModel)]="data.OperatedBy"
+                placeholder="Select Operated By" required = "1" maxlength="50" 
+                #operatedBy="ngModel">
+                <option value="">-----Select-----</option>
+                <option value="Agent">Agent</option>    
+                <option value="KPP-Self">KPP-Self</option>
+                <option value="SK">SK</option>                    
+                <option value="DB">DB</option>                    
+                <option value="Regular">Regular</option>                    
+                <option value="Self-Pickup">Self-Pickup</option>                    
+                <option value="None">None</option>                    
+            </select>
+            <div class="col-md-4"></div> 
+            <div *ngIf="isInvalid && !channel.valid && channel.errors.required">
+                <code>Channel is required</code>
+            </div>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="lbfrieghtdisc">Freight Discount</label>
+                <select id="frieghtdisc" name="frieghtdisc" class="form-control selectType" [(ngModel)]="data.FreightDiscount"
+                placeholder="Select FreightDiscount" required = "1" 
+                #frieghtdisc="ngModel">
+                <option value="">-----Select-----</option>
+                <option value="1">Percentage</option>    
+                <option value="2">Cash</option>
+                <option value="3">Credit</option>                    
+                <option value="4">Wallet(%)</option>                      
+                <option value="5">None</option>                    
+            </select>
+            <div class="col-md-4"></div> 
+            <div *ngIf="isInvalid && !frieghtdisc.valid && frieghtdisc.errors.required">
+                <code>Channel is required</code>
+            </div>
+            </div>
+             <div class="col-md-3 form-group">
+            <label for="lbtollamt">Toll Amount</label>
+            <input type="number" placeholder="Toll Amount" [(ngModel)]="data.TollAmt"
+                id="tollamt" name="tollamt" class="form-control" maxlength="10" 
+                >
+            <!-- <div *ngIf="isInvalid && !tollamt.valid && tollamt.errors.required">
+              <code>Toll Amount is required</code>
+            </div>
+            <div class="col-md-4"></div> 
+            <div *ngIf="isInvalid && !tollamt.valid && tollamt.errors.minlength">
+              <code>Minlength 4</code>
+            </div> -->
+        
+             </div>
+            <div class="col-md-3 form-group">
+                <div class="form-group">
+                    <label for="lbstartDate">Contract Start</label>
+                    <p-calendar [showIcon]="true"  [(ngModel)]="data.ContractStart " id="startDate" name="startDate"
+                    [readonlyInput]="true" placeholder="Start Date"  showTime="true" hourFormat="24" required #startDate="ngModel">
+                    </p-calendar>
+                        <div *ngIf="isInvalid && !startDate.valid && startDate.errors.required">
+                        <code>Contract Start Date is required</code>
+                        </div>
+                </div>
+            </div>
+            <div class="col-md-3 form-group">
+                <div class="form-group">
+                    <label for="lbendDate">Contract End</label>
+                    <p-calendar [showIcon]="true" [(ngModel)]="data.ContractEnd" id="endDate" name="endDate"
+                    [readonlyInput]="true" placeholder="End Date" showTime="true"  hourFormat="24" required #endDate="ngModel">
+                    </p-calendar>
+                        <div *ngIf="isInvalid && !endDate.valid && endDate.errors.required">
+                        <code>Contract Valid Upto is required</code>
+                        </div>
+                </div>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="lbtransportName">Transport Name</label>
+            <input type="text" placeholder="Transport Name" [(ngModel)]="data.TransportName"
+            id="transportName" name="transportName" class="form-control selectType" required = "1" maxlength="50"   
+                #transportName="ngModel">               
+                    <div class="col-md-4"></div>
+                    <div *ngIf="isInvalid && !transportName.valid && transportName.errors.required">
+                    <code>Transport Name is required</code>
+                    </div>
+                    <div *ngIf="isInvalid && !transportName.valid && transportName.errors.minlength">
+                        <code>Minlength 4</code>
+                    </div>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="lbtransportagentName">Transporter/Agent Name</label>
+            <input type="text" placeholder="Transport Agent Name" [(ngModel)]="data.TransportAgentName"
+            id="transportagentName" name="transportagentName" class="form-control selectType" required = "1" maxlength="50" 
+                #transportagentName="ngModel">               
+                    <div class="col-md-4"></div>
+                    <div *ngIf="isInvalid && !transportagentName.valid && transportagentName.errors.required">
+                    <code>Transporter/Agent Name is required</code>
+                    </div>
+                    <div *ngIf="isInvalid && !transportagentName.valid && transportagentName.errors.minlength">
+                        <code>Minlength 4</code>
+                    </div>
+            </div>
+
+            <div class="col-md-3 form-group">
+              <label for="lbtransportagentName">TRANSPORT AGENT Mobile No</label>
+          <input type="number" placeholder="TRANSPORT AGENT Mobile No" [(ngModel)]="data.TransportAgentMobileNo"
+          id="transportagentmobile" name="transportagentmobile" class="form-control selectType" required = "1" minlength="10" maxlength="10" 
+              #transportagentmobile="ngModel">               
+                  <div class="col-md-4"></div>
+                  <div *ngIf="isInvalid && !transportagentmobile.valid && transportagentmobile.errors.required">
+                  <code>TRANSPORT AGENT Mobile No is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !transportagentmobile.valid && transportagentmobile.errors.minlength">
+                      <code>Minlength 10</code>
+                  </div>
+          </div>
+
+            <!--  -->
+
+            <div class="col-md-1 form-group">
+                <label for="lbtransportagentName">IsActive</label>
+                <div class="col-md-4"></div>
+                <p-inputSwitch name="IsActive"  [(ngModel)]="data.IsActive" (ngModelChange)="ActiveInactive(data)">
+                </p-inputSwitch>&nbsp;&nbsp;
+            </div>
+            <div class="col-md-1 form-group"  *ngIf="isEditOpen">
+              <label for="lbIsBlocked">IsBlocked</label>
+              <div class="col-md-4"></div>
+              <p-inputSwitch name="IsBlocked"  [(ngModel)]="data.IsBlocked" (ngModelChange)="ActiveInactiveIsblocked(data)">
+              </p-inputSwitch>&nbsp;&nbsp;
+          </div>
+            <div class="p-3" *ngIf="!isEditOpen">
+            <button type="button" class="btn btn-raised btn-primary" (click)="addFleetMaster(fleetForm)" style="margin-top: 5px;" >
+                Save
+            </button>
+            </div>
+            </div>
+        </form>
+    </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover" *ngIf="!isSearch && !isEditOpen">
+                <!-- <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center"
+        (click)="toggleSearch()">
+        <h5 >Fleet Master</h5>
+        <div><i class="fa fa-lg fa-angle-double-right"></i></div>
+    </div> -->
+    <div class="search-head rounded d-flex p-2 px-4 text-primary justify-content-between align-items-center">
+        <h5>Fleet Master Details</h5>
+        <div>
+            <button type="button" class="btn btn-raised btn-primary" (click)="isOpen = true;isInvalid=false;" style="margin-top: 5px;" >
+                Add <i class="fa fa-plus"></i>
+              </button>
+        </div>
+        </div>
+
+    </div>
+
+<!-- popup strat -->
+
+    <p-dialog [(visible)]="isOpen" positionTop="100" [style]="{width: '90vw',height: '70%'}" appendTo="body">
+        <p-header>
+        Fleet Details
+        </p-header>
+        <form class="form " name="fform" #vehilclefleetForm="ngForm">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="lbvehicleType">Vehicle Type</label>
+                    <input type="text" placeholder="Vehicle Type" [(ngModel)]="data.VehicleType "
+                    id="vehicleType" name="vehicleType" class="form-control" required = "1" maxlength="50" 
+                    #vehicleType="ngModel">
+                        <div *ngIf="isInvalid && !vehicleType.valid && vehicleType.errors.required">
+                          <code>Vehicle Type is required</code>
+                        </div>
+                        <div class="col-md-4"></div> 
+                        <div *ngIf="isInvalid && !vehicleType.valid && vehicleType.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                </div>
+                <div class="col-md-3">
+                        <label for="lbnoofvehicle">No. Of Vehicle</label>
+                        <input type="text" placeholder="No. of Vehicle" [(ngModel)]="data.NoOfVehicle "
+                        id="noofvehicle" name="noofvehicle" class="form-control" required = "1" maxlength="50"
+                        #noofvehicle="ngModel">
+                            <div *ngIf="isInvalid && !noofvehicle.valid && noofvehicle.errors.required">
+                            <code>No. Of Vehicle is required</code>
+                            </div>
+                            <div class="col-md-4"></div> 
+                            <div *ngIf="isInvalid && !noofvehicle.valid && noofvehicle.errors.minlength">
+                                <code>Minlength 4</code>
+                            </div>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="lbfixedCost">Fixed Cost</label>
+                    <input type="number" placeholder="Fixed Cost" [(ngModel)]="data.FixedCost"
+                    id="fixedCost" name="fixedCost" class="form-control selectType" required = "1" maxlength="50" 
+                    #fixedCost="ngModel">      
+                        <div class="col-md-12"></div>
+                        <div *ngIf="isInvalid && !fixedCost.valid && fixedCost.errors.required">
+                          <code>Fixed Cost is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !fixedCost.valid && fixedCost.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                 </div>
+                 <div class="col-md-3 form-group">
+                    <label for="lbextrakmCharge">Extra KM Charge</label>
+                    <input type="number" placeholder="Extra KM Charge" [(ngModel)]="data.ExtraKmCharge"
+                    id="extrakmCharge" name="extrakmCharge" class="form-control selectType" required = "1" maxlength="50"  
+                    #extrakmCharge="ngModel">      
+                        <div class="col-md-12"></div>
+                        <div *ngIf="isInvalid && !extrakmCharge.valid && extrakmCharge.errors.required">
+                        <code>Extra KM Charge is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !extrakmCharge.valid && extrakmCharge.errors.minlength">
+                            <code>Minlength 4</code>
+                        </div>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="lbextraHrCharge">Extra Hr Charge</label>
+                    <input type="number" placeholder="Extra Hr Charge" [(ngModel)]="data.ExtraHrCharge "
+                    id="extraHrCharge" name="extraHrCharge" class="form-control selectType" required = "1" maxlength="50" 
+                    #extraHrCharge="ngModel">      
+                        <div class="col-md-12"></div>
+                        <div *ngIf="isInvalid && !extraHrCharge.valid && extraHrCharge.errors.required">
+                          <code>Extra Hr Charge is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !extraHrCharge.valid && extraHrCharge.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                 </div>
+                 <div class="col-md-3 form-group">
+                    <label for="lbwaitingCharge">Waiting Charges/Per Hour</label>
+                    <input type="number" placeholder="Waiting Time/HaultCharges" [(ngModel)]="data.WaitingCharge"
+                    id="waitingCharge" name="waitingCharge" class="form-control selectType" required = "1" maxlength="50" 
+                    #waitingCharge="ngModel">      
+                        <div class="col-md-12"></div>
+                        <div *ngIf="isInvalid && !waitingCharge.valid && waitingCharge.errors.required">
+                          <code>Waiting Time/HaultCharges is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !waitingCharge.valid && waitingCharge.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                 </div>
+                 <div class="col-md-3 form-group">
+                    <label for="lbvehicleCapcity">Vehicle Capacity(KGs)</label>
+                    <input type="number" placeholder="Vehicle Capacity(KGs)" [(ngModel)]="data.VehicleCapacity"
+                    id="vehicleCapcity" name="vehicleCapcity" class="form-control" required = "1" maxlength="50"
+                    #vehicleCapcity="ngModel">               
+                        <div class="col-md-4"></div>
+                        <div *ngIf="isInvalid && !vehicleCapcity.valid && vehicleCapcity.errors.required">
+                          <code>Vehicle Capacity(KGs) is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !vehicleCapcity.valid && vehicleCapcity.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                 </div>
+                 <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="lbmake">Make</label>
+                        <input type="text" placeholder="Make" [(ngModel)]="data.Make "
+                            id="make" name="make" class="form-control selectType" required = "1" maxlength="50" 
+                            #make="ngModel">
+                            <div *ngIf="isInvalid && !make.valid && make.errors.required">
+                              <code>Make is required</code>
+                            </div>
+                            <div *ngIf="isInvalid && !make.valid && make.errors.minlength">
+                                <code>Minlength 4</code>
+                              </div>
+                    </div>
+                 </div>
+                 <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="lbnon_workingDayamt">Non Working Day Amount</label>
+                        <input type="number" placeholder="Non Working Day Amount" [(ngModel)]="data.NonworkingDayAmt"
+                            id="lbnon_workingDayamt" name="lbnon_workingDayamt" class="form-control selectType" required = "1" maxlength="50" 
+                            #lbnon_workingDayamt="ngModel">                        
+                            <div class="col-md-4"></div>
+                            <div *ngIf="isInvalid && !lbnon_workingDayamt.valid && lbnon_workingDayamt.errors.required">
+                              <code>Non Working Day Amount is required</code>
+                            </div>
+                            <div *ngIf="isInvalid && !lbnon_workingDayamt.valid && lbnon_workingDayamt.errors.minlength">
+                                <code>Minlength 4</code>
+                              </div>
+                    </div>
+                 </div>
+                 <div class="col-md-3 form-group">
+                    <label for="lbdistance">Km Contract</label>
+                    <input type="number" placeholder="Distance Contract(KM)" [(ngModel)]="data.DistanceContract"
+                    id="distance" name="distance" class="form-control" required = "1" maxlength="50" 
+                    #distance="ngModel">               
+                        <div class="col-md-4"></div>
+                        <div *ngIf="isInvalid && !distance.valid && distance.errors.required">
+                          <code>Distance Contract is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !distance.valid && distance.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="lbdays">Days Contract</label>
+                    <input type="number" placeholder="Days Contract" [(ngModel)]="data.DaysContract "
+                    id="days" name="days" class="form-control" required = "1" maxlength="50" 
+                    #days="ngModel">               
+                        <div class="col-md-4"></div>
+                        <div *ngIf="isInvalid && !days.valid && days.errors.required">
+                        <code>Days Contract is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !days.valid && days.errors.minlength">
+                            <code>Minlength 4</code>
+                        </div>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label for="lbtimeContract"> Contract Per Day in time
+                      <span  style=" text-transform: lowercase;">(hr)</span></label>
+                    <input type="number" placeholder="Contract(hr)" [(ngModel)]="data.HrContract"
+                    id="timeContract" name="timeContract" class="form-control" required = "1" maxlength="50" 
+                    #timeContract="ngModel">               
+                        <div class="col-md-4"></div>
+                        <div *ngIf="isInvalid && !timeContract.valid && timeContract.errors.required">
+                        <code>Contract is required</code>
+                        </div>
+                        <div *ngIf="isInvalid && !timeContract.valid && timeContract.errors.minlength">
+                            <code>Minlength 4</code>
+                        </div>
+                </div>
+                <!-- <div class="p-3">
+                    <button type="button" class="btn btn-raised btn-primary" (click)="addFleetVehicleType(vehilclefleetForm)" style="margin-top: 5px;" >
+                        Save 
+                      </button>
+                      <button type="button" class="btn btn-raised btn-primary" (click)="isOpen = false;" style="margin-top: 5px;margin-left: 10px;" >
+                        Cancel 
+                      </button>
+                </div> -->
+            </div>
+        </form>
+        <p-footer>
+            <button type="button" class="btn btn-raised btn-primary" (click)="addFleetVehicleType(vehilclefleetForm,data)" >
+                Save 
+              </button>
+            <button type="button" pButton  (click)="isOpen=false;showTable=true;" label="Close"></button>
+          </p-footer>
+        </p-dialog>
+
+<!-- end -->
+
+
+    <div  *ngIf="showTable" style="margin-left: 15px;">
+     
+        <p-table #dt [value]="vehicleDetail" [paginator]="false" [rows]="10">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>S.No</th>
+                    <th>Vehicle Type</th>
+                    <th>No. Of Vehicle</th>
+                    <th>Fixed Cost</th>
+                    <th>Extra Km Charge</th>
+                    <th>Extra Hr Charge </th>
+                    <th>Waiting Charge</th>
+                    <th>Vehicle Capacity </th>
+                    <th>Make </th>
+                    <th>Non-working Day Amt </th>
+                    <th>Distance Contract </th>
+                    <th>Days Contract </th>
+                    <th>Time Contract(hr) </th>
+                    <th *ngIf="isEditOpen">Edit</th>
+                    <!-- <th>Delete</th> -->
+                  </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-selecteditem let-columns="columns" let-i="rowIndex">
+                <tr >
+                    <td>{{i+1}}</td>
+                    <td><span style="border-bottom: 1px dashed;">
+                        {{selecteditem.VehicleType}}</span>
+                    </td>
+                    <td>{{selecteditem.NoOfVehicle}}</td>
+                    <td>{{selecteditem.FixedCost}}</td>
+                    <td>{{selecteditem.ExtraKmCharge}}</td>
+                    <td>{{selecteditem.ExtraHrCharge}}</td>
+                    <td>{{selecteditem.WaitingCharge}}</td>
+                    <td>{{selecteditem.VehicleCapacity}}</td>
+                    <td>{{selecteditem.Make}}</td>
+                    <td>{{selecteditem.NonworkingDayAmt}}</td>
+                    <td>{{selecteditem.DistanceContract}}</td>
+                    <td>{{selecteditem.DaysContract}}</td>
+                    <td>{{selecteditem.HrContract}}</td>
+                    <td *ngIf="isEditOpen">
+                        <span (click)="editelected(selecteditem)" class="mlft">
+                          <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </span>
+                      </td>
+                    <!-- <td>
+                      <span (click)="removeSelected(selecteditem)" class="mlft">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                      </span>
+                    </td> -->
+                  </tr>
+            </ng-template>
+          </p-table>
+
+      </div>
+
+      <div class="ui-fluid shadow mb-2 bg-white rounded form-actions right p-3" *ngIf="showTable">
+        <button type="button" class="btn btn-raised btn-warning mr-1" (click)="backToListPage()">
+          Back
+        </button>
+        <button type="button" class="btn btn-raised btn-primary" (click)="saveFleetMaster(data)">
+          Save
+        </button>
+      </div>
+
+      <p-blockUI [blocked]="blocked"></p-blockUI>
+      <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+</section>

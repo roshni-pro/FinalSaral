@@ -1,0 +1,773 @@
+<div class="header">
+    <h3 class="m-2">Test Category</h3>
+</div>
+<div class="m-1 d-flex justify-content-between align-items-center">
+    <div class="card" style="width: 150rem;">
+        <div id="RolePagePermission-table" class="ui-fluid  bg-white rounded">
+            <div class="position-relative">
+                <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group m-3">
+                        <label for="dep" class="col-md-6">Department:</label>
+                        <select id="dep" name="dep" class="form-control col-md-6" [(ngModel)]="data.DepartmentId"
+                            (change)="deptwiseCategory(data.DepartmentId)">
+                            <option value="">Select Department</option>
+                            <option *ngFor="let dept of deptList" [ngValue]="dept.DepId">{{dept.DepName}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+                <div class="col-md-6">
+                   <div class="card">
+                    <div class="pr-dv" *ngFor="let role of  deptCategory; let pindex = index;">
+                        <a href="javascript:void(0);" (click)="collapseParent(role)" *ngIf="role.ticketCategoriesNewDcs && role.ticketCategoriesNewDcs.length >0">
+                            <i *ngIf="!role.IsVisible" class="fa fa-caret-right fa-lg mr-10" aria-hidden="true"></i>
+                            <i *ngIf="role.IsVisible" class="fa fa-caret-down fa-lg mr-10" aria-hidden="true"></i>
+                        </a>
+                        <p-checkbox  [ngClass]="{'nt-pr': !(role.ticketCategoriesNewDcs && role.ticketCategoriesNewDcs.length >0) }" name="pchk{{pindex}}" [label]="role.Name" 
+                            binary="true"  (click)="onParentPageClick(role)" ></p-checkbox>&nbsp;&nbsp;
+                            <a href="javascript:void(0);" (click)="addCategory(data.DepartmentId)" style="margin-left: 1px;" *ngIf="subcategoryList && subcategoryList.length >0">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                            <p-inputSwitch class="btn" name="IsActive" [(ngModel)]="role.IsActive" (ngModelChange)="ActiveInactive(role)">
+                            </p-inputSwitch>
+                            <a href="javascript:void(0);" (click)="editMode(role)" *ngIf="subcategoryList && subcategoryList.length >0">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                            <a href="javascript:void(0);" (click)="remove(role)" style="margin-left: 11px;" *ngIf="subcategoryList && subcategoryList.length >0">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                            
+                        <div *ngIf="role.IsVisible && role.ticketCategoriesNewDcs && role.ticketCategoriesNewDcs.length >0;">
+                            <div class="ch-div" *ngFor="let page of  role.ticketCategoriesNewDcs; let cindex = index;">
+                                <a href="javascript:void(0);" (click)="collapseParent(page)" *ngIf="page.ticketCategoriesNewDcs && page.ticketCategoriesNewDcs.length >0">
+                                      <i *ngIf="role.IsVisible" class="fa fa-caret-right fa-lg mr-10" aria-hidden="true"></i>
+                                      <i *ngIf="!role.IsVisible" class="fa fa-caret-down fa-lg mr-10" aria-hidden="true"></i>
+                                  </a>
+                                <p-checkbox (click)="onChildPageClick(page)" name="cchk{{cindex}}" [label]="page.Name" 
+                                    binary="true"></p-checkbox>                                  
+                                    <a href="javascript:void(0);" (click)="addSubCategory(page)" style="margin-left: 11px;" *ngIf="subcategoryList && subcategoryList.length >0">
+                                       <i class="fa fa-plus"></i>
+                                     </a>
+                            <a href="javascript:void(0);" (click)="editMode(page)" style="margin-left: 8px;" *ngIf="subcategoryList && subcategoryList.length >0">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                            <a href="javascript:void(0);" (click)="remove(page)" style="margin-left: 8px;" *ngIf="subcategoryList && subcategoryList.length >0">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="CatoverView">
+    <p-dialog [(visible)]="CatoverView" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '86%',height: '88%', overflow: 'auto'}">
+        <p-header>
+            <h4
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                <b>Add Data </b></h4>
+        </p-header>
+        <div class="borderTable" style="padding:10px 15px; position: relative;z-index: 9;">
+            <div class="waterMark"
+                style="width: 50%;position: absolute;top: 50%;left: 40%;transform: skew(23deg, -36deg);height: 390px;margin-top: -225px;margin-left: -18%;z-index: -1;">
+                <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+            </div>
+            <div style="position: absolute; right: 15px; margin-top: 40px;">
+                <img src="assets/img/logo/Logo.png" width="200px">
+            </div>
+            <form class="form" #ticketForm="ngForm">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="projectinput3">Select Department</label>
+                          <select id="city" name="city" class="form-control" [(ngModel)]="data.DepartmentId">
+                            <option value="">Select Department</option>
+                            <option *ngFor="let dept of deptList" [ngValue]="dept.DepId">{{dept.DepName}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                 
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="name">Type</label>
+                      <select class="form-control" id="Type" name="Type" [(ngModel)]="data.Type"  (ngModelChange)="type(data.Type)" #Type="ngModel" required="1" >
+                        <option value="">Select</option>
+                        <option value="1">Customer</option>
+                        <option value="2">People</option>
+                      </select>
+                      <div class="col-md-2"></div>
+                      <div *ngIf="isInvalid && !Type.valid && Type.errors.required">
+                        <code>Type is required</code>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="OfferName">TATInHrs</label>
+                      <input type="number" placeholder="TATInHrs" [(ngModel)]="data.TATInHrs" id="TATInHrs" 
+                      name="TATInHrs" class="form-control" required = "1" #TATInHrs="ngModel">
+                      <div class="col-md-4"></div>
+                      <div *ngIf="isInvalid && !TATInHrs.valid && TATInHrs.errors.required">
+                        <code>TATInHrs is required</code>
+                      </div>
+                      </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="OfferName">Category Name</label>
+                      <input type="text" placeholder="Category Name" [(ngModel)]="data.Name" id="Name" name="Name" 
+                      class="form-control" required = "1" #Name="ngModel">
+                      <div class="col-md-4"></div>
+                      <div *ngIf="isInvalid && !Name.valid && Name.errors.required">
+                        <code>Category Name is required</code>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OfferName">Display Text</label>
+                        <input type="text" placeholder="Display Text" [(ngModel)]="data.DisplayText"
+                            id="DisplayText" name="DisplayText" class="form-control" required = "1" maxlength="50" minlength="4" 
+                            #DisplayText="ngModel">
+                            <div class="col-md-4"></div>
+                            <div *ngIf="isInvalid && !DisplayText.valid && DisplayText.errors.required">
+                              <code>Display Text is required</code>
+                            </div>
+                            <div *ngIf="isInvalid && !DisplayText.valid && DisplayText.errors.minlength">
+                                <code>Minlength 4</code>
+                              </div>
+                    </div>
+                </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OfferName">Display Text in Hindi</label>
+                        <input type="text" placeholder="Display Text in Hindi" [(ngModel)]="data.DisplayTextHindi"
+                            id="DisplayTextHindi" name="DisplayTextHindi" class="form-control" required = "1"  
+                            #DisplayTextHindi="ngModel">
+                            <div class="col-md-4"></div>
+                            <div *ngIf="isInvalid && !DisplayTextHindi.valid && DisplayTextHindi.errors.required">
+                              <code>Display Text in Hindi is required</code>
+                            </div>
+                           </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                      <label for="OfferName">After Select Message</label>
+                      <input type="text" placeholder="After Select Message" [(ngModel)]="data.AfterSelectMessage"
+                          id="AfterSelectMessage" name="AfterSelectMessage" class="form-control" required = "1"  
+                          #AfterSelectMessage="ngModel">
+                          <div class="col-md-4"></div>
+                          <div *ngIf="isInvalid && !AfterSelectMessage.valid && AfterSelectMessage.errors.required">
+                            <code>After Select Message is required</code>
+                          </div>
+                  </div>
+              </div>
+                
+               <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OfferName">After Select Hindi Message</label>
+                        <input type="text" placeholder="After Select Hindi Message" [(ngModel)]="data.AfterSelectHindiMessage"
+                            id="AfterSelectHindiMessage" name="AfterSelectHindiMessage" class="form-control" required = "1" 
+                            #AfterSelectHindiMessage="ngModel">
+                            <div class="col-md-4"></div>
+                            <div *ngIf="isInvalid && !AfterSelectHindiMessage.valid && AfterSelectHindiMessage.errors.required">
+                              <code>AfterSelectHindiMessage is required</code>
+                            </div>
+                    </div>
+                </div> 
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox custom-control-inline">
+                        <input class="custom-control-input" id="customCheckboxInline4" name="dbvalue" type="checkbox" 
+                        [(ngModel)]="data.IsDbValue" (change)="sqlquery(data.IsDbValue)" #dbvalue="ngModel">
+                        <label class="custom-control-label" for="customCheckboxInline4">Is Db Value:</label>
+                        <div class="col-md-2"></div>
+                        <div *ngIf="isInvalid && !dbvalue.valid && dbvalue.errors.required">
+                          <code>Is Db Value is required</code>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group" *ngIf = "sqlField == true">
+                        <textarea type="text" placeholder="Sql Query" [(ngModel)]="data.SqlQuery" id="SqlQuery"
+                        name="SqlQuery" class="form-control" required = "1" maxlength="50" minlength="4"
+                        #SqlQuery="ngModel" style="height: 38px; margin-top:5px;">
+                          <div class="col-md-4"></div>
+                          <div *ngIf="isInvalid && !SqlQuery.valid && SqlQuery.errors.required">
+                            <code>SqlQuery is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !SqlQuery.valid && SqlQuery.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                        </textarea>
+                      </div>
+                    </div>
+                  </div>
+      
+      
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox custom-control-inline">
+                        <input class="custom-control-input" id="customCheckboxInline5" name="askques" type="checkbox" 
+                        [(ngModel)]="data.IsAskQuestion" (change)="askQuestion(data.IsAskQuestion)" #askques="ngModel">
+                        <label class="custom-control-label" for="customCheckboxInline5">Is Ask Question:</label>               
+                        <div class="col-md-2"></div>
+                        <div *ngIf="isInvalid && !askques.valid && askques.errors.required">
+                          <code>Is Ask question is required</code>
+                        </div>
+                      </div>
+      
+                      <div class="form-group" *ngIf = "questionField == true">
+                        <!-- <label for="OfferName">Question</label> -->
+                        <textarea type="text" placeholder="Question" [(ngModel)]="data.Question" id="Question" 
+                        name="Question" class="form-control" required = "1"  
+                        #Question="ngModel" style="height: 38px; margin-top:5px;">
+                          <div class="col-md-4"></div>
+                          <div *ngIf="isInvalid && !Question.valid && Question.errors.required">
+                            <code>Question is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !Question.valid && Question.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                        </textarea>
+                      </div>
+      
+                    </div>
+                  </div>
+      
+                  <div class="col-md-4">
+                    <div class="form-group" *ngIf = "questionField == true">
+                    <label for="OfferName">Question in Hindi</label>
+                    <textarea type="text" placeholder="QuestionHindi" [(ngModel)]="data.QuestionHindi" id="QuestionHindi" 
+                    name="QuestionHindi" class="form-control" required = "1"  
+                    #QuestionHindi="ngModel" style="height: 38px; margin-top:5px;">
+                      <div class="col-md-4"></div>
+                      <div *ngIf="isInvalid && !QuestionHindi.valid && QuestionHindi.errors.required">
+                        <code>Question Hindi is required</code>
+                      </div>
+                    </textarea>
+                  </div>
+                  </div>
+               
+                 
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="OfferName">Answar Replace String</label>
+                      <input type="text" placeholder="AnswareReplaceString" [(ngModel)]="data.AnswareReplaceString"
+                      id="AnswareReplaceString" name="AnswareReplaceString" class="form-control" >
+                     
+                    </div>
+                  </div>
+                
+                        </div>
+      
+                <div class="ui-fluid shadow mb-2 bg-white rounded form-actions right p-3" >
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    Back
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="save(data,ticketForm)" >
+                    Save
+                  </button>
+                </div>
+              </form>
+        </div>
+    </p-dialog>
+  </div>
+
+
+  <div *ngIf="AddSubCategory">
+    <p-dialog [(visible)]="AddSubCategory" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '86%',height: '88%', overflow: 'auto'}">
+        <p-header>
+            <h4
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                <b>Add SubCategory </b></h4>
+        </p-header>
+        <div class="borderTable" style="padding:10px 15px; position: relative;z-index: 9;">
+            <div class="waterMark"
+                style="width: 50%;position: absolute;top: 50%;left: 40%;transform: skew(23deg, -36deg);height: 390px;margin-top: -225px;margin-left: -18%;z-index: -1;">
+                <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+            </div>
+            <div style="position: absolute; right: 15px; margin-top: 40px;">
+                <img src="assets/img/logo/Logo.png" width="200px">
+            </div>
+            <form class="form" #ticketForm="ngForm">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="projectinput3">Select Department</label>
+                          <select id="city" name="city" class="form-control" [(ngModel)]="data.DepartmentId">
+                            <option value="">Select Department</option>
+                            <option *ngFor="let dept of deptList" [ngValue]="dept.DepId">{{dept.DepName}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>         
+                      
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="name">Type</label>
+                          <select class="form-control" id="Type" name="Type" [(ngModel)]="data.Type"  (ngModelChange)="type(data.Type)" #Type="ngModel" required="1" >
+                            <option value="">Select</option>
+                            <option value="1">Customer</option>
+                            <option value="2">People</option>
+                          </select>
+                          <div class="col-md-2"></div>
+                          <div *ngIf="isInvalid && !Type.valid && Type.errors.required">
+                            <code>Type is required</code>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="projectinput3">Select Category</label>
+                          <select id="subcat" name="subcat" class="form-control" [(ngModel)]="data.Id" (change)="CategoryparentId(data)">
+                            <option value="">Select Category</option>
+                            <option *ngFor="let subcat of subcategoryList" [ngValue]="subcat.Id">{{subcat.Name}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="OfferName">TATInHrs</label>
+                          <input type="number" placeholder="TATInHrs" [(ngModel)]="data.TATInHrs" id="TATInHrs" 
+                          name="TATInHrs" class="form-control" required = "1" #TATInHrs="ngModel">
+                          <div class="col-md-4"></div>
+                          <div *ngIf="isInvalid && !TATInHrs.valid && TATInHrs.errors.required">
+                            <code>TATInHrs is required</code>
+                          </div>
+                        </div>
+                      </div>
+                  
+      
+                  <div class="col-md-4"> 
+                    <div class="form-group">
+                      <label for="OfferName">Name</label>
+                      <input type="text" placeholder="Name" [(ngModel)]="data.Name" id="Name" name="Name" 
+                      class="form-control" required = "1"  #Name="ngModel">
+                      <div class="col-md-4"></div>
+                      <div *ngIf="isInvalid && !Name.valid && Name.errors.required">
+                        <code>Name is required</code>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OfferName">Display Text</label>
+                        <input type="text" placeholder="Display Text" [(ngModel)]="data.DisplayText"
+                            id="DisplayText" name="DisplayText" class="form-control" required = "1" 
+                            #DisplayText="ngModel">
+                            <div class="col-md-4"></div>
+                            <div *ngIf="isInvalid && !DisplayText.valid && DisplayText.errors.required">
+                              <code>Display Text is required</code>
+                            </div>
+                    </div>
+                </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OfferName">Display Text in Hindi</label>
+                        <input type="text" placeholder="Display Text in Hindi" [(ngModel)]="data.DisplayTextHindi"
+                            id="DisplayTextHindi" name="DisplayTextHindi" class="form-control" required = "1"  
+                            #DisplayTextHindi="ngModel">
+                            <div class="col-md-4"></div>
+                            <div *ngIf="isInvalid && !DisplayTextHindi.valid && DisplayTextHindi.errors.required">
+                              <code>Display Text in Hindi is required</code>
+                            </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                      <label for="OfferName">After Select Message</label>
+                      <input type="text" placeholder="After Select Message" [(ngModel)]="data.AfterSelectMessage"
+                          id="AfterSelectMessage" name="AfterSelectMessage" class="form-control" required = "1" 
+                          #AfterSelectMessage="ngModel">
+                          <div class="col-md-4"></div>
+                          <div *ngIf="isInvalid && !AfterSelectMessage.valid && AfterSelectMessage.errors.required">
+                            <code>After Select Message is required</code>
+                          </div>
+                  </div>
+              </div>
+               
+               <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="OfferName">After Select Hindi Message</label>
+                        <input type="text" placeholder="After Select Hindi Message" [(ngModel)]="data.AfterSelectHindiMessage"
+                            id="AfterSelectHindiMessage" name="AfterSelectHindiMessage" class="form-control" required = "1" 
+                            #AfterSelectHindiMessage="ngModel">
+                            <div class="col-md-4"></div>
+                            <div *ngIf="isInvalid && !AfterSelectHindiMessage.valid && AfterSelectHindiMessage.errors.required">
+                              <code>AfterSelectHindiMessage is required</code>
+                            </div>
+                    </div>
+                </div>                 
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox custom-control-inline">
+                        <input class="custom-control-input" id="customCheckboxInline4" name="dbvalue" type="checkbox"
+                        [(ngModel)]="data.IsDbValue" (change)="sqlquery(data.IsDbValue)" #dbvalue="ngModel">
+                        <label class="custom-control-label" for="customCheckboxInline4">IsDbValue:</label>
+                        <div class="col-md-2"></div>
+                        <div *ngIf="isInvalid && !dbvalue.valid && dbvalue.errors.required">
+                          <code>Is Db Value is required</code>
+                        </div>
+                      </div>
+      
+                      <div class="form-group" *ngIf = "sqlField == true">
+                        <textarea  style="height: 38px; margin-top: 2px;" type="text" placeholder="Sql Query" [(ngModel)]="data.SqlQuery" id="SqlQuery" 
+                        name="SqlQuery" class="form-control" required = "1"  #SqlQuery="ngModel">
+                          <div class="col-md-4"></div>
+                          <div *ngIf="isInvalid && !SqlQuery.valid && SqlQuery.errors.required">
+                            <code>SqlQuery is required</code>
+                          </div>
+                        </textarea>
+                      </div>
+      
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox custom-control-inline">
+                        <input class="custom-control-input" id="customCheckboxInline5" name="askques"
+                          type="checkbox" [(ngModel)]="data.IsAskQuestion" (change)="askQuestion(data.IsAskQuestion)" #askques="ngModel">
+                        <label class="custom-control-label" for="customCheckboxInline5">Is Ask Question:</label>               
+                        <div class="col-md-2"></div>
+                        <div *ngIf="isInvalid && !askques.valid && askques.errors.required">
+                          <code>Is Ask question is required</code>
+                        </div>
+                      </div>
+                  
+                      <div class="form-group" *ngIf = "questionField == true">
+                        <!-- <label for="OfferName">Question</label> -->
+                        <textarea type="text" placeholder="Question" [(ngModel)]="data.Question"
+                          id="Question" name="Question" class="form-control" required = "1" maxlength="50" minlength="4" 
+                          #Question="ngModel" style="height: 38px; margin-top: 2px;">
+                          <div class="col-md-4"></div>
+                          <div *ngIf="isInvalid && !Question.valid && Question.errors.required">
+                            <code>Question is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !Question.valid && Question.errors.minlength">
+                            <code>Minlength 4</code>
+                          </div>
+                        </textarea>
+                      </div>
+               
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                  <div class="form-group" *ngIf = "questionField == true">
+                    <label for="OfferName">Question in Hindi</label>
+                    <textarea type="text" placeholder="QuestionHindi" [(ngModel)]="data.QuestionHindi"
+                      id="QuestionHindi" name="QuestionHindi" class="form-control" required = "1"
+                      #QuestionHindi="ngModel" style="height: 38px; margin-top: 2px;">
+                      <div class="col-md-4"></div>
+                      <div *ngIf="isInvalid && !QuestionHindi.valid && QuestionHindi.errors.required">
+                        <code>Question in Hindi is required</code>
+                      </div>
+                    </textarea>
+                  </div>
+                  </div>
+                 
+      
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="OfferName">Answar Replace String</label>
+                      <input type="text" placeholder="AnswareReplaceString" [(ngModel)]="data.AnswareReplaceString"
+                      id="AnswareReplaceString" name="AnswareReplaceString" class="form-control">
+                     
+                    </div>
+                  </div>   
+                        </div>
+      
+                <div class="ui-fluid shadow mb-2 bg-white rounded form-actions right p-3" >
+                  <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                    Back
+                  </button>
+                  <button type="button" class="btn btn-raised btn-primary" (click)="save(data,ticketForm)" >
+                    Save
+                  </button>
+                </div>
+              </form>
+        </div>
+    </p-dialog>
+  </div>
+
+  <div *ngIf="editView">
+    <p-dialog [(visible)]="editView" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '86%',height: '88%', overflow: 'auto'}">
+        <p-header>
+            <h4
+                style="position: absolute; top: 0px; left: 5%; width: 90%; text-align: center; font-size: 24px; line-height: 24px;">
+                <b>Edit Data </b></h4>
+        </p-header>
+        <div class="borderTable" style="padding:10px 15px; position: relative;z-index: 9;">
+            <div class="waterMark"
+                style="width: 50%;position: absolute;top: 50%;left: 40%;transform: skew(23deg, -36deg);height: 390px;margin-top: -225px;margin-left: -18%;z-index: -1;">
+                <img src="assets/img/logo/sk.png" alt="sk" style="max-width:100%;max-height:100%;opacity: .5;">
+            </div>
+            <div style="position: absolute; right: 15px; margin-top: 40px;">
+                <img src="assets/img/logo/Logo.png" width="200px">
+            </div>
+                <form class="form" #ticketForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="projectinput3">Select Department</label>
+                          <select id="city" name="city" class="form-control" [(ngModel)]="data.DepartmentId">
+                            <option value="">Select Department</option>
+                            <option *ngFor="let dept of deptList" [ngValue]="dept.DepId">{{dept.DepName}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="name">Type</label>
+                          <select class="form-control" id="Type" name="Type" [(ngModel)]="data.Type"
+                          (ngModelChange)="type(data.Type)" #Type="ngModel" required="1" >
+                            <option value="">Select</option>
+                            <option value="1">Customer</option>
+                            <option value="2">People</option>
+                          </select>
+                          <div *ngIf="isInvalid && !Type.valid && Type.errors.required">
+                            <code>Type is required</code>
+                          </div>
+                        </div>
+                      </div>
+            
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="OfferName">TATInHrs</label>
+                          <input type="number" placeholder="TATInHrs" [(ngModel)]="data.TATInHrs" id="TATInHrs"
+                          name="TATInHrs" class="form-control" required = "1" #TATInHrs="ngModel">
+                          <div *ngIf="isInvalid && !TATInHrs.valid && TATInHrs.errors.required">
+                            <code>TATInHrs is required</code>
+                          </div>
+                        </div>
+                      </div>
+            
+                     
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="OfferName">Category Name</label>
+                        <input type="text" placeholder="Category Name" [(ngModel)]="data.Name" id="Name" name="Name"
+                        class="form-control" required = "1" #Name="ngModel">
+                        <div *ngIf="isInvalid && !Name.valid && Name.errors.required">
+                          <code>Name is required</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="OfferName">Display Text</label>
+                        <input type="text" placeholder="DisplayText" [(ngModel)]="data.DisplayText" id="DisplayText" 
+                        name="DisplayText" class="form-control" required = "1" #DisplayText="ngModel">
+                        <div *ngIf="isInvalid && !DisplayText.valid && DisplayText.errors.required">
+                          <code>Display Text is required</code>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="OfferName">Display Text in Hindi</label>
+                        <input type="text" placeholder="Display Text in Hindi" [(ngModel)]="data.DisplayTextHindi" 
+                        id="DisplayTextHindi" name="DisplayTextHindi" class="form-control" required = "1" 
+                        #DisplayTextHindi="ngModel">
+                        <div *ngIf="isInvalid && !DisplayTextHindi.valid && DisplayTextHindi.errors.required">
+                          <code>Display Text in Hindi is required</code>
+                        </div>
+                      </div>
+                    </div>
+          
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="OfferName">After Select Message</label>
+                        <input type="text" placeholder="AfterSelectMessage" [(ngModel)]="data.AfterSelectMessage"
+                        id="AfterSelectMessage" name="AfterSelectMessage" class="form-control" required = "1"
+                        #AfterSelectMessage="ngModel">
+                        <div *ngIf="isInvalid && !AfterSelectMessage.valid && AfterSelectMessage.errors.required">
+                          <code>After Select Message is required</code>
+                        </div>
+                      </div>
+                    </div>          
+          
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="OfferName">After Select Hindi Message</label>
+                        <input type="text" placeholder="AfterSelectHindiMessage" [(ngModel)]="data.AfterSelectHindiMessage"
+                        id="AfterSelectHindiMessage" name="AfterSelectHindiMessage" class="form-control" required = "1"
+                        #AfterSelectHindiMessage="ngModel">
+                        <div *ngIf="isInvalid && !AfterSelectHindiMessage.valid && AfterSelectHindiMessage.errors.required">
+                          <code>AfterSelectHindiMessage is required</code>
+                        </div>
+                      </div>
+                    </div>
+          
+          
+          
+                 
+                    <div class="col-md-4">
+                        <div class="form-group">
+                          <div class="custom-control custom-checkbox custom-control-inline">
+                            <input class="custom-control-input" id="customCheckboxInline4" name="dbvalue" type="checkbox"
+                            [(ngModel)]="data.IsDbValue" (change)="sqlquery(data.IsDbValue)" #dbvalue="ngModel">
+                            <label class="custom-control-label" for="customCheckboxInline4">IsDbValue:</label>
+                            <div *ngIf="isInvalid && !dbvalue.valid && dbvalue.errors.required">
+                              <code>Is Db Value is required</code>
+                            </div>
+                          </div>
+            
+                          <div class="form-group" *ngIf = "sqlField == true">
+                              <!-- <label for="OfferName">Sql Query</label> -->
+                              <textarea type="text" placeholder="Sql Query" [(ngModel)]="data.SqlQuery" id="SqlQuery"
+                              name="SqlQuery" class="form-control" required = "1" maxlength="50" minlength="4" #SqlQuery="ngModel">
+                                <div *ngIf="isInvalid && !SqlQuery.valid && SqlQuery.errors.required">
+                                  <code>SqlQuery is required</code>
+                                </div>
+                                <div *ngIf="isInvalid && !SqlQuery.valid && SqlQuery.errors.minlength">
+                                  <code>Minlength 4</code>
+                                </div>
+                              </textarea>
+                          </div>
+                        </div>
+                      </div>
+          
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <div class="custom-control custom-checkbox custom-control-inline">
+                          <input class="custom-control-input" id="customCheckboxInline5" name="askques" type="checkbox" 
+                          [(ngModel)]="data.IsAskQuestion" (change)="askQuestion(data.IsAskQuestion)" #askques="ngModel">
+                          <label class="custom-control-label" for="customCheckboxInline5">IsAskQuestion:</label>               
+                          <div *ngIf="isInvalid && !askques.valid && askques.errors.required">
+                            <code>Is Ask question is required</code>
+                          </div>
+                        </div>
+          
+                        <div class="row" *ngIf = "questionField == true">
+                          <div class="col-md-6" *ngIf = "questionField == true">
+                            <div class="form-group">
+                              <!-- <label for="OfferName">Question</label> -->
+                              <textarea type="text" placeholder="Question" [(ngModel)]="data.Question" id="Question" name="Question"
+                              class="form-control" required = "1" maxlength="50" minlength="4" #Question="ngModel">
+                                <div *ngIf="isInvalid && !Question.valid && Question.errors.required">
+                                  <code>Question is required</code>
+                                </div>
+                                <div *ngIf="isInvalid && !Question.valid && Question.errors.minlength">
+                                  <code>Minlength 4</code>
+                                </div>
+                              </textarea>
+                            </div>
+                          </div>
+                
+                          <div class="col-md-6" *ngIf = "questionField == true">
+                            <div class="form-group">
+                              <!-- <label for="OfferName">Question in Hindi</label> -->
+                              <textarea type="text" placeholder="Question in Hindi" [(ngModel)]="data.QuestionHindi" id="QuestionHindi"
+                              name="QuestionHindi" class="form-control" required = "1" maxlength="50" minlength="4" #QuestionHindi="ngModel">
+                                <div *ngIf="isInvalid && !QuestionHindi.valid && QuestionHindi.errors.required">
+                                  <code>QuestionHindi is required</code>
+                                </div>
+                                <div *ngIf="isInvalid && !QuestionHindi.valid && QuestionHindi.errors.minlength">
+                                  <code>Minlength 4</code>
+                                </div>
+                              </textarea>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  
+          
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="OfferName">Answar Replace String</label>
+                        <input type="text" placeholder="AnswareReplaceString" [(ngModel)]="data.AnswareReplaceString"
+                        id="AnswareReplaceString" name="AnswareReplaceString" class="form-control" >
+                      </div>
+                    </div>
+                  </div>
+          
+                  <div class="ui-fluid shadow mb-2 bg-white rounded form-actions right p-3" >
+                    <button type="button" class="btn btn-raised btn-warning mr-1" (click)="onCancel()">
+                      Back
+                    </button>
+                    <button type="button" class="btn btn-raised btn-primary" (click)="saveCategory(data,ticketForm)" >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              </div>
+    </p-dialog>
+  </div>
+
+  <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+
+
+  <!-- <ul>
+    <ng-container *ngTemplateOutlet="recursiveListTmpl; context:{ list: list }"></ng-container>
+  </ul>
+  
+  <ng-template #recursiveListTmpl let-list="list">
+    <li *ngFor="let item of deptCategory">
+       {{ item.Name }} 
+      <ul *ngIf="item.ticketCategoriesNewDcs.length > 0">
+        <ng-container *ngTemplateOutlet="recursiveListTmpl; context:{ list: item.ticketCategoriesNewDcs }"></ng-container>
+      </ul>
+    </li>
+  </ng-template> -->
+
+
+  <!-- <table [ngClass] = "(isParent=='false')?'hideAccordion': 'showAccordion'" style="font-family: arial, sans-serif;border-collapse: collapse;width:100%;margin:0%">
+    <tr *ngFor="let item of deptCategory;let i = index; " id=TR{{item.Id}} style="background-color:rgba(240, 242, 243, 0.3); ">
+      <td id={{item.Id}} style="border: 1px solid #dddddd;text-align: left;padding: 14px;">
+        <span class="row">
+          <span class="col-11">{{item.Name}}</span>
+          <hyperlink id=A{{item.Id}} href="javascript:;"  class="arrowTransform pva-accordion-header col-1" style="color:black;padding: 0px;font-size: 14px; " *ngIf="subcategoryList != null && subcategoryList.length > 0" (click)="toggleSection2(item.Id)">
+          </hyperlink>
+        </span><br />
+        <div id=DIV{{item.Id}} *ngIf="subcategoryList != null && subcategoryList.length > 0" style="width:100%;margin:0%">
+
+          <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: subcategoryList,true:'false' }"></ng-container>
+        </div>
+      </td>
+    </tr>
+  </table>
+</ng-template>
+<ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: selectedRuleList }" ></ng-container> -->
+
+
+
+<!-- 
+<cdk-tree [dataSource]="dataSource" [treeControl]="treeControl">
+    <cdk-nested-tree-node *cdkTreeNodeDef="let node" class="example-tree-node">
+      <button mat-icon-button disabled></button>
+      {{node.name}}
+    </cdk-nested-tree-node>
+    <cdk-nested-tree-node *cdkTreeNodeDef="let node; when: hasChild" class="example-tree-node">
+      <button mat-icon-button [attr.aria-label]="'toggle ' + node.name" cdkTreeNodeToggle>
+        <mat-icon class="mat-icon-rtl-mirror">
+          {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+        </mat-icon>
+      </button>
+      {{node.name}}
+      <div [class.example-tree-invisible]="!treeControl.isExpanded(node)">
+        <ng-container cdkTreeNodeOutlet></ng-container>
+      </div>
+    </cdk-nested-tree-node>
+  </cdk-tree> -->
+  

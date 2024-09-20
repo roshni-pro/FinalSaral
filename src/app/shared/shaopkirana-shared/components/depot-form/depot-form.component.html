@@ -1,0 +1,104 @@
+
+<div class="h4 text-primary" *ngIf="isdepoId">Edit Form</div>
+<div class="h4 text-primary" *ngIf="!isdepoId">Add Form</div>
+<div class="ui-fluid p-2 rounded bg-lightprimary">
+  <div>
+      <form class="form form-inline" name="form" (ngSubmit)="onclick(selectedDepot)" #testForm="ngForm" autocomplete="off" ngNativeValidate>
+          <input autocomplete="false" name="hidden" type="text" style="display:none;">
+
+        <div class="col-md-6">
+            <div class="form-group m-2">
+              <label for="depotname" class="col-md-6">Depot Name</label>
+              <input type="text" id="depotname" class="form-control col-md-6" name="depotname" [(ngModel)]="selectedDepot.DepoName" placeholder="" >
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group m-2">
+                <label for="depotcode" class="col-md-6">Depot Code</label>
+                <input type="text" id="depotcode" class="form-control col-md-6" name="depotcode" [(ngModel)]="selectedDepot.DepoCodes" placeholder="" >
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group m-2">
+                <label for="gstno" class="col-md-6">GST No.</label>
+                <input type="text" id="gstno" class="form-control col-md-6" name="gstno" [(ngModel)]="selectedDepot.GSTin" placeholder="" >
+            </div>
+        </div>
+
+        <div class="col-md-6"></div>
+
+        <div class="col-md-6">
+            <div class="form-group m-2">
+              <label for="mail" class="col-md-6">Email</label>
+              <input type="email" id="mail" class="form-control col-md-6" name="mail" [(ngModel)]="selectedDepot.Email" placeholder="" >              
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group m-2">
+              <label for="phoneno" class="col-md-6">Phone Number</label>
+              <input type="number" id="phoneno" class="form-control col-md-6" name="phoneno" [(ngModel)]="selectedDepot.PhoneNumber" placeholder="" >              
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-group m-2">
+              <label for="address" class="col-md-3">Address</label>
+              <input type="text" id="address" class="form-control col-md-6" name="address" [(ngModel)]="selectedDepot.ContactPerson" placeholder="" >              
+            </div>
+        </div>
+
+        <!-- Select State -->
+        <div class="col-md-6">
+          <div class="form-group m-2">
+            <label for="state" class="col-md-6">Select State *</label>
+            <select id="state" name="state" class="form-control col-md-6" [(ngModel)]="selectedDepot.Stateid">
+              <option disabled>--Select State--</option>
+              <option *ngFor="let state of states" value="state.Stateid">{{state.StateName}}</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Select City -->
+        <div class="col-md-6">
+          <div class="form-group m-2">
+            <label for="city" class="col-md-6">Select City *</label>
+            <select id="city" name="city" class="form-control col-md-6" [(ngModel)]="selectedDepot.CityId">
+              <option disabled>--Select City--</option>
+              <option *ngFor="let city of cities" value="city.Cityid">{{city.CityName}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group m-2">
+              <label for="contactperson" class="col-md-6">Contact Person</label>
+              <input type="text" id="contactperson" class="form-control col-md-6" name="contactperson" [(ngModel)]="selectedDepot.ContactPerson" placeholder="" >              
+            </div>
+        </div>
+
+        <div class=" col-md-6">
+          <div class="form-group m-2">
+            <label for="active" class="col-md-6"> Active</label>
+            <div class="custom-control custom-checkbox custom-control-inline">
+              <input class="custom-control-input" id="customCheckboxInline1" name="customCheckboxInline1" type="checkbox"
+                [(ngModel)]="selectedDepot.IsActive">
+              <label class="custom-control-label" for="customCheckboxInline1"></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions right col-sm-12 p-3">
+            <button type="button" class="btn btn-raised bg-grey50 text-primary mr-1" (click) = "onCancel()">
+              <i class="ft-x"></i> Cancel
+            </button>
+            <button type="submit" class="btn btn-raised btn-primary">
+              <i class="fa fa-check-square-o"></i> Save
+            </button>
+        </div>
+
+    </form>
+  </div>
+</div>

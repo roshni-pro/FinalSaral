@@ -1,0 +1,433 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="my-2 d-flex justify-content-between">
+  <div class="header">
+    <h3 class="m-2"><b>Assignment Payment</b></h3>
+  </div>
+</div>
+<div class="ui-fluid">
+  <form class="form">
+    <div class="form-body">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput3" class="col-md-3"><b>Hub</b></label>
+            <select id="ip" name="hub" class="form-control" [(ngModel)]="warehouseId"
+              (ngModelChange)="onsearch(warehouseId)">
+              <option value="">Select Hub</option>
+              <option *ngFor="let hub of hubList" [ngValue]="hub.WarehouseId">{{hub.WarehouseName}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput8">&nbsp;&nbsp;&nbsp;<b>Agent Name</b></label>
+            <select id="ip" name="agentname" class="form-control" [(ngModel)]="searchdata.AgentId"
+              (ngModelChange)="onsearchAgent()">
+              <option value="">Select Agent Name</option>
+              <option *ngFor="let agent of agentList" [ngValue]="agent.PeopleID">
+                {{agent.PeopleID}}-{{agent.DisplayName}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Payment Status</b></label>
+            <select id="ip" name="paymentstatus" class="form-control" [(ngModel)]="searchdata.paymentstatus">
+              <option value="Paid">Paid</option>
+              <option value="UnPaid">UnPaid</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="projectinput23" class="col-md-3"><b>AssignmentID</b></label>
+            <input type="text" id="ip9" name="DeliveryIssuanceId" class="form-control"
+              [(ngModel)]="searchdata.DeliveryIssuanceId" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <label for="dt"><b>From Date</b></label>
+          <p-calendar appendTo="body" [(ngModel)]="searchdata.StartDate" [showIcon]="true" name="FromDate">
+          </p-calendar>
+        </div>
+        <div class="col-md-3">
+          <label for="dt"><b>End Date</b></label>
+          <p-calendar appendTo="body" [(ngModel)]="searchdata.EndDate" [showIcon]="true" name="EndDate">
+          </p-calendar>
+        </div>
+        <div class="col-md-3">
+          <br>
+          <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="search()">
+            Search
+          </button>
+        </div>
+        <div class="col-md-3 ">
+          <br>
+          <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24" (click)="multipleassignmentpay()"[disabled]=multiplepay>
+            MultiplePay
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- For show the List data  -->
+<div class="position-relative">
+  <div class="position-relative">
+    <p-table #dt [columns]="cols" [value]="assignmentList" [paginator]="true" [rows]="20" dataKey="DeliveryIssuanceId">
+      <ng-template pTemplate="header">
+        <tr>
+          <th></th>
+          <th style="text-align: center">
+            AssignmentId
+          </th>
+          <th style="text-align: center">
+            DBoy Name
+          </th>
+          <th style="text-align: center">
+            Status
+          </th>
+          <th style="text-align: center">
+            CreatedDate
+          </th>
+          <th style="text-align: center">
+            TotalAssignmentAmount
+          </th>
+          <th style="text-align: center">
+            ChequeAmount
+          </th>
+          <th style="text-align: center">
+            CashAmount
+          </th>
+          <th style="text-align: center">
+            OnlineAmount
+          </th>
+          <th>
+            Pay
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td>
+              <input type="checkbox" class="largerCheckbox"  [(ngModel)]="rowData.IsChecked" *ngIf="rowData.Status!='Paid'"
+              (ngModelChange)="onClickAssignment(rowData)" [name]="rowData.DeliveryIssuanceId" [id]="rowData.DeliveryIssuanceId"
+              >
+            <!-- <p-checkbox [(ngModel)]="rowData.IsChecked"  [name]="rowData.Id"
+              [id]="rowData.DeliveryIssuanceId">></p-checkbox> -->
+          </td>
+          <td style="text-align: center">
+            {{rowData.DeliveryIssuanceId}}
+          </td>
+          <td style="text-align: center">
+            {{rowData.DisplayName}}
+          </td>
+          <td style="text-align: center">
+            {{rowData.Status}}
+          </td>
+          <td style="text-align: center">
+            {{rowData.CreatedDate}}
+          </td>
+          <td style="text-align: center">
+            {{rowData.TotalAssignmentAmount}}
+          </td>
+          <td style="text-align: center">
+            {{rowData.ChequeAmount}}
+          </td>
+          <td style="text-align: center">
+            {{rowData.CashAmount}}
+          </td>
+          <td style="text-align: center">
+            {{rowData.OnlineAmount}}
+          </td>
+          <td>
+            <button type="button" class="btn btn-raised btn-primary" (click)="openDetails(rowData,$event)" pButton
+              icon="pi pi-info-circle" label="Pay" *ngIf="rowData.Status!='Paid'"></button>
+            <span *ngIf="rowData.Status=='Paid'">Already Paid</span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <br><br>
+  </div>
+</div>
+
+<!--Popup for single assignment payment-->
+
+<div *ngIf="isOpenPopup">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="px-3">
+          <form class="form">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3" class="col-md-2"><b>AssignmentID</b></label>
+                    <input type="text" id="ip4" name="DeliveryIssuanceId" class="form-control"
+                      [(ngModel)]="selectedRowDetails.DeliveryIssuanceId" disabled />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Refrence No</b></label>
+                    <input type="text" id="ip2" name="Refno" class="form-control" [(ngModel)]="RefNo" />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Remark</b></label>
+                    <input type="text" id="ip2" name="Remark" class="form-control" [(ngModel)]="Remark" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Cash Amount</b></label>
+                    <input type="number" id="ip2" name="cashAmountss" class="form-group ip2" class="form-control"
+                      [(ngModel)]="totalAmount.cashAmount" (ngModelChange)="onTotalAmount(totalAmount)" />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Cheque Amount</b></label>
+                    <input type="number" id="ip2" name="chequeAmount" class="form-control"
+                      [(ngModel)]="totalAmount.chequeAmount" (ngModelChange)="onTotalAmount(totalAmount)" />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Online Amount</b></label>
+                    <input type="number" id="ip2" name="onlineAmount" class="form-control"
+                      [(ngModel)]="totalAmount.onlineAmount" (ngModelChange)="onTotalAmount(totalAmount)" />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label for="dt"><b>Total Delivery Amount</b></label>
+                  <input type="text" id="TDA" name="TDA" [(ngModel)]="totalDeliverdAmount" class="form-control"
+                    disabled>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3" ><b>Payment Date</b></label>
+                    <p-calendar appendTo="body" [(ngModel)]="PaymentDate" [showIcon]="true" name="PaymentDate">
+                    </p-calendar>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <br>
+                  <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24 ip3" (click)="save()"
+                    [disabled]="verifyDisable">
+                    Verify
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="position-relative">
+      <div class="position-relative">
+        <p-table #dt [columns]="cols1" [value]="GetOrderList" [paginator]="true" [rows]="20"
+          dataKey="DeliveryIssuanceId">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="text-align: center">
+                OrderId
+              </th>
+              <th style="text-align: center">
+                Skcode
+              </th>
+              <th style="text-align: center">
+                Status
+              </th>
+              <th style="text-align: center">
+                GrossAmount
+              </th>
+              <th style="text-align: center">
+                Online Amount
+              </th>
+              <th style="text-align: center">
+                Cheque Amount
+              </th>
+              <th style="text-align: center">
+                Cash Amount
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr [ngClass]="{'pmnt-blr': rowData.Status != 'Delivered' && rowData.Status != 'sattled'}">
+
+              <td style="text-align: center">
+                {{rowData.OrderId}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.Skcode}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.Status}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.GrossAmount}}
+              </td>
+              <td style="text-align: center">
+                {{rowData. OnlineAmount}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.ChequeAmount}}
+              </td>
+              <td style="text-align: center">
+                {{rowData.CashAmount}}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <br><br>
+      </div>
+    </div>
+  </p-dialog>
+</div>
+<!-- for popup mutliple assignment payment -->
+
+<div *ngIf="isOpenPopupPayment">
+  <p-dialog [(visible)]="isOpenPopupPayment" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="px-3">
+          <form class="form">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Refrence No</b></label>
+                    <input type="text" id="ip2" name="Refno" class="form-control" [(ngModel)]="RefNoMulti" />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Remark</b></label>
+                    <input type="text" id="ip2" name="Remark" class="form-control" [(ngModel)]="RemarkMulti" />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Total Assignment Amount</b></label>
+                    <input type="number" id="ip2" name="TotalAssignment" class="form-group ip2" class="form-control"
+                      [(ngModel)]="multipleassignmenttotaldata.TotalAssignmentAmount" disabled />
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Cash Amount</b></label>
+                    <input type="number" id="ip2" name="cashAmount" class="form-group ip2" class="form-control"
+                      [(ngModel)]="multipleassignmenttotaldata.cashAmount" disabled />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Cheque Amount</b></label>
+                    <input type="number" id="ip2" name="chequeAmount" class="form-control"
+                      [(ngModel)]="multipleassignmenttotaldata.chequeAmount" disabled />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3">&nbsp;&nbsp;&nbsp;<b>Online Amount</b></label>
+                    <input type="number" id="ip2" name="onlineAmount" class="form-control"
+                      [(ngModel)]="multipleassignmenttotaldata.onlineAmount" disabled />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label for="dt"><b>Total Amount</b></label>
+                  <input type="text" id="TDA" name="TDA" [(ngModel)]="multipleassignmenttotaldata.totalDeliverdAmount"
+                    class="form-control" disabled>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="projectinput3" ><b>Payment Date</b></label>
+                    <p-calendar appendTo="body" [(ngModel)]="PaymentDateMulti" [showIcon]="true" name="PaymentDateMulti">
+                    </p-calendar>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <br>
+                  <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24 ip3"
+                    (click)="saveMutliple()" [disabled]="verifyDisablemulti">
+                    MultiVerify
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="position-relative">
+      <div class="position-relative">
+        <p-table #dt [columns]="cols1" [value]="mutlipleassignmentpayemntlist" [paginator]="true" [rows]="20"
+          dataKey="DeliveryIssuanceId">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>
+                AssignmentID
+              </th>
+              <th>
+                OnlineAmount
+              </th>
+              <th>
+                ChequeAmount
+              </th>
+              <th>
+                CashAmount
+              </th>
+              <th>
+                TotalAmount
+              </th>
+              <th>
+                TotalAssignmentAmount
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns" let i=index>
+            <tr>
+              <td>
+                {{rowData.DeliveryIssuanceId}}
+              </td>
+              <td>
+                <input type="number" id="ip21" name="onlineAmount" class="form-control"
+                  [(ngModel)]="rowData.onlineAmount" (ngModelChange)="onAmountchange(rowData.DeliveryIssuanceId)" />
+              </td>
+              <td>
+                <input type="number" id="ip22" name="chequeAmount" class="form-control"
+                  [(ngModel)]="rowData.chequeAmount" (ngModelChange)="onAmountchange(rowData.DeliveryIssuanceId)" />
+              </td>
+              <td>
+                <input type="number" id="ip23" name="cashAmount" class="form-control" [(ngModel)]="rowData.cashAmount"
+                  (ngModelChange)="onAmountchange(rowData.DeliveryIssuanceId)" />
+
+              </td>
+              <td>
+                {{rowData.totalDeliverdAmount}}
+              </td>
+              <td>
+                {{rowData.TotalAssignmentAmount}}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <br><br>
+      </div>
+    </div>
+  </p-dialog>
+</div>

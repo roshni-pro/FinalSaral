@@ -1,0 +1,307 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<section id="customer-master">
+  <div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="m-2">Customer Master</h3>
+    </div>
+    <div>
+      <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-bottom: 0;"
+        (click)="addPeoples()">
+        <i class="fa fa-plus-circle"></i> Add Customer </button>
+    </div>
+  </div>
+
+  <!-- <div class="container h-100">
+        <div class="d-flex justify-content-left ">
+          <div class="searchbar">
+            <input class="search_input" type="text" name="" placeholder="Search..."  >
+            <a href="#" class="search_icon"><i class="fas fa-search"></i></a>
+          </div>
+        </div>
+      </div> -->
+  <!-- <br><br> -->
+
+  <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>
+
+  <div class="container">
+    <!-- <div class="px-3"> -->
+    <form class="form" #ledgerForm="ngForm">
+      <div class="form-body">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="projectinput3">City</label>
+              <br>
+              <!-- <select id="desg" name="desg" class="form-control" [(ngModel)]="searchModel.cityId">
+                <option value="">--select--</option>
+                <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                  {{ city.CityName }}
+                </option>
+              </select> -->
+
+              <!-- <select id="state" name="state" class="form-control" [(ngModel)]="searchModel.cityId"
+                    (change)="getWarehousee(searchModel.cityId)" placeholder="Select City"
+                    #state="ngModel">
+                    <option value="">--select--</option>
+                    <option *ngFor="let city of cityList" [ngValue]="city.Cityid">
+                      {{ city.CityName }}
+                    </option>
+                  </select> -->
+
+              <p-dropdown id="state" name="state" [options]="cityList" [filter]="true" (onChange)="getWarehouse(CiDD)"
+                [(ngModel)]="CiDD" optionLabel="CityName" optionValue="Cityid" placeholder="select City">
+              </p-dropdown>
+
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="projectinput3">Warehouse</label>
+              <br>
+              <!-- <select id="ware" name="ware" class="form-control" [(ngModel)]="searchModel.Warehouseid"  
+              (change)="getCluster(searchModel.Warehouseid)" placeholder="Select warehouse">
+              <option value="" >--Select warehouse--</option>
+              <option *ngFor="let w of warehouseList" [ngValue]="w.WareHouseId" >
+                {{ w.WareHouseName }} {{w.CityName}}
+              </option>
+            </select> -->
+
+              <p-dropdown id="ware" name="ware" [options]="warehouseList" [filter]="true"
+                (onChange)="getCluster(WareIDD)" [(ngModel)]="WareIDD" optionLabel="WareHouseName"
+                placeholder="select Warehouse">
+              </p-dropdown>
+
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="cluster" class="col-md-6">Cluster</label>
+              <!-- <select id="cluster" name="cluster" class="form-control"
+                [(ngModel)]="searchModel.ClusterId" >
+                <option value="">select cluster</option>
+                <option *ngFor="let w of clusterList" [ngValue]="w.ClusterId">
+                  {{ w.ClusterName }}
+                </option>
+              </select> -->
+
+              <p-dropdown id="cluster" name="cluster" [options]="clusterList" [filter]="true"
+                (onChange)="Check(CustIDD)" [(ngModel)]="CustIDD" optionLabel="ClusterName"
+                placeholder="select Cluster">
+              </p-dropdown>
+
+            </div>
+            <!-- <div *ngIf="isInvalid && !ClusterId.valid && ClusterId.errors.required">
+            <code>Cluster is required</code>
+          </div> -->
+          </div>
+
+          <!-- <div class="col-md-3">
+                <div class="form-group">
+                  <label for="projectinput3">Party Name*</label>
+                  <br>
+                  <p-autoComplete [(ngModel)]="selectedLedger" [suggestions]="ledgerList"
+                    (completeMethod)="getLedgerList($event)" field="Name" [size]="30"
+                    placeholder="enter at least 3 chars" [minLength]="1" name="ledgerName"
+                    (ngModelChange)="onSelectLedger()" name="ledgerName" required="true" #ledgerName="ngModel">
+                  </p-autoComplete>
+                  <div [hidden]="!(isInvalid && !ledgerName.valid)">
+                    <code>Required!</code>
+                  </div>
+                </div>
+              </div> -->
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="orderType">Sk Code</label>
+              <input type="text" id="orderType" name="orderType" class="form-control" [(ngModel)]="searchModel.skcode">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="orderType">Mobile</label>
+              <!-- <input type="tel" id="orderType" name="orderType" class="form-control" (keypress)="keyPress($event)"
+                [(ngModel)]="searchModel.mobile"> -->
+              <input name="orderType" type="tel" pattern="^[6-9][0-9]{9}$" (keypress)="keyPress($event)" maxlength="10"
+                minlength="10" class="form-control" required [(ngModel)]="searchModel.mobile">
+
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="projectinput3">From Date</label>
+              <br>
+              <p-calendar name="startDateInput" [(ngModel)]="searchModel.FromDate" [showIcon]="true" name="fromDate">
+              </p-calendar>
+              <!-- <div [hidden]="!(isInvalid && !fromDate.valid)">
+                    <code>Required!</code>
+                  </div> -->
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="projectinput4">To Date</label>
+              <br>
+              <p-calendar name="endDateInput" [(ngModel)]="searchModel.ToDate" [showIcon]="true" name="toDate">
+              </p-calendar>
+              <!-- <div [hidden]="!(isInvalid && !toDate.valid)">
+                    <code>Required!</code>
+                  </div> -->
+            </div>
+          </div>
+
+          <div class="col-md-3" style="padding-top: 30px">
+            <div class="form-group">
+              <button type="button" class="btn btn-raised btn-raised btn-primary"
+                (click)="search(searchModel)">Search</button>
+              <button type="button" class="btn btn-raised btn-raised btn-primary " style="margin-left:15px"
+                (click)="clear()">
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="orderType">Customer Type</label>
+              <select id="Verified" name="Verified" class="form-control" [(ngModel)]="customertype"
+                (change)="getFilterdata(customertype)">
+                <option value="" disabled>--Select--</option>
+                <option value="Retailer">Retailer</option>
+                <option value="IsKPP">IsKPP</option>
+                <option value="Direct Open Network">Direct Open Network</option>
+                <option value="SKP Owner">SKP Owner</option>
+                <option value="SKP Retailer">SKP Retailer</option>
+                <option value="Trader">Trader</option>
+                <option value="Wholesaler">Wholesaler</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label for="orderType"> Customer Levels </label>
+            <select id="level" name="level" class="form-control" [(ngModel)]="searchModel.LevelName">
+              <option value="">--Select--</option>
+              <option [ngValue]="a.LevelName" *ngFor="let a of LevelColor"
+                [ngStyle]="{'background-color': a.LevelColour}">
+                {{a.LevelName}}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <div class="form-group">
+              <label for="orderType">Customer AppType</label>
+              <select id="Verified" name="Verified" class="form-control" [(ngModel)]="searchModel.CustomerAppType">
+                <option value="0">--Select--</option>
+                <option value="1">SkRetailer</option>
+                <option value="2">Trade Customer</option>
+                <option value="3">Zaruri Customer</option>
+                <option value="4">Distributor App Customer</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label for="IsDistributed">Show Distributed Customer:</label><br>
+            &nbsp;&nbsp; <p-checkbox name="IsKPP" [(ngModel)]="searchModel.IsKPP" binary="true"></p-checkbox>
+            <!-- &nbsp&nbsp;<input type="checkbox" name="distributedCustomer" [(ngModel)]="IsKPP" (change)="getdistVerifydata(IsKPP)">                 -->
+          </div>
+
+          <div class="col-sm-12">
+            <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="exportFullCustomer()"
+              style="margin-left:15px">
+              <!-- <i class="fa fa-file-excel-o" aria-hidden="true"></i> -->
+              Export Full Customer List
+            </button>
+
+            <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="exportCustomer()"
+              style="margin-left:15px">
+              Export Customer List </button>
+
+            <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="exportDateBased()"
+              style="margin-left:15px">
+              Export Date Based List </button>
+
+            <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="exportMissing()"
+              style="margin-left:15px">
+              Missing Customer Details List </button>
+
+            <!-- <button type="button" class="btn btn-raised btn-raised btn-primary" (click)="popupchannel()"
+              style="margin-left:15px">
+              Upload ChannelList </button> -->
+
+
+            <!-- <button type="button" class="btn btn-raised btn-raised btn-info" style="margin-left:15px"
+                  (click)="missingDetails()">
+                   <i class="fa fa-file-excel-o" aria-hidden="true"></i> -->
+            <!-- Show Customer's Missing Details </button>&nbsp;&nbsp;
+                
+                  <button type="button" class="btn btn-raised btn-raised btn-info" (click)="allCustomer()">
+                  All Customer</button>             -->
+          </div>
+          <!-- <div class="form-group col-md-12 clear-both"></div> -->
+        </div>
+      </div>
+
+
+    </form>
+    <!-- </div> -->
+  </div>
+
+  <div class="ui-fluid shadow p-3 bg-white rounded table table-hover">
+    <div class="position-relative">
+      <div class="position-absolute tax-details" *ngIf="isDetails">
+        <app-customer-details [details]="selectedRowDetails" [activeFields]="activeFields"
+          (isdetailsclose)="isDetailsFalse($event)" (refreshParent)="ngOnInit()" (deleteSelected)="onDelete($event)"
+          class="d-flex justify-content-end"></app-customer-details>
+      </div>
+    </div>
+
+    <p-table [columns]="cols" [value]="customerList" [lazy]="true" [totalRecords]="totalRecords"
+      (onLazyLoad)="load($event)" [paginator]="true" [rows]="20" dataKey="CustomerId" [scrollable]="true"
+      scrollHeight="65vh" text-align: center>
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="text-align: center">
+            {{col.header}}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+        <tr (click)="openDetails(rowData,$event)">
+          <td *ngFor="let col of columns" style="text-align: center"
+            [ngStyle]="(rowData.ColourCode != null)?{'background-color':rowData.ColourCode}:{'background-color':rowData.ColourCode}">
+            {{rowData[col.field]}}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+  <div class="row" *ngIf="isResultFalse">
+    <h4 style="margin-left: 25px"><b>No Data Found</b></h4>
+  </div>
+</section>
+
+<!-- <p-dialog contentStyleClass="abc" [(visible)]="displaypop" [resizable]="false" positionTop="200" [modal]="true" appendTo="body"  
+ [draggable]="false" [blockScroll]="true" 
+[style]="{ width: '30%',height:'auto'}"  header="Channel upload">
+<br>
+<p-fileUpload name="myfile[]" customUpload="true" accept=".xls,.xlsx"
+              (uploadHandler)="onUpload($event)" #uploadCustom>
+              <code>*</code>
+          </p-fileUpload>
+<button class=" btn mt-2" type="submit" (click)="DownLoadSampleFile()" style=" background-color: #119150;color: white;float: right;">Download Sample</button>
+<br><br>
+
+</p-dialog> -->

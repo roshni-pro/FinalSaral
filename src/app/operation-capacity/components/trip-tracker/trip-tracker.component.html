@@ -1,0 +1,452 @@
+<div class="row">
+    <br>
+    <div class="col-xl-12 col-lg-12">
+        <h4 style="text-align: center;font-weight: 600; margin-top: 10px;">Trip - Live Tracker</h4>
+    </div>
+    <div class="col-xl-12 col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title"></h4>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="new-fix">
+                        <button type="button" class="btn btn-primary tow mr" name="back" id="back" (click)="back()">
+                            Back
+                        </button>
+                    </div>
+                    <div class="row mr">
+                        <div class="col-md-3">
+                            <label for="select-time">Trip Time</label>
+                            <select class="form-control" id="select-time" [(ngModel)]="selectedTripTime"
+                                (ngModelChange)="onTripTimeChange()">
+                                <option [ngValue]="1">Today</option>
+                                <option [ngValue]="2">Previous</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="select-time">Select Date</label><br>
+                            <p-calendar [disabled]="selectedTripTime == 1" dateFormat="dd/mm/yy" [maxDate]="maxDate"
+                                [(ngModel)]="selectedDate" (ngModelChange)="getTripList()" [showIcon]="true">
+                            </p-calendar>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cityid">Trip</label>
+                            <!--  -->
+                            <!--  -->
+                            <select id="trip" name="trip" class="form-control" [(ngModel)]="selectedTrip"
+                                (ngModelChange)="onChangeTripNo()">
+                                <option [ngValue]="null" disabled>--Select Trip--</option>
+                                <option *ngFor="let trip of tripList" [ngValue]="trip.value">
+                                    {{ trip.label }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div *ngIf="selectedTrip">
+                        <div class="row" *ngIf="showMap && expectedWaypoints && expectedWaypoints.length > 0">
+                            <div class="col-sm-6">
+                                <p class="rte">Expected</p>
+                                <div class="sk">
+                                    <div class="tooltip-clu"
+                                        *ngIf="totalExpectedWapoint && totalExpectedWapoint.length>0">
+                                        <!-- <div (click)="onSelectWayopint(-1)" class="crl">
+                                        AL
+                                    </div> -->
+                                        <div (click)="onChangeTripNo()" class="crl">
+                                            AL
+                                        </div>
+                                        <div (click)="onSelectWayopint(i)" class="crl"
+                                            *ngFor="let pt of totalExpectedWapoint; let i=index;">
+                                            {{i+1}}
+                                        </div>
+                                    </div>
+                                    <agm-map [latitude]="source.Lat" [longitude]="source.Lng" [zoom]="zoom"
+                                        [disableDefaultUI]="false" [fullscreenControl]="true" [zoomControl]="true"
+                                        [style.height.px]="myInnerHeight" (mapClick)="resetMarker()">
+
+                                        <agm-direction *ngIf="totalExpectedWapoint && totalExpectedWapoint.length>0"
+                                            [origin]="origin" [destination]="origin" [renderOptions]="renderOptions"
+                                            [optimizeWaypoints]="false" [waypoints]="totalExpectedWapoint">
+                                        </agm-direction>
+
+                                        <agm-marker *ngFor="let wp of expectedWaypoints; let i = index;"
+                                            label="{{wp.location.label}}" [latitude]="wp.location.lat"
+                                            [longitude]="wp.location.lng" [iconUrl]="shopMarker"
+                                            (markerClick)="markerClicked($event, wp.location.obj.Skcode)">
+                                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                                <div>
+                                                    {{wp.location.obj.Skcode}}
+                                                </div>
+                                            </agm-info-window>
+                                        </agm-marker>
+
+                                        <agm-marker label="W" [latitude]="origin.lat" [longitude]="origin.lng"
+                                            [iconUrl]="warehouseMarker">
+                                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                                <div>
+                                                    Warehouse
+                                                </div>
+                                            </agm-info-window>
+                                        </agm-marker>
+
+
+                                        <!-- [iconUrl]="icon" (mouseOver)="onMouseOver(infoWindow, $event)"
+                                        (mouseOut)="onMouseOut(infoWindow, $event)" -->
+                                        <agm-marker *ngIf="showMarker" [latitude]="currentLocation.Lat"
+                                            [longitude]="currentLocation.Lng" [iconUrl]="icon">
+                                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                                <div>
+                                                    {{currentLocation.TripPlannerConfirmedDetailId}}
+                                                </div>
+                                            </agm-info-window>
+                                        </agm-marker>
+
+                                    </agm-map>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="rte">Actual</p>
+                                <div class="sk" *ngIf="actualRouteArray && actualRouteArray.length > 0">
+                                    <agm-map [latitude]="source.Lat" [longitude]="source.Lng" [zoom]="zoom"
+                                        [fullscreenControl]="true" [disableDefaultUI]="false" [zoomControl]="true"
+                                        (mapClick)="resetMarker()" [style.height.px]="myInnerHeight">
+                                        <!-- <agm-direction [renderOptions]="renderOptions" [optimizeWaypoints]="false"
+                                        [origin]="actualOrigin" [destination]="actualDestination"
+                                        [waypoints]="actualWaypoints" [markerOptions]="markerOptions">
+                                    </agm-direction> -->
+
+                                        <agm-direction
+                                            *ngIf="totalExpectedWapoint && totalExpectedWapoint.length>0 && showExpectedPath"
+                                            [origin]="origin" [destination]="origin" [renderOptions]="renderOptions"
+                                            [optimizeWaypoints]="false" [waypoints]="totalExpectedWapoint">
+                                        </agm-direction>
+
+                                        <agm-polyline [editable]="false" *ngIf="showActualPath">
+                                            <agm-polyline-point *ngFor="let data of actualWaypoints"
+                                                [latitude]="data.location.lat" [longitude]="data.location.lng">
+                                            </agm-polyline-point>
+                                        </agm-polyline>
+
+                                        <!-- <agm-direction id="{{'abc-'+i}}" *ngFor="let rte of actualRouteArray; let i=index;"
+                                        [renderOptions]="renderOptions" [optimizeWaypoints]="false"
+                                        [origin]="rte.origin" [destination]="rte.destination"
+                                        [waypoints]="rte.waypoints">
+                                    </agm-direction> -->
+                                        <!-- [iconUrl]="icon" (mouseOver)="onMouseOver(infoWindow, $event)"
+                                        (mouseOut)="onMouseOut(infoWindow, $event)" -->
+
+                                        <!-- [animation]="ANIMETIONTEST" -->
+                                        <agm-marker *ngFor="let wp of expectedWaypoints; let i = index;"
+                                            label="{{wp.location.obj.SequenceNo}}" [latitude]="wp.location.lat"
+                                            [longitude]="wp.location.lng" [iconUrl]="wp.icon"
+                                            (markerClick)="showDistanceBetweenMarkers($event, wp)"
+                                            [animation]="wp.ANIMETIONTEST">
+                                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                                <div>
+                                                    {{wp.location.obj.Skcode}}
+                                                </div>
+                                            </agm-info-window>
+                                        </agm-marker>
+
+                                        <!-- *ngIf="wp.location.obj.UnloadLng && wp.location.obj.UnloadLat" -->
+                                        <ng-container *ngFor="let wp of expectedWaypoints; let i = index;">
+                                            <agm-marker
+                                                *ngIf="wp.location.obj.UnloadLng && wp.location.obj.UnloadLat && showActualPath"
+                                                label="{{wp.location.obj.SequenceNo}}"
+                                                [latitude]="wp.location.obj.UnloadLat"
+                                                [longitude]="wp.location.obj.UnloadLng" [iconUrl]="unloadMarker">
+                                                <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                                    <div>
+                                                        {{wp.location.obj.Skcode}}
+                                                    </div>
+                                                </agm-info-window>
+                                            </agm-marker>
+                                        </ng-container>
+
+
+
+
+                                        <!-- <agm-marker *ngFor="let wp of actualWaypoints; let i = index;" label="{{i+1}}"
+                                        [latitude]="wp.location.lat" [longitude]="wp.location.lng"
+                                        [iconUrl]="waypointMarker">
+                                        <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                            <div>
+                                                Vehicle Current Location
+                                            </div>
+                                        </agm-info-window>
+                                    </agm-marker> -->
+
+                                        <!-- <agm-marker *ngFor="let wp of actualRouteArray; let i = index;" label="{{i+1}}"
+                                        [latitude]="wp.origin.lat" [longitude]="wp.origin.lng">
+                                        <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                            <div>
+                                                Vehicle Current Location
+                                            </div>
+                                        </agm-info-window>
+                                    </agm-marker> -->
+
+                                        <agm-marker *ngIf="currentLocation" [latitude]="currentLocation.Lat"
+                                            [longitude]="currentLocation.Lng" [iconUrl]="icon">
+                                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                                <div>
+                                                    Vehicle Current Location
+                                                </div>
+                                            </agm-info-window>
+                                        </agm-marker>
+
+                                        <ng-container *ngIf="showActualWaypoint">
+                                            <agm-marker *ngFor="let wp of actualWaypoints; let i = index;"
+                                                label="{{i+1}}" [latitude]="wp.location.lat"
+                                                [longitude]="wp.location.lng" [iconUrl]="waypointMarker">
+                                                <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                                    <div>
+                                                        Vehicle Current Location
+                                                    </div>
+                                                </agm-info-window>
+                                            </agm-marker>
+                                        </ng-container>
+
+                                        <agm-marker label="W" [latitude]="origin.lat" [longitude]="origin.lng"
+                                            [iconUrl]="warehouseMarker">
+                                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                                <div>
+                                                    Warehouse
+                                                </div>
+                                            </agm-info-window>
+                                        </agm-marker>
+
+                                    </agm-map>
+                                </div>
+
+                                <button (click)="showHideActualWaypoint()">{{showActualWaypoint? 'Hide actual waypoint':
+                                    'Show actual waypoint'}}</button> &nbsp;
+
+                                <button (click)="showHideActualPath()">{{showActualPath?
+                                    'Hide actual path':
+                                    'Show actual path'}}</button> &nbsp;
+
+                                <button (click)="showHideExpectedPath()">{{showExpectedPath?
+                                    'Hide expected path':
+                                    'Show expected Path'}}</button>
+                                <!-- <div *ngIf="showActualWaypoint">
+                                <app-show-entire-route [locationsList]="actualWaypoints"></app-show-entire-route>
+                            </div> -->
+                            </div>
+                            <div class="col-sm-12">
+                                <p>
+                                    <br>
+                                    Note: In expected route all given markers are nothing but the touch point
+                                    (Customer).
+                                    But in Actual route given markers are waypoints through which vehicle traversed.
+
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="row" *ngIf="tripInformation">
+                            <div class="col-12">
+                                <p class="hdd"> Trip Overview </p>
+                            </div>
+                            <div class="col-12">
+                                <table class="tbll-1">
+                                    <tr>
+                                        <td>Truck Status</td>
+                                        <td>{{tripInformation.TruckStatus}}</td>
+                                        <td>Assigned To</td>
+                                        <td>{{tripInformation.Assignedto}}</td>
+                                        <td>Vehicle Type</td>
+                                        <td>{{tripInformation.VehicleType}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Start Time</td>
+                                        <td>{{tripInformation.ReportingTime? (tripInformation.ReportingTime|date:
+                                            'medium')
+                                            : 'N/A' }}</td>
+                                        <td>No of sk-code left</td>
+                                        <td>{{tripInformation.NoOfSkCodeLeft}}</td>
+                                        <td>Estimated Time to Complete </td>
+                                        <td>{{getHr(tripInformation.EstimatedTimetoComplete)}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>KM travelled</td>
+                                        <td>{{tripInformation.Kmtravelled/1000 |number:'1.2-2'}} &nbsp; KM</td>
+                                        <td>Estimated Distance Left </td>
+                                        <td>{{tripInformation.DistanceLeft /1000 |number:'1.2-2'}}&nbsp; KM</td>
+                                        <td>End Time</td>
+                                        <td>{{tripInformation.EndTime?(tripInformation.EndTime|date: 'medium') : 'N/A'}}
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>Actual KM travelled</td>
+                                        <td>{{tripInformation.ActualDistanceTraveled/1000 |number:'1.2-2'}} &nbsp; KM
+                                        </td>
+                                        <td>Milometer Reading</td>
+                                        <td> {{tripInformation.MiloMeterReading}} &nbsp; KM</td>
+
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <div *ngIf="showMap">
+                            <div class="row ssd">
+                                <div class="col-12">
+                                    <p class="hdd"> Touch Points Details </p>
+                                </div>
+                            </div>
+                            <div [ngClass]="{'crl-cntr': true, 'delivered': true}">
+                                <div class="crl">
+                                    Start
+                                </div>
+                                <div class="crl-ar">
+                                    <i class="fa fa-chevron-right fa-2x" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            <div (click)="openTripPlannerConfirmedDetail(touchPoint)"
+                                [ngClass]="{'crl-cntr': true, 'shpipped': touchPoint.OrderStatus == 'Shipped', 'delivered': touchPoint.OrderStatus =='Delivered', 'redispatch': touchPoint.OrderStatus =='Delivery Redispatch', 'cancelled': touchPoint.OrderStatus =='Delivery Canceled', 'multi': touchPoint.OrderStatus =='multi'}"
+                                *ngFor="let touchPoint of touchPointList;">
+                                <div [ngClass]="{'crl': true, 'skp': touchPoint.IsSkip}" tooltipStyleClass="tlp-ccc"
+                                    [pTooltip]="getTooltipData(touchPoint)" [escape]="false" tooltipPosition="bottom">
+
+                                    {{touchPoint.Skcode}}
+                                </div>
+
+                                <div class="crl-ar">
+                                    <i class="fa fa-chevron-right fa-2x" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                            <div
+                                [ngClass]="{'crl-cntr': true, 'whr': (tripInformation.TruckStatusId != 6 && tripInformation.TruckStatusId != 7), 'delivered': (tripInformation.TruckStatusId == 6 || tripInformation.TruckStatusId == 7)  }">
+                                <div class="crl">
+                                    End
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <table class="lgnd">
+                                        <tr>
+                                            <th>Order Status</th>
+                                            <th>Color code</th>
+                                            <th>Order Status</th>
+                                            <th>Color code</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Shipped</td>
+                                            <td>
+                                                <div class="bxs shp"></div>
+                                            </td>
+
+                                            <td>Delivered</td>
+                                            <td>
+                                                <div class="bxs del"></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Re-Dispatch</td>
+                                            <td>
+                                                <div class="bxs redispatch"></div>
+                                            </td>
+                                            <td>Cancelled</td>
+                                            <td>
+                                                <div class="bxs cancelled"></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Multiple</td>
+                                            <td>
+                                                <div class="bxs multi"></div>
+                                            </td>
+                                            <td>Other</td>
+                                            <td>
+                                                <div class="bxs other"></div>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="isShowOrderDetail">
+    <p-dialog header="Order Details" [(visible)]="isShowOrderDetail" [closeOnEscape]="true" [dismissableMask]="true"
+        [blockScroll]="true" appendTo="body" [style]="{width: '100vw', height:'50vh'}" [modal]="true" [positionTop]="0"
+        [positionLeft]="0" appendTo="body">
+
+
+
+        <table class="table">
+            <tr>
+                <td>Order Id</td>
+                <td>OrderAmount</td>
+                <td>WeightInKg</td>
+                <td>OrderDate</td>
+                <!-- <td>UnloadTimeInMins</td> -->
+                <td>OrderStatus</td>
+                <td>Is Manually Added</td>
+            </tr>
+            <tr *ngFor="let ordr of orderDetailList">
+                <td>{{ordr.OrderId}}</td>
+                <td>{{ordr.OrderAmount |number: '1.2-2'}}</td>
+                <td>{{ordr.WeightInKg |number: '1.2-2'}}</td>
+                <td>{{ordr.OrderDate |date}}</td>
+                <!-- <td>{{ordr.UnloadTimeInMins}}</td> -->
+                <td>{{ordr.OrderStatus}}</td>
+                <td>{{ordr.IsManuallyAdded?'Yes': 'No'}}</td>
+            </tr>
+        </table>
+
+
+
+    </p-dialog>
+</div>
+
+<p-dialog header="Load and Unload Details" [(visible)]="loadUnloadDistanceDetailPopUp" [closeOnEscape]="true"
+    [dismissableMask]="true" [blockScroll]="true" appendTo="body" [style]="{width: '90vw', height:'90vh'}"
+    [modal]="true">
+
+    <h1>Details</h1>
+
+    <p *ngIf="!(actualUnloadLat != null || actualUnloadLng != null)">Unload position has not been gathered yet!</p>
+
+    <agm-map *ngIf="actualUnloadLat != null || actualUnloadLng != null" [latitude]="actualShopLat"
+        [longitude]="actualShopLng" [zoom]="zoom" [disableDefaultUI]="false" [fullscreenControl]="true"
+        [zoomControl]="true" [style.height.px]="myInnerHeight">
+
+
+        <agm-marker label="S" [latitude]="actualShopLat" [longitude]="actualShopLng" [iconUrl]="shopMarker">
+            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                <div>
+                    shop
+                </div>
+            </agm-info-window>
+        </agm-marker>
+
+        <agm-direction *ngIf="unloadPosition != undefined" [origin]="shopPosition" [destination]="unloadPosition"
+            [renderOptions]="renderOptions" [optimizeWaypoints]="false" [waypoints]="totalExpectedWapoint">
+        </agm-direction>
+
+        <agm-marker label="U" *ngIf="actualUnloadLat != null || actualUnloadLng != null" [latitude]="actualUnloadLat"
+            [longitude]="actualUnloadLng" [iconUrl]="unloadMarker">
+            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                <div>
+                    unload Position
+                </div>
+            </agm-info-window>
+        </agm-marker>
+
+
+    </agm-map>
+
+
+</p-dialog>

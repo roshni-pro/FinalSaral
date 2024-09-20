@@ -1,0 +1,282 @@
+<p-toast></p-toast>
+<h3 class=" heading mt-4 abb" >Level Reward Configuration</h3>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-2 mt-2">
+                    <label><b>From Bucket No:</b></label>
+                    <input type="number" placeholder="Enter Bucket No" class="form-control" [(ngModel)]="fromBucket">
+                </div>    
+                <div class="col-sm-2 mt-2">
+                    <label><b>To Bucket No:</b></label>
+                    <input type="number" placeholder="Enter Bucket No" class="form-control"  [(ngModel)]="toBucket">
+                </div>  
+                <div class="col-sm-2 mt-2">
+                    <label><b>Active/Inactive:</b></label>
+                    <p-dropdown  placeholder="Select" [options]="filterActive" optionLabel="name"  [(ngModel)]="isActiveState" ></p-dropdown>
+                </div>
+                <div class="col-sm-1 mt-2">
+                    <button class="btn btn-primary" style="margin-top: 30px;"  (click)="onSearchBucket(fromBucket,toBucket)">Search</button>
+                    <!-- <button class="btn btn abc ml-3" style="margin-top: 14px;" (click)="showDialog()">History</button> -->
+                </div>
+                <div  class="col-sm-5 mt-4">
+                    <button type="button" class="btn btn-raised float-right align-self-end ml-2" style="margin-bottom: 0;background-color: crimson;color: white;" (click)="Export()">
+                        <i class="pi pi-download"></i> Export
+                    </button>
+                    <button type="button" class="btn btn-raised float-right align-self-end" style="margin-bottom: 0;background-color: #119150;color: white;" (click)="AddNewRow()">
+                        <i class="fa fa-plus-circle"></i> Add New Bucket
+                    </button>
+                    <button type="button" class="btn btn-raised float-right align-self-end mr-2" style="margin-bottom: 0;background-color:cadetblue;color: white;" (click)="Refresh()">
+                        <i class="pi pi-refresh"></i> Refresh
+                    </button>
+                </div>
+            </div>    
+        </div>
+    </div>
+</div>
+<div class="card" *ngIf="gameBucketRewards!=null">
+    <p-table [value]="gameBucketRewards" [(first)]="first"  [paginator]="true" [rows]="10" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 3rem;"></th>
+                <th>BucketReward ID</th>
+                <th >C. Bucket No</th>
+                <th>IsFix</th>
+                <th >RewardType </th>
+                <th>Reward Value</th>
+                <th>StartDate</th>
+                <th>EndDate</th>
+                <th style="width: 164px;">RewardApproveStatus</th>
+                <th>Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+            <tr>
+                
+                <td style="width: 3rem;"></td>
+                <td (click)="EditData(data)">{{data.BucketRewardConditionsID}}</td>
+                <td (click)="EditData(data)">{{data.BucketNo }}</td>
+                <td (click)="EditData(data)">{{data.isFixTypeName }}</td>
+                <td (click)="EditData(data)">{{data.RewardTypeName }}</td>
+                <td (click)="EditData(data)">{{data.BucketRewardValue }}</td>
+                <td (click)="EditData(data)">{{data.StartDate| date:'d/M/yy' }}</td>
+                <td (click)="EditData(data)">{{data.EndDate| date:'d/M/yy' }}</td>
+                <td  (click)="EditData(data)">{{data.RewardApproveStatus }}</td>
+                    <td>
+                        <!-- <i class="pi pi-trash ml-2" (click)="confirm1(data)"style="font-size: 2rem;color:orangered;"></i> -->
+                        <p-inputSwitch [(ngModel)]="data.IsActive" (onChange)="confirm1(data)"></p-inputSwitch>
+                    </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="8" >
+                <br>
+                <h3 style="text-align: center;color: blue;">No Data Found.</h3>
+              </td>
+            </tr>
+        </ng-template>
+    </p-table>
+        </div>
+        <p-dialog header="Add New Bucket" [(visible)]="showRow" [resizable]="false" positionTop="50" [modal]="true"
+        appendTo="body" [draggable]="false" [style]="{width: '80%', top: '70px',overflow:'scroll',height:'90%'}">
+        <div class="row">
+            <div class="col mb-2">
+                    <label for="">Bucket No</label><br>
+                    <input type="number" class="form-control" [(ngModel)]="bucketNo">
+            </div>
+            <div class="col mb-2">
+                <label for="">RewardType:</label><br>
+                <p-dropdown [options]="rewardList" [(ngModel)]="selectedRewardType"
+                optionLabel="RewardType"
+                placeholder="Select Reward Type"></p-dropdown>
+            </div>
+            <div class="col mb-2">
+               
+               <label for="">Reward:</label><br>
+               <input type="number" class="form-control"  [(ngModel)]="value">
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col mb-2">
+                 <label for="">IsFixed:</label><br>
+                <p-dropdown [options]="isFixed" [(ngModel)]="selectedisFix"
+                optionLabel="Name" placeholder="Select" (onChange)="Isfixed(selectedisFix)"></p-dropdown>
+           </div>
+            <div class="col mb-2 ml-2" *ngIf="showDate" >
+                <label for="" >Start Date:</label><br>
+                
+                <p-calendar [(ngModel)]="startDate"></p-calendar>
+            </div>
+            <div class="col mb-2" *ngIf="showDate">
+                <label for="">End Date:</label><br>
+                
+                <p-calendar [(ngModel)]="endDate"></p-calendar>
+            </div>
+            <div class="col mb-2">
+                <label for="">Reward Approve Status</label><br>
+                
+                <p-dropdown [options]="rewardApprovedStatus" [(ngModel)]="rewardApproveStatus" optionLabel="name" placeholder="Select Reward Approve Status"></p-dropdown>
+           </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col mb-2">
+            <label for="">App Description</label><br>
+            <p-dropdown  [(ngModel)]="selectedAppDesc"
+            optionLabel="AppDesc"
+            placeholder="Select App Description" [options]="AppDescriptionListData" (onChange)="OnchangeAPP(selectedAppDesc)"></p-dropdown>
+            </div>
+            <div class="col mb-2">
+                <label for="">Name</label><br>
+            <input type="text" class="form-control"  [(ngModel)]="conditionMasterName" disabled>
+            </div>
+            <div class="col mb-2">
+                <label for="">Value</label><br>
+                <input type="number" class="form-control"  [(ngModel)]="conditionMasterValue" >
+                </div>
+                <div class="col mb-2">
+                    <button type="button" class="btn btn-primary mt-4" (click)="AddDescriptionValue(selectedAppDesc)">Add</button>
+                    </div>
+      </div>
+      <div class="row card" *ngIf="appDescriptionArray.length>0">
+        <p-table [value]="appDescriptionArray">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>App Description</th>
+                    <th>Name</th>
+                    <th>Value</th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{ item.AppDescriptionName }}</td>
+                    <td>{{ item.Name}}</td>
+                    <td>{{ item.value }}</td>
+                    <td><span  data-toggle="tooltip" data-placement="top"
+                        title="Delete">
+                        <i class="pi pi-trash ml-2" (click)="confirmDeleteAdd(item)"style="font-size: 2rem;color:orangered;"></i></span></td>
+                </tr>
+            </ng-template>
+        </p-table>
+      </div>
+    <div class="row">
+        <div class="col mb-2 text-right">
+          <button class="btn btn mt-3 ml-4" (click)="AddNew()" style="background-color:green;
+          color: white;">Save</button>
+          <button class="btn btn mt-3 ml-2"  style="background-color:orange ;color: white;
+          color: white;" (click)="Cancel()">Cancel</button>
+      </div>
+      </div>
+    </p-dialog>
+    <!-- Edit POpUp Start-->
+    <p-dialog header="Edit Bucket" [(visible)]="IseditOpen" [resizable]="false" positionTop="50" [modal]="true"
+    appendTo="body" [draggable]="false" [style]="{width: '80%', top: '70px',overflow:'scroll',height:'90%'}">
+    <p-toast></p-toast>
+    <div class="row">
+        <div class="col mb-2">
+                <label for="">Bucket No</label><br>
+                <input type="text" class="form-control" disabled [(ngModel)]="EditBucketNo">
+        </div>
+        <div class="col mb-2">
+                <label for="">RewardType:</label><br>
+                <p-dropdown [options]="rewardList" [(ngModel)]="EditRewardType"
+                optionLabel="RewardType"
+                placeholder="Select Reward Type"></p-dropdown>
+
+            </div>
+            <div class="col mb-2">
+               <label for="">Reward:</label><br>
+               <input type="number" class="form-control"  [(ngModel)]="EditValue">
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col mb-2">
+                 <label for="">IsFixed:</label><br>
+                <p-dropdown [options]="isFixed" [(ngModel)]="EditisFix"
+                optionLabel="Name" placeholder="Select" (onChange)="IsfixedEdit(EditisFix)"></p-dropdown>
+           </div>
+            <div class="col mb-2 ml-2" *ngIf="showEditDate" >
+                <label for="" >Start Date:</label><br>
+                <p-calendar appendTo="body" 
+            [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  [(ngModel)]="EditstartDate"
+             [readonlyInput]="true"  showButtonBar="true"></p-calendar>
+            </div>
+            <div class="col mb-2" *ngIf="showEditDate">
+                <label for="">End Date:</label><br>
+                
+                <p-calendar appendTo="body" 
+                [yearNavigator]="true" [monthNavigator]="true" yearRange="2022:2099"  [(ngModel)]="EditEndDate" 
+                 [readonlyInput]="true"  showButtonBar="true"></p-calendar>
+            </div>
+            <div class="col mb-2">
+                <label for="">Reward Approve Status</label><br>
+                <p-dropdown [options]="rewardApprovedStatus" [(ngModel)]="EditRewardApproveStatus" optionLabel="name" placeholder="Select Reward Approve Status"></p-dropdown>
+           </div>
+    </div>
+    <hr>
+    <div class="row" *ngIf="EditIsActive">
+        <button type="button" class="btn btn-raised align-self-end mt-1 ml-4" style="background-color: indianred;color: white;" (click)="AddMore()">
+            <i class="fa fa-plus-circle"></i>
+            Add more condition 
+        </button>
+      </div>
+    <div class="row mt-4" *ngIf="isAddMore">
+        <div class="col mb-2">
+            <label for="">App Description</label><br>
+            <p-dropdown 
+            placeholder="Select App Description" [options]="AppDescriptionListData" [(ngModel)]="EditAppDes" optionLabel="AppDesc" (onChange)="OnEditchangeAPP(EditAppDes)" ></p-dropdown>
+            </div>
+            <div class="col mb-2">
+                <label for="">Name</label><br>
+            <input type="text" class="form-control"  [(ngModel)]="EditAppName" disabled>
+            </div>
+            <div class="col mb-2">
+                <label for="">Value</label><br>
+                <input type="number" class="form-control" [(ngModel)]="EditAppValue">
+                </div>
+                <div class="col mb-2" *ngIf="EditIsActive">
+                    <button class="btn btn-primary mt-4" (click)="AddNewCondition()">Add</button>
+                    </div>
+      </div>
+      <div class="row card mt-4">
+        <p-table [value]="BucketConditionList">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width:13rem"></th>
+                    <th>App Description</th>
+                    <th>Value</th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td style="width:1rem"></td>
+                    <td>{{ item.AppDesc }}</td>
+                    <!-- <td>{{ item.GameValue}}</td> -->
+                    <td><input type="number" [(ngModel)]="item.GameValue"></td>
+                    <!-- <td>{{ item.value }}</td> -->
+                    <td *ngIf="EditIsActive">
+                         <span  data-toggle="tooltip" data-placement="top"
+                        title="Delete">
+                        <i class="pi pi-trash ml-2" (click)="confirm2(item)"style="font-size: 2rem;color:orangered;"></i></span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        </div>
+        <div class="row">
+            <div *ngIf="EditIsActive" class="col mb-2 text-right">
+                <button class="btn btn mt-3 ml-4" (click)="Edit()" style="background-color:green;
+                color: white;">Save</button>
+                <button class="btn btn mt-3 ml-2"  style="background-color: orange;
+                color: white;" (click)="EditCancel()">Cancel</button>
+            </div>
+        </div>
+</p-dialog>
+    <p-confirmDialog [style]="{width: '50vw'}" appendTo="body"></p-confirmDialog>
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}"
+        strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

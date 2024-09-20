@@ -1,0 +1,50 @@
+<div class="col-xl-12 col-lg-12">
+    <p-table [value]="orderList" #dt [globalFilterFields]="['OrderId','Skcode','Customerphonenum','ShopName']" [paginator]="true" [lazy]="true"
+    (onLazyLoad)="load($event)" [rows]="10" [totalRecords]="totalRecords" text-align: center>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>S.No </th>
+            <th>Order Id</th>  
+            <th>Order Details</th> 
+            <th>Customer Info</th> 
+            <!-- <th>Cluster Name</th>  -->
+            <th>Delivery Address</th> 
+            <!-- <th>Delivery Date</th>  -->
+            <th *ngIf="orderNo == 3">ReDispatch Count</th>
+            <th>Product Details</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+          <tr >
+            <td>{{i+1}}</td>
+            <td>{{rowData.OrderId}}</td>
+            <td>            
+                <span>Amount : {{rowData.GrossAmount}}</span><br>
+                <span>Invoice No : {{rowData.invoice_no}}</span>
+            </td>
+            <td>
+                <span><b>{{rowData.Skcode}}</b></span><br>
+                <span>{{rowData.ShopName}}</span><br>
+                <span>{{rowData.Customerphonenum}}</span><br>
+                <span>{{rowData.OrderCount}}</span>
+            </td>
+            <!-- <td>{{rowData.ClusterName}}</td> -->
+            <td>{{rowData.BillingAddress}}</td>
+            <!-- <td>{{rowData.Deliverydate | date : 'medium'}}</td> -->
+            <td *ngIf="orderNo == 3">{{rowData.ReDispatchCount}}</td>
+            <td>
+                <button type="button" class="btn btn-primary" (click)="openOrderDetail(rowData)">Details</button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+</div>
+<div *ngIf="isOpenOrderDetail">
+  <p-dialog header="Order Details" [(visible)]="isOpenOrderDetail"
+      [blockScroll]="true" appendTo="body" [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0"
+      [positionLeft]="0" appendTo="body">
+      <div class="cnt">
+        <app-order-detail-list [warehouseId]="warehouseId" [orderNo]="orderNo" [OrderId]="OrderId"></app-order-detail-list>
+      </div>
+  </p-dialog>
+</div>

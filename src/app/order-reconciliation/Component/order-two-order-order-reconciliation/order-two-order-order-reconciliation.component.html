@@ -1,0 +1,217 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Order To Order Reconciliation</h3>
+    </div>
+</div>
+
+<div class="ui-fluid shadow p-2 m-2 bg-white rounded table table-hover">
+    <div class="row ml-2" >
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Select City</b></label>
+            <p-multiSelect id="Cityid" name="CityName" [options]="cityList" [(ngModel)]="SelectedCity"
+                (onChange)="GetWarehouse()" optionLabel="label" selectedItemsLabel="{0} City selected"
+                placeholder="Select City">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Select Warehouse</b></label>
+            <p-multiSelect id="Categorys" name="Categorys" [options]="WareHouseList" [(ngModel)]="SelectedWarehouse" [filter]="true" optionLabel="label"
+                placeholder="Select WareHouse">
+            </p-multiSelect>
+        </div>
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Select Date Range</b></label><br>
+             <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [showIcon]="true" showButtonBar="true"   [maxDate]="maxDate"
+                    [readonlyInput]="true" inputId="range" placeholder="select date range"  [style]="{'width':'100%'}" ></p-calendar>
+        </div>
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Select Recon Status</b></label>
+            <p-dropdown id="Categorys" name="Categorys" [options]="ReasonStatus" [(ngModel)]="SelectedRecon" optionLabel="name" optionValue="code"
+                selectedItemsLabel="{0} City selected" placeholder="Select Recon Status">
+            </p-dropdown> 
+        </div>
+    </div>
+    <div class="row ml-2 mb-3">
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Select MOP</b></label>
+            <p-dropdown id="Categorys" name="Categorys" [options]="MOP" [filter]="true" [(ngModel)]="paymentmode"
+                (onChange)="mopStatus(paymentmode)" optionLabel="name" optionValue="code"
+                selectedItemsLabel="{0} City selected" placeholder="Select MOP">
+            </p-dropdown>
+        </div>
+        <div class="col-md-3">
+            <label><b style="font-weight: 500;">Search</b></label>
+            <input type="text" class="form-control"  placeholder="Enter SKcode,Order ID" [(ngModel)]="keyword"
+                style="width:100%; border-radius: 19px; height: 50%;">
+        </div>
+        <div class="col-md-4 mt-4">
+            <button class="btn btn-primary mr-2" (click)="ForSearchHit();onSearch($event)">Search</button>
+            <button class="btn btn-Success" (click)="exportdata()">Export</button>
+        </div>
+    </div>
+    <!-- <div class="row mt-2" *ngIf="mop">
+        <div class="col-md-5  mb-2">
+            <input #myInput *ngIf=" mop=='hdfc' || mop=='UPI'" type="file" style="margin-left: 17px;margin-bottom: 10px;" multiple="false"
+                (change)="onUploadCheque($event.target.files)" name="file" id="myInput" />
+            <br>
+            <div class="col-md-12 mt-2" *ngIf="mop=='RTGSNEFT'  ||mop=='Cash'">
+                <button class="btn btn-primary" accept=".xlsx" (click)="UploadRTGSNEFTChequeCash()">Upload Bank
+                    Statement</button>
+            </div> -->
+            <!-- <div class="col-md-12 mt-2" *ngIf="mop=='DirectUdhar'">
+                <button class="btn btn-primary" accept=".xlsx" (click)="UploadHDFCDirect()">Upload HDFC Direct</button>
+            </div> -->
+            <!-- <div class="col-md-12 mt-2" *ngIf="mop=='Gullak'">
+                <button class="btn btn-primary" accept=".xlsx" (click)="UploadGullak()">Upload Bank Gullak</button>
+            </div>
+            <div class="col-md-12 mt-2" *ngIf="mop=='hdfc'">
+                <button class="btn btn-primary" accept=".xlsx" (click)="UploadHDFC()">Upload HDFC</button>
+            </div>
+            <div class="col-md-12 mt-2" *ngIf="mop=='UPI'">
+                <button class="btn btn-primary" accept=".xlsx" (click)="uploadUpiFile()">Upload UPI</button>
+            </div>
+        </div>
+    </div> -->
+        <p-table [value]="ReconciliationList" [(first)]="first" [tableStyle]="{ 'min-width': '140rem' }" (onLazyLoad)="load($event)" [totalRecords]="TotalRecords"
+         [paginator]="true" [rows]="10" [scrollable]="true"  scrollHeight="45vh" text-align: cente
+        [lazy]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>SKCode</th>
+                    <th>Warehouse</th>
+                    <th>Order No.</th>
+                    <th>Reference Number</th>
+                    <th>Order Settled Date</th>
+                    <th>Invoice Amount</th>
+                    <th>Payment Type</th>
+                    <th>Payment Date</th>
+                    <th>Amount Received</th>
+                    <th>Payment Received Date</th>
+                    <th>Order Status</th>
+                    <th>Recon Status</th>
+                    <th>Action</th>
+                    <th>History</th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{item.Skcode}}</td>
+                    <td>{{item.WarehouseName}}</td>
+                    <td>{{item.OrderId}}</td>
+                    <td>{{item.Refno}}</td>
+                    <td>{{item.SettleDate | date: 'dd-MM-yyyy'}}</td>
+                    <td>{{item.InvoiceAmount}}</td>
+                    <td>{{item.ModeofPayment}}</td>
+                    <td>{{item.PaymentDate | date: 'dd-MM-yyyy'}}</td>
+                    <td>{{item.AmountReceived}}</td>
+                    <td>{{item.PaymentReceivedDate | date: 'dd-MM-yyyy'}}</td>
+                    <td>{{item.Status}}</td>
+                    <td>{{item.Reconstatus}}</td>
+                    <td *ngIf="(item.Reconstatus=='Verified') "> </td>
+                    <td *ngIf="item.Reconstatus=='Partially Verified' || item.Reconstatus=='Not Verified' "><button
+                            class="btn btn-Success" (click)="Update(item)">Update</button></td>
+                    <td><button class="btn btn-primary" (click)="HistoryPopUp(item)">History</button></td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                  <td colspan="13" style="text-align: center;">
+                    <br>
+                    <h4><b>No Data Found.</b></h4>
+                  </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-dialog [(visible)]="UpdateStatus"  [resizable]="false" [modal]="true" appendTo="body" [blockScroll]="true" [closable]="true"  [style]="{width: '45vw'}" [baseZIndex]="10000">
+            <div class="row">
+                <div class="col-md-4">
+                    <label><b style="font-weight: 900;">SKcode:  {{Skcode}}</b></label>
+                </div>
+                <div class="col-md-6">
+                    <label><b style="font-weight: 900;">Order Number: {{OrderId}}</b> </label>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <label><b style="font-weight: 900;">Invoice Amount: {{InvoiceAmount}}</b> </label>
+                </div>
+                <div class="col-md-6">
+                    <label><b style="font-weight: 900;">Received Amount: {{AmountReceived}}</b> </label>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <label><b style="font-weight: 900;">Comment</b></label>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control"  [(ngModel)]="selectedComments"
+                        style="width: 100%;;">
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <label><b style="font-weight: 900;">Status</b></label>
+                </div>
+                <div class="col-md-6" *ngIf="!dropdownopen">
+                    <p-dropdown id="Categorys" name="Categorys" [options]="UpdatesonStatus" optionLabel="name"
+                        optionValue="code" [(ngModel)]="selectedStatus" placeholder="Select Reason">
+                    </p-dropdown>
+                </div>
+                <div class="col-md-6" *ngIf="dropdownopen">
+                    <p-dropdown id="Categorys" name="Categorys" [options]="VerifiedStatus" optionLabel="name"
+                        optionValue="code" [(ngModel)]="selectedStatus" placeholder="Select Reason">
+                    </p-dropdown>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6"></div>
+                <div class="col-md-6 d-flex">
+                    <button class="btn btn-Warning mr-2" (click)="Cancel()">Cancel</button>
+                    <button class="btn btn-primary" (click)="onSubmit(selectedStatus,selectedComments)">Submit</button>
+                </div>
+            </div>
+        </p-dialog>
+
+        <p-dialog [(visible)]="HistoryStatus"   [resizable]="true" [modal]="true" appendTo="body" [blockScroll]="true" [closable]="true"  [style]="{width: '55vw',left: '370px',top: '10px'}" [baseZIndex]="10000" >
+            <!-- <div class="my-2 d-flex justify-content-between align-items-center"> -->
+                <div class="header">
+                    <h3 class="m-2" style=" text-align: center; padding-left: 43px;">Reconciliation History</h3>
+                </div>
+            <!-- </div> -->
+            <p-table [value]="historyList" scrollHeight="50vh" [scrollable]="true" text-align: center
+            [lazy]="true">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>ModeofPayment</th>
+                        <th>Status</th>
+                        <th>Updated Date</th>
+                        <th>Updated By(User)</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td>{{item.ModeOfPayment}}</td>
+                        <td>{{item.Status}}</td>
+                        <td>{{item.UpdatedDate | date: 'dd-MM-yyyy'}}</td>
+                        <td>{{item.UpdatedBy}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                      <td colspan="13" style="text-align: center;">
+                        <br>
+                        <h4><b>No Data Found.</b></h4>
+                      </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-dialog>
+    <!-- </div> -->
+</div>
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

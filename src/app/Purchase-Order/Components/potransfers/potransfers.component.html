@@ -1,0 +1,305 @@
+<p-toast></p-toast>
+
+<div class="row m-0">
+    <div class="col-12">
+        <!-- Kick start -->
+        <div id="kick-start" class="kick-start card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Request PO Transfer</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Select Warehouse </label>
+                                <div>
+                                    <select (change)="setwarehousebycityname()" id="desg" name="desg"
+                                        class="form-control" [(ngModel)]="warehouseid">
+                                        <option [value]="null">
+                                            -- select warehouse --
+                                        </option>
+                                        <ng-container *ngFor="let at of warehouseList ; let i = index">
+                                            <ng-container>
+                                                <option [value]="at.WarehouseId">
+                                                    {{ at.WarehouseName }}
+                                                </option>
+
+                                            </ng-container>
+                                        </ng-container>
+                                    </select>
+                                </div>
+
+                                <!-- FOR FUTURE REFERENCE WHERE ONLY CITY HAS TO BE SHOWN From
+                                WAREHOUSE LIST AND NO WAREHOUSES ARE REPEATED -->
+
+                                <!-- <div>
+                                    <select id="desg" name="desg" class="form-control" [(ngModel)]="warehouseid">
+                                        <option [value]="null">
+                                            -- select warehouse --
+                                        </option>
+                                        <ng-container *ngFor="let at of warehouseList ; let i = index">
+                                            <ng-container
+                                                *ngIf="!warehouseList[i-1] || (warehouseList[i].CityName != warehouseList[i-1].CityName)">
+                                                <option [value]="at.WarehouseId">
+                                                    {{ at.CityName }}
+                                                </option>
+
+                                            </ng-container>
+                                        </ng-container>
+                                    </select>
+                                </div> -->
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="form-group">
+
+                                <div>
+                                    <label for="orderType">PO Number:</label>
+                                    <input type="text" name="purchaseorderid" placeholder="enter po id"
+                                        [(ngModel)]="purchaseOrderId">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <label> </label>
+                                <div>
+                                    <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="getPOWithoutGR();" label="Search"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <label> </label>
+                                <div>
+                                    <button type="button" pButton (click)="initialize(); " label="Reset"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-lg-3">
+                            <div class="form-group">
+                                <label> Go To Approval</label>
+                                <div>
+                                    <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="gotoapproval();" label="Go To Approval"></button>
+                                </div>
+                            </div>
+                        </div> -->
+                        <!-- <div class="col-lg-4">
+                            <div class="form-group" *ngIf="dashboarddata && dashboarddata.length"
+                                style="margin-left: 20px;">
+                                <label> Export {{ReportType}} : </label>
+                                <div>
+                                    <button type="button" class="btn btn-raised btn-success" (click)="exportToExcel();">
+                                        Export {{ReportType}}
+                                    </button>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card-content" *ngIf="prRequestList && prRequestList.length">
+                <div class="card-body">
+                    <p-table #table [paginator]="true" [rows]="10" [value]="prRequestList" [lazy]="true"
+                        [totalRecords]="totalCount" (onLazyLoad)="loadLazy($event)" [paginator]="true"
+                        [scrollable]="true" scrollHeight="140vh" text-align: center>
+
+                        <!-- <p-table [value]="prRequestList" [paginator]="true" [lazy]="true" [totalRecords]="totalCount"
+                        (onLazyLoad)="loadLazy($event)"> -->
+
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>PO Number</th>
+                                <th>Warehouse Name</th>
+                                <th>Supplier Name</th>
+                                <th>Buyer Name</th>
+                                <th>PO Status</th>
+                                <th>PO Date</th>
+                                <!-- <th>PO Amount</th>
+                                <th>GR Amount</th>
+                                <th>IR Amount</th> -->
+
+                                <!-- <th>Send Approval Date</th> -->
+                                <!-- <th style="width: 15%; text-align: center;">Close Rejected</th> -->
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <!-- <ng-template pTemplate="body" let-po let-i="rowIndex"> -->
+                        <ng-template pTemplate="body" let-po let-i="rowIndex">
+                            <tr>
+                                <!-- <td style="width:60px;">
+                                    <i *ngIf="po.open" class="fa fa-square-o fa-2x" aria-hidden="true">+</i>
+                                    <i *ngIf="po.closed" class="fa fa-check-square-o fa-2x" aria-hidden="true">-</i>
+                                </td> -->
+
+                                <td>
+                                    <div>
+                                        <span style="color: red;" (click)="navToPo(po.PurchaseOrderId)">
+                                            {{po.PurchaseOrderId}}
+                                        </span>
+                                        <!-- <span style="margin-left: 40px;"><i *ngIf="!po.open" class="fa fa-expand"
+                                                aria-hidden="true"></i>
+                                            <i *ngIf="po.open" class="fa fa-compress" aria-hidden="true"></i></span> -->
+
+                                    </div>
+
+                                </td>
+
+                                <td (click)="po.open = !po.open">{{po.WarehouseName}}</td>
+                                <td (click)="po.open = !po.open">{{po.SupplierName}}</td>
+                                <td (click)="po.open = !po.open">{{po.BuyerName}}</td>
+                                <td>{{po.Status}}</td>
+                                <td (click)="po.open = !po.open">{{po.CreationDate | date}}</td>
+                                <!-- <td (click)="po.open = !po.open">{{po.TotalPOPrice}}</td>
+                                <td (click)="po.open = !po.open">{{po.TotalGRAmount}}</td>
+                                <td (click)="po.open = !po.open">{{po.TotalIrAmount}}</td> -->
+                                <!-- <td>{{po.SendApprovalDate | date}}</td> -->
+                                <!-- <td style="width: 15%; text-align: center;">
+                                    <ng-container *ngIf="po.IsCloseRejected == false">
+                                        <div (click)="po.open = !po.open">No</div>
+                                    </ng-container>
+                                    <ng-container *ngIf="po.IsCloseRejected == true">
+                                        <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                            (click)="ViewRejectHistory(po.PurchaseOrderId)">
+                                            Reject History
+                                        </button>
+                                    </ng-container>
+
+                                </td> -->
+                                <td> <button type="button" class="btn btn-raised btn-raised btn-primary"
+                                        (click)="ViewRejectHistory(po.PurchaseOrderId)">
+                                        Transfer PO
+                                    </button>
+
+                                </td>
+                            </tr>
+                            <tr *ngIf="po.open && po.POItemDetials && po.POItemDetials.length">
+
+
+                                <div style="width: 1000%;  color: white; outline: 2px solid black; margin-left: 10px;
+                                margin-bottom: 10px; margin-top: 10px; margin-right: 10px;">
+                                    <div
+                                        style="margin-left: 10px; margin-bottom: 10px; margin-top: 10px; margin-right: 20px;">
+                                        <br>
+                                        <!-- <h4 style="color: royalblue; margin-left: 5px;">Item List</h4> -->
+                                        <br>
+                                        <p-table [value]="po.POItemDetials">
+
+                                            <ng-template pTemplate="header">
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Item MultiMrp Id</th>
+                                <th>Total PO Price</th>
+                                <th>Total PO Qty</th>
+                                <th>Total GR Amount</th>
+                                <th>Total Gr Qty</th>
+                                <th>Total Ir Amount</th>
+                                <th>Total IR Qty</th>
+                            </tr>
+                        </ng-template>
+                        <!-- <ng-template pTemplate="body" let-po let-i="rowIndex"> -->
+                        <ng-template pTemplate="body" let-poitem let-i="rowIndex">
+                            <tr style="cursor: pointer; pointer-events: all;">
+                                <td>{{poitem.Itemname}}</td>
+                                <td>{{poitem.ItemMultiMRPId}}</td>
+                                <td>{{poitem.TotalPOQty}}</td>
+                                <td>{{poitem.TotalPOPrice}}</td>
+                                <td>{{poitem.TotalGrQty}}</td>
+                                <td>{{poitem.TotalGRAmount}}</td>
+                                <td>{{poitem.TotalIrAmount}}</td>
+                                <td>{{poitem.TotalIRQty}}</td>
+                        </ng-template>
+                    </p-table>
+                    <br>
+
+
+                </div>
+            </div>
+            <hr style="width: 700%;">
+
+            </tr>
+
+            </ng-template>
+            </p-table>
+
+
+        </div>
+    </div>
+</div>
+<!--/ Kick start -->
+</div>
+</div>
+
+
+
+
+
+
+
+
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<p-dialog *ngIf="rejectedhistory" [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body"
+    positionTop="100" [style]="{width: '50%',height: '40%'}">
+    <p-header>
+        Transfer Purchase Orders For Po No - {{poid}}
+    </p-header>
+    <div><label> From Warehouse </label>
+        <div>
+            <select id="desg" name="desg" class="form-control" [disabled]="true" [(ngModel)]="warehouseid">
+                <option [value]="null">
+                    -- select warehouse --
+                </option>
+                <ng-container *ngFor="let at of warehouseList">
+                    <option *ngIf="at.WarehouseId == warehouseid" [value]="at.WarehouseId">
+                        {{ at.WarehouseName }}
+                    </option>
+                </ng-container>
+            </select>
+        </div>
+    </div>
+    <div class="text-center">
+        <h1>TO</h1>
+    </div>
+    <div><label> To Warehouse </label>
+        <div>
+            <select id="desg" name="desg" class="form-control" [(ngModel)]="towarehouseid">
+                <option [value]="null">
+                    -- select warehouse --
+                </option>
+                <ng-container *ngFor="let at of setwarehousebycityname()">
+                    <ng-container *ngIf="at.WarehouseId != warehouseid">
+                        <option [value]="at.WarehouseId">
+                            {{ at.WarehouseName }}
+                        </option>
+                    </ng-container>
+                </ng-container>
+            </select>
+        </div>
+    </div>
+    <br>
+    <div class="text-right">
+        <button type="button" [disabled]="!towarehouseid" class="btn btn-raised btn-raised btn-primary"
+            (click)="TransferPOToHub()">
+            Transfer PO
+        </button>
+    </div>
+</p-dialog>
+
+<p-confirmDialog header="Confirmation" [baseZIndex]="201" appendTo="body" icon="pi pi-exclamation-triangle">
+</p-confirmDialog>

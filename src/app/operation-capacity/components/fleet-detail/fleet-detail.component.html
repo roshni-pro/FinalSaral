@@ -1,0 +1,79 @@
+<div class="row mt-1">
+
+    <p-tabView styleClass="tabview-custom">
+        <p-tabPanel>
+
+            <ng-template pTemplate="header">
+                <i class="pi pi-calendar"></i>
+                <span>Document List</span>
+            </ng-template>
+
+            <p-table [value]="doc" [scrollable]="true" scrollHeight="300px">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 20%;">S.No </th>
+                        <th style="width: 40%;">Doc Type</th>
+                        <th style="width: 40%;">Doc Path</th>
+                    </tr>
+
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                    <tr>
+                        <td style="width: 20%;">{{i+1}}</td>
+                        <td style="width: 40%;">{{rowData.DocTypeName}}</td>
+                        <td style="width: 40%;" (click)="openImage(rowData.DocPath)"><b><u>{{rowData.DocPath}}</u></b></td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <span class="emptymsg">No Record</span>
+                </ng-template>
+            </p-table>
+
+        </p-tabPanel>
+
+
+        <p-tabPanel header="Header II">
+
+            <ng-template pTemplate="header">
+                <i class="pi pi-user"></i>
+                <span>Detail List</span>
+            </ng-template>
+
+            <p-table [value]="fleetDetail" [scrollable]="true" scrollHeight="300px">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>S.No </th>
+                        <th>Created Date</th>
+                        <th>Vehicle NO</th>
+                        <th>Vehicle Type</th>
+                        <th>Fleet Type</th>
+                        <th>Start KM</th>
+                        <th>Close KM</th>
+                        <th>Total KM</th>
+
+                    </tr>
+
+                </ng-template>
+                <ng-template pTemplate="body" let-data let-i="rowIndex">
+                    <tr>
+                        <td>{{i+1}}</td>
+                        <td><b>{{data.AttendanceDate}}</b></td>
+                        <td><b>{{data.VehicleNo}}</b></td>
+                        <td><b>{{data.VehicleType}}</b></td>
+                        <td><b>{{data.FleetType}}</b></td>
+                        <td><b>{{data.StartKm}}</b></td>
+                        <td><b>{{data.ClosingKm}}</b></td>
+                        <td><b>{{data.TotalKm}}</b></td>
+                    </tr>
+
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <span class="emptymsg">No Record</span>
+                </ng-template>
+
+            </p-table>
+        </p-tabPanel>
+
+    </p-tabView>
+
+</div>

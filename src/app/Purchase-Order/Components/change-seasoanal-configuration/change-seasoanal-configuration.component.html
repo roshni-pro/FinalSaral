@@ -1,0 +1,171 @@
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-10">
+        <div class="cmian-card">
+            <div class="row">
+                <div class="col-md-2 mt-2">
+                    <div class="cmain-header">
+                        <div class="back" (click)="onBackClick()">
+                          ←
+                        </div>
+                        <div class="h-label" (click)="onBackClick()">Back</div>
+                      </div>
+                </div>
+                <div class="col-md-9 mt-2" >
+                    <section id="Category" >
+                        <div class="my-2" style="text-align: center;">
+                          <div class="header"><h3 class="m-2"><b >Change Seasonal Configuration</b></h3></div>
+                        </div>
+                      </section>
+                </div>
+            </div>
+          
+        </div>
+      </div>
+      <div class="col-md-2 mt-2" style="text-align: right;">
+        <button class="btn btn-primary mr-2 mt-1" (click)="Add()">Add</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <p-table [value]="Seasonlist" [scrollable]="true" scrollHeight="73vh">
+          <ng-template pTemplate="header"> 
+            <tr>
+              <th style="text-align: center;">S.No</th>
+              <th style="text-align: center;">Season Name</th>
+              <th style="text-align: center;">From Month Name</th>
+              <th style="text-align: center;">To Month Name</th>
+              <th *ngIf="EditHQMaster" style="text-align: center;">Active/DeActive</th>
+              <th style="text-align: center;">Action</th>
+              <th style="text-align: center;">History</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item let-expanded="expanded" let-rowIndex="rowIndex">
+            <tr>
+              <td style="text-align: center;"> {{rowIndex -- 1}}</td>
+              <td style="text-align: center;">{{item.SeasonName}}</td>
+              <td style="text-align: center;">{{item.FromMonthName}}</td>
+              <td style="text-align: center;">{{item.ToMonthName}}</td>
+              <td *ngIf="EditHQMaster" style="text-align: center;"><p-inputSwitch  id="Active" name="Active" [(ngModel)]="item.IsActive" (onChange)="Seasonal(item)">                
+              </p-inputSwitch></td>
+              <td style="text-align: center;"> <button class="btn btn-primary mr-2 mt-1" [disabled]="!(item.Isedit)" 
+                  (click)="edit(item)">Edit</button></td> 
+                  <td style="text-align: center;"> <button class="btn btn-primary mr-2 mt-1"
+                    (click)="History(item)">History</button></td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td colspan="13" style="text-align: center;">
+                <br>
+                <h4><b>No Data Found.</b></h4>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <p-dialog header="Edit Season Config" [(visible)]="EditPopup" [resizable]="false" (onHide)="cancel()"
+        [modal]="true" appendTo="body" positionTop="100" [style]="{width: '40vw',height: '30%',left: '310px'}">
+        <h5 class="m-1 ml-2"><strong><b>Season Name : </b>{{SeasonName}}</strong></h5>
+        <div class="row mt-5 mb-4">
+          <div class="col-md-6" style="text-align: center;">
+            <label for="des"><b style="font-weight: 600;">From Month: </b></label><br>
+            <p-calendar [(ngModel)]="SelectedFormDate"  [showIcon]="true" view="month" yearNavigator="false" dateFormat="mm"
+              showbuttonbar="true" [readonlyInput]="true" inputId="monthpicker"></p-calendar>
+          </div>
+          <div class="col-md-6" style="text-align: center;">
+            <label for="des"><b style="font-weight: 600;">To Month: </b></label><br>
+            <p-calendar [(ngModel)]="SelectedEndDate" [showIcon]="true" view="month" id="end" name="endm" yearNavigator="false"
+              dateFormat="mm" showbuttonbar="true" [readonlyInput]="true" inputId="monthpicker"></p-calendar>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12" style="text-align: center;">
+            <label for="name"></label><br>
+            <button class="btn btn-primary mr-2 mt-2" (click)="SaveChanges()">Save</button>
+          </div>
+        </div>
+      </p-dialog>
+      <p-dialog header="Add Season Config" [(visible)]="AddPopup" [resizable]="false" (onHide)="addcancel()"
+        [modal]="true" appendTo="body" positionTop="100" [style]="{width: '54vw',height: '30%',left: '310px'}">
+
+        <div class="row mt-5 mb-4">
+          <div class="col-md-4" style="text-align: center;">
+            <label for="des"><b style="font-weight: 600;">Season Name: </b><span style="color:red"> *</span></label><br>
+
+            <input type="text" class="form-control" [(ngModel)]="seasonname">
+          </div>
+          <div class="col-md-4" style="text-align: center;">
+            <label for="des"><b style="font-weight: 600;">From Month: </b><span style="color:red"> *</span></label><br>
+            <p-calendar [(ngModel)]="fromdate" view="month" [showIcon]="true" yearNavigator="false" dateFormat="mm" showbuttonbar="true"
+              [readonlyInput]="true" inputId="monthpicker"></p-calendar>
+          </div>
+          <div class="col-md-4" style="text-align: center;">
+            <label for="des"><b style="font-weight: 600;">To Month: </b><span style="color:red"> *</span></label><br>
+            <p-calendar [(ngModel)]="todate" view="month" [showIcon]="true" id="end" name="endm" yearNavigator="false" dateFormat="mm"
+              showbuttonbar="true" [readonlyInput]="true" inputId="monthpicker"></p-calendar>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <label for="name"><b style="font-weight: 600;">Is Edit Disabled: </b></label><br>
+            <input type="checkbox" [(ngModel)]="checked" class="custom"  binary="true" inputId="binary" size="none"  />
+          </div>
+          <div class="col-md-6" style="text-align: center;">
+            <label for="name"></label><br>
+            <button class="btn btn-primary mr-2 mt-2" (click)="addseason(checked)">Save</button>
+          </div>
+        </div>
+      </p-dialog>
+      <p-dialog [(visible)]="HistoryPopUp" [resizable]="true" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '85%',height: '55%'}">
+
+    <p-table [value]="ChangeSeasonalHistoryList"  [scrollable]="true" scrollHeight="66vh">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>From Month</th>
+                <th>To Month</th>
+                <th>CreatedDate</th>
+                <th>ModifiedDate</th>
+                <th>CreatedBy</th>
+                <th>ModifiedBy</th>
+                <th>Active</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+            <tr>
+                <td>{{item.Frommonth?item.Frommonth:'-'}}</td>
+                <td>{{item.Tomonth?item.Tomonth:'-'}}</td>
+                <td>{{item.CreatedDate | date: 'dd-MM-yyyy' }}</td>
+                <td>{{item.ModifiedDate | date: 'dd-MM-yyyy' }}</td>
+                <td>{{item.CreatedBy?item.CreatedBy:'-'}}</td>
+                <td>{{item.ModifiedBy?item.ModifiedBy:'-'}}</td>
+                <td>{{item.IsActive}}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="13" style="text-align: center;">
+                    <br>
+                    <h4><b>No Data Found.</b></h4>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>
+    </div>
+  </div>
+  <p-blockUI [blocked]="isLoading"></p-blockUI>
+  <p-progressSpinner *ngIf="isLoading"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+  </p-progressSpinner>
+  <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer>
+  
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+  </p-confirmDialog>

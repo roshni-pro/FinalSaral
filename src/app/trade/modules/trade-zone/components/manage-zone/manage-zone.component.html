@@ -1,0 +1,197 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <!-- <div class="row text-left">
+      <div class="col-lg-9">
+        <div class="content-header"><b>Manage Zone</b></div>
+      </div>
+      <div class="col-lg-3">
+        <button type="button" class="btn btn-raised btn-primary pull-right" style="margin-top: 20px;"
+          (click)="refreshZones()"><b>Refresh Zones</b></button>
+      </div>
+    </div> -->
+    <div class="p-grid text-left">
+
+      <div class=" p-lg-2">
+        <div class="p-grid">
+          <div class="card">
+            <div class="card-content">
+              <div class="px-3">
+                <form class="form">
+                  <div class="form-body">
+                    <h4 class="form-section"><i class="ft-user"></i>Zone Filters</h4>
+
+                    <div class="ui-g">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="long"><b>Supplier Name:</b></label>
+
+                          <p-autoComplete [suggestions]="sellerList" (completeMethod)="getSupplierList($event)"
+                            field="CustomerName" [size]="30" [(ngModel)]="CustomerId"
+                            placeholder="enter at least 3 chars" [minLength]="3" (onSelect)="onSelectSupplier($event)"
+                            name="sellerid" id="sellerid">
+                          </p-autoComplete>
+                        </div>
+                      </div>
+
+                      <!-- <div class="col-3">
+                        <div class="form-group">
+                        <label ><b>Supplier<span style="color:red"> *</span></b></label>
+                        <select id="des" name="supplier"  [(ngModel)]="CustomerId" (ngModelChange)="tradeCustomer(CustomerId)" class="form-control col-md-6">
+                            <option value="">Select Supplier </option>
+                            <option *ngFor="let supp of sellerList;" [value]="supp.CustomerId">
+                                {{supp.CustomerName}}</option>
+                        </select>   
+                        </div>                     
+                    </div> -->
+                      <div class="col-9">
+                        <div class="form-group">
+                          <div class="ccss">Add New Zone </div>&nbsp;&nbsp;
+                          <p-inputSwitch name="map" [(ngModel)]="viewMap">
+                          </p-inputSwitch>&nbsp;&nbsp;&nbsp;
+                          <div class="ccss">Edit Existing Zone</div>
+                        </div>
+                      </div>
+
+                      <div class="col-3">
+                        <button *ngIf="viewMap == true" type="button" class="btn btn-raised btn-primary pull-right"
+                          (click)="UpdateZonePolygons()"><b>Update</b></button>
+                        <button *ngIf="viewMap == false" type="button" class="btn btn-raised btn-primary pull-right"
+                          (click)="save()"><b>Save</b></button>
+                        <!-- (click)="saveMap(CustomerId)"><b>Save</b></button> -->
+                      </div>
+
+
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+      <!-- ViewSupplierMap -->
+      <div class="p-lg-10" *ngIf="viewMap == true">
+        <div class="card-content">
+          <div class="px-3">
+            <form class="form" style="position: relative;">
+              <div class="form-body">
+                <div class="sk">
+                  <div class="tooltip-clu" *ngIf="selectedPolygon">
+                    <b>{{selectedPolygon.ZoneName}}</b> <button class="btn" (click)="deleteZone(selectedPolygon)"
+                      style="margin-left: 33px;margin-bottom: 6px; color: black;">Delete<i class="fas fa-trash"
+                        style="font-size:20px;margin-left: 4px; color:red" aria-hidden="true"></i></button>
+                  </div>
+                  <!-- (mapReady)="onMapReady($event)" -->
+                  <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [zoomControl]="true"
+                    [fullscreenControl]="fullscreenControl" [disableDefaultUI]="false" [zoomControl]="false"
+                    [fullscreenControlOptions]="options" [style.height.px]="myInnerHeight">
+                    <div *ngIf="showMap && zoneList">
+                      <agm-polygon [fillColor]="item.fillColor" *ngFor="let item of zoneList; let i=index"
+                        [polyDraggable]="false" [fillOpacity]="0.4" [paths]="item.PointList" [editable]="true"
+                        strokeOpacity="0.1" (polyPathsChange)="onPolygonChange($event, item, i)"
+                        (polyClick)="polyClicked(item, clusterWiseCityWise)">
+                      </agm-polygon>
+                      <agm-marker *ngFor="let m of activeMarkers; let i = index" [latitude]="m.lat" [longitude]="m.lg"
+                        [animation]="m.animation" [iconUrl]="m.icon">
+                        <agm-info-window [disableAutoPan]="false" #infoWindow>
+                          <div><b>{{m.title }}</b>
+                            <br />{{m.ZoneName }}
+                            <br /> {{m.Mobile}}
+                          </div>
+                        </agm-info-window>
+                      </agm-marker>
+                    </div>
+
+                  </agm-map>
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+      <!-- AddSupplierMap -->
+
+
+      <div class="p-lg-10" *ngIf="viewMap == false">
+        <div class="card-content">
+          <div class="px-3">
+            <form class="form" style="position: relative;">
+              <div class="form-body">
+                <div class="sk">
+
+                  <!-- (mapReady)="onMapReady($event)" -->
+                  <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [zoomControl]="true"
+                    (mapReady)="onMapReady($event)" [fullscreenControl]="fullscreenControl" [disableDefaultUI]="false"
+                    [zoomControl]="false" [fullscreenControlOptions]="options" [style.height.px]="myInnerHeight">
+                    <div *ngIf="showMap && zoneList">
+                      <agm-polygon [fillColor]="item.fillColor" *ngFor="let item of zoneList; let i=index"
+                        [polyDraggable]="false" [fillOpacity]="0.4" [paths]="item.PointList" [editable]="false"
+                        strokeOpacity="0.1" (polyPathsChange)="onPolygonChange($event, item, i)"
+                        (polyClick)="polyClicked(item, clusterWiseCityWise)">
+                      </agm-polygon>
+                    </div>
+
+                  </agm-map>
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+  </section>
+</div>
+
+<p-dialog header="Zone Name" [(visible)]="dialoguebox" [resizable]="false" [modal]="true" appendTo="body"
+  positionTop="100" [style]="{width: '560'}">
+  <form class="form form-inline" name="form" #zonenameForm="ngForm">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="form-group m-2">
+            <label for="a" class="col-md-6"><b>Zone Name:</b><span style="color:red"> *</span></label>
+            <input type="text" id="zonename" class="form-control col-md-6" name="zonename" [(ngModel)]="zoneName"
+              placeholder="Zone Name" #zonename="ngModel" required="1" maxlength="50" minlength="2" />
+            <div class="col-md-6"></div>
+            <div *ngIf="isInvalid && !zonename.valid && zonename.errors.required">
+              <code>Zone Name is required</code>
+            </div>
+            <div *ngIf="isInvalid && !zonename.valid && zonename.errors.minlength">
+              <code>minlength 2</code>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label for="a" class="col-md-6"></label>
+          <button type="button" class="btn btn-raised btn-primary pull-right"
+            style="margin-top: 13px;padding-left: 25px;padding-right: 25px"
+            (click)="saveMap(CustomerId,zoneName,zonenameForm)"><b>Save</b></button>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

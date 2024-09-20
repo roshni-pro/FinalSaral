@@ -1,0 +1,153 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2">Actual Vs Forecast (Item Wise)</h3>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <!-- <div class=" mr-2 ml-2 mt-3 "> -->
+                <div class="row m-2">
+                    <div class="col-lg-3 col-md-4">
+                        <label for="ware" class="col-md-12"><b>Warehouse:</b></label>
+                        <p-dropdown [options]="masterwarehouseList" name="warehouseInput" placeholder="Select Warehouse"
+                            [(ngModel)]="selectedwarehouse" id="ware" [panelStyle]="{minWidth:'25em'}"
+                            optionLabel="WarehouseName">
+                        </p-dropdown>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <label for="Category" class="col-md-6"><b>Category:</b></label>
+                        <p-multiSelect id="Category" name="Category" [options]="CategoryList"
+                            [(ngModel)]="selectedCatregory" [panelStyle]="{minWidth:'25em'}"
+                            (onChange)="getSubCatList(selectedCatregory)" optionLabel="CategoryName">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <label for="SubCategoryName" class="col-md-6" style="white-space: nowrap;"><b>Sub
+                                Category:</b></label>
+                        <p-multiSelect id="SubCategoryName" name="SubCategoryName" [options]="subCatList"
+                            [(ngModel)]="selectedSubCat" (onChange)="getBrandsnew(selectedSubCat)"
+                            [panelStyle]="{minWidth:'25em'}" optionLabel="SubCategoryName">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <label for="Brand" class="col-md-6"
+                            style="white-space: nowrap;"><b>SubSubCategory/Brand:</b></label>
+                        <p-multiSelect id="Brand" name="Brand" [options]="brandList"
+                            [(ngModel)]="selectedSubsubCatregory" [panelStyle]="{minWidth:'25em'}"
+                            optionLabel="BrandName">
+                        </p-multiSelect>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <label for="type" class="col-md-6" style="white-space: nowrap;"><b>Month:</b></label><br>
+                        <p-calendar [showIcon]="true" id="type" [(ngModel)]="dateValue" view="month" [style]="{'width':'106%'}"
+                        [inputStyle]="{width:'85%'}" dateFormat="01/mm/yy">
+                        </p-calendar>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <label for="" class="col-md-6" style="white-space: nowrap;"><b>Type:</b></label>
+                        <p-dropdown [options]="types" [(ngModel)]="selectedType" optionLabel="name"></p-dropdown>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <label for="" class="col-md-6" style="white-space: nowrap;"><b>Item Name:</b></label>
+                        <input [(ngModel)]="key" class="form-control" type="text">
+                    </div>
+                    <div class="col-lg-1">
+                        <label></label><br>
+                        <button type="button" class="btn btn-primary" (click)="search()"> Search </button>
+                    </div>
+                    <div class="col-lg-1">
+                    <button type="button" class="btn btn-primary mt-3" (click)="clearRecord()"> Clear </button>
+                    </div>
+                    <div class="col-lg-1">
+                        <label></label><br>
+                        <button type="button" class="btn btn-primary" [disabled]="!activeExport" (click)="Export()">
+                            Export </button>
+                    </div>
+                </div>
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow">
+                <div class="m-2 p-2">
+                    <h6><b>Item Wise Compaire - Actual VS Forecast Data </b></h6>
+                </div>
+                <div class="table-responsive table-wrapper-scroll-x my-custom-scrollbar wrapp">
+                    <p-table [value]="Item_wise_list" [scrollable]="true" [totalRecords]="totalRecords"
+                         [(first)]="first" (onLazyLoad)="load($event)" [lazy]="true"
+                        [paginator]="true" [rows]="10">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th> Brand Name </th>
+                                <th> Product Name </th>
+                                <th> Warehouse </th>
+                                <th> Product ID </th>
+
+                                <th> Sales Forecast </th>
+                                <th> Buyer Forecast </th>
+                                <th> System Forcast </th>
+                                <th> Sales Intent </th>
+
+                                <th> Month </th>
+                                <th> Actual <br> Quantity Sold</th>
+
+                                <th> Buyer F. - <br> System F. </th>
+                                <th> Sales F. -<br> Actual F. </th>
+                                <th> System F. -<br> Actual F. </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-product>
+                            <tr>
+                                <td>{{product.SubsubcategoryName}}</td>
+                                <td>{{product.itemname}}</td>
+                                <td>{{product.WarehouseName}}</td>
+                                <td>{{product.ItemMultiMRPId}}</td>
+
+                                <td *ngIf="selectedType.value == 'Qty'">{{product.GrowthForecastQty}}</td>
+                                <td *ngIf="selectedType.value == 'Qty'">{{product.BuyerSalesForecast}}</td>
+                                <td *ngIf="selectedType.value == 'Qty'">{{product.SystemSuggestedQty}}</td>
+
+                                <td *ngIf="selectedType.value == 'Amt'">{{product.GrowthForecastQty *
+                                    product.MaxSellingPrice}}</td>
+                                <td *ngIf="selectedType.value == 'Amt'">{{product.BuyerSalesForecast *
+                                    product.MaxSellingPrice}}</td>
+                                <td *ngIf="selectedType.value == 'Amt'">{{product.SystemSuggestedQty *
+                                    product.MaxSellingPrice}}</td>
+
+                                <td>{{product.salesIntent}}</td>
+                                <td>{{product.CreatedDate | date: 'MMMM'}}</td>
+
+                                <td *ngIf="selectedType.value == 'Qty'">{{product.totalqtySale}}</td>
+                                <td *ngIf="selectedType.value == 'Amt'">{{product.totalSale}}</td>
+
+                                <td *ngIf="selectedType.value == 'Qty'">{{product.BuyerSalesForecast -
+                                    product.SystemSuggestedQty}}</td>
+                                <td *ngIf="selectedType.value == 'Qty'">{{product.GrowthForecastQty -
+                                    product.totalqtySale}}</td>
+                                <td *ngIf="selectedType.value == 'Qty'">{{product.SystemSuggestedQty -
+                                    product.totalqtySale}}</td>
+
+                                <td *ngIf="selectedType.value == 'Amt'">{{(product.BuyerSalesForecast *
+                                    product.MaxSellingPrice) - product.totalSale}}</td>
+                                <td *ngIf="selectedType.value == 'Amt'">{{(product.GrowthForecastQty *
+                                    product.MaxSellingPrice) - product.totalSale}}</td>
+                                <td *ngIf="selectedType.value == 'Amt'">{{(product.SystemSuggestedQty *
+                                    product.MaxSellingPrice) - product.totalSale}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p-blockUI [blocked]="blocked" appendTo="body"></p-blockUI>
+<p-progressSpinner *ngIf="blocked" appendTo="body"
+    [style]="{width: '70px', height: '70px', position: 'fixed', left: '48%', top: '18%','background-color':'rgb(255,255,0)'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

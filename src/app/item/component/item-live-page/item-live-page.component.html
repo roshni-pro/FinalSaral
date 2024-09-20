@@ -1,0 +1,695 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <div class="my-2 justify-content-between align-items-center">
+    <div class="header">
+      <h3 class="mt-3">Live Item Page</h3>
+    </div>
+  </div>
+  <div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded">
+    <div class="card-content">
+      <div class="col-12">
+        <div class="row">
+          <div class="col-md-3">
+            <label><strong>Warehouse</strong></label>
+            <p-dropdown [options]="warehouses" placeholder="Select Warehouse" [(ngModel)]="liveData.warehouseId"
+              filter="true" optionLabel="WarehouseName"
+              (ngModelChange)="liveItemList = [];multiMRPList = [];liveData.BrandId=null">
+            </p-dropdown>
+
+            <!-- <select [(ngModel)]="liveData.warehouseId" class="form-control" name="warehouse">
+                <option [value]="null">select </option>
+                <option *ngFor="let warehouse of warehouses" [value]="warehouse.WarehouseId">
+                  {{warehouse.WarehouseName}} </option>
+              </select> -->
+          </div>
+          <div class="col-md-3">
+            <label><strong>Brand Name</strong></label>
+            <p-dropdown [options]="brandList" placeholder="Select Brand" name="brand" [(ngModel)]="liveData.BrandId"
+              filter="true" optionLabel="BrandName" (ngModelChange)="onSearch()">
+            </p-dropdown>
+            <!-- <select [(ngModel)]="liveData.BrandId" class="form-control" name="brand"  filter="true" (ngModelChange)="onSearch()">
+                  <option [value]="null">select </option>
+                  <option *ngFor="let brand of brandList" [value]="brand.BrandId">
+                    {{brand.BrandName}} </option>
+                </select> -->
+          </div>
+          <div class="col-md-3">
+            <label><strong>Search By Field</strong></label>
+            <input id="searchKeyword" name="searchKeyword" [(ngModel)]="liveData.Keyword" class="form-control"
+              placeholder="ItemNo./ItemName" (input)="inputValidator($event)">
+          </div>
+          <!-- <div class="col-md-4 text-right"></div> -->
+          <div class="col-md-3 text-right">
+            <button type="button" class="btn btn-search" (click)="onSearch()">Search</button>
+          </div>
+          <!-- <div class="col-md-2 ">
+            <button type="button" class="btn btn-search" (click)="onPriceChange()">UnitPrice Change</button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="widt">
+    <div class="card wwi container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded text-center">
+      <p-table #dt [value]="liveItemList" selectionMode="single" [paginator]="true" [lazy]="true" [rows]="25"
+        rowExpandMode="single" [scrollable]="true" [totalRecords]="totalRecords" (onLazyLoad)="load($event)"
+        scrollHeight="130vh" (onRowExpand)="onRowCollapseFun($event)" text-align: center dataKey="ItemNumber"
+        [(selection)]="selectedList" [rowsPerPageOptions]="[10,25,50,100]" [(first)]="first">
+        <ng-template pTemplate="header">
+          <tr>
+            <th></th>
+            <th colspan="6">Item Number </th>
+            <th colspan="6">Item Name</th>
+            <!-- <th colspan="6">Segment</th> -->
+            <th colspan="6">Supplier Name</th>
+            <th colspan="6">Supplier Depo</th>
+            <!-- <th>History</th> -->
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex" let-expanded="expanded">
+          <tr text-center>
+            <td colspan="1">
+              <i [pRowToggler]="rowData" [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                (click)="onClickRow(rowData)"></i>
+            </td>
+            <td colspan="7" [pRowToggler]="rowData" (click)="onClickRow(rowData)">
+              <!-- <i [pRowToggler]="rowData" [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i> -->
+              {{rowData.ItemNumber}}
+            </td>
+            <td colspan="8" [pRowToggler]="rowData" (click)="onClickRow(rowData)">{{rowData.ItemName}}</td>
+            <!-- <td colspan="8" [pRowToggler]="rowData" (click)="onClickRow(rowData)">{{rowData.Classification}}</td>                 -->
+            <td colspan="8">
+              <select [(ngModel)]="rowData.SupplierId" class="form-control brdr1" name="supplierName"
+                (ngModelChange)="getDepoBySupplierId(rowData)">
+                <option [value]="null">select </option>
+                <option *ngFor="let sn of supplierList" [value]="sn.SupplierId">
+                  {{sn.Name}} </option>
+              </select>
+            </td>
+            <td colspan="8">
+              <select [(ngModel)]="rowData.SupplierDepoId" class="form-control brdr1" name="depo">
+                <option [value]="null">select </option>
+                <option *ngFor="let sd of rowData.depoList" [value]="sd.DepoId">
+                  {{sd.DepoName}} </option>
+              </select>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-rowData>
+          <tr>
+            <td colspan="33">
+              <div class="p-3 cc">
+                <p-table [value]="multiMRPList" dataKey="ItemName">
+                  <ng-template pTemplate="header">
+          <tr>
+            <th colspan="2">MultiMRP Id</th>
+            <th colspan="2">Item Name</th>
+            <th colspan="2">Segment/ROC</th>
+            <!-- <th colspan="2">ROC</th> -->
+            <th colspan="5">PO Price/<br>Purchase Price/<br>Weighted Purchase Price</th>
+            <!-- <th colspan="3">PO Price</th> -->
+            <!-- <th colspan="2" >Purchase Price</th>
+                          <th colspan="2" >Weighted Purchase Price</th> -->
+            <!-- <th colspan="2" >
+                            APP/
+                            NPP</th> -->
+            <!-- <th colspan="2" >NPP</th> -->
+            <th colspan="2">Current Net Inventory</th>
+            <th colspan="2">Risk(PCS)</th>
+            <th colspan="2">Risk Purchase Price</th>
+            <th colspan="2">Allowed Qty</th>
+            <th colspan="3">Live Qty</th>
+            <th colspan="2">Select MOQ</th>
+            <!-- <th colspan="2" >Txn History</th> -->
+            <th colspan="2">Save Changes</th>
+            <th colspan="2">Update Risk</th>
+            <th colspan="2">Risk History</th>
+            <!-- <th colspan="2" >Item History</th> -->
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-order>
+          <tr [ngStyle]="(order.active != false)?{'background-color': 'lightgreen'}:{'background-color':'lightcoral'}">
+            <!--active-->
+            <td colspan="2">{{order.ItemMultiMRPId}}</td>
+            <td colspan="2" >{{order.ItemName}}</td>
+            <td colspan="2">{{order.Classification != null ? order.Classification : 'N/A'}} /
+              <br>{{order.Tag?order.Tag:'--'}}
+            </td>
+            <!-- <td colspan="2">{{order.Tag?order.Tag:'--'}}</td> -->
+            <td colspan="5">
+
+              <div>
+                <span>
+                  POP : &nbsp;
+                  <input  id="PoPrice" name="PoPrice" type="number" [(ngModel)]="order.POPrice" min="0"                    
+                    class="brdr2 inputRow" placeholder="Enter PoPrice" (ngModelChange)="onChangeInput(order);">
+                </span>
+                <!-- <span *ngIf="isEditablePurchase">
+                  POP : &nbsp;
+                  <input id="PoPrice" name="PoPrice" type="number" [(ngModel)]="order.POPrice" min="0"
+                    class="brdr2 inputRow" placeholder="Enter PoPrice" (ngModelChange)="onChangeInput(order)">
+                </span> -->
+              </div>
+              <br>
+
+              <div>
+                PP : &nbsp;
+                <input id="PurchasePrice"
+                  name="PurchasePrice" type="number" [(ngModel)]="order.PurchasePrice" min="0" disabled
+                  class="brdr2 inputRow" placeholder="PurchasePrice" (ngModelChange)="onChangeInput()">
+              </div>
+              <br>
+              
+              <div>
+                WPP : &nbsp;
+                <span *ngIf="!isEditablePurchase">
+                  <input id="PurchasePrice" name="PurchasePrice" type="number" [(ngModel)]="order.WeightedPurchasePrice"
+                    min="0" [disabled]="(order.EnableAutoPrice && order.WeightedPP > 0) || order.WeightedPP > 0"
+                    class="brdr2 inputRow" placeholder="Enter WeightedPP"
+                    (ngModelChange)="onChangeInput(order);onChangeWPP(order)">
+                </span>
+                <span *ngIf="isEditablePurchase">
+                  <input id="PurchasePrice" name="PurchasePrice" type="number" [(ngModel)]="order.WeightedPurchasePrice"
+                    min="0" class="brdr2 inputRow" placeholder="Enter WeightedPurchasePrice"
+                    (ngModelChange)="onChangeInput(order)">
+                </span>
+              </div>
+
+              <!-- {{order.PoPrice}}  && order.EnableAutoPrice-->
+            </td>
+            <!-- <td colspan="2">
+              <span>{{order.PurchasePrice | number : '1.4-4'}}</span>
+            </td> -->
+            <!-- <td colspan="2"> -->
+            <!-- <span *ngIf="isEditablePurchase && (order.EnableAutoPrice || order.PurchasePrice > 0)">{{order.PurchasePrice | number : '1.2-2'}}</span> -->
+            <!-- <span *ngIf="!isEditablePurchase">
+                <input id="PurchasePrice" name="PurchasePrice" type="number" [(ngModel)]="order.WeightedPurchasePrice"
+                  min="0" [disabled]="(order.EnableAutoPrice && order.WeightedPP > 0) || order.WeightedPP > 0"
+                  class="form-control brdr2 wdth" placeholder="Enter WeightedPP"
+                  (ngModelChange)="onChangeInput(order);onChangeWPP(order)">
+              </span>
+              <span *ngIf="isEditablePurchase">
+                <input id="PurchasePrice" name="PurchasePrice" type="number" [(ngModel)]="order.WeightedPurchasePrice"
+                  min="0" class="form-control brdr2 wdth" placeholder="Enter WeightedPurchasePrice"
+                  (ngModelChange)="onChangeInput(order)">
+              </span> -->
+            <!-- <a href="javascript:void(0);" class="er" (click)="onClickPurchasePrice(order)">{{order.PurchasePrice}}</a> -->
+            <!-- </td> -->
+            <!-- <td colspan="2" >{{order.APP | number : '1.2-2'}} /<br>
+                            {{order.NPP | number : '1.2-2'}}</td>
+                          <td colspan="2" >{{order.NPP | number : '1.2-2'}}</td> -->
+            <td colspan="2">
+            {{order.CurrentNetInventory}}
+              <!-- <a href="javascript:void(0);" class="er" (click)="onClickLimitQty(order)">{{order.CurrentNetInventory | number : '1.0-2'}}</a></td> -->
+            <td colspan="2">
+              <!-- <input id="RiskQuantity" name="RiskQuantity" type="number" [(ngModel)]="order.RiskQuantity" class="form-control brdr2 wdth" placeholder="Enter RiskQuantity" (ngModelChange)="onCheckNegativeValue(order)" >                          -->
+              {{order.RiskQuantity}}
+            </td>
+            <td colspan="2">
+              <!-- <input id="riskPurchasePrice" type="number" name="riskPurchasePrice"  min="0" [(ngModel)]="order.RiskPurchasePrice" class="form-control brdr2 wdth" placeholder="Enter RiskPurchasePrice" (ngModelChange)="onCheckNegativeValue(order)" > -->
+              {{order.RiskPurchasePrice | number : '1.4-4'}}
+            </td>
+            <td colspan="2">
+              {{+order.LimitQty + +order.RiskQuantity}}
+            </td>
+            <td colspan="3">
+              <!-- {{+order.LimitQty + +order.RiskQuantity}} -->
+              <input id="LiveLimitQuantity" name="LiveLimitQuantity" type="number" [(ngModel)]="order.LiveLimitQuantity"
+                class="form-control brdr2 wdth" placeholder="Enter LiveLimitQuantity"
+                (ngModelChange)="onCheckNegativeValue(order)" (keypress)="keyPress($event)"
+                (keypress)="decimalFilter($event)">
+              <!-- {{order.LiveQuantity}} -->
+            </td>
+            <td colspan="2">
+              <a class="cl" href="javascript:void(0);" (click)="onClickMOQ(rowData,order,true)">
+                <strong>Click To <i class="fa fa-folder-open" aria-hidden="true"></i> MOQ</strong>
+              </a>
+            </td>
+            <!-- <td colspan="2" >
+                            <button type="button" class="btn btn-primary btn-success mr-1" (click)="onClickHistory(order)">
+                              <i class="fa fa-history" ></i>  
+                            </button>
+                          </td> -->
+            <td colspan="2">
+              <button type="button" class="btn btn-raised btn-success mr-1" (click)="onModify(rowData,order)">
+                <i class="fa fa-save"></i>
+              </button>
+            </td>
+            <td colspan="2">
+              <button type="button" class="btn btn-raised btn-success mr-1" (click)="onClickUpdateRisk(rowData,order)">
+                <i class="fa fa-edit">Open</i>
+              </button>
+            </td>
+            <td colspan="2">
+              <button type="button" class="btn btn-raised btn-success mr-1" (click)="onClickRiskQtyHistory(order)">
+                <i class="fa fa-history"></i> <!-- History -->
+              </button>
+            </td>
+            <!-- <td colspan="2" >
+                            <button type="button" class="btn btn-primary btn-success mr-1" (click)="onClickItemHistory(order)">
+                              <i class="fa fa-history" ></i>  
+                            </button>
+                          </td> -->
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <h5>Data Not Found</h5>
+        </ng-template>
+      </p-table>
+    </div>
+    </td>
+    </tr>
+
+    </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-dialog appendTo="body" [modal]="true" [(visible)]="isOpenMOQ">
+  <p-header>
+    <div class="lbl">
+      <strong> <u>ItemName : {{selectedMultiMRPData?.ItemName}}(ItemMultiMRPId :
+          {{selectedMultiMRPData?.ItemMultiMRPId}})(PO Price : {{+selectedMultiMRPData?.POPrice}})</u></strong><br />
+      <!-- <strong>Live Qty : {{selectedMultiMRPData?.LimitQty}}</strong> -->
+    </div>
+  </p-header>
+  <div class="lbl">
+    <strong>Live Qty : {{+selectedMultiMRPData?.LimitQty + +selectedMultiMRPData?.RiskQuantity}}</strong><br />
+    <!-- <strong>PO Price : {{+selectedMultiMRPData?.POPrice}}</strong> -->
+  </div>
+  <p-table #dt [value]="moqList" selectionMode="single" [scrollable]="true" scrollHeight="130vh" text-align: center
+  [(selection)]="selectedMarginList" dataKey="ItemId">
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="wix" style="text-align: center;">IsLive
+          <!-- <p-tableHeaderCheckbox>IsLive</p-tableHeaderCheckbox> -->
+        </th>
+        <!-- <th class="wix" style="text-align: left;" >SellingSku</th> -->
+        <th class="wix" colspan="1" style="text-align: left;">MOQ</th>
+        <!-- <th class="wix" style="text-align: center;" >Item MultiMrpId</th> -->
+        <th class="wix" colspan="1" style="text-align: center;">MRP</th>
+        <th class="wix" colspan="2" style="text-align: center;">Discount% </th>
+        <!-- <th class="wix" style="text-align: center;">NetPurchasePrice </th> -->
+        <th class="wix" colspan="2" style="text-align: center;">Purchase Price</th>
+        <th class="wix" colspan="2" style="text-align: center;">Retailer Margin </th>
+        <th class="wix" colspan="2" style="text-align: center;">Old Retailer Unit Price / New Unit Price </th>
+        <!-- <th class="wix" colspan="2" style="text-align: center;">New Unit Price </th>    -->
+        <!-- <th class="wix" colspan="2" style="text-align: center;">CopyToAll </th>    -->
+        <th class="wix" colspan="2" style="text-align: center;">Wholseller Margin </th>
+        <th class="wix" colspan="2" style="text-align: center;">Old Wholseller Unit Price / New Unit Price </th>
+        <!-- <th class="wix" colspan="2" style="text-align: center;">New Unit Price </th>    -->
+        <th class="wix" colspan="2" style="text-align: center;">Trade Margin </th>
+        <th class="wix" colspan="2" style="text-align: center;">Old Trade Unit Price / New Unit Price </th>
+        <!-- <th class="wix" style="text-align: center;">Unit Price </th>    -->
+        <!-- <th class="wix" style="text-align: center;" >IsLive </th>                               -->
+        <!-- <th class="wix" style="text-align: center;">Update</th> -->
+        <th class="wix" colspan="2" style="text-align: center;">Item History</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-i="rowIndex" let-expanded="expanded">
+      <tr [ngStyle]="(rowData.Active != false)?{'background-color': 'lightgreen'}:{'background-color':'lightcoral'}">
+        <td colspan="0" style="text-align: left;">
+          <!-- <i [pRowToggler]="rowData" [ngClass]="expanded ? '' : ''" [(ngModel)]="rowData.Active" (click)="onLive(rowData)">
+            <p-tableCheckbox id="isLive" name="isLive" [value]="rowData" [(ngModel)]="rowData.Active" ></p-tableCheckbox>
+          </i> -->
+          <input type="checkbox" id="isLive" name="isLive" [value]="rowData" [(ngModel)]="rowData.Active"
+            class="form-control wdth" (click)="onLive(rowData)">
+          <!-- <p-tableCheckbox [value]="rowData"></p-tableCheckbox> -->
+        </td>
+        <!-- <td colspan="1" class="wix" style="text-align: left;" >{{rowData.SellingSku}}</td> -->
+        <td colspan="1" class="wix" style="text-align: left;"  >{{rowData.MinOrderQty}}</td>
+        <!-- <td class="wix" style="text-align: center;" >{{rowData.ItemMultiMrpId}}</td>           -->
+
+        <td colspan="1" class="wix" style="text-align: center;">
+          {{rowData.MRP | number : '1.4-4'}}
+          <!-- <input id="mRP" name="mRP" type="text" [(ngModel)]="rowData.MRP" class="form-control wdth" placeholder="Enter MRP" (keypress)="decimalFilter($event)" disabled> -->
+          <!-- {{rowData.Status}} -->
+        </td>
+        <td class="wix" colspan="2" style="text-align: center;">
+          <input id="discountPercent" name="discountPercent" type="text" [(ngModel)]="rowData.DiscountPercent"
+            class="form-control wdth" placeholder="Enter DiscountPercent" (ngModelChange)="onChangeDiscount(rowData)">
+          <!-- {{rowData.ItemName}} -->
+        </td>
+        <!-- <td class="wix" style="text-align: center;" >
+              {{rowData.NPP}}
+            </td>  -->
+        <td class="wix" colspan="2" style="text-align: center;">
+          <!-- <input id="purchasePrice" name="purchasePrice" type="number" [(ngModel)]="rowData.PurchasePrice"  min="0" class="form-control wdth" placeholder="Enter PurchasePrice"
+              [disabled]="rowData.WeightedPurchasePrice > 0" 
+              (ngModelChange)="onChangePurchasePrice(rowData)"> -->
+          {{rowData.PurchasePrice | number : '1.4-4'}}
+          <!-- {{rowData.CurrentInventory}} -->
+        </td>
+        <td class="wix" colspan="2">
+          <input id="margin" name="margin" type="number" [(ngModel)]="rowData.Margin" [min]="rowData.RetailerRMargin"
+            (keypress)="keyPressAmount($event)" class="form-control wdth" placeholder="Enter Margin"
+            (ngModelChange)="onChangePurchasePrice(rowData,true)">
+          <!-- [disabled]="rowData.RetailerRMargin>0" -->
+          <!-- {{rowData.MRP}} -->
+        </td>
+        <td class="wix" colspan="2" style="text-align: center;">
+          {{(rowData.ActualUnitPrice) | number : '1.4-4'}} / <br>{{(rowData.UnitPrice) | number : '1.4-4'}}
+        </td>
+        <!-- <td class="wix" style="text-align: center;" >
+              {{(rowData.UnitPrice) | number : '1.3-3'}}
+              <input id="unitPrice" name="unitPrice" [(ngModel)]="rowData.UnitPrice" class="form-control" placeholder="Enter UnitPrice">
+              {{rowData.MRP}}
+            </td>  -->
+        <!-- <td colspan="0" style="text-align: center;">
+              <input type="checkbox" id="isCopy" name="isCopy" [(ngModel)]="rowData.isCopy" binary="true" [value]="rowData" class="form-control wdth" (click)="onCopyRetailerValueToAll(rowData)">
+          </td> -->
+        <td class="wix" colspan="2" style="text-align: center;">
+          <input id="wholsellerMargin" name="wholsellerMargin" type="number" [(ngModel)]="rowData.WholesaleMargin"
+            [min]="rowData.WholesaleRMargin" class="form-control wdth" placeholder="Enter WholsellerMargin"
+            (ngModelChange)="onChangeDistributionPrice(rowData,true)">
+          <!-- [disabled]="rowData.WholesaleRMargin>0" -->
+          <!-- {{rowData.ItemName}} -->
+        </td>
+        <td class="wix" colspan="2" style="text-align: center;">
+          {{(rowData.WholesalePrice) | number : '1.4-4'}} / <br>{{(rowData.WholsellerUnitPrice) | number : '1.4-4'}}
+        </td>
+        <!-- <td class="wix" style="text-align: center;" >
+              {{(rowData.WholsellerUnitPrice) | number : '1.3-3'}}
+            </td>  -->
+        <td class="wix" colspan="2" style="text-align: center;">
+          <input id="tradeMargin" name="tradeMargin" type="number" [(ngModel)]="rowData.TradeMargin"
+            [min]="rowData.TradeRMargin" class="form-control wdth" placeholder="Enter TradeMargin"
+            (ngModelChange)="onChangeTradePrice(rowData,true)">
+          <!-- [disabled]="rowData.TradeRMargin>0"  -->
+          <!-- {{rowData.ItemName}} -->
+        </td>
+        <td class="wix" colspan="2" style="text-align: center;">
+          {{(rowData.TradePrice) | number : '1.4-4'}} / <br /> {{(rowData.TradeUnitPrice) | number : '1.4-4'}}
+        </td>
+        <!-- <td class="wix" style="text-align: center;" >
+              {{(rowData.TradeUnitPrice) | number : '1.3-3'}}
+            </td>  -->
+        <!-- <td class="wix" style="text-align: center;" >
+              <p-inputSwitch name="isPublished" [(ngModel)]="rowData.Active" >
+                </p-inputSwitch>
+          </td>   -->
+        <!-- <td class="wix" style="text-align: center;">
+                <button type="button" name="save" class="btn btn-primary" (click)="onSaveMOQ()">Save</button>
+            </td> -->
+        <td class="wix" colspan="2" style="text-align: center;">
+          <button type="button" class="btn btn-primary btn-success mr-1" (click)="onClickItemHistory(rowData)">
+            <i class="fa fa-history"></i>
+          </button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-footer>
+    <button type="button" name="update" class="btn btn-info" (click)="onUpdate(true,selectedMarginList)">Update</button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog appendTo="body" [modal]="true" [(visible)]="isOpenLimitQty">
+  <p-header>
+    <div class="lbl">
+      <strong> <u>ItemName : {{limitQtyData?.ItemName}}(ItemMultiMRPId : {{limitQtyData?.ItemMultiMRPId}})</u></strong>
+    </div>
+  </p-header>
+  <p-table #dt [value]="limitQtyDataList" [scrollable]="true" scrollHeight="130vh" text-align:center>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>CNS Qty</th>
+        <!-- <th>Open PO</th> -->
+        <th>Internal</th>
+        <th>Vendor</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-limitQtyData let-i="rowIndex" let-expanded="expanded">
+      <tr>
+        <td>{{limitQtyData?.CurrentNetInventory}}</td>
+        <!-- <td>{{limitQtyData?.OpenPOQty}}</td> -->
+        <td>{{limitQtyData?.InternalQty}}</td>
+        <td>0</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- <div class="row" style="color: black;font-weight: 600;">
+          <div class="col-md-12">
+            <div class="row text-center">
+              <div class="col-4">
+                <b>CNS Qty: </b><br>
+                <b>Open PO:</b><br>
+                <b>Internal:</b><br> 
+                <b>Vendor:</b>
+              </div>
+              <div class="col-4">
+                <b>: </b><br>
+                <b>:</b><br>
+                <b>:</b><br> 
+                <b>:</b>
+              </div>
+              <div class="col-4" style="color: mediumblue;">
+                {{limitQtyData?.CurrentNetInventory}} <br />
+                {{limitQtyData?.OpenPOQty}} <br />
+                {{limitQtyData?.InternalQty}} <br />
+                {{limitQtyData?.DelCancelQty}}
+              </div>
+            </div>
+          </div>
+        </div>   -->
+</p-dialog>
+
+<p-dialog appendTo="body" [modal]="true" [(visible)]="isOpenWPP">
+  <p-header>
+    <div class="lbl">
+      <strong> <u>ItemName : {{limitQtyData?.ItemName}}(ItemMultiMRPId : {{limitQtyData?.ItemMultiMRPId}})</u></strong>
+    </div>
+  </p-header>
+  <p-table #dt [value]="limitQtyDataList" [scrollable]="true" scrollHeight="130vh" text-align:center>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>CNS Qty</th>
+        <th>Internal</th>
+        <th>Vendor</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-limitQtyData let-i="rowIndex" let-expanded="expanded">
+      <tr>
+        <td>{{limitQtyData?.CurrentNetInventory}}</td>
+        <td>{{limitQtyData?.InternalQty}}</td>
+        <td>0</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>
+
+<div *ngIf="isHistoryOpen">
+  <p-dialog header="History" [(visible)]="isHistoryOpen" [blockScroll]="true" appendTo="body"
+    [style]="{width: '75vw', height:'75vh'}" [modal]="true" [positionTop]="0" appendTo="body">
+    <div class="cnt">
+      <app-history [entity]="entity" [id]="selectedItemRowData.Id"></app-history>
+    </div>
+  </p-dialog>
+</div>
+
+<div *ngIf="isItemHistoryOpen">
+  <p-dialog header="History" [(visible)]="isItemHistoryOpen" [blockScroll]="true" appendTo="body"
+    [style]="{width: '75vw', height:'75vh'}" [modal]="true" [positionTop]="0" appendTo="body">
+    <div class="cnt">
+      <app-history [entity]="entityName" [id]="selectedItemMRowData.ItemId"></app-history>
+    </div>
+  </p-dialog>
+</div>
+
+
+<div *ngIf="isRiskQtyHistoryOpen">
+  <p-dialog appendTo="body" [modal]="true" [(visible)]="isRiskQtyHistoryOpen">
+    <p-header>
+      <div class="lbl">
+        <strong> <u>Risk History</u></strong>
+        <!-- <strong>Live Qty : {{selectedMultiMRPData?.LimitQty}}</strong> -->
+      </div>
+    </p-header>
+    <div class="lbl">
+      <strong> <u>ItemName : {{selectedMultiMRPData?.ItemName}}(ItemMultiMRPId :
+          {{selectedMultiMRPData?.ItemMultiMRPId}})</u></strong><br />
+    </div><br />
+    <p-table #dt [value]="riskHistoryList" selectionMode="single" [paginator]="true" [lazy]="true" [rows]="3"
+      [totalRecords]="totalItem" (onLazyLoad)="onloadRiskQtyHistory($event)" [scrollable]="true" scrollHeight="130vh"
+      text-align: center [(selection)]="selectedList" [(first)]="first">
+      <ng-template pTemplate="header">
+        <tr>
+          <!-- <th class="wix" style="text-align: center;" >ItemMultiMRPId</th> -->
+          <th class="wix" style="text-align: center;">RiskQuantity</th>
+          <th class="wix" style="text-align: center;">RiskPurchasePrice</th>
+          <!-- <th class="wix" style="text-align: center;" >APP</th> -->
+          <!-- <th class="wix" style="text-align: center;" >LiveQuantity</th>
+                  <th class="wix" style="text-align: center;" >OldLiveQuantity</th>
+                  <th class="wix" style="text-align: center;" >LimitQty</th>                   -->
+          <th class="wix" style="text-align: center;">Comment</th>
+          <th class="wix" style="text-align: center;">ModifiedBy </th>
+          <th class="wix" style="text-align: center;">ModifiedDate</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-i="rowIndex" let-expanded="expanded">
+        <tr>
+          <!-- <td class="wix" style="text-align: center;" >{{rowData.ItemMultiMRPId}}</td> -->
+          <td class="wix" style="text-align: center;">{{rowData.RiskQuantity}}</td>
+          <td class="wix" style="text-align: center;">{{rowData.RiskPurchasePrice | number : '1.4-4'}}</td>
+          <!-- <td class="wix" style="text-align: center;" >{{rowData.APP | number : '1.2-2'}}</td>
+                <td class="wix" style="text-align: center;" >{{rowData.LiveQuantity}}</td>
+                <td class="wix" style="text-align: center;" >{{rowData.OldLiveQuantity}}</td>
+                <td class="wix" style="text-align: center;" >{{rowData.LimitQty}}</td> -->
+          <td class="wix" style="text-align: center;">{{rowData.Comment}}</td>
+          <td class="wix" style="text-align: center;">{{rowData.ModifiedBy}}</td>
+          <td class="wix" style="text-align: center;">{{rowData.ModifiedDate | date : 'medium'}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-dialog>
+</div>
+
+<div *ngIf="isOpenRiskPopup">
+  <p-dialog appendTo="body" [modal]="true" [(visible)]="isOpenRiskPopup">
+    <p-header>
+      <div class="lbl">
+        <strong> <u>ItemName : {{riskData?.ItemName}}(ItemMultiMRPId : {{riskData?.ItemMultiMRPId}})</u></strong><br />
+      </div>
+    </p-header>
+    <div class="lbl">
+      <div class="row">
+        <div class="col-6">
+          <strong>Total Risk Qty : {{riskData?.TotalRiskQty}}</strong>
+        </div>
+        <div class="col-6">
+          <strong>Weighted Purchase Price : {{riskData?.WPP}}</strong>
+        </div>
+      </div>
+    </div>
+    <!-- <br/> -->
+    <hr>
+    <div class="lbl text-center">
+      <strong>PO</strong>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-6">
+        <label class="bld">Current PO Risk Quantity</label>
+        <input id="PORiskQuantity" name="PORiskQuantity" type="number" [(ngModel)]="riskData.PORiskQuantity"
+          class="form-control brdr2 wdth" placeholder="Enter PO RiskQuantity" disabled>
+      </div>
+      <div class="col-md-6">
+        <label class="bld">Current PO Risk Purchase Price</label>
+        <input id="poriskPurchasePrice" type="number" name="poriskPurchasePrice" min="0"
+          [(ngModel)]="riskData.PORiskPurchasePrice" class="form-control brdr2 wdth"
+          placeholder="Enter PO RiskPurchasePrice" disabled>
+      </div>
+      <div class="col-md-6">
+        <label class="bld">PO Risk Quantity</label>
+        <input id="PORiskQty" name="PORiskQty" type="number" [(ngModel)]="riskData.PORiskQty"
+          class="form-control brdr2 wdth" placeholder="Enter PO RiskQuantity"
+          (ngModelChange)="onCheckNegativeValue(order)">
+      </div>
+      <div class="col-md-6">
+        <label class="bld">PO Risk Purchase Price</label>
+        <input id="PORiskPPrice" type="number" name="PORiskPPrice" min="0" [(ngModel)]="riskData.PORiskPPrice"
+          class="form-control brdr2 wdth" placeholder="Enter PO RiskPurchasePrice"
+          (ngModelChange)="onCheckNegativeValue(order)">
+      </div>
+    </div>
+    <br />
+    <hr>
+    <div class="lbl text-center">
+      <strong>Internal</strong>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-6">
+        <label class="bld">Current Internal Risk Quantity</label>
+        <input id="RiskQuantity" name="RiskQuantity" type="number" [(ngModel)]="riskData.InternalRiskQuantity"
+          class="form-control brdr2 wdth" placeholder="Enter RiskQuantity" disabled>
+      </div>
+      <div class="col-md-6">
+        <label class="bld">Current Internal Risk Purchase Price</label>
+        <input id="riskPurchasePrice" type="number" name="riskPurchasePrice" min="0"
+          [(ngModel)]="riskData.InternalRiskPurchasePrice" class="form-control brdr2 wdth"
+          placeholder="Enter RiskPurchasePrice" disabled>
+      </div>
+      <div class="col-md-6">
+        <label class="bld">Internal Risk Quantity</label>
+        <input id="RiskQty" name="RiskQty" type="number" [(ngModel)]="riskData.RiskQty" class="form-control brdr2 wdth"
+          placeholder="Enter RiskQuantity" (ngModelChange)="onCheckNegativeValue(order)">
+      </div>
+      <div class="col-md-6">
+        <label class="bld">Internal Risk Purchase Price</label>
+        <input id="RiskPPrice" type="number" name="RiskPPrice" min="0" [(ngModel)]="riskData.RiskPPrice"
+          class="form-control brdr2 wdth" placeholder="Enter RiskPurchasePrice"
+          (ngModelChange)="onCheckNegativeValue(order)">
+      </div>
+    </div>
+    <p-footer>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="onUpdateRisk()">Update</button>
+    </p-footer>
+  </p-dialog>
+</div>
+
+
+<!-- <p-dialog appendTo="body" [modal]="true" [style]="{width: '75%', height:'20%'}" [(visible)]="isPriceChange" positionTop="100" 
+  [blockScroll]="true" [closable]="false">
+  <p-header>
+    <div class="lbl">
+      <div class="row">
+        <div class="col-6">
+          <strong> <u>Warehouse : {{this.liveData.warehouseId ? this.liveData.warehouseId.WarehouseName : ''}} ,
+              Brand : {{this.liveData.BrandId ? this.liveData.BrandId.BrandName : ''}}</u></strong>
+        </div>
+        <div class="col-md-5" style="text-align: right;">
+          <button type="button" class="btn btn-primary" (click)="onExport()">Export</button>
+        </div>
+        <div class="col-1">
+          <span class="close" (click)="close()">&times;</span>
+        </div>
+      </div>
+    </div>
+  </p-header>
+  <p-table #dt [value]="ItemASPList" [scrollable]="true" scrollHeight="50vh" text-align:center [paginator]="true"
+    [lazy]="true" [(first)]="first" [rows]="10" [totalRecords]="TotalCount" (onLazyLoad)="onLoad($event)">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ItemMRP</th>
+        <th>ItemName</th>
+        <th>ASP</th>
+        <th>UnitPrice</th>
+        <th>TradePrice</th>
+        <th>WholesalePrice</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-itemData let-i="rowIndex" let-expanded="expanded">
+      <tr style="background-color:#db3636;font-weight: bold">
+        <td>{{itemData.ItemMRP}}</td>
+        <td>{{itemData.ItemName}}</td>
+        <td>{{itemData.ASP}}</td>
+        <td>{{itemData.UnitPrice}}</td>
+        <td>{{itemData.TradePrice}}</td>
+        <td>{{itemData.WholesalePrice}}</td>
+      </tr>
+      <hr style="margin: 1px;">
+    </ng-template>
+  </p-table>
+</p-dialog> -->
+
+
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+    <div *ngIf="isOpenMOQ == true">
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">Back to edit</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Go Live</button>
+    </div>
+    <div *ngIf="isOpenMOQ == false">
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </div>
+  </p-footer>
+</p-confirmDialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

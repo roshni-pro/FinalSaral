@@ -1,0 +1,72 @@
+<section>
+<div class="row">
+    <div class="col-sm-10">
+        <div class="content-header">GR Approval </div>
+    </div>
+    <div class=" col-md-2 float-right">
+        <label>&nbsp;</label>
+        <div></div>
+        <!-- <button type="button" class="btn btn-raised btn-primary" (click)="OnWhAccept()">WH Accept</button> -->
+        <button class="btn btn-raised btn-primary float-right"  (click)=onBack()>Back</button>
+    </div>
+</div>
+<br />
+
+<div class="ui-fluid" >
+    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+        <p-footer>  
+        <h6 class="text-left">Comment Section:</h6>
+            <textarea type="text"  class="form-control" [(ngModel)]="Comment"></textarea><br/>
+            <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+            <button type="button" class="btn btn-raised btn-danger mr-1" [disabled]="!Comment" (click)="cd.accept()">Yes</button>
+        </p-footer>
+      </p-confirmDialog>
+    </div>
+
+<div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover">
+    <div class="position-relative">
+        <p-table #dt [globalFilterFields]="cols" [value]="GRList" [paginator]="true" [rows]="20"
+            dataKey="PackingId" [scrollable]="true" scrollHeight="70vh" text-align: center>
+            <ng-template pTemplate="header">
+                <tr>
+                    <!-- <th>Select</th> -->
+                    <th *ngFor="let col of cols" style="text-align: center">
+                        {{col.header}}
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                <tr >
+                    <td *ngFor="let col of cols" style="text-align: center" (click)="open(rowData)">
+                        <div *ngIf="col.field !='InvoiceUrl'">
+                            {{rowData[col.field]}}
+                        </div>
+                        <div *ngIf="col.field =='InvoiceUrl'">
+                            <img [src]="rowData[col.field]" height="40px">
+                        </div>
+                            
+                    </td>
+                    <td>
+                        <div  *ngIf="rowData.Status == 0" >
+                        <button type="button" class="btn btn-raised btn-primary" (click)="grApproveAccept(rowData)">GR Approve</button>
+                        </div>
+                        <div *ngIf="rowData.Status == 1">
+                            Approved
+                        </div>
+                        <div *ngIf="rowData.Status == 3">
+                            Reject
+                        </div>
+                    </td>
+                   
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+
+</div>
+</section>

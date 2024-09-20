@@ -1,0 +1,181 @@
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <p-confirmDialog #cd appendTo="body" header="Confirmation">
+      <p-footer>
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+      </p-footer>
+    </p-confirmDialog>
+
+    <div class="w3-container w3-center w3-animate-left">
+      <div class="row">
+        <!-- <h1><i class="fa fa-address-book w3-spin" style="font-size:64px"></i></h1> -->
+        <h1><b>Book Expense List Page</b></h1>
+      </div>
+    </div>
+
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+      <form>
+        <div class="row">
+          <div class="form-group" class="col-sm-2">
+            <label for="Dept"> <b>Department:</b></label><br>
+            <select id="Dept" name="Dept" class="form-control" [(ngModel)]="DepartmentId" placeholder="Select a Dept">
+              <option value="">Select Department</option>
+              <option *ngFor="let dept of deptList" [ngValue]="dept.DepId">
+                {{dept.DepName}}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group" class="col-sm-2">
+            <label for="comp"> <b>Working Company:</b></label><br>
+            <select id="comp" name="comp" class="form-control" [(ngModel)]="WorkingCompanyId"
+              placeholder="Select a Dept">
+              <option value="">Select Working Company</option>
+              <option *ngFor="let comp of workingcompanyList" [ngValue]="comp.ID">
+                {{comp.Label}}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group" class="col-sm-2">
+            <label for="loc"> <b>Working Location:</b></label><br>
+            <select id="loc" name="loc" class="form-control" [(ngModel)]="WorkingLocationId"
+              placeholder="Select a Dept">
+              <option value="">Select Working Location</option>
+              <option *ngFor="let loc of workinglocationList" [ngValue]="loc.ID">
+                {{loc.Label}}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group" class="col-sm-2">
+            <label for="search"><b>Filter:</b></label>
+            <input class="form-control" type="text" pInputText size="20" name="search"
+              [(ngModel)]="BookExpensePager.Filter" placeholder="Filter Only Name">
+          </div>
+
+          <div class="form-group" class="col-sm-2">
+            <button class="btn btn-raised btn-raised btn-primary m1" (click)="OnClick()">Search</button>
+          </div>
+
+          <div>
+            <button type="button" class="btn btn-raised btn-primary float-right align-self-end" style="margin-bottom: 0;" (click)="onAdd()"> Add Expense </button>
+          </div>
+
+        </div>
+      </form>
+      <br />
+      <div class="position-relative">
+        <p-table [value]="pagerList" [paginator]="true" [lazy]="true"
+          (onLazyLoad)="load($event,DepartmentId,WorkingCompanyId,WorkingLocationId)" [rows]="10"
+          [totalRecords]="totalRecords" dataKey="Id" [scrollable]="true" scrollHeight="130vh" text-align: center>
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Name</th>
+              <th>Id</th>
+              <th>DepartmentName</th>
+              <th>WorkingCompanyName</th>
+              <th>WorkingLocationName</th>
+              <th>View</th>
+              <th>Approved</th>
+              <th>Cancel</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData>
+            <tr>
+              <td>{{rowData.Name}}</td>
+              <td>{{rowData.Id}}</td>
+              <td>{{rowData.DepartmentName}}</td>
+              <td>{{rowData.WorkingCompanyName}}</td>
+              <td>{{rowData.WorkingLocationName}}</td>
+              <td><button class="btn btn-raised btn-raised btn-primary"
+                  (click)="viewbookexpense(rowData.Id)">View</button></td>
+              <td>
+                <p-inputSwitch name="IsActive" [(ngModel)]="rowData.IsChecked" (ngModelChange)="GetApproved(rowData)">
+                </p-inputSwitch>
+              </td>
+              <td><button class="btn btn-raised btn-raised btn-primary" (click)="onCancel(rowData)">Cancel</button></td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <p-dialog [(visible)]="isOpenPopupPayments" positionTop="100" [style]="{width: '90vw'}" appendTo="body">
+      <p-header>
+        Expense Details
+      </p-header>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-6">
+              <b>Id: </b><br>
+              <b>ExpenseName:</b><br>
+              <b>TotalAmount:</b> <br>
+              <b> DebitLedgerName:</b><br>
+              <b>DebitLedgerAmount:</b><br>
+
+              <b>IsLedgerGenerated:</b><br>
+              <b>ExpenseDate:</b> <br>
+              <b>IsTDSApplied:</b><br>
+              <b>IsGSTApplied:</b><br>
+
+            </div>
+            <div class="col-6">
+              {{viewdata.Id}} <br />
+              {{viewdata.ExpenseName}} <br />
+              {{viewdata.TotalAmount}} <br />
+              {{viewdata.DebitLedgerName}} <br />
+              {{viewdata.DebitLedgerAmount}} <br />
+
+              {{viewdata.IsLedgerGenerated}} <br />
+              {{viewdata.ExpenseDate}} <br />
+              {{viewdata.IsTDSApplied}} <br />
+              {{viewdata.IsGSTApplied}}
+            </div>
+          </div>
+        </div> 
+
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-6">
+              <b>DepartmentName:</b><br>
+              <b> WorkingLocationName:</b><br>
+              <b>WorkingCompanyName:</b> <br>
+              <b>CheckerName:</b><br>
+              <b>IsChecked: </b><br>
+
+              <b> TDSLedgerName:</b><br>
+              <b> GSTLedgerName:</b><br>
+              <b> TDSAmount:</b> <br>
+              <b> GSTAmount:</b> <br>
+
+            </div>
+            <div class="col-6">
+              {{viewdata.DepartmentName}} <br />
+              {{viewdata.WorkingLocationName}} <br />
+              {{viewdata.WorkingCompanyName}} <br />
+              {{viewdata.CheckerName}} <br />
+              {{viewdata.IsChecked}} <br />
+
+              {{viewdata.TDSLedgerName}} <br />
+              {{viewdata.GSTLedgerName}} <br />
+              {{viewdata.TDSAmount}} <br />
+              {{viewdata.GSTAmount}}
+            </div>
+          </div>
+        </div> 
+
+      </div>
+
+      <p-footer>
+        <button type="button" pButton  (click)="isOpenPopupPayments=false" label="Close"></button>
+      </p-footer>
+    </p-dialog>
+
+  </section>
+</div>

@@ -1,0 +1,49 @@
+<p-dialog appendTo="body" header="Upload Coupons" [closable]="false" [(visible)]="showDialog" [style]="{width: '50vw'}"
+    [baseZIndex]="10000">
+    <div class="ui-fluid">
+
+        <div class="ui-g" *ngIf="!isErrorOccured">
+            <div class="ui-g-12"  *ngIf="!isNotUploading">
+                <code>Note: Please wait while list is uploading into the backend!!</code>
+            </div>
+            <div class="ui-g-12"  *ngIf="isNotUploading">
+                <button (click)="openTemplate()">Download Template</button>
+            </div>
+            <div class="ui-g-12" *ngIf="isNotUploading">
+                <p-fileUpload name="myfile[]" customUpload="true" (uploadHandler)="onUpload($event, uploadCustom)"
+                    #uploadCustom>
+                    <code>*</code>
+                </p-fileUpload>
+            </div>
+        </div>
+        <div class="ui-g" *ngIf="isErrorOccured">
+            <div class="ui-g-12">
+                <code>Note: Following codes are not updated in backend</code>
+                <table class="table table-responsive-sm text-center"
+                    *ngIf="erroredCouponList && erroredCouponList.length > 0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Mobile Number</th>
+                            <th>Coupon Amount</th>
+                            <th>Min Order Amount</th>
+                            <th>ExpireInDays</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let code of erroredCouponList; let i = index;">
+                            <td>{{i+1}}</td>
+                            <td>{{code.MobileNumber}}</td>
+                            <td>{{code.CouponAmount}}</td>
+                            <td>{{code.MinOrderAmount}}</td>
+                            <td>{{code.ExpireInDays? (code.ExpireInDays  + ' Days'): 'N/A' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <p-footer>
+        <button type="button" pButton (click)="closeDialog()" label="close" class="ui-button-secondary"></button>
+    </p-footer>
+</p-dialog>

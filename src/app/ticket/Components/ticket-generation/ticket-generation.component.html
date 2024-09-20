@@ -1,0 +1,483 @@
+<p-toast></p-toast>
+<!-- <button (click)="displayLog = false">close</button> -->
+<div>
+    <div class="row m-0">
+        <div class="col-12">
+            <!-- Kick start -->
+            <div id="kick-start" class="kick-start card">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="card-title">Ticket Master</h4>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label> Search Ticket:</label>
+                                    <div>
+                                        <input type="text" class="form-control" placeholder="Search Ticket"
+                                            [(ngModel)]="filterTicket.SearchString">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <div class="form-group">
+
+                                    <div>
+                                        <label for="startdate"><b>Start Date: </b></label><br>
+                                        <p-calendar [showIcon]="true" [(ngModel)]="filterTicket.StartDate"
+                                            name="startDate" required="1" [readonlyInput]="true" required
+                                            #dateRangeListInput>
+                                        </p-calendar>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label> Expiry Date:</label>
+                                    <div>
+                                        <p-calendar [showIcon]="true" [(ngModel)]="filterTicket.EndDate" name="EndDate"
+                                            required="1" [readonlyInput]="true" required #dateRangeListInput>
+                                        </p-calendar>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label> Status:</label>
+                                    <div>
+                                        <select id="vcht" name="vcht" class="form-control"
+                                            [(ngModel)]="filterTicket.Status">
+                                            <option *ngFor="let at of statusList" [ngValue]="at.level">
+                                                {{ at.Name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label> Severity:</label>
+                                    <div>
+                                        <select id="vcht" name="vcht" class="form-control"
+                                            [(ngModel)]="filterTicket.Severity">
+                                            <option *ngFor="let at of severityList" [ngValue]="at.level">
+                                                {{ at.Name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col-lg-3">
+                            <div class="form-group">
+                                <label> Category:</label>
+                                <div>
+                                    <p-multiSelect id="role=" name="role" [options]="ticketCategoryList"
+                                        [(ngModel)]="filterTicket.CategoryIds" #role="ngModel" optionLabel="Name">
+                                    </p-multiSelect>
+                                </div>
+                            </div>
+                        </div> -->
+
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="vcht">Select Type</label>
+                                    <select id="vcsht" name="vcsht" class="form-control"
+                                        [(ngModel)]="filterTicket.Type">
+                                        <option *ngFor="let at of types" [ngValue]="at.id">
+                                            {{ at.name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-1">
+                                <div class="form-group">
+                                    <label> Search:</label>
+                                    <div>
+                                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                            (click)="filterTicket.Skip = 0; filterTicket.Take = 10; GetAllTickets();"
+                                            label="Search"></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label> Reset:</label>
+                                    <div>
+                                        <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                            (click)="filterTicket.Skip = 0; filterTicket.Take = 10; reset(); GetAllTickets();"
+                                            label="Reset"></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-lg-2">
+                            <div class="form-group" style="margin-left: 20px;">
+                                <label> Select Categories:</label>
+                                <div>
+                                    <p-multiSelect [style]="{minWidth:'55em'}"id ="role=" name="role" [options]="departmentList" [(ngModel)]="filterTicket.CategoryId"  #role="ngModel" [panelStyle]="{minWidth:'25em'}" optionLabel="Category" ></p-multiSelect>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group" style="margin-left: 20px;">
+                                <label> Select Departments:</label>
+                                <div>
+                                    <p-multiSelect [style]="{minWidth:'55em'}"id ="role=" name="role" [options]="ticketCategoryList" [(ngModel)]="filterTicket.DepartmentId"  #role="ngModel" [panelStyle]="{minWidth:'25em'}" optionLabel="Department" ></p-multiSelect>
+                                </div>
+                            </div>
+                        </div> -->
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label> Generate Ticket:</label>
+                                    <div>
+                                        <button class="btn btn-raised btn-raised btn-primary c1"
+                                            (click)="display = true; initializeticketlog()">
+                                            <i class="fa fa-upload"></i>
+                                            Generate Ticket</button>
+                                        <button class="btn btn-raised btn-raised btn-primary c1"
+                                            (click)="export()">
+                                            <i class="fa fa-upload"></i>
+                                            Export</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- <div *ngIf="ticketList && ticketList.length"> -->
+    <p-table  [paginator]="true" [rows]="10" [value]="ticketList" [lazy]="true"
+         [totalRecords]="TotalRecords" (onLazyLoad)="load($event)" [paginator]="true"
+        [scrollable]="true" scrollHeight="70vh" text-align: center>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th>
+                    S.no
+                </th>
+                <th>
+                    Ticket No
+                </th>
+                <!-- <th>
+                Description
+            </th> -->
+                <th>
+                    Category
+                </th>
+                <th>
+                    Department
+                </th>
+
+                <th>
+                    Status
+                </th>
+                <th>
+                    Applied By
+                </th>
+                <th>
+                    Generated By
+                </th>
+                <th>
+                    Severity
+                </th>
+                <th>
+                    Created On
+
+                </th>
+                <th>
+                    View Details
+                </th>
+                <!-- <th>
+                Assign Ticket
+
+            </th> -->
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-i="rowIndex" let-columns="columns">
+            <tr>
+                <td>
+                    {{i+1}}
+                </td>
+                <td>
+                    {{rowData.Id}}
+                </td>
+                <!-- <td>
+                {{rowData.Description}}
+            </td> -->
+                <td>
+                    {{getCategory(rowData.CategoryId)}}
+                </td>
+                <td>
+                    {{rowData.DepartmentName}}
+                    <!-- {{getDepartment(rowData.DepartmentId)}} -->
+                </td>
+                <td>
+                    <ng-container *ngIf="rowData.Status == 0">
+                        Pending
+                    </ng-container>
+                    <ng-container *ngIf="rowData.Status == 1">
+                        Open
+                    </ng-container>
+                    <ng-container *ngIf="rowData.Status == 4">
+                        On Hold
+                    </ng-container>
+                    <ng-container *ngIf="rowData.Status == 2">
+                        Closed
+                    </ng-container>
+                </td>
+                <td>
+
+                    {{(rowData.CreatedBy < 0) ? rowData.CustomerDetail : getModifiedByPerson(rowData.CreatedBy) }}
+                    <!-- {{getAppliedBy(rowData.CreatedBy)}} -->
+                </td>
+                <td>
+                    {{(rowData.CreatedBy < 0) ? rowData.CustomerDetail : getModifiedBy(rowData.GeneratedBy) }}
+                    <!-- {{getModifiedBy(rowData.GeneratedBy)}} -->
+                </td>
+
+                <td>
+                    {{getSeverityName(rowData.severity)}}
+                </td>
+                <td>
+                    {{rowData.CreatedDate | date}}
+                </td>
+                <td>
+                    <button type="button" (click)="viewActivityLog(rowData)" class="btn btn-raised btn-primary">
+                        View
+                    </button>
+                </td>
+
+                <!-- <td>
+                <button *ngIf="rowData.Status == 0" type="button" pButton
+                    class="btn btn-raised btn-raised btn-primary c1" (click)="assign(rowData)" label="Assign"></button>
+                <ng-container *ngIf="rowData.Status != 0">already assigned</ng-container>
+
+            </td> -->
+            </tr>
+        </ng-template>
+    </p-table>
+<!-- </div> -->
+
+    <div>
+        <p-dialog [header]="'Generate Ticket'" *ngIf="display" [(visible)]="display"
+            [style]="{width: '80vw',height: '120vw'}" [baseZIndex]="100" appendTo="body">
+            <div class="card-content">
+
+                <form class="form" name="form" #ticketForm="ngForm">
+                    <div class="form-body" style="margin-left: 50px;">
+                        <h4 class="form-section"><i class="ft-user"></i> Generate Ticket</h4>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="vcht">Select Type</label>
+                                    <select id="vcht" name="vcht" class="form-control" [(ngModel)]="ticket.type">
+                                        <option [value]="0">
+                                            --- Please Select Type ---
+                                        </option>
+                                        <option [value]="1">
+                                            People
+                                        </option>
+                                        <option [value]="2">
+                                            Customer
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dssdds">Search Reporting Person</label>
+                                    <br>
+                                    <p-autoComplete *ngIf="ticket.type == 0" id="partyLedgearNamssse"
+                                        [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                                        name="partyLsseaadgerName">
+                                    </p-autoComplete>
+
+                                    <p-autoComplete *ngIf="ticket.type == 1" (completeMethod)="searchPeople($event)"
+                                        [suggestions]="pplfiltered" field="DisplayName" [inputStyle]="{'width':'100%'}"
+                                        (onSelect)="onSelectPeople($event)" id="partyLedgearName"
+                                        name="partyLeaadgerName" required>
+                                    </p-autoComplete>
+
+
+                                    <p-autoComplete *ngIf="ticket.type == 2" [suggestions]="customerList" field="Name"
+                                        (onSelect)="onSelectParty($event)" (completeMethod)="searchCustomers($event)"
+                                        [inputStyle]="{'width':'100%'}" id="partyLedgerName" name="partyLedgerName"
+                                        required>
+                                    </p-autoComplete>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="vcht">Select Category</label>
+                                    <select id="vcht" name="vcht" class="form-control"
+                                        (change)="selectDepartmentOnCategory()" [(ngModel)]="ticket.CategoryId">
+                                        <option *ngFor="let at of ticketCategoryList" [ngValue]="at.Id">
+                                            {{ at.Name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="date"> Department:</label>
+                                    <br>
+                                    <div class="form-control">
+                                        {{DepartmentName}}
+                                    </div>
+                                    <!-- <p-autoComplete [disabled]="true" [style]="{'width':'100%'}"
+                                        [inputStyle]="{'width':'100%'}" (completeMethod)="searchDept($event)"
+                                        [suggestions]="deptFiltered" field="DepName" (onSelect)="onSelectDept($event)"
+                                        id="partyLedgearName" name="DepName" required>
+                                        <h1>{{ticket.DepartmentId}}</h1>
+                                    </p-autoComplete> -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="pert"> Description</label>
+                                    <textarea type="text" id="pert" class="form-control" name="pert"
+                                        [(ngModel)]="ticket.Description" placeholder="Enter Description" required
+                                        #perticular="ngModel"></textarea>
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div>
+                                    <label for="vchno"> Select Severity</label>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <select id="vcht" name="vcht" class="form-control" [(ngModel)]="ticket.severity">
+                                        <option *ngFor="let at of severityList" [ngValue]="at.level">
+                                            {{ at.Name }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="pert"> Assign To</label>
+                                    <br>
+                                    <p-autoComplete [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                                        (completeMethod)="searchPeople($event)" [suggestions]="pplfiltered"
+                                        field="DisplayName" (onSelect)="assignPerson($event)" id="partyLedgearName"
+                                        name="partyLeaadgerName" required>
+                                    </p-autoComplete>
+
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div>
+                                    <label for="vchno"> Comments</label>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <textarea type="text" id="pert" class="form-control" name="pert"
+                                        [(ngModel)]="ticketLog.Comment" placeholder="Enter Comment" required
+                                        #perticular="ngModel"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-actions  right col-sm-12">
+                        <button type="button" (click)="save(ticket)" class="btn btn-raised btn-primary">
+                            Save
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </p-dialog>
+    </div>
+
+
+
+
+
+    <p-dialog [header]="'Assign Ticket'" *ngIf="displayassign" [(visible)]="displayassign" [style]="{width: '50vw'}"
+        [baseZIndex]="100" appendTo="body">
+        <div class="card-content">
+            <div class="row">
+                <form class="form" name="form" #ticketForm="ngForm">
+                    <div class="form-body" style="margin-left: 100px;">
+                        <h4 class="form-section"><i class="ft-user"></i> Assign Ticket</h4>
+                        <div class="row" style="margin-left: 20px;">
+
+
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="dssdds">Search Person</label>
+                                    <br>
+                                    <p-autoComplete (completeMethod)="searchPeople($event)" [suggestions]="pplfiltered"
+                                        field="DisplayName" (onSelect)="assignPerson($event)" id="partyLedgearName"
+                                        name="partyLeaadgerName" required>
+                                    </p-autoComplete>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="pert"> Comment</label>
+                                    <textarea type="text" id="pert" class="form-control" name="pert"
+                                        [(ngModel)]="ticketLog.Comment" placeholder="Enter Comment" required
+                                        #perticular="ngModel"></textarea>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="form-actions  right col-sm-12">
+                        <button type="button" (click)="assignTicket()" class="btn btn-raised btn-primary">
+                            Assign Ticket
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </p-dialog>
+
+
+
+
+    <br />
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+        [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+        fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+</div>
+
+<div>
+    <!-- <p-dialog header="Ticket Number:  {{log.Ticket.Id}}" *ngIf="displayLog" [(visible)]="displayLog"
+        [style]="{width: '100vw', height: '100vw'}" appendTo="body"> -->
+    <br>
+
+
+
+</div>

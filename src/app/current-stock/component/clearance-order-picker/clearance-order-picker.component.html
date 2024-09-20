@@ -1,0 +1,97 @@
+<div class="d-flex justify-content-between" style="margin-top: 50px;">
+    <div class="header">
+        <h3 class="m-2">Clearance Order Picker List</h3>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <label>Select Warehouse</label>
+                  <p-dropdown [options]="warehouseList" optionLabel="WarehouseName" [filter]="true" [resetFilterOnHide]="true" placeholder="Select Warehouse" [(ngModel)]="selWarehouse"
+                  ></p-dropdown>
+                  <!-- (ngModelChange)="onSearch()" -->
+                </div>
+                <div class="col-md-2">
+                    <label for="">Select date range</label>
+                    <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [showIcon]="true" showButtonBar="true"  [minDate]="minDate" [maxDate]="maxDate"
+                    [readonlyInput]="true" inputId="range" placeholder="select date range"  [style]="{'width':'100%'}" ></p-calendar>
+                </div>
+                <div class="col-md-2">
+                    <label for="">Item Name/ Number</label><br>
+                    <input type="text" style="width: 100%;" placeholder="search" [(ngModel)]="item" pInputText  >
+                </div>
+                <div class="col-md-2">
+                    <label>Select picker status</label>
+                  <p-dropdown [options]="pickerstatus" optionLabel="Name" [filter]="true" [resetFilterOnHide]="true" placeholder="Select status" [(ngModel)]="selpickerstatus"
+                  ></p-dropdown>
+                  <!-- (ngModelChange)="onSearch()" -->
+                </div>
+                <div class="col-md-4 mt-3">
+                    <div style="margin-top: 8px;">&nbsp;&nbsp;
+                        <button class="btn btn-raised btn-success" (click)="onSearch()">
+                            Search
+                         </button>  &nbsp;
+                         <button class="btn btn-primary ml-1" (click)="onRefresh()">
+                            Clear
+                         </button>   &nbsp;
+                        
+                            <button class="btn btn-raised btn-info ml-1 text-right" (click)="onExport()">
+                                Export
+                             </button> 
+                        
+
+                    </div>          
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded ">
+    <p-table  [value]="ClearanceOrderPickerList"  [showCurrentPageReport]="true" [paginator]="true" [rows]="10" [scrollable]="true" [lazy]="true" (onLazyLoad)="load($event)"  [totalRecords]="TotalRecordsCount">
+        <ng-template pTemplate="header" >
+            <tr >
+                <th scope="col" style="width:80px"><b> S.NO.</b></th>
+                <th scope="col" ><b> Order Number</b></th>
+                <th  scope="col"><b> Warehouse</b></th>
+                <th  scope="col"><b> Item Number </b></th>
+                <th  scope="col"><b> Quantity</b></th>
+                <th  scope="col"><b> Value </b></th>
+                <th  scope="col"><b> Created Date</b></th>
+                <th scope="col" ><b> Rejected Date/Time</b></th> 
+                <th scope="col" ><b> Rejected By</b></th> 
+                <th scope="col" ><b> Rejection Comment</b></th> 
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+                <td style="width:80px">{{rowIndex+1}}</td>
+                <td >{{rowData.OrderNumber}}</td>
+                <td >{{rowData.WareHouseName}}</td>
+                <td >{{rowData.ItemNumber}}</td>
+                <td >{{rowData.Quantity}}</td>
+                <td >{{rowData.ValueAmount|number: '1.0-2'}}</td>
+                <td >{{rowData.CreatedDate==null?'--':rowData.CreatedDate |date:'mediumDate'}}</td>
+                <td >{{rowData.RajectedDateTime==null?'--':rowData.RajectedDateTime |date:'medium'}}</td>
+                <td >{{rowData.RajectedBy==null?'--':rowData.RajectedBy}}</td>
+                <td >{{rowData.RajectionComment==null?'--':rowData.RajectionComment}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-toast [style]="{width: '20vw'}" position="top-right"></p-toast>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+
+
+
+
+            
+

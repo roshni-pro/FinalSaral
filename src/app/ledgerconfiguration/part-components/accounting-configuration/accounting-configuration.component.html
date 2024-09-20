@@ -1,0 +1,286 @@
+<div class="row">
+    <div class="col-sm-12">
+        <form class="form" #accountConfigurationForm="ngForm">
+            <div class="form-body" *ngIf="ledgerConfigurationMaster">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Name">Transaction Name <span class="red"> *</span></label>
+                            <input class="form-control" id="Name" name="Name"
+                                [(ngModel)]="ledgerConfigurationMaster.Name" required="1" #Name="ngModel" minlength="2"
+                                maxlength="10" />
+
+                            <div class="col-md-6"></div>
+                            <div *ngIf="isInvalid && !Name.valid && Name.errors.required">
+                                <code> Name is required</code>
+                            </div>
+                            <!-- <code></code> -->
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Code">Code <span class="red"> *</span></label>
+                            <input class="form-control" id="Code" name="Code"
+                                [(ngModel)]="ledgerConfigurationMaster.Code" required="1" #Code="ngModel" minlength="2"
+                                maxlength="6">
+                            <div *ngIf="isInvalid && !Code.valid && Code.errors.required">
+                                <code> Code is required</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="Action">Event/Action <span class="red"> *</span></label>
+                            <input class="form-control" id="Action" name="Action"
+                                [(ngModel)]="ledgerConfigurationMaster.Action" required="1" #Action="ngModel"
+                                minlength="2" maxlength="30">
+                            <div *ngIf="isInvalid && !Action.valid && Action.errors.required">
+                                <code> Action is required</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <br>
+                        <label for="Save"></label>
+                        <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24 ip3"
+                            (click)="save(accountConfigurationForm)">
+                            Save
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <p-dataView #dv [value]="ledgerConfigurationMaster.ledgerConfigurationDetails">
+            <p-header>
+                <div class="ui-helper-clearfix">
+                    <div class="ui-g">
+
+                        <div class="ui-g-12 ui-md-12" style="text-align:right">
+                            <button (click)="addNewDetail()" *ngIf="ledgerConfigurationMaster.Id">Add New
+                                Ledger</button>
+                        </div>
+
+                    </div>
+                </div>
+            </p-header>
+            <ng-template let-detail pTemplate="listItem">
+
+
+                <div class="ss">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-6 bld">
+                                    Debit Account Type:
+                                </div>
+                                <div class="col-sm-6">
+                                    {{detail.DebitLedgerTypeString}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-6 bld">
+                                    IsFixed Debit Account:
+                                </div>
+                                <div class="col-sm-6">
+                                    {{detail.IsFixedDebitLedger}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-6 bld">
+                                    Debit Account:
+                                </div>
+                                <div class="col-sm-6">
+                                    {{detail.DebitLedgerName}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-6 bld">
+                                    Credit Account Type:
+                                </div>
+                                <div class="col-sm-6">
+                                    {{detail.CreditLedgerTypeString}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-6 bld">
+                                    IsFixed Credit Account:
+                                </div>
+                                <div class="col-sm-6">
+                                    {{detail.IsFixedCreditLedger}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-6 bld">
+                                    Credit Account:
+                                </div>
+                                <div class="col-sm-6">
+                                    {{detail.CreditLedgerName}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-6 bld">
+                                    Voucher Type:
+                                </div>
+                                <div class="col-sm-6">
+                                    {{detail.VoucherTypeName}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-6 bld">
+
+                                </div>
+                                <div class="col-sm-6">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="row">
+                                <div class="col-sm-6 bld">
+                                </div>
+                                <div class="col-sm-6">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button class="pull-right" (click)="EditDetails(detail)"
+                                *ngIf="ledgerConfigurationMaster.Id">Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </ng-template>
+
+        </p-dataView>
+    </div>
+</div>
+<!--  Add New Entry -->
+<div *ngIf="isOpenPopup">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '70%',height: '80%', overflow: 'auto'}">
+        <form class="form" #accountAddConfigurationForm="ngForm">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-4">
+                    <div class="form-group">
+                        <label for="Name">Debit Account Type<span class="red"> *</span></label>
+                        <select class="form-control" id="DebitLedgerTypeId" name="DebitLedgerTypeIdname" required="1"
+                            [(ngModel)]="ledgerConfigurationDetails.DebitLedgerTypeId" #DebitLedgerTypeId="ngModel">
+                            <option value="">select</option>
+                            <option [value]="opt.ID" *ngFor="let opt of ledgerTypeList;">{{opt.Name}}</option>
+                        </select>
+                        <div *ngIf="isInvalid && !DebitLedgerTypeId.valid && DebitLedgerTypeId.errors.required">
+                            <code> Debit Account Type is required</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12 ui-md-4">
+                    <div class="form-group">
+                        <label for="Name">Is Fixed Debit Account</label><br>
+                        <p-inputSwitch id="IsFixedDebitLedger" name="IsFixedDebitLedgerName"
+                            [(ngModel)]="ledgerConfigurationDetails.IsFixedDebitLedger"
+                            (ngModelChange)="onChangeDebitFixedLedger()">
+                        </p-inputSwitch>
+                    </div>
+                </div>
+                <div class="ui-g-12 ui-md-4">
+                    <div class="form-group" *ngIf="ledgerConfigurationDetails.IsFixedDebitLedger">
+                        <label for="Name">Debit Account </label><br>
+                        <p-autoComplete id="DebitAccountIds" name="Debi" [(ngModel)]="selectedDebitLedger"
+                            [suggestions]="ledgerList" field="Name" [dataKey]="ID"
+                            (completeMethod)="searchLedger(ledgerConfigurationDetails.DebitLedgerTypeId , $event)"
+                            (onSelect)="onSelectDebit($event, ledgerConfigurationDetails)"></p-autoComplete>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-4">
+                    <div class="form-group">
+                        <label for="Name">Credit Account Type<span class="red"> *</span></label>
+                        <select class="form-control" id="CreditLedgerTypeId" name="CreditLedgerTypeIdNames" required="1"
+                            [(ngModel)]="ledgerConfigurationDetails.CreditLedgerTypeId" #CreditLedgerTypeId="ngModel">
+                            <option value="">select</option>
+                            <option [value]="opt.ID" *ngFor="let opt of ledgerTypeList;">{{opt.Name}}</option>
+                        </select>
+                        <div *ngIf="isInvalid && !CreditLedgerTypeId.valid && CreditLedgerTypeId.errors.required">
+                            <code> Credit Account Type is required</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12 ui-md-4">
+                    <div class="form-group">
+                        <label for="Name">Is Fixed Credit Account </label><br>
+                        <p-inputSwitch id="IsFixedCreditLedgerss" name="IsFixedCreditLedgerss"
+                            [(ngModel)]="ledgerConfigurationDetails.IsFixedCreditLedger"
+                            (ngModelChange)="onChangeCreditFixedLedger()">
+                        </p-inputSwitch>
+                    </div>
+                </div>
+
+                <div class="ui-g-12 ui-md-4">
+                    <div class="form-group" *ngIf="ledgerConfigurationDetails.IsFixedCreditLedger">
+                        <label for="Name">Credit Account </label><br>
+                        <p-autoComplete id="selectedDebitLedgerss" name="selectedDebitLedgerName"
+                            [(ngModel)]="selectedCreditLedger" [suggestions]="ledgerList" field="Name" [dataKey]="ID"
+                            (completeMethod)="searchLedger(ledgerConfigurationDetails.CreditLedgerTypeId, $event)"
+                            (onSelect)="onSelectCredit($event, ledgerConfigurationDetails)"></p-autoComplete>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-4">
+                    <div class="form-group">
+                        <label for="Name">Voucher Type<span class="red"> *</span></label>
+                        <select class="form-control" id="VoucherTypeId" name="VoucherTypeIdname" required="1"
+                            [(ngModel)]="ledgerConfigurationDetails.VoucherTypeId" #VoucherTypeId="ngModel">
+                            <option value="">select</option>
+                            <option [value]="opt.ID" *ngFor="let opt of vocherTypeList;">{{opt.Label}}</option>
+                        </select>
+                        <div *ngIf="isInvalid && !VoucherTypeId.valid && VoucherTypeId.errors.required">
+                            <code> Voucher Type is required</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12 ui-md-4">
+
+                </div>
+                <div class="ui-g-12 ui-md-4">
+                    <label for="ahsjd"></label>
+                    <button type="button" class="btn btn-raised btn-primary mr-1 shadow mr-24 ip3"
+                        (click)="saveDetails(accountAddConfigurationForm)">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </form>
+    </p-dialog>
+</div>

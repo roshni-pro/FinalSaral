@@ -1,0 +1,224 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<!-- <div class="row text-left"> -->
+<div class="col-md-12">
+  <div class="card pt-2">
+    <div class="card-content">
+      <div class="px-3">
+        <form class="form form-inline" name="form" #testForm="ngForm" autocomplete="off">
+          <input autocomplete="false" name="hidden" type="text" style="display:none;">
+          <div class="form-body col-12">
+            <!-- General -->
+            <h5 class="m-1 ml-2"><strong>General Details of Buyer</strong></h5>
+            <hr>
+            <div class="row">
+
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6">Buyer Name *</label>
+                  <input type="text" id="a" class="form-control col-md-6" [(ngModel)]="NewOrder.Name" name="a"
+                    required="1" maxlength="50" minlength="2" #Name="ngModel" />
+                  <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !Name.valid && Name.errors.required">
+                    <code>Supplier Name is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !Name.valid && Name.errors.minlength">
+                    <code>Minlength 2</code>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phone Number  -->
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="phone" class="col-md-6">Phone Number *</label>
+                  <input type="tel" id="MobileNo" class="form-control col-md-6" name="MobileNo"
+                    [(ngModel)]="NewOrder.MobileNo" placeholder="Enter Phone Number" required="1"
+                    (keypress)="keyPress($event)" minlength=10 maxlength=10 #phoneno="ngModel" />
+                  <div class="col-md-6"></div>
+
+                  <div *ngIf="isInvalid && !phoneno.valid && phoneno.errors.required">
+                    <code>Phone No is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !phoneno.valid && phoneno.errors.minlength">
+                    <code>Minlength 10</code>
+                  </div>
+                  <div *ngIf="isInvalid && !phoneno.valid && phoneno.errors.maxlength">
+                    <code>Maxlength 10</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6">Buyer Address *</label>
+                  <input type="text" id="a" class="form-control col-md-6" [(ngModel)]="NewOrder.Address" name="a"
+                    required="1" maxlength="50" minlength="2" #Address="ngModel" />
+                  <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !Address.valid && Address.errors.required">
+                    <code>Buyer Address is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !Address.valid && Address.errors.minlength">
+                    <code>Minlength 2</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6">Description *</label>
+                  <input type="text" id="a" class="form-control col-md-6" [(ngModel)]="NewOrder.Discription" name="a"
+                    required="1" maxlength="50" minlength="2" #Discription="ngModel" />
+                  <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !Discription.valid && Discription.errors.required">
+                    <code>Description is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !Discription.valid && Discription.errors.minlength">
+                    <code>Minlength 2</code>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6">Payment Method *</label>
+                  <input type="text" id="a" class="form-control col-md-6" [(ngModel)]="NewOrder.PaymentThrough" name="a"
+                    required="1" maxlength="50" minlength="2" #PaymentThrough="ngModel" />
+                  <div class="col-md-6"></div>
+                  <div *ngIf="isInvalid && !PaymentThrough.valid && PaymentThrough.errors.required">
+                    <code>payment Method is required</code>
+                  </div>
+                  <div *ngIf="isInvalid && !PaymentThrough.valid && PaymentThrough.errors.minlength">
+                    <code>Minlength 2</code>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-md-6">
+                <div class="form-group m-2">
+                  <label for="a" class="col-md-6">Total Order Amount : </label>
+                  <h1 style="color:Tomato;">{{finalamount}} /-</h1>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-2 bg-grey50 border-top border-top-2 border-top-primary">
+              <ngb-tabset type="pills" class="itmDetail">
+                <ngb-tab title="Item Details">
+                  <ng-template ngbTabContent>
+                    <form name="formV1" #testFormV1="ngForm">
+                      <div class="row">
+
+                        <!-- Contact Person -->
+                        <div class="col-md-3">
+                          <div class="form-group m-2">
+                            <label for="ItemName" class="col-md-4">ItemName *</label>
+                            <input type="text" id="ItemName" class="form-control col-md-8" name="ItemName"
+                              [(ngModel)]="newOrderDetails.ItemName" placeholder="Enter Item Name" required="1"
+                              maxlength="50" minlength="2" #PaymentThrough="ngModel" />
+                            <div class="col-md-6"></div>
+                            <div *ngIf="isInvalid && !ItemName.valid && ItemName.errors.required">
+                              <code>ItemName is required</code>
+                            </div>
+                            <div *ngIf="isInvalid && !ItemName.valid && ItemName.errors.minlength">
+                              <code>Minlength 5</code>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group m-2">
+                            <label for="UnitPrice" class="col-md-4">Unit Price*</label>
+                            <input type="number" id="offUnitPriceiceno" class="form-control col-md-8"
+                              [(ngModel)]="newOrderDetails.UnitPrice" name="UnitPrice" placeholder="Enter Unit Price"
+                              required="0" value="0" maxlength="50" minlength="1" #PaymentThrough="ngModel" />
+                            <div class="col-md-6"></div>
+                            <div *ngIf="isInvalid && !UnitPrice.valid && UnitPrice.errors.required">
+                              <code>UnitPrice is required</code>
+                            </div>
+                            <div *ngIf="isInvalid && !UnitPrice.valid && UnitPrice.errors.minlength">
+                              <code>Minlength 1</code>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group m-2">
+                            <label for="Qty" class="col-md-4">Quantity *</label>
+                            <input type="number" id="Qty" class="form-control col-md-8"
+                              [(ngModel)]="newOrderDetails.Qty" name="Qty" placeholder="Enter Quantity" required="0"
+                              value="0" maxlength="50" minlength="1" #PaymentThrough="ngModel" />
+                            <div class="col-md-6"></div>
+                            <div *ngIf="isInvalid && !Qty.valid && Qty.errors.required">
+                              <code>UnitPrice is required</code>
+                            </div>
+                            <div *ngIf="isInvalid && !Qty.valid && Qty.errors.minlength">
+                              <code>Minlength 1</code>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group m-2">
+                            <label for="Qty" class="col-md-4">Tax Percent % *</label>
+                            <input type="number" id="Percentage" class="form-control col-md-8"
+                              [(ngModel)]="newOrderDetails.Percentage" name="Percentage"
+                              placeholder="Enter TAX in Percentage" required="0" value="0" maxlength="50" minlength="0"
+                              #PaymentThrough="ngModel" />
+                            <div class="col-md-6"></div>
+                            <div *ngIf="isInvalid && !Percentage.valid && Percentage.errors.required">
+                              <code>Percent is required</code>
+                            </div>
+                            <div *ngIf="isInvalid && !Percentage.valid && Percentage.errors.minlength">
+                              <code>Minlength 0</code>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-2" style="left:85%;">
+                          <button type="button" class="btn btn-raised btn-primary mr-1"
+                            (click)="AddItemsTolist(testFormV1)">
+                            <i class="fa fa-check-square-o"></i> Add Item
+                          </button>
+                        </div>
+                      </div>
+
+                    </form>
+
+                  </ng-template>
+                </ngb-tab>
+              </ngb-tabset>
+            </div>
+            <p-table [columns]="cols" [value]="NewOrderDetailsView">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th *ngFor="let col of cols" style="text-align: initial">
+                    {{col.header}}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                <tr>
+                  <td *ngFor="let col of columns" style="text-align: initial">
+                    {{rowData[col.field]}}
+                  </td>
+                </tr>
+
+              </ng-template>
+            </p-table>
+            <div class="form-actions right col-sm-12 p-3">
+              <button type="button" class="btn btn-raised btn-warning mr-2" (click)="onCancel()">
+                <i class="ft-x"></i> Cancel
+              </button>
+              <button type="submit" class="btn btn-raised btn-primary" (click)="onSave(testForm)">
+                <i class="fa fa-check-square-o"></i> Save Order
+              </button>
+            </div>
+            <div class="form-footer m-2">Fields with * sign are mandatory to fill</div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '50%', top: '50%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> 

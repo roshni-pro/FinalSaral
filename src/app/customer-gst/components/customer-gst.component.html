@@ -1,0 +1,142 @@
+<section id="customer-gst">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="header">
+        <h3 class="content-header">Customer GST </h3>
+      </div>
+    </div>
+  </div>
+  <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <form style="margin:15px 0px;">
+      <div class="row">
+        <div class="form-group" class="col-sm-3">
+          <label for="Warehouse"> <b>warehouses:</b></label><br>
+          <p-dropdown [filter]="true" [options]="warehouses" #id optionLabel="WarehouseName" placeholder="Select Warehouse"></p-dropdown>
+        </div>
+        <div class="col-sm-3">
+          <label for="validto">SK Code</label>
+          <input class="form-control" type="text" pInputText size="20" name="searchwh" [(ngModel)]="data.Skcode"
+            placeholder="Search">
+        </div>
+
+        <div class="col-sm-2">
+          <label class="col-md-12">&nbsp;</label>
+          <button type="submit" class="btn btn-raised btn-primary" name="search" (click)="OnClick(id)"> Search</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="position-relative">
+      <p-table [value]="GstList" [paginator]="true" [lazy]="true" (onLazyLoad)="load($event)" [rows]="10"
+        [totalRecords]="totalRecords" dataKey="OrderId" [scrollable]="true" scrollHeight="130vh" text-align: center>
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th> CustomerId </th>
+            <th> WarehouseName </th>
+            <th> Skcode </th>
+            <th> City </th>
+            <th> Status </th>
+            <th> Updateby </th>
+            <th> CreateDate </th>
+            <th> GSTImage </th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData>
+          <tr (click)="openDetails(rowData,$event)">
+            <td>{{rowData.CustomerId}}</td>
+            <td>{{rowData.WarehouseName}}</td>
+            <td>{{rowData.Skcode}}</td>
+            <td>{{rowData.City}}</td>
+            <td>{{rowData.Status}}</td>
+            <td>{{rowData.Updateby}}</td>
+            <td>{{rowData.CreateDate | date: 'M/d/yy, h:mm a'}}</td>
+            <td>
+              <span *ngIf="rowData.GSTImage">
+                <img src="{{baseURL}}/UploadedImages/{{rowData.GSTImage}}" class="img">
+                <!-- <img src="https://uat.shopkirana.in/UploadedImages/{{rowData.GSTImage}}" class="img"> -->
+                <!-- <img src="/assets/img/photos/01.jpg" class="img">  -->
+              </span>
+            </td>
+
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</section>
+
+
+<div *ngIf="isOpenPopup">
+  <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+    [style]="{width: '70%',height: '70%', overflow: 'auto'}">
+    <p-header>
+      Customer Gst Details
+    </p-header>
+    <div class="ui-fluid">
+      <form #storyForm="ngForm">
+        <div class="ui-g">
+          <div class="ui-g-12">
+
+            <div class="row">
+              <div class="col-6">
+                <h5 style="text-align-last: right;"><span>CustomerId: </span></h5>
+                <h5 style="text-align-last: right;"><span>GST NO.:</span></h5>
+                <h5 style="text-align-last: right;"><span>Name:</span></h5>
+                <h5 style="text-align-last: right;"><span>ShopName:</span></h5>
+                <h5 style="text-align-last: right;"><span>City:</span></h5>
+                <h5 style="text-align-last: right;"><span>State:</span></h5>
+                <h5 style="text-align-last: right;"><span>ShippingAddress:</span></h5>
+                <h5 style="text-align-last: right;"><span>ZipCode:</span></h5>
+                <h5 style="text-align-last: right;"><span>Citycode:</span></h5>
+                <h5 style="text-align-last: right;"><span>RegisterDate:</span></h5>
+                <h5 style="text-align-last: right;"><span>CustomerBusiness:</span></h5>
+                <h5 style="text-align-last: right;"><span>HomeName:</span></h5>
+                <h5 style="text-align-last: right;"><span>PlotNo:</span></h5>
+                <h5 style="text-align-last: right;"><span>Status:</span></h5>
+                <button type="submit"  class="btn btn-primary" style="margin-left: 470px;margin-top: 20px;"
+                [ngStyle]="{'background-color': DetailList.Status == 'Approval' ? 'skyblue' : '#00bfff' }"
+                name="search" (click)="OnSave(DetailList.Status)"> Save</button>
+              </div>
+              <div class="col-md-6">
+                <h5>{{DetailList.CustomerId?DetailList.CustomerId:'-'}}</h5>
+                <h5>{{DetailList.GSTNo?DetailList.GSTNo:'-'}}</h5>
+                <h5>{{DetailList.Name?DetailList.Name:'-'}}</h5>
+                <h5>{{DetailList.ShopName?DetailList.ShopName:'-'}}</h5>
+                <h5>{{DetailList.City?DetailList.City:'-'}}</h5>
+                <h5>{{DetailList.State?DetailList.State:'-'}}</h5>
+                <h5>{{DetailList.ShippingAddress?DetailList.ShippingAddress:'-'}}</h5>
+                <h5>{{DetailList.ZipCode?DetailList.ZipCode:'-'}}</h5>
+                <h5>{{DetailList.Citycode?DetailList.Citycode:'-'}}</h5>
+                <h5>{{DetailList.RegisterDate?DetailList.RegisterDate:'-'}}</h5>
+                <h5>{{DetailList.CustomerBusiness?DetailList.CustomerBusiness:'-'}}</h5>
+                <h5>{{DetailList.HomeName ? DetailList.HomeName:'-'}}</h5>
+                <h5>{{DetailList.PlotNo?DetailList.PlotNo:'-'}}</h5>
+                <h5> <select id="suppCat" name="suppCat" class="form-control" [(ngModel)]="DetailList.Status" [disabled]="DetailList.Status == 'Approval'">
+                  <option value="pending">pending</option>
+                  <option value="Approval">Approval</option>
+                  <option value="Reject">Reject</option>
+                </select></h5>
+               
+                
+                
+
+
+              </div>
+              <!-- <div class="col-6 imgBox">
+              <img src="/assets/img/photos/01.jpg" class="" >
+             <img src="https://uat.shopkirana.in/UploadedImages/{{rowData.GSTImage}}" class="img">
+              
+            </div> -->
+
+              <div class="col-6 imgBox" *ngIf="DetailList.GSTImage">
+                <img src="{{baseURL}}/UploadedImages/{{DetailList.GSTImage}}" class="imgBox"><br>
+                <!-- <img src="/assets/img/photos/01.jpg" class="imgBox">  -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </p-dialog>
+</div>

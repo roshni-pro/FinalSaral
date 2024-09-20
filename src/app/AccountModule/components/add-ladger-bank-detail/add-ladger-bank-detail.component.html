@@ -1,0 +1,35 @@
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="col-md-12">
+  <div class="card pt-2">
+    <div class="card-content">
+      <div class="px-3">
+        <form class="form">
+          <div class="form-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group m-2">
+                  <label for="bank"><b>Select Bank: </b></label>
+                  <select id="bank" name="bank" class="form-control" [(ngModel)]="Name" (ngModelChange)="onChangeBank()"> 
+                    <option value="">---Select---</option>              
+                    <option *ngFor="let bank of nameList" [ngValue]="bank.BankName">
+                       {{ bank.Id }}-{{ bank.BankName }}
+                    </option>
+                  </select>               
+                </div>
+                </div>
+        </div>
+            <div class="form-actions right col-sm-12 p-3">
+              <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+               Cancel
+              </button>
+              <button type="button" class="btn btn-raised btn-primary" (click) ="update(Name)" [disabled]="IsExist">
+                Save
+              </button>
+            </div> 
+        </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

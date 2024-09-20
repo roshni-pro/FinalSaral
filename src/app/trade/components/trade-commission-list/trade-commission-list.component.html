@@ -1,0 +1,101 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+
+<div class="header">
+    <h3> Trade Commission Master List <i class="icon-notebook"></i> </h3>
+</div>
+<br>
+<br>
+<div class="row">
+    <div class="col-md-12 mar-top">
+        <form class="form bg-white p-3">
+            <div class="form-body">
+                <form class="form " name="form" #TargetAddForm="ngForm">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="city">city*</label>
+                                <select id="city" name="city" class="form-control" required="1" maxlength="50" minlength="2" [(ngModel)]="tradelistData.city"
+                                (change)="gettradedata(tradelistData.city)">                               
+                                    <option value="">Select</option>
+                                    <option *ngFor="let city of cityList" [ngValue]="city">{{ city }}</option>
+                                </select>
+                            </div>
+                        </div> 
+
+                         <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="Category">Category Name*</label>
+                                <select id="Category" name="Catlist" class="form-control" [(ngModel)]="tradelistData.CategoryId"  (change)="gettradedata(tradelistData.CategoryId)">
+                                    <option value="">Select</option>
+                                    <option *ngFor="let Catlist of CategoryList" [ngValue]="Catlist.CategoryId">
+                                        {{ Catlist.CategoryName }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                      
+                        <div class="col-md-2">
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-raised btn-raised btn-primary mt-tra" (click)="onSave(tradelistData)" [disabled]="isSearch">
+                                        Search
+                                    </button>
+                                </div>
+                            </div>
+    
+                        <!-- <div class="col-md-2" style="padding-top: 30px">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-raised btn-raised btn-primary "
+                                    style="margin-left:15px" (click)="Search(TargetAddForm,FinalData)">
+                                    Search
+                                </button>
+                            </div>
+                        </div> -->
+                    </div>
+                </form>
+            </div>
+        </form>
+    </div>
+</div>
+<br>
+<div class="row">
+<div class="col-md-12">
+    <p-table [value]="tradelist" [paginator]="true" [scrollable]="true" [rows]="10" text-align: center>
+        <ng-template pTemplate="header">         
+            <tr style="text-align: center">
+                <th>SNo.</th>
+                <th>Category Name.</th>
+                <th>City.</th>
+                <th>Start Date.</th>
+                <th>End Date.</th>
+                <th>Start Range ₹</th>
+                <th>End Range ₹</th>
+                <th>Commission Percent %</th>
+                <th>MaxCommission Amount ₹/th>
+                <th>Active/Inactive</th>
+            </tr>
+      
+        </ng-template>
+        <ng-template pTemplate="body" let-pageData let-rowIndex="rowIndex">
+            <tr style="text-align: center">
+                <td>{{rowIndex -- 1}}</td>
+                <td>{{pageData.CategoryName}}</td>
+                <td>{{pageData.City}}</td>
+                <td>{{pageData.StartDate | date}}</td>
+                <td>{{pageData.EndDate | date}}</td>
+                <td>{{pageData.StartRange |currency:'INR':true }}</td>
+                <td>{{pageData.EndRange |currency:'INR':true }}</td>
+                <td>{{pageData.CommissionPercent}} %</td>
+                <td>{{pageData.MaxCommissionAmount |currency:'INR':true }}</td>
+                <td>              
+                    <p-inputSwitch name="isPublished" [(ngModel)]="pageData.IsActive" (ngModelChange)="ActiveCommissionlist(pageData)"></p-inputSwitch> 
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

@@ -1,0 +1,276 @@
+<app-town-hall-navigation></app-town-hall-navigation>
+<div *ngIf="townHallCommentsSection">
+<section id="horizontal-examples">
+    <div class="row text-left">
+        <div class="col-12 mt-3 mb-1">
+            <div class="content-header">
+                
+                    <span>
+                            <a href="javascript:void(0);" (click)="isEditable = !isEditable"> Active Items</a>
+                            &nbsp;
+                            <a href="javascript:void(0);" *ngIf="isEditable" (click)="updateComment()"><i
+                                    class="fa fa-floppy-o" aria-hidden="true"></i></a>
+                        </span>
+                
+                
+                
+               </div>
+            <p class="content-sub-header"></p>
+        </div>
+    </div>
+  
+    <div class="row text-left" matchHeight="card">
+  
+        <div class="col-xl-12 col-lg-12">
+            <div class="card horizontal">
+                <div class="card-content d-flex justify-content-between">
+                    <div class="card-img ttbr">
+                        <!-- <img class="card-img-top img-fluid" src="assets/img/photos/06.jpg" alt="Card image cap"> -->
+                        <div *ngIf="ActiveItemChartData">
+                            <canvas height="500" baseChart class="chart" [datasets]="ActiveItemChartData"
+                                [labels]="ActiveSourcing" [options]="ActiveItemChartOptions" [colors]="ActiveSourcingChartColors"
+                                [legend]="lineChartLegend" [chartType]="lineChartType"
+                                (chartClick)="chartClicked($event)"></canvas>
+                        </div>
+                    </div>
+                    <!-- <div class="card-stacked align-self-center xmr"> -->
+                            <div
+                            [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallSourcingComments.ActiveItems}">
+                        <div class="px-3">
+                            <table class="table ">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Month</th>
+                                        <th>Active Items</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let kpp of ActiveSourcingDataList; let i=index;">
+                                        <td>{{i+1}}</td>
+                                        <td>{{kpp.MonthName}}</td>
+                                        <td>{{kpp.ActiveItems}}</td>
+                                        
+                                    </tr>
+  
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card-stacked align-self-center xmr bck rghtt"
+                    *ngIf="!isEditable && townHallCommentsSection.TownHallSourcingComments.ActiveItems">
+                    <div class="card horizontal">
+                        <div class="card-content d-flex justify-content-between">
+                            <div class="vtnt"
+                                [innerHTML]="townHallCommentsSection.TownHallSourcingComments.ActiveItems"></div>
+                        </div>
+                    </div>
+                </div>
+
+  
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+            <p-editor [(ngModel)]="townHallCommentsSection.TownHallSourcingComments.ActiveItems" name="AgentKPPEditor"
+                [style]="{'height':'320px'}"></p-editor>
+        </div>
+
+    </div>
+  </section>
+<!-- Active stores scope starts-->
+<section id="horizontal-examples">
+  <div class="row text-left">
+      <div class="col-12 mt-3 mb-1">
+          <div class="content-header">Active Brands and Vendors</div>
+          <p class="content-sub-header">.</p>
+      </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+
+      <div class="col-xl-12 col-lg-12">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="card-img cc">
+                      <!-- <img class="card-img-top img-fluid" src="assets/img/photos/06.jpg" alt="Card image cap"> -->
+                      <div *ngIf="ActiveSourcingChartData">
+                          <canvas height="500" baseChart class="chart" [datasets]="ActiveSourcingChartData"
+                              [labels]="ActiveSourcing" [options]="ActiveSourcingChartOptions" [colors]="ActiveSourcingChartColors"
+                              [legend]="lineChartLegend" [chartType]="lineChartType"
+                              (chartClick)="chartClicked($event)"></canvas>
+                      </div>
+                  </div>
+                  <!-- <div class="card-stacked align-self-center xmr"> -->
+                        <div
+                            [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallSourcingComments.ActiveBrandsAndVendors}">
+                      <div class="px-3">
+                          <table class="table ">
+                              <thead class="thead-dark">
+                                  <tr>
+                                      <th>#</th>
+                                      <th>Month</th>
+                                      <!-- <th>Active Items</th> -->
+                                      <th>Active Brand</th>
+                                      <th>Active Vendors</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr *ngFor="let kpp of ActiveSourcingDataList; let i=index;">
+                                      <td>{{i+1}}</td>
+                                      <td>{{kpp.MonthName}}</td>
+                                      <!-- <td>{{kpp.ActiveItems}}</td> -->
+                                      <td>{{kpp.ActiveBrand}}</td>
+                                      <td>{{kpp.ActiveVendors}}</td>
+                                  </tr>
+
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+
+                  <div class="card-stacked align-self-center xmr  bck rghtt"
+                  *ngIf="!isEditable && townHallCommentsSection.TownHallSourcingComments.ActiveBrandsAndVendors">
+                  <div class="card horizontal">
+                      <div class="card-content d-flex justify-content-between">
+                          <div class="vtnt"
+                              [innerHTML]="townHallCommentsSection.TownHallSourcingComments.ActiveBrandsAndVendors"></div>
+                      </div>
+                  </div>
+              </div>
+
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+            <p-editor [(ngModel)]="townHallCommentsSection.TownHallSourcingComments.ActiveBrandsAndVendors" name="AgentKPPEditor"
+                [style]="{'height':'320px'}"></p-editor>
+        </div>
+  </div>
+</section>
+<!-- Active stores scope ends-->
+
+
+<!-- Active stores scope starts-->
+<section id="horizontal-examples">
+  <div class="row text-left">
+      <div class="col-12 mt-3 mb-1">
+          <div class="content-header">Active Items Kissan Kirana</div>
+          <p class="content-sub-header"></p>
+      </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+
+      <div class="col-xl-12 col-lg-12">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="card-img ac-kpp-clr">
+                      <!-- <img class="card-img-top img-fluid" src="assets/img/photos/06.jpg" alt="Card image cap"> -->
+                      <div *ngIf="ActiveItemsKKChartData">
+                          <canvas height="500" baseChart class="chart" [datasets]="ActiveItemsKKChartData"
+                              [labels]="ActiveItemsKK" [options]="ActiveItemsKKChartOptions" [colors]="ActiveItemsKKChartColors"
+                              [legend]="lineChartLegend" [chartType]="lineChartType"
+                              (chartClick)="chartClicked($event)"></canvas>
+                      </div>
+                  </div>
+                  <!-- <div class="card-stacked align-self-center xmr"> -->
+                        <div [ngClass]="{'card-stacked': true, 'align-self-center': true,  'xmr': true, 'bck': townHallCommentsSection.TownHallSourcingComments.ActiveItemsKissanKirana}">
+                      <div class="px-3">
+                          <table class="table ">
+                              <thead class="thead-dark">
+                                  <tr>
+                                      <th>#</th>
+                                      <th>Month</th>
+                                      <th>Active Items Kissan Kirana</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr *ngFor="let kpp of ActiveItemsKKDataList; let i=index;">
+                                      <td>{{i+1}}</td>
+                                      <td>{{kpp.MonthName}}</td>
+                                      <td>{{kpp.ActiveItemsKK}}</td>
+                                  </tr>
+
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+
+                  <div class="card-stacked align-self-center xmr  bck rghtt"
+                  *ngIf="!isEditable && townHallCommentsSection.TownHallSourcingComments.ActiveItemsKissanKirana">
+                  <div class="card horizontal">
+                      <div class="card-content d-flex justify-content-between">
+                          <div class="vtnt"
+                              [innerHTML]="townHallCommentsSection.TownHallSourcingComments.ActiveItemsKissanKirana"></div>
+                      </div>
+                  </div>
+              </div>
+
+              </div>
+          </div>
+      </div>
+      <div class="col-xl-12 col-lg-12" *ngIf="isEditable">
+            <p-editor [(ngModel)]="townHallCommentsSection.TownHallSourcingComments.ActiveItemsKissanKirana"
+                name="ActiveClusterEditor" [style]="{'height':'320px'}"></p-editor>
+        </div>
+  </div>
+</section>
+
+
+</div>
+<!-- Active stores scope ends-->
+
+<!-- DP Added scope starts-->
+<!-- <section id="horizontal-examples">
+  <div class="row text-left">
+      <div class="col-12 mt-3 mb-1">
+          <div class="content-header">DP Added</div>
+          <p class="content-sub-header">.</p>
+      </div>
+  </div>
+
+  <div class="row text-left" matchHeight="card">
+
+      <div class="col-xl-12 col-lg-12">
+          <div class="card horizontal">
+              <div class="card-content d-flex justify-content-between">
+                  <div class="card-img ac-kpp-clr">
+                      
+                      <div *ngIf=" DPAddedChartData">
+                          <canvas height="500" baseChart class="chart" [datasets]=" DPAddedChartData"
+                              [labels]="DPAdded" [options]=" DPAddedChartOptions" [colors]=" DPAddedChartColors"
+                              [legend]="lineChartLegend" [chartType]="lineChartType"
+                              (chartClick)="chartClicked($event)"></canvas>
+                      </div>
+                  </div>
+                  <div class="card-stacked align-self-center xmr">
+                      <div class="px-3">
+                          <table class="table ">
+                              <thead class="thead-dark">
+                                  <tr>
+                                      <th>#</th>
+                                      <th>Month</th>
+                                      <th>PointsAdded</th>
+                                      <th>PointsUsed</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr *ngFor="let kpp of DPAddedDataList; let i=index;">
+                                      <td>{{i+1}}</td>
+                                      <td>{{kpp.MonthName}}</td>
+                                      <td>{{kpp.PointsAdded}}</td>
+                                      <td>{{kpp.PointsUsed}}</td>
+                                  </tr>
+
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+  </div>
+</section> -->

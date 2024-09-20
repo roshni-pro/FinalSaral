@@ -1,0 +1,311 @@
+<div class="my-2 d-flex justify-content-between align-items-center">
+    <div class="header">
+        <h3 class="m-2"><b>Dummy Order Master</b></h3>
+    </div>
+</div>
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+    <div class="row">
+      <div class="col-12">
+          <div class="row">
+                <div class="col-md-3 mt-2">
+                    <label style="font-size: medium;" class="form-label">Warehouse</label>
+                    <p-multiSelect [options]="warehouseList" name="WarehouseName"  [(ngModel)]="warehousekeyword"
+                    placeholder="Select Warehouse"  optionLabel="WarehouseName"  (onChange)="getWarehouseId($event)"
+                    ></p-multiSelect>
+                    <!-- <select class="form-control" [(ngModel)]="warehousekeyword" (change)="getWarehouseId($event)">
+                        <option value="">Select</option>
+                        <option *ngFor="let item of warehouseFilterList" [value]="item.WarehouseId">
+                            {{item.WarehouseName}} {{item.CityName}}
+                        </option>
+                    </select> -->
+                </div>
+                <div class="col-md-3 mt-2">
+                  <label style="font-size: medium;" class="form-label">Sk Code</label>
+                  <input type="text" class="form-control" placeholder="search" [(ngModel)]="skCode">
+                </div>
+                <div class="col-md-3 mt-2">
+                  <label style="font-size: medium;" class="form-label">Mobile</label>
+                  <input type="text" class="form-control" placeholder="search" [(ngModel)]="mobile">
+                </div>
+                <div class="col-md-3 mt-2">
+                    <label style="font-size: medium;" class="form-label">Select Status</label>
+                    <p-dropdown [options]="statusList" optionValue="statusCode"  [(ngModel)]="selectedStatus"
+                    placeholder="Select Status"  optionLabel="statusName"  (onChange)="getStatusId($event)"
+                    ></p-dropdown>
+                </div>
+           </div>
+           <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <!-- <div class="col-md-3  mt-2">
+                      <label style="font-size: medium;" class="form-label">Select Date Range</label>
+                      <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" inputId="range" showTime="true" [hourFormat]="12" [showIcon]="true" [style]="{'width': '100%','display': 'inline-flex','height':'34px'}" >
+                        </p-calendar>
+                    </div> -->
+                    <div class="col-md-3  mt-2">
+                        <label style="font-size: medium;" class="form-label">Start Date</label>
+                        <p-calendar [(ngModel)]="startDate" [readonlyInput]="true" inputId="range" showTime="true" [hourFormat]="12" [showIcon]="true" [style]="{'width': '100%','display': 'inline-flex','height':'34px'}" >
+                          </p-calendar>
+                    </div>
+                    <div class="col-md-3  mt-2">
+                        <label style="font-size: medium;" class="form-label">End Date</label>
+                        <p-calendar [(ngModel)]="endDate" [readonlyInput]="true" inputId="range" showTime="true" [hourFormat]="12" [showIcon]="true" [style]="{'width': '100%','display': 'inline-flex','height':'34px'}" >
+                          </p-calendar>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- [disabled]="!(skCode || mobile || selectedStatus || startDate || endDate)" -->
+        <div class="row">
+          <div class="col-md-6">
+              <input type="button" value="Search"  (click)="searchdata()" class="btn btn-raised btn-primary" style="margin-top: 27px;">&nbsp;
+              <input type="button" value="Refresh"  (click)="refresh()" class="btn btn-raised btn-primary" style="margin-top: 27px;">&nbsp;
+              <input type="button" value="Export Data" [disabled]="!exportBtn" (click)="exportDownload()" class="btn btn-raised btn-primary" style="margin-top: 27px;">&nbsp;
+              <input type="button" value="Export Two Month Data" [disabled]="!exportTwoMonthBtn" (click)="exportTwoMonthData()" class="btn btn-raised btn-primary" style="margin-top: 27px;">&nbsp;
+            </div>
+        </div>
+       </div>
+    </div>
+</div>  
+<div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white ">
+      <p-table #dt [value]="warehouseBasedList" [paginator]="true" [rows]="20"     
+      [scrollable]="true" scrollHeight="650px" [lazy]="true" [totalRecords]="warehouseListCount"  (onLazyLoad)="load($event)" 
+          text-align: center>  
+          <ng-template pTemplate="header">
+              <tr>
+                  <th style="width:100px">Order No</th>
+                  <th style="width:110px">Order By</th>
+                  <th style="width:100px">Sale Person</th>
+                  <th style="width:100px">Online<br>Payment</th>
+                  <th style="width:140px">SK Code</th>
+                  <th style="width:100px">Shop Name</th>
+                  <th style="width:100px">Customer Name</th>
+                  <th style="width:100px">Warehouse<br>Name</th>
+                  <th style="width:120px">Phone</th>
+                  <th style="width:100px">Cluster<br>Name</th>
+                  <th style="width:100px">Order Date</th>
+                  <th style="width:100px">Amount</th>
+                  <th style="width:100px">Payment<br>Mode</th>
+                  <th style="width:100px">Status</th>
+                  <th style="width:100px">Open order details</th>
+                  <th style="width:110px">History</th>
+                  <th style="width:100px">Comments</th>
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-warehouseBasedList>
+                  <tr>
+                      <td style="width:100px">{{warehouseBasedList.OrderTypestr}}<br>{{warehouseBasedList.OrderId}}</td>
+                      <td style="width:110px">
+                          <ng-container *ngIf="warehouseBasedList.OrderTakenSalesPersonId == 0 else second">
+                            {{warehouseBasedList.OrderTakenSalesPerson}}
+                          </ng-container>
+                          <ng-template #second>
+                            Salesperson
+                          </ng-template>
+                      </td>
+                      <td style="width:100px">{{warehouseBasedList.SalesPerson}}</td>
+                      <td style="width:100px" *ngIf="warehouseBasedList.Trupay == 'false' || warehouseBasedList.Trupay == null">
+                        <button class="online_payment">No</button>
+                      </td>
+                      <td style="width:140px">{{warehouseBasedList.Skcode}}<br><p style="color:darkred">OrderCount:{{warehouseBasedList.InactiveCustOrderCount}}</p></td>
+                      <td style="width:100px">{{warehouseBasedList.ShopName}}</td>
+                      <td style="width:100px">{{warehouseBasedList.CustomerName}}</td>
+                      <td style="width:100px">{{warehouseBasedList.WarehouseName}}</td>
+                      <td style="width:120px">{{warehouseBasedList.Customerphonenum}}</td>
+                      <td style="width:100px">{{warehouseBasedList.ClusterName}}</td>
+                      <td style="width:100px">{{warehouseBasedList.CreatedDate}}</td>
+                      <td style="width:100px">{{warehouseBasedList.GrossAmount + warehouseBasedList.WalletAmount}}</td>
+                      <td style="width:100px">{{warehouseBasedList.PaymentMode}}</td>
+                      <td style="width:100px">{{warehouseBasedList.Status}}</td>
+                      <td style="width:100px">
+                          <button class="order_details" (click)="showDialogOpen(warehouseBasedList,$event)">Open</button>
+                      </td>
+                      <td style="width:110px">
+                          <button class="history_details" (click)="showHistroy(warehouseBasedList)">History</button>
+                      </td>
+                      <td style="width:100px"></td>
+                 </tr>
+          </ng-template>
+      </p-table>
+</div>
+<br>
+<!-- open dialog box --start , left: '440px'-->
+<p-dialog header="Order Details" [(visible)]="displayOpen" [style]="{width: '90%'}"  [modal]="true" appendTo="body" positionTop="60"
+    [draggable]="false" >
+        <section id="tax-details" style="overflow: auto; height: 750px;">
+              <div class="email-app-mail-content-detail h-90 overflow-hidden">
+                <div class="info-header">
+                    <div class="row">
+                        <div class="col-12">
+                          <h4 style="padding-top: 10px; padding-left: 20px"><b>Initial Orders</b></h4>
+                        </div>
+                      </div>
+                </div>
+                <div class="info-div m-2" >
+                    <div class="scale-small">
+                        <div class="container-fluid ui-fluid bg-white rounded table table-hover">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Order ID</label>
+                                                <input type="text" class="form-control" value="{{orderId}}" disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Customer Name</label>
+                                                <input type="text" class="form-control" value="{{customerName}}" disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Customer Phone Number</label>
+                                                <input type="text" class="form-control" value="{{custPhoneNo}}" disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Billing Address</label>
+                                                <input type="text" class="form-control" value="{{billAdd}}" disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Shipping Address</label>
+                                                <input type="text" class="form-control" value="{{shipAdd}}" disabled/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="name">Bill Amount</label>
+                                                <input type="text" class="form-control" value="{{billAmt}}" disabled/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row"  style="overflow-x:scroll">
+                                <p-table #dt [value]="tableDiscriptionDetails"
+                                [scrollable]="true" [lazy]="true"  text-align: center>
+
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width:100px">Item ID</th>
+                                            <th style="width:100px">ABC Classification</th>
+                                            <th style="width:100px">Item Name</th>
+                                            <th style="width:100px">Item Code</th>
+                                            <th style="width:100px">Unit Price</th>
+                                            <th style="width:100px">MRP Price</th>
+                                            <th style="width:100px">MOQ</th>
+                                            <th style="width:100px">Quantity</th>
+                                            <th style="width:100px">Item Limit Active</th>
+                                            <th style="width:100px">Item Limit Quantity</th>
+                                            <th style="width:100px">ItemActive</th>
+                                            <th style="width:100px">Select Reason</th>
+                                            <th style="width:100px">Amt Without Tax & Disc.</th>
+                                            <th style="width:100px">Amount w/o tax after discount (hidden)</th>
+                                            <th style="width:100px">vat Tax</th>
+                                            <th style="width:100px">Tax amount (hidden)</th>
+                                            <th style="width:100px">Total Amount After Tax Disc (hidden)</th>
+                                            <th style="width:100px">Total Amount Incl. Tax</th>
+                                        <tr>
+                                    </ng-template>  
+                                    <ng-template pTemplate="body" let-tableDiscriptionDetails>
+                                        <tr>
+                                            <td style="width:100px">{{tableDiscriptionDetails.ItemId}}</td>
+                                            <td style="width:100px" *ngIf="tableDiscriptionDetails.Cateogry != null">{{tableDiscriptionDetails.Cateogry}}</td>
+                                            <td style="width:100px">
+                                                {{tableDiscriptionDetails.itemname}}
+                                                <span *ngIf="tableDiscriptionDetails.IsFreeItem">
+                                                    <b style="color:red">(Free Item)</b>
+                                                </span>
+                                            </td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.itemcode}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.UnitPrice}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.price}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.MinOrderQty}}</td>
+                                            <td style="width:100px">
+                                                <ng-container *ngIf="tableDiscriptionDetails.ISEditable else second">
+                                                    <input type="number" [(ngModel)]="tableDiscriptionDetails.qty" (change)="ChangeAmount(tableDiscriptionDetails.qty, tableDiscriptionDetails.AmtWithoutTaxDisc, tableDiscriptionDetails, $index)" (keypress)="PreventMinus($event)">
+                                                </ng-container>
+                                                <ng-template #second>
+                                                    <ng-container>
+                                                        {{tableDiscriptionDetails.qty}}
+                                                    </ng-container>
+                                                </ng-template>
+                                            </td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.ISItemLimit}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.ItemLimitQty}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.ItemActive}}</td>
+                                            <td style="width:100px"></td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.AmtWithoutTaxDisc}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.AmtWithoutAfterTaxDisc}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.TaxPercentage}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.TaxAmmount}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.TotalAmountAfterTaxDisc}}</td>
+                                            <td style="width:100px">{{tableDiscriptionDetails.TotalAmt}}</td>
+                                        </tr>
+                                    </ng-template>                  
+                                </p-table>
+                            </div>
+                            <div class="row mt-3" >
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-sm-4" *ngIf="((statusValueChecked == 'Dummy Order') || (statusValueChecked == 'Inactive'))">
+                                            <div class="form-group">
+                                                <label for="name">Status</label>
+                                                <select class="form-control" [(ngModel)]="statusValue">
+                                                    <option value="" selected>Select</option>
+                                                    <option value="Order Confirmed">Order Confirmed</option>
+                                                    <option value="Order Canceled">Order Canceled</option>
+                                                    <option value="Order Confirmed With InTransit">Order Confirmed With InTransit</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4" *ngIf="((statusValueChecked == 'Dummy Order') || (statusValueChecked == 'Inactive'))">
+                                            <div class="form-group">
+                                                <label for="name">Select Warehouse</label>
+                                                <select class="form-control" [(ngModel)]="warehouseValue">
+                                                    <option value="">Select</option>
+                                                    <option *ngFor="let item of cityWiseWarehouse" [value]="item.WarehouseId">
+                                                        {{item.WarehouseName}} {{item.Address}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4" style="margin-top: 29px">
+                                            <div class="form-group">
+                                                <button class="btn btn-primary" *ngIf="((statusValueChecked == 'Dummy Order') || (statusValueChecked == 'Inactive'))"  (click)="PostOrder()">Post Order</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>    
+                        
+                    </div>
+                </div>
+                       
+              </div>
+        </section>
+</p-dialog> 
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+<!-- open dialog box --end -->
+
+<!-- histroy dialog box --start -->
+<div id="history" *ngIf="displayHistroy" >
+    <p-dialog header="Order Master" [(visible)]="displayHistroy" [resizable]="true"  [modal]="true" appendTo="body" positionTop="60"  [style]="{width: '90%'}"  [draggable]="false" [contentStyle]="{'overflow': 'auto'}">
+      <p-header>
+        History
+      </p-header>
+      <app-history [entity]="entity" [id]="histroyData.OrderId" ></app-history>
+     
+  </p-dialog>
+</div>
+<!-- histroy dialog box --end -->
+

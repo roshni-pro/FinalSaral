@@ -1,0 +1,29 @@
+<div class="col-xl-12 col-lg-12">
+        <p-table [value]="orderList" #dt [globalFilterFields]="['ClusterName']">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>S.No </th>
+                <th>Trip.No </th>
+                <th>Trip</th>  
+                <th>OrderCount</th> 
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+              <tr (click)="openOrder(rowData)">
+                <td>{{i+1}}</td>
+                <td>Trip No : {{rowData.ClusterId}}</td>
+                <td>Trip Name : {{rowData.ClusterName}}</td>
+                <td>{{rowData.OrderCount}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+</div>
+<div *ngIf="isOpenOrder">
+  <p-dialog header="No Of Orders" [(visible)]="isOpenOrder" 
+      [blockScroll]="true" appendTo="body" [style]="{width: '100vw', height:'100vh'}" [modal]="true" [positionTop]="0"
+      [positionLeft]="0" appendTo="body">
+      <div class="cnt">
+        <app-order-list [warehouseId]="warehouseId" [orderNo]="orderNo" [ClusterId]="ClusterId"></app-order-list>
+      </div>
+  </p-dialog>
+</div>

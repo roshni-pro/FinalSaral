@@ -1,0 +1,115 @@
+<p-toast [style]="{marginTop: '10px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<section id="i-master">
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+            <h3 class="m-2">Scheme Uploader Details</h3>
+        </div>
+        <div>
+            <button type="button" class="btn btn-raised btn-primary float-left align-self-end back" (click)="back()">
+                Back </button>
+        </div>
+    </div>
+    <div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+        <div class="position-relative">
+            <div class="row" *ngIf="ItemschemuplaoderMaster">
+                <div class="col-md-10">
+                    <span class="card-title"> Brand Name : {{BrandName}}</span>
+                    <div *ngIf="ItemschemuplaoderMaster">
+						<span>
+							Start Date : {{ItemschemuplaoderMaster.StartDate | date : "dd/MM/yyyy h:mm a"}}
+						</span>
+						<span >
+							End Date : {{ItemschemuplaoderMaster.EndDate | date : "dd/MM/yyyy h:mm a"}}
+                        </span>
+                        
+					</div>
+                </div>
+                <div class="col-md-2" *ngIf="ItemschemuplaoderMaster.ItemSchemeMasterId>0">
+                    <button type="button" class="btn btn-raised btn-raised btn-default" pButton
+                        (click)="navigateToMaster(ItemschemuplaoderMaster);" label="Go to SchemeMaster >>"
+                        >
+                    </button>
+                </div>
+                <div class="col-md-2" *ngIf="ItemschemuplaoderMaster.Status==1">
+                    <button type="button" class="btn btn-raised btn-raised btn-default" pButton
+                        (click)="UpdateForReErrorChecking();" label="UpdateForReChecking"
+                        [disabled]="ItemschemuplaoderMaster.Status!=1">
+                    </button>
+                </div>
+
+                
+            </div>
+
+            <p-table [columns]="Detailscolumns" [value]="ItemschemuplaoderDetail" >
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th *ngFor="let col of columns">
+                            {{col.header}}
+                        </th>
+                        <th>Detail</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                    <tr>
+                        <td *ngFor="let col of columns">
+                            <span *ngIf="(col.field=='ErrorMessage' && rowData[col.field])">
+                                <button type="button" class="btn btn-raised btn-raised btn-danger" pButton
+                                    (click)="openErrorDetails(rowData);" label="error"></button>
+
+                            </span>
+                            <span *ngIf="(col.field!='ErrorMessage')">
+                                {{rowData[col.field]}}
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-raised btn-raised btn-success" pButton
+                                (click)="openDetails(rowData);" label="Detail"></button>
+
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+</section>
+<p-dialog header="Detail" [(visible)]="display" appendTo="body" [style]="{width: '1040px', height: '300px'}">
+    <div class="panel panel-info" *ngIf="ItemschemuplaoderDetails">
+        <div class="row">
+            <div class="col-md-6">ItemName: {{ItemschemuplaoderDetails.ItemName}}</div>
+            <div class="col-md-6">MRP: {{ItemschemuplaoderDetails.MRP}}</div>
+            <div class="col-md-6">CompanyCode: {{ItemschemuplaoderDetails.CompanyCode}}</div>
+            <div class="col-md-6">CompanyStockCode: {{ItemschemuplaoderDetails.CompanyStockCode}}</div>
+            <div class="col-md-6">FreeBaseItemQty: {{ItemschemuplaoderDetails.FreeBaseItemQty}}</div>
+            <div class="col-md-6">FreeChildItem: {{ItemschemuplaoderDetails.FreeChildItem}}</div>
+            <div class="col-md-6">FreeChildItemCompanyStockcode :
+                {{ItemschemuplaoderDetails.FreeChildItemCompanyStockcode}}</div>
+            <div class="col-md-6">FreeChildItemCompanycode: {{ItemschemuplaoderDetails.FreeChildItemCompanycode}}</div>
+            <div class="col-md-6">FreeItemMRP: {{ItemschemuplaoderDetails.FreeItemMRP}}</div>
+            <div class="col-md-6">FreeItemQty: {{ItemschemuplaoderDetails.FreeItemQty}}</div>
+            <div class="col-md-6">FreeItemStockQty: {{ItemschemuplaoderDetails.FreeItemStockQty}}</div>
+            <div class="col-md-6">offinvoicemargin: {{ItemschemuplaoderDetails.offinvoicemargin}}</div>
+        </div>
+
+    </div>
+</p-dialog>
+
+<p-dialog header="Detail" [(visible)]="Errordisplay" appendTo="body" [style]="{width: '1040px', height: '300px'}">
+    <div class="panel panel-info" *ngIf="ErroItemschemuplaoderDetail">
+        <div class="row">
+            <div class="col-md-6" style="color: red;font-size: 14pt;" *ngIf="ErroItemschemuplaoderDetail.ErrorMessage">
+                ErrorMessage: {{ErroItemschemuplaoderDetail.ErrorMessage}}</div>
+        </div>
+    </div>
+</p-dialog>
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

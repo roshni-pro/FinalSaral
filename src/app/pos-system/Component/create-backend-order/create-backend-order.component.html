@@ -1,0 +1,93 @@
+<section id="Category" >
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header"><h3 class="m-2"><b>Backend Created Order Master</b></h3></div>
+    </div>
+  </section>
+
+  <div class="card" style="margin-top: -38px !important;">
+    <div class="card-header">
+        <div class="row mb-4">
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;">Warehouse: </b><span style="color:red;font-weight: 400;">
+                    *</span></label><br>
+                    <p-dropdown [filter]="true"  appendTo="body" [(ngModel)]="WarehouseIds"  [options]="warehouseListData" optionLabel="label"   placeholder="Select Warehouse"
+                    optionValue="value"></p-dropdown>
+            </div>
+            <div class="col">
+                <label for="name"><b style="font-weight: 600;">Status </b></label><br>
+                    <p-dropdown [filter]="true"  appendTo="body" [(ngModel)]="Status"  [options]="StatusList" optionLabel="label"  (onChange)="Statuschange()"
+                    optionValue="value"></p-dropdown>
+            </div>
+            <div  class="col">
+                <label for="name"><b style="font-weight: 600;">Select Date Range </b></label><br>
+                <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [style]="{'width':'100%'}" plaseholder="Select rangeDates" 
+                    [inputStyle]="{'width':'75%'}" [readonlyInput]="true" inputId="range"
+                    [showIcon]="true"></p-calendar>
+            </div>
+            <div class="col">
+                
+                <label for="search"><b style="font-weight: 600;">Search </b><span style="color:red;font-weight: 400;"></span></label>
+                <input type="text" placeholder="Search Skcode/OrderId/MobileNo" class="form-control" [(ngModel)]="keyword">
+            </div>
+           
+            <div class="col-md-2 " style="margin-top: 31px;">
+                <button class="btn btn-primary mr-2" (click)="ForSearchHit();Search(WarehouseIds)">Search</button>
+            </div>
+            
+        </div>
+    </div>
+  </div>
+  <div class="card">
+    <p-table [value]="list" [(first)]="first"  (onLazyLoad)="load($event)" [totalRecords]="totalRecords"
+    [paginator]="true" [rows]="10" [scrollable]="true"  scrollHeight="50vh" text-align: cente
+   [lazy]="true">
+        <ng-template pTemplate="header">
+            <tr>
+            
+             <th style="width: 10%;">OrderId</th>
+             <th style="width: 10%;">SK Code</th>
+             <th style="width: 10%;"> Shop Name</th>
+             <th style="width: 10%;">Customer Name</th>
+             <th style="width: 10%;">Warehouse Name</th>
+             <th style="width: 10%;">Cluster Name</th>
+             <th style="width: 10%;">Amount</th>
+             <th style="width: 10%;">CreatedBy</th>
+             <th style="width: 10%;">Order Date</th>
+             <th style="width: 10%;">Status</th>
+             <th style="width: 10%;">Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-index="rowIndex">
+            <tr>
+             
+               <td style="width: 10%;">{{item.OrderId?item.OrderId:'-'}}</td>
+               <td style="width: 10%;">{{item.Skcode?item.Skcode:'-'}}</td>
+               <td style="width: 10%;">{{item.ShopName?item.ShopName:'-'}}</td>
+               <td style="width: 10%;">{{item.CustomerName?item.CustomerName:'-'}}</td>
+               <td style="width: 10%;">{{item.WarehouseName?item.WarehouseName:'-'}}</td>
+               <td style="width: 10%;">{{item.ClusterName?item.ClusterName:'-'}}</td>
+               <td style="width: 10%;">{{ item.TotalAmount ? (item.TotalAmount | number: '1.2-2') : '0.00' }}</td>
+               <td style="width: 10%;">{{item.CreatedBy?item.CreatedBy:'-'}}</td>
+               <td style="width: 10%;">{{item.OrderDate | date: 'dd-MM-yyyy'}}</td>
+               <td style="width: 10%;">{{item.Status?item.Status:'-'}}</td>
+               <td  style="width: 10%;">
+                  <button class="btn btn-primary mr-2 " (click)="navToPo(item.OrderId)">open</button></td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td colspan="13" style="text-align: center;">
+                    <br>
+                    <h4><b>No Data Found.</b></h4>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+  </div>
+
+
+  <p-blockUI [blocked]="isLoading"></p-blockUI>
+<p-progressSpinner *ngIf="isLoading"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

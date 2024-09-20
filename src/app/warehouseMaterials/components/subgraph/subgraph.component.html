@@ -1,0 +1,49 @@
+<div class="row m-0" (keydown)="handleKeyboardEventChild($event)">
+    <div class="col-12">
+        <div id="kick-start" class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3 class="card-title">Brand Capacity Graph</h3>
+                    </div>
+                    <div class="col-md-3">
+                      
+                    </div>
+                    <div class="col-md-3" *ngIf="initial">
+                        <div class="form-group">
+                            <div>
+                                <input style="margin-left: 15px;" type="text" class="form-control" placeholder="Search Brands"
+                                    (keyup)="searchMenuItems($event.target.value)" [(ngModel)]="searchVal">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="card-content" *ngIf="initial">
+                <div class="card-body">
+                    <canvas baseChart [datasets]="barChartData" [labels]="labels" [chartType]="'bar'" [legend]="true"
+                        [options]="options" height="120">
+                    </canvas>
+                    <div style="margin-left: 450px;">
+                        <br>
+                        <i *ngIf="initial" class="fa fa-arrow-circle-left" style="font-size:36px; margin-right: 20px;"
+                            (click)="navigate(37)"></i>
+                            {{unmountedbrandlist[0] && unmountedbrandlist[0].BuyerName ? unmountedbrandlist[0].BuyerName : ''}}
+                        <i *ngIf="initial" class="fa fa-arrow-circle-right" style="font-size:36px ; margin-left: 20px;"
+                            (click)="navigate(39)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+</div>
+<p-toast [style]="{marginTop: '20px'}"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

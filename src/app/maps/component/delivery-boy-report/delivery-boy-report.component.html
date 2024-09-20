@@ -1,0 +1,74 @@
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+    <div class="card">
+      <div class="card-content">
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group cll" *ngIf="markers">
+              <label for="warehouse"> Warehouses</label>
+              <select id="warehouse" name="warehouse" class="form-control" [(ngModel)]="selectedWarehouseId"
+                (ngModelChange)="onChangeWarehouse()">
+                <option *ngFor="let wh of warehouseList" [ngValue]="wh.WarehouseId">
+                  {{ wh.WarehouseName }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group cll" *ngIf="markers">
+              <label for="partyLedgerType"> Follow</label>
+              <select id="partyLedgerType" name="partyLedgerType" class="form-control" [(ngModel)]="followMarker"
+                (ngModelChange)="onChangeFollowTarger()">
+                <option value="">None</option>
+                <option *ngFor="let marker of allMarkers" [ngValue]="marker">
+                  {{ marker.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-2">
+              <div class="bln">
+                <div *ngFor="let m of markers; let i = index" class="mk">
+                  <span><img style="width: 20px;"   [src]="m.icon"> &nbsp;&nbsp;{{m.label}}</span>
+                </div>
+              </div>
+          </div>
+          <div class="col-sm-10">
+            <div class="sk" *ngIf="!isShowDirection">
+              <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false"
+                [style.height.px]="myInnerHeight">
+                <agm-marker *ngFor="let m of markers; let i = index" [latitude]="m.lat" [longitude]="m.lng"
+                  [iconUrl]="m.icon" (mouseOver)="onMouseOver(infoWindow, $event)"
+                  (mouseOut)="onMouseOut(infoWindow, $event)">
+                  <agm-info-window [disableAutoPan]="false" #infoWindow>
+                    <div>
+                      {{m.label}}
+                    </div>
+                  </agm-info-window>
+                </agm-marker>
+
+              </agm-map>
+
+            </div>
+            <div class="sk" *ngIf="isShowDirection">
+
+              <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false"
+                [style.height.px]="myInnerHeight">
+                <agm-direction [origin]="origin" [destination]="destination" [renderOptions]="renderOptions"
+                  [markerOptions]="markerOptions" [waypoints]="wayPoint">
+                </agm-direction>
+
+              </agm-map>
+
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>

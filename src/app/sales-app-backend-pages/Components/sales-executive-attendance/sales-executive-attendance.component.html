@@ -1,0 +1,144 @@
+<div>
+    <h3 class="heading mt-4">Sales Executive Attendance</h3>
+  </div>
+  <div class="card">
+      <div class="card-body"> 
+            <div class="row">
+                <div class="col-md">
+                    <label for="">Select Channel</label>
+                    <!-- <p-multiSelect [options]="StoreList" [(ngModel)]="StoreId" defaultLabel="Select Store" (onChange)="chageStore()"
+                    optionLabel="Name" selectedItemsLabel="{0} Store selected"></p-multiSelect> -->
+
+                    <p-multiSelect id="id" name="Name" [options]="ChannelTypeList" [(ngModel)]="ChannelMasterId" optionValue="ChannelMasterId"
+                 optionLabel="ChannelType" placeholder="Select Channel" selectedItemsLabel="{0} Store selected" defaultLabel="Select Channel">
+               </p-multiSelect>
+
+                </div>
+              <div class="col-md">
+                  <label for="">Select City</label>
+                  <p-multiSelect [options]="CityList" [(ngModel)]="selectedCity" defaultLabel="Select City" (onChange)="getWarehouseByCityId(selectedCity)"
+                  optionLabel="label" selectedItemsLabel="{0} City selected" ></p-multiSelect>
+              </div>
+              <div class="col-md">
+                  <label for="">Select Warehouse</label>
+                  <p-multiSelect id="WarehouseId" name="WarehouseName"  [options]="warehouseList"   [filter]="true" (onChange)="chageWarehouse(warehouseObj)"
+                  [(ngModel)]="warehouseObj" optionLabel="label" optionValue="value" placeholder="--Select Warehouse--">
+                  </p-multiSelect>
+              </div>
+              <div class="col-md-.5">        
+                <label for="">Enter Month</label><br>
+                <p-calendar [style]="{'width':'auto'}" [(ngModel)]="dateValue" view="month" dateFormat="mm/yy" [showIcon]="true" ></p-calendar>
+              </div>
+              <div class="col mt-4">
+                  <div class="text-right">
+                     <button class="btn btn-primary mr-1" (click)="Clear()" >Clear</button>
+                      <button class="btn btn-primary" (click)="Search(true)" >Search</button>
+                      <button class="btn btn-success ml-1" (click)="ExportDateWiseDisplay()" >Date wise Export</button>
+                      <button class="btn btn-success ml-1" (click)="Export()" >Export</button>
+                      <button class="btn btn-success ml-1" (click)="ExportAll()" >Export All</button>
+                  </div>
+              </div>
+            </div>  
+      </div>
+  </div>
+
+<p-toast *ngIf="!display" [style]="{width: '20vw'}" position="top-right"></p-toast>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+[style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>
+
+
+<p-table #dt [value]="salesExecutiveReport" dataKey="ExecutiveId" [paginator]="true" [rows]="10" [(first)]="first"
+    [showCurrentPageReport]="true"  [scrollable]="true" [lazy]="true"
+    (onLazyLoad)="load($event)"  [totalRecords]="TotalRecords" [globalFilterFields]="['ExecutiveName','EmpCode']" >
+        <ng-template pTemplate="caption">
+            <div style="text-align: right">
+                <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                <input type="text" pInputText size="50" placeholder="Executive Name/ Mobile/ Executive Code" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    style="width:auto;border: solid 1px #ddd;">
+            </div>
+        </ng-template>
+            <ng-template pTemplate="header">
+                <tr>
+                    <th></th>
+                    <th>Executive Code</th>
+                    <th>Executive Name</th>
+                    <th>Warehouse</th>
+                    <th>Cluster</th>
+                    <th>Channel</th>
+                    <th>Total working days</th>
+                    <th>Present days</th>
+                    <th>Absent days</th>
+                    <th>TADA</th>
+                </tr>
+            </ng-template>
+          <ng-template pTemplate="body" id="dtt" let-rowData let-expanded="expanded" let-rowIndex="rowIndex" >
+                <tr href="#" [pRowToggler]="rowData" (click)="onNodeChange(rowData,rowData.expanded)">
+                    <td >
+                        <i [ngClass]="(rowData.expanded) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" ></i>
+                    </td>
+                    <td>{{rowData.EmpCode}}</td>
+                    <td>{{rowData.ExecutiveName}}</td>
+                    <td>{{rowData.Warehouse}}</td>
+                    <td>{{rowData.Cluster==""?'--':rowData.Cluster}}</td>
+                    <td>{{rowData.ChannelName}}</td>
+                    <td>{{rowData.TotalWorkingDays}}</td>
+                    <td>{{rowData.PresentDays}}</td>
+                    <td>{{rowData.AbsentDays}}</td>
+                    <td>{{rowData.TADA}}</td>
+                </tr>
+            <!-- </ng-template>           -->
+        <!-- <ng-template pTemplate="rowexpansion" let-rowData  > -->
+            <tr *ngIf="rowData.expanded">
+                <td colspan="9" *ngIf="rowData.children">
+                        <p-table  [value]="rowData.children"  >
+                            <ng-template pTemplate="header">
+                                <tr >
+                                    <th>Date</th>
+                                    <th>Day</th>
+                                    <th>Check-In</th>
+                                    <th>Check-Out</th>
+                                    <th>TC</th>
+                                    <th>Status</th>
+                                    <th>PC</th>
+                                    <th>TADA</th>
+                                    <th> <button pButton pRipple label="Export" (click)="subExcelDownload(rowData)" class="p-button-success"></button></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-order>
+                                <tr >
+                                    <td><b> {{order.CreatedDate | date : 'mediumDate'}} </b></td>
+                                    <td><b>{{order.Day}}</b></td>
+                                    <td><b>{{order.FirstCheckIn==null?'--':order.FirstCheckIn | date: 'mediumTime'}}</b></td>
+                                    <td><b>{{order.LastCheckOut==null?'--':order.LastCheckOut | date: 'mediumTime'}}</b></td>
+                                    <td><b>{{order.TC}}</b></td>
+                                    <td><b>{{order.Status}}</b></td>
+                                    <td><b>{{order.PC}}</b></td>
+                                    <td><b>{{order.TADA}}</b></td>
+                                    <td><a style="color: blue;" (click)="DetailExport(order)"><b> Details </b></a> </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td>Data Not Found.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                </td>
+            </tr>
+        </ng-template>
+</p-table>
+
+<p-dialog header="Date wise Export" [(visible)]="display"  (onHide)="cancel()" appendTo="body" positionTop="50vh" [style]="{width: '30vw'}" modal="true">
+    <div class="justify-content-between">
+        <p-calendar appendTo="body" 
+        [yearNavigator]="true" [monthNavigator]="true" yearRange="2023:2099"  [(ngModel)]="DateValue" 
+        [readonlyInput]="true" [showIcon]="true" showButtonBar="true"></p-calendar>
+        <button class="btn btn-success mt-2 ml-4" (click)="ExportDateWise()">Export</button>
+    </div>
+    <p-toast *ngIf="display" position="top-center"></p-toast>
+</p-dialog>
+

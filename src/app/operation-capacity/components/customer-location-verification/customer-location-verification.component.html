@@ -1,0 +1,147 @@
+<p-dialog header="Customer List" [(visible)]="isVisible" [blockScroll]="true" appendTo="body"
+    [style]="{width: '100vw', height:'100vh', overflow: 'scroll'}" (onHide)="hide()" [modal]="true" [positionTop]="0" [positionLeft]="0"
+    appendTo="body">
+    <div class="card">
+        <div class="card-content">
+            <div class="card-body">
+                <div class="ui-fluid">
+                    <div class="ui-g">
+                        <div class="ui-g-3">
+                            <label for="cityid">Hub</label>
+                            <select id="cityid" name="cityid" class="form-control" [(ngModel)]="warehouseId"
+                                (ngModelChange)="onChangeHub()">
+                                <option [ngValue]="null">--select--</option>
+                                <option *ngFor="let hub of warehouseList" [ngValue]="hub.value">
+                                    {{ hub.label }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="ui-g-6">
+                            <label for="cityid">Select Customer</label><br>
+                            <p-dropdown placeholder="Select a customer"  *ngIf="!isCustomerSelected" [options]="customerList" [(ngModel)]="selectedCustomer" optionLabel="Customer" optionValue="CustomerId" [filter]="true"  (onChange)="onSelectCustomer()"></p-dropdown>
+
+
+                            <!-- <p-autoComplete *ngIf="!isCustomerSelected" [minLength]="3" field="Customer"
+                                [(ngModel)]="selectedCustomer" [suggestions]="customerList"
+                                (onSelect)="onSelectCustomer($event)" (completeMethod)="searchCustomers($event)">
+                            </p-autoComplete> -->
+                            <div class="brr" *ngIf="isCustomerSelected">
+                                {{selectedCustomer.Customer}}
+                                <div class="rlt-r">
+                                    <i (click)="deSelectCustomer()" class="fa fa-times fa-lg" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-9" *ngIf="showMap">
+                            <agm-map [latitude]="customerLocationDiff.CustomerTableLatitude"
+                                [longitude]="customerLocationDiff.CustomerTableLongitude" [zoom]="zoom"
+                                [disableDefaultUI]="false" [fullscreenControl]="true" [zoomControl]="true"
+                                [style.height.px]="myInnerHeight">
+
+                                <ng-container
+                                    *ngIf="customerLocationDiff && customerLocationDiff.CustomerTableLatitude && customerLocationDiff.CustomerTableLongitude">
+                                    <agm-direction id="abc" 
+                                        [renderOptions]="renderOptions" [optimizeWaypoints]="false"
+                                        [origin]="origin" [destination]="destination">
+                                    </agm-direction>
+
+                                </ng-container>
+
+                                <agm-marker
+                                    *ngIf="customerLocationDiff.CustomerTableLatitude && customerLocationDiff.CustomerTableLongitude"
+                                    [latitude]="customerLocationDiff.CustomerTableLatitude"
+                                    [longitude]="customerLocationDiff.CustomerTableLongitude" [iconUrl]="actualMarker"
+                                    label="O">
+                                    <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                        <div>
+                                            Customer Stored Location
+                                            <!-- {{currentLocation.TripPlannerConfirmedDetailId}} -->
+                                        </div>
+                                    </agm-info-window>
+                                </agm-marker>
+
+                                <agm-marker
+                                    *ngIf="customerLocationDiff.UploadImageLatitude && customerLocationDiff.UploadImageLongitude"
+                                    [latitude]="customerLocationDiff.UploadImageLatitude"
+                                    [longitude]="customerLocationDiff.UploadImageLongitude" [iconUrl]="newMarker"
+                                    label="N">
+                                    <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                        <div>
+                                            Captured new Location
+                                            <!-- {{currentLocation.TripPlannerConfirmedDetailId}} -->
+                                        </div>
+                                    </agm-info-window>
+                                </agm-marker>
+
+                                <agm-marker
+                                *ngIf="customerLocationDiff.WarehouseLatitude && customerLocationDiff.WarehouseLongitude"
+                                [latitude]="customerLocationDiff.WarehouseLatitude"
+                                [longitude]="customerLocationDiff.WarehouseLongitude" [iconUrl]="warehouseMarker">
+                                <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                    <div>
+                                        Warehouse Location
+                                        <!-- {{currentLocation.TripPlannerConfirmedDetailId}} -->
+                                    </div>
+                                </agm-info-window>
+                            </agm-marker>
+                                <!-- <agm-direction *ngIf="totalExpectedWapoint && totalExpectedWapoint.length>0" [origin]="origin"
+                            [destination]="origin" [renderOptions]="renderOptions" [optimizeWaypoints]="false"
+                            [waypoints]="totalExpectedWapoint">
+                        </agm-direction> -->
+
+                                <!-- <agm-marker *ngFor="let wp of expectedWaypoints; let i = index;" label="{{wp.location.label}}"
+                            [latitude]="wp.location.lat" [longitude]="wp.location.lng" [iconUrl]="shopMarker">
+                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                <div>
+                                    {{wp.location.obj.Skcode}}
+                                </div>
+                            </agm-info-window>
+                        </agm-marker>
+
+                        <agm-marker label="W" [latitude]="origin.lat" [longitude]="origin.lng"
+                            [iconUrl]="warehouseMarker">
+                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                <div>
+                                    Warehouse
+                                </div>
+                            </agm-info-window>
+                        </agm-marker>
+                        <agm-marker *ngIf="showMarker" [latitude]="currentLocation.Lat"
+                            [longitude]="currentLocation.Lng" [iconUrl]="icon">
+                            <agm-info-window [disableAutoPan]="false" #infoWindow>
+                                <div>
+                                    {{currentLocation.TripPlannerConfirmedDetailId}}
+                                </div>
+                            </agm-info-window>
+                        </agm-marker> -->
+
+                            </agm-map>
+                        </div>
+                        <div class="col-3" *ngIf="customerLocationDiff && customerLocationDiff.ImagePath">
+                            <div>Distance between two points : {{distanceInKmBetweenPoint}} KM</div>
+                            <div>Distance between Warehouse and New Point : {{distanceBetweenNewPointAndWarehouse}} KM</div>
+                            <div>Distance between Warehouse and Old Point : {{distanceBetweenOldPointAndWarehouse}} KM</div>
+                            
+
+                            <div>
+                                <p>Customer new latitude: {{customerLocationDiff.UploadImageLatitude}}</p>
+                                <p>Customer new longitude: {{customerLocationDiff.UploadImageLongitude}}</p>
+                                <button (click)="changeLocation()" class="btn btn-primary">Change Location </button>
+                                <button (click)="removeLocation()" class="mybtn">Still wrong location
+                                </button>
+                            </div>
+                            <img (click)="openImage()" class="wddd" [src]="baseUrl+customerLocationDiff.ImagePath">
+                        </div>
+                        <div class="col-3" *ngIf="customerLocationDiff && !customerLocationDiff.ImagePath">
+                            <div class="ntee">Not have any updated location</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <p-confirmDialog appendTo="body" header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+</p-dialog>

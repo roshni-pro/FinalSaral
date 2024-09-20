@@ -1,0 +1,169 @@
+<p-toast></p-toast>
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle" appendTo="body"></p-confirmDialog>
+
+<div class="my-2 d-flex justify-content-between">
+    <div class=" header">
+        <h3 class="m-2">Bulk Notification <i class="fa fa fa-flag" aria-hidden="true"></i></h3>
+    </div>
+</div>
+
+<div class="row m-0">
+    <div class="col-12">
+        <!-- Kick start -->
+        <div id="kick-start" class="card">
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <div>
+                                    <label for="projectinput8"></label><br>
+                                    <button class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="uploaddata()">
+                                        <i class="fa fa-upload"></i>
+                                        Upload Contacts</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label for="projectinput8">Enter Title Here:</label><br>
+                                <input type="text" class="form-control" placeholder="Enter Title here"
+                                        [(ngModel)]="data.title">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                        <div class="form-group">
+                            <label for="name">Notify Type:</label>
+                            <select id="Notifytype" name="Notifytype" class="form-control"
+                                [(ngModel)]="data.notify_type">
+                                <option value="">---Select--</option>
+                               <option value="home">home</option>
+                               <option value="notification">notification</option>
+                            </select>
+                        </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="projectinput8">Enter Message Here:</label><br>
+                                <textarea id="projectinput8" rows="3" class="form-control" name="comment"
+                                    [(ngModel)]="data.message" style="width: 400px;"> </textarea>
+                            </div>
+                        </div>
+                        <div class="col-lg-1" style="margin-top: 8px;">
+                            <div class="form-group">
+                                <label for="project"></label><br><br>
+                                    <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="data.skip = 0; data.take = 15;sendNotification(data); GetNotificationDetails(data)"
+                                        label="Send"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-table #dt [paginator]="true" [rows]="15" [value]="customerNotificationlist" [lazy]="true" 
+    [totalRecords]="TotalRecords" (onLazyLoad)="load($event)" [paginator]="true" [scrollable]="true" scrollHeight="70vh">
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="text-align: center">Sr.no</th> 
+            <th style="text-align: center">Mobile</th>
+            <th style="text-align: center">Title</th>
+            <th style="text-align: center">Message</th>
+            <th style="text-align: center">Created Date</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns"
+        let-expanded="expanded"  let-i="rowIndex">
+        <tr>
+            <td style="text-align: center">{{i+1}}</td>
+            <td style="text-align: center; min-width: 207px; width: 200px;">
+                <a href="javascript:;" (click)="openPopup(rowData.CxMobileNo)">View Mobile No.</a>
+            </td>
+            <td style="text-align: center">{{rowData.Title}}</td>
+            <td style="text-align: center">{{rowData.Message}}</td>
+            <td style="text-align: center">{{rowData.CreatedDate | date}}</td>
+        </tr>
+    </ng-template>
+
+</p-table>
+
+<div *ngIf="order">
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+        [style]="{width: '60%',height:'auto', overflow: 'auto'}">
+        <p-header>
+           Mobile Number List
+        </p-header>
+        <div class="ui-fluid">
+            <form #statusForm="ngForm">
+                <div class="ui-g">
+
+                    <div class="ui-g-12">
+                        <div class="row">
+                             <b>{{mobileNos}}</b>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <p-footer>
+            <button type="button" pButton (click)="closeDialog()" label="close" class="ui-button-secondary"></button>
+        </p-footer>
+    </p-dialog>
+</div>
+
+<div *ngIf="isUploadedCoupon">
+    <p-dialog appendTo="body" header="Upload File" [closable]="false" [(visible)]="showDialog" [style]="{width: '50vw'}"
+        [baseZIndex]="10000">
+        <div class="ui-fluid">
+
+            <div class="ui-g" *ngIf="!isErrorOccured">
+                <!-- <div class="ui-g-12" *ngIf="!isNotUploading">
+                    <code>Note: Please wait while list is uploading into the backend!!</code>
+                </div> -->
+                <div class="ui-g-12" *ngIf="isNotUploading">
+                    <button (click)="openTemplate()">Download Template</button>
+                </div>
+                <div class="ui-g-12" *ngIf="isNotUploading">
+                    <p-fileUpload name="myfile[]" customUpload="true" (uploadHandler)="onUpload($event, uploadCustom)"
+                        #uploadCustom>
+                        <code>*</code>
+                    </p-fileUpload>
+                </div>
+            </div>
+            <div class="ui-g" *ngIf="isErrorOccured">
+                <div class="ui-g-12">
+                    <code>Note: Following codes are not updated in backend</code>
+                    <table class="table table-responsive-sm text-center"
+                        *ngIf="erroredCouponList && erroredCouponList.length > 0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Mobile Number</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let code of erroredCouponList; let i = index;">
+                                <td>{{i+1}}</td>
+                                <td>{{code.MobileNumber}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <p-footer>
+            <button type="button" pButton (click)="closeDialog()" label="close" class="ui-button-secondary"></button>
+        </p-footer>
+    </p-dialog>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

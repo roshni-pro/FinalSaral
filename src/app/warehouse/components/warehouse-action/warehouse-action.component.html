@@ -1,0 +1,90 @@
+
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+    <p-footer class="ovelFieldForm">
+        <button type="button" class="btn btn-raised btn-primary" (click)="cd.reject()">No</button>
+        <button type="button" class="btn btn-raised btn-danger" (click)="cd.accept()">Yes</button>
+    </p-footer>
+</p-confirmDialog>
+<section id="Warehouse" >
+    <div class="my-2 d-flex justify-content-between">
+      <div class="header">
+          <br>
+        <h3 class="m-2">Warehouse Action </h3>
+      </div>
+    </div>
+<div class="row ">
+
+  <div class="ui-fluid shadow p-3 m-2 mt-4 bg-white rounded table table-hover min-height-80">
+    <div class="position-relative">
+  <div class="row text-left" style="margin-top: -2%;">
+    <div class="col-md-12">
+        <div class="card noneHoverRow">
+            <p-table #dt [value]="list" [scrollable]="true"
+                scrollHeight="130vh" text-align: center>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Warehouse Name</th>
+                        <th>Action</th>
+                        <th>ActionLocation</th>
+                        <th>History</th>
+                    </tr>
+                </ng-template>  
+                <ng-template pTemplate="body" let-ir>
+                     <tr>
+                        <td>{{ir.WarehouseName}}</td>
+                        <td *ngIf="ir.IsDeliveryOptimizationEnabled==false"> 
+                            <button type="button" class="btn" style="background-color: #337ab7;color:white" (click)="start(ir,0)">
+                                startDeliveryOptimizationEnabled
+                            </button></td>
+                            <td *ngIf="ir.IsDeliveryOptimizationEnabled==true"> 
+                                <button type="button" class="btn" style="background-color: orangered;color:white" (click)="stop(ir,0)">
+                                    stopDeliveryOptimizationEnabled
+                                </button></td>
+                        <td *ngIf="ir.IsLocationEnabled==false"> <button type="button" class="btn" style="background-color: #337ab7;color:white" (click)="start(ir,1)">
+                            startLocationEnabled
+                            </button></td>
+                            <td *ngIf="ir.IsLocationEnabled==true"> <button type="button" class="btn" style="background-color: orangered;color:white" (click)="stop(ir,1)">
+                                stopLocationEnabled
+                                </button></td>
+                        <td><button type="button" class="btn btn-raised btn-primary" (click)="openDetails(ir)">
+                            History
+                        </button></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+  </div>
+    </div>
+</div>
+</div>
+</section>
+<div id="history" *ngIf="popupOpen" >
+    <p-dialog [(visible)]="popupOpen" [resizable]="true"  [modal]="true" appendTo="body" positionTop="100"  [style]="{width: '70%'}">
+        <div class="w3-container w3-center w3-animate-left">
+            <h4><b>History</b></h4>
+        </div>
+        <p-table #dt [value]="historylist" [scrollable]="true"  [paginator]="true" [rows]="10" dataKey="WarehouseId"[scrollable]="true" 
+        scrollHeight="130vh" text-align: center>
+     
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Warehouse Name</th>
+                <th>IsStopCurrentStockTrans</th>
+                <th>CreatedBy</th>
+                <th>CreatedDate</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-ir>
+            <tr>
+                <td>{{ir.WarehoueName}}</td>
+                <td>{{ir.IsStopCurrentStockTrans}} </td>
+                <td>{{ir.CreatedBy}} </td>
+                <td>{{ir.CreatedDate | date:'medium'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+  </p-dialog>
+  </div>

@@ -1,0 +1,141 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="row text-left">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header pb-2">
+        <h4 class="card-title" id="basic-layout-form">Agent Pitch Master</h4>
+      </div>
+      <div class="card-content">
+        <div class="px-3">
+          <form class="form" name="agentPitchForm" #agentPitchForm="ngForm">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput1">SELECT Warehouse<span style="color:red"> *</span></label>
+                    <select id="WarehouseId" name="WarehouseId" class="form-control" [(ngModel)]="Search.WarehouseId"
+                      #WarehouseId="ngModel" required (ngModelChange)="getAgent(Search.WarehouseId)">
+                      <option value="">--Select Warehouse--</option>
+                      <option *ngFor="let Warehouse of WarehouseList" [ngValue]="Warehouse.WarehouseId">
+                        {{Warehouse.WarehouseName}}
+                      </option>
+                    </select>
+                    <div *ngIf="isInvalid && !WarehouseId.valid && WarehouseId.errors.required">
+                      <code>Warehouse is required</code>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput2">Agent<span style="color:red"> *</span></label><br>
+                    <select id="sb" name="PeopleID" class="form-control" [(ngModel)]="Search.AgentId"
+                      placeholder="Select agent" #PeopleID="ngModel" required>
+                      <div class="col-md-6"></div>
+                      <option value="">--Select Agent--</option>
+                      <option *ngFor="let agent of AgentList" [ngValue]="agent.PeopleID">
+                        {{agent.DisplayName}} {{agent.PeopleID}}
+                      </option>
+                    </select>
+                    <div *ngIf="isInvalid && !PeopleID.valid && PeopleID.errors.required">
+                      <code>Agent Name is required</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput3">StartDate<span style="color:red"> *</span></label>
+                    <p-calendar id="ssb" name="ssb" [(ngModel)]="Search.StartDate" [showTime]="false"
+                      #StartDate="ngModel"></p-calendar>
+                    <div *ngIf="isInvalid && !StartDate.valid && StartDate.errors.required">
+                      <code>StartDate is required</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput4">EndDate<span style="color:red"> *</span></label>
+                    <p-calendar id="esb" name="esb" [(ngModel)]="Search.EndDate" [showTime]="false" #EndDate="ngModel">
+                    </p-calendar>
+                    <div *ngIf="isInvalid && !EndDate.valid && EndDate.errors.required">
+                      <code>EndDate is required</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" style="float: right;" class="btn btn-raised btn-warning mr-1"
+                  (click)="SearchRecord(agentPitchForm)">
+                  Search
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>  
+    </div>
+
+    
+    <div  class="position-relative">
+        <p-table [columns]="cols" [value]="AgentPitchList" [paginator]="true" [rows]="10"
+          [showCurrentPageReport]="true">
+          <!-- currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" -->
+          <ng-template pTemplate="caption">
+            <div class="ui-helper-clearfix" style="text-align: left">
+              <button type="button" pButton icon="pi pi-file-o" iconPos="left" label="CSV" (click)="dt.exportCSV()"
+                style="margin-right: 0.5em;"></button>
+              <button type="button" pButton  label="EXCEL" (click)="exportExcel()"
+                style="margin-right: 0.5em;" class="ui-button-success"></button>
+              <button type="button" pButton icon="pi pi-file-pdf" iconPos="left" label="PDF" (click)="exportPdf()"
+                class="ui-button-warning"></button>
+              <button type="button" pButton icon="pi pi-file" iconPos="left" label="CSV - Selection Only"
+                (click)="dt.exportCSV({selectionOnly:true})" style="float:right"></button>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th *ngFor="let col of columns">
+                {{col.header}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+              <td *ngFor="let col of columns">
+                {{rowData[col.field]}}
+                <div style="align-content: center;" *ngIf="col.bools">
+                  <a (click)="openPopup(rowData.ShopImageUrl)" target="_blank">
+                    <img *ngIf="rowData.ShopImageUrl" src="{{rowData.ShopImageUrl}}" style="height: 75px;width: 75px;"
+                      class="wcr">
+                  </a>
+                </div>
+                <div style="align-content: center;" *ngIf="col.bool">
+                  <audio controls style="width: 145px;" *ngIf="rowData.AudioUrl">
+                    <source src="{{baseURL}}/{{rowData.AudioUrl}}" type="audio/mp3">
+                  </audio>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+    </div>  
+    <!-- <div style="margin-bottom: 1em">
+    <button type="button" pButton icon="pi pi-chevron-left" (click)="prev()" style="margin-right:.5em" [disabled]="isFirstPage()"></button>
+    <button type="button" pButton icon="pi pi-refresh" (click)="reset()" style="margin-right:.5em"></button>
+    <button type="button" pButton icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()"></button>
+</div> -->
+
+    <p-dialog [(visible)]="isOpenPopup" [resizable]="false" appendTo="body" [style]="{width: '50vw'}"
+      [baseZIndex]="10000">
+      <p-header>
+        Shop Image
+      </p-header>
+      <img src="{{imagePath}}" style="width: 100%;" />
+      <!-- <img src="assets\img\gallery\1.jpg" style="width: 100%;" /> -->
+    </p-dialog>
+
+    <p-blockUI [blocked]="blocked"></p-blockUI>
+    <p-progressSpinner *ngIf="blocked"
+      [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+      fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

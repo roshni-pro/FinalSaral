@@ -1,0 +1,39 @@
+<form class="form mr-t-10" #promotionalForm="ngForm">
+    <div class="form-body">
+        <h4 class="form-section"><i class="fa fa-clock-o" aria-hidden="true"></i>Recurring Selections</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group" *ngIf="anFrequencyMastersList">
+                    <label for="projectinput1">Frequency Type</label>
+                    <select class="form-control"  [(ngModel)]="autoNotification.ANFrequencyMasterId" (ngModelChange)="onANFrequencyMasterChange()"
+                        name="frequencyMasterIdInput">
+                        <option [value]="null">select</option>
+                        <option *ngFor="let frequence of anFrequencyMastersList" [value]="frequence.Id">
+                            {{frequence.Name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group" *ngIf="autoNotification.ANFrequencyMasterId">
+                    <label for="projectinput1">Recur Every</label>
+                    <input class="form-control" name="recurEveryInput" type="number" [(ngModel)]="autoNotification.RecurEvery" >
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="projectinput1">Start Date</label>
+                    <p-calendar name="startDateInput" [(ngModel)]="autoNotification.StartDate"  [showTime]="true" [inline]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2018:2025"></p-calendar>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="projectinput1">End Date</label>
+                    <p-calendar name="endDateInput" [(ngModel)]="autoNotification.EndDate"  [showTime]="true" [inline]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2018:2025"></p-calendar>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

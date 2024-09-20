@@ -1,0 +1,424 @@
+<div class="container-fluid contPad" *ngIf="sourceExecutiveRole || hqMasterRole || inventoryForecastingExecutive || inventoryForecastingSeniorExecutive">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="header">
+                <h3 class="m-2 pt-2">Buyers Edit</h3>
+            </div>
+            <div class="search-head rounded d-flex mr-2 ml-2 bg-white text-primary justify-content-between align-items-center" (click)="toggleSearch()">
+                <h5  *ngIf="!isSearch" class="m-0 ml-3">Search By</h5>
+                <h5  *ngIf="isSearch" class="m-0 ml-3"></h5>
+                <div  *ngIf="!isSearch"><i class="pi pi-angle-double-right mr-3" style="font-size: 30px;"></i></div>
+                <div  *ngIf="isSearch"><i class="pi pi-angle-double-down mr-3" style="font-size: 30px;"></i></div>
+            </div>
+            <div class="d-flex mr-2 ml-2 justify-content-between bg-white p-1" *ngIf="isSearch">
+                <!-- <div class="sel-opt d-flex justify-content-between"> -->
+                    
+                    <div class="col-12">
+                        <div class="row">
+                            <!-- <div class="col-md-2">
+                                <p-dropdown [options]="cityListData" placeholder="Select City" [(ngModel)]="selectedCity"
+                                    [panelStyle]="{minWidth:'100%'}" optionLabel="CityName"
+                                    (onChange)="getHubList(selectedCity)">
+                                </p-dropdown>
+                            </div> -->
+                            <div class="col-md-2 mmb">
+                                <p-dropdown [options]="hubList" placeholder="Select Hub" [(ngModel)]="selectedHub"
+                                    [panelStyle]="{minWidth:'100%'}" optionLabel="WarehouseName">
+                                </p-dropdown>
+                            </div>
+                            <!-- <div class="col-md-2">
+                                <p-dropdown [options]="categoryListData" placeholder="Select Category"
+                                    [(ngModel)]="selectedCatregory" [panelStyle]="{minWidth:'100%'}" optionLabel="CategoryName"
+                                    (onChange)="getSubCatList(selectedCatregory)" [filter]="true" filterBy="label">
+                                </p-dropdown>
+                            </div>
+                            <div class="col-md-2">
+                                <p-dropdown [options]="subCatList" placeholder="Select SubCategory" [(ngModel)]="selectedSubCat"
+                                    [panelStyle]="{minWidth:'100%'}" optionLabel="SubCategoryName"
+                                    (onChange)="getBrandsnew(selectedSubCat)" [filter]="true" filterBy="label">
+                                </p-dropdown>
+                            </div> -->
+                            <div class="col-md-2 mmb">
+                                <p-dropdown [options]="brandList" placeholder="Select Brand"
+                                    [(ngModel)]="selectedSubsubCatregory" [panelStyle]="{minWidth:'100%'}"
+                                    optionLabel="BrandName" [filter]="true" filterBy="label"></p-dropdown>
+                            </div>
+                            <div class="col-md-2 mmb">
+                                <input type="text" class="form-control" placeholder="Search Item" [(ngModel)]="searchItem">
+                            </div>
+                            <!-- <div class="col-md-2"></div> -->
+                            <div class="col-md-6 text-right">
+                                <button class="btn btn-primary" (click)="getSearchResult()">Search</button>
+                                <button class="btn btn-primary ml-2" (click)="clearRecord()" style="background-color: red !important;
+                                border-color: red !important;">Clear</button>
+                                <button class="btn btn-primary ml-2" *ngIf="addBtnEnable" (click)="showDialog()" style="background-color: blue !important;
+                                border-color: blue !important;">Add Items</button>
+                                <button class="btn btn-primary ml-2" *ngIf="addBtnEnable" (click)="moveFutureMultiMrpPage()" style="background-color: yellow !important;
+                                border-color: yellow !important;color: black !important;font-weight: 500;">Merge Item</button>
+                                <button *ngIf="(regionSourcingRole || hqMasterRole) && enableExportBtn" 
+                                    class="btn btn-primary ml-2" (click)="exportDownload()" style="background-color: green !important;
+                                    border-color: green !important;">Export</button>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-5" *ngIf="(regionSourcingRole || hqMasterRole) && isSearch">
+                                <p-fileUpload 
+                                name="myfile[]" 
+                                customUpload="true" 
+                                [files]="letsClear" 
+                                accept=".xls,.xlsx"
+                                (uploadHandler)="onUpload($event)" #uploadCustom>
+                                <code>*</code>
+                            </p-fileUpload>
+                            </div>
+                            <div class="col-md-5"></div>
+                           
+                            <!-- <div class="col-md-2" style="display: flex;" *ngIf="regionSourcingRole || hqMasterRole">
+                                <div><button class="upd-btn" (click)="exportDownload()" *ngIf="enableExportBtn">Export</button>
+                                </div> `
+                            </div> -->
+                        </div>
+                    </div>     
+                <!-- </div> -->
+                
+            </div>
+            <!-- <div class="d-flex justify-content-between bg-white ml-2 mr-2" *ngIf="(regionSourcingRole || hqMasterRole) && isSearch" >
+                <div class="col-lg-4 ml-1">
+                   
+                </div>
+                <div class="col-lg-4 mt-2" >
+                    <button *ngIf="itemForcastDetails" (click)="showDialog()" class="btn btn-primary">Add Items</button>
+                    <button *ngIf="!itemForcastDetails"disabled (click)="showDialog()" class="btn btn-primary">Add Items</button>
+                </div>
+                <div class="col-lg-4 "></div>
+                
+            </div> -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="bg-white p-3 mr-2 ml-2 mt-3 rounded">
+                <div class="p-2" style="background-color:#26578a;color:#fff;">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-2">Brand Target Value<br>
+                                <p style="margin-left: 0px">{{BrandTotalValue}}</p>
+                            </div>
+                            <div class="col-md-3">Brand Sales Value<br>
+                                <p style="margin-left: 0px">{{BrandSalesValue}} </p>
+                            </div>
+                            <div class="col-md-3">Avg Inventory Days<br>
+                                <p style="margin-left: 0px">{{AvgInventoryDays|number:'1.2-2'}}</p>
+                            </div>
+                            <div class="col-md-2">Brand Total Percent<br>
+                                <p style="margin-left: 0px">{{BrandTotalPercent}}</p>
+                            </div>
+                            <div class="col-md-2">Brand Predictive Percent<br>
+                                <!-- <p style="margin-left: 0px">{{BrandPredictivePercent >= 0 ? (BrandPredictivePercent|number:'1.2-2') : 0}}
+                                <br><code class="code" *ngIf="check_Hundred">(More than 100%, can't<br>update)</code></p> -->
+                                <p style="margin-left: 0px">{{BrandPredictivePercent == 'Infinity' ? 0 : (BrandPredictivePercent|number:'1.2-2')}}
+                                
+                            </div>
+                            <!-- <div class="col-md-3">Brand  Percent<br>
+                                <p style="margin-left: 0px">{{SumItemPercent}}</p>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive table-wrapper-scroll-x my-custom-scrollbar mt-3 text-center wrapp">
+                    <p-table [value]="itemForcastDetails" [paginator]="true" [rows]="50" [lazy]="true"
+                        (onLazyLoad)="load($event)" [totalRecords]="TotalRecord" responsiveLayout="scroll"
+                        [scrollable]="true">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th rowspan="2"> Brand Name </th>
+                                <th rowspan="2" style="width: 119px;"> Product Name </th>
+                                <th rowspan="2"> ROC </th>
+                                <th rowspan="2"> Hub </th>
+                                <th rowspan="2"> System /Growth <br /> Buyer Edit Forcast Qty</th>
+                                <th rowspan="2"> Brand Amount / Cal.Sales % </th>
+                                <th> A </th>
+                                <th> B </th>
+                                <th> C </th>
+                                <th> D </th>
+                                <th> E </th>
+                                <th rowspan="2">Last Demand Value<br>/Demand Qty</th>
+                                <th rowspan="2"> Safety Stock Qty</th>
+                                <th rowspan="2">Safety Stock days</th>
+                                <th rowspan="2"> Fulfilled Qty</th>
+                                <th rowspan="2"> Approved Qty</th>
+                                <th> F </th>
+                                <th rowspan="2" style="width: 9%;"> Actions </th>
+                            </tr>
+                            <tr>
+                                <th> Buyer Day Wise Forcast </th>
+                                <th> Sales Intent + Demand </th>
+                                <th> Current Stock </th>
+                                <th> PD Inventory<br /> (A*F)</th>
+                                <!-- <th> Required Qty<br />(D-(C-B))<br />..............<br />Qty</th> -->
+                                <th> Required Qty<br />((D+ Safety Stock qty+B)-C)<br />..............<br />Qty</th>
+                                <th> Cal. Inven. Days <br /> Plan Inventory </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr 
+                                [ngStyle]="{'background-color':'rgb(153, 204, 255)'}">
+                                <td> {{item.SubsubcategoryName}} </td>
+                                <td style="font-weight: bold; color: black; width: 120px;"> {{item.ItemName}} <br />
+                                    {{item.ItemMultiMrpId}} </td>
+                                <td>{{item.Tag?item.Tag:'--'}}</td>
+                                <td> {{item.WarehouseName}} </td>
+                                <td> {{item.SystemSuggestedQty}}/{{item.GrowthForecastQty}}<br />
+
+                                    
+                                    <ng-container                                        
+                                        *ngIf="(hqMasterRole || regionSourcingRole)  else forThird" >
+                                            <input type="number" [(ngModel)]="item.BuyerEditForecast">
+                                    </ng-container>                                  
+                                    <ng-template #forThird>
+                                        <ng-container>
+                                            {{item.BuyerEditForecast}}
+                                        </ng-container>
+                                    </ng-template>
+                                    <!-- <input type="number" style="width: 80px" [(ngModel)]="item.BuyerEditForecast"> -->
+                                </td>
+                                <!-- <td style="width:100px"> {{item.GrowthInAmount}}/{{item.DisplayPercentValue|number:'1.2-2'}}% -{{item.PercentValue|number:'1.2-2'}}                                    -->
+                                    <td style="width:100px"> {{item.GrowthInAmount}}/<br>{{item.Individualsalespercent|number:'1.2-2'}}%                                 
+                                    <!--<br>{{item.PercentValue|number:'1.2-2'}}% Changes at 02 Nov -->
+                                        <!-- <ng-container *ngIf="TodayDayVal == 1 || TodayDayVal == 2 || TodayDayVal == 3 || TodayDayVal == 4 || TodayDayVal == 5 else perSecond">     
+                                        <input type="number" id="inputBox" (keypress)="keyPressNumbers($event)"  [(ngModel)]="item.PercentValue">
+                                    </ng-container> -->
+                                    <!-- <ng-template #perSecond>
+                                        <ng-container>
+                                            {{item.PercentValue}} 
+                                            {{salespercent}}
+                                        </ng-container>
+                                    </ng-template>-->
+
+                                    <!-- <input type="number" style="width: 80px" id="inputBox"
+                                        (keypress)="keyPressNumbers($event)" [(ngModel)]="item.PercentValue"> -->
+                                </td>
+                                <td> {{item.BuyerPDForecast}} </td>
+                                <td> {{item.SalesIntent}} + {{item.TillYesterdayDemand}} <br />
+                                    {{item.SalesIntent + item.TillYesterdayDemand}}
+                                </td>
+                                <td> {{item.CurrentInventory}} </td>
+                                <td> {{item.InventoryDays * item.BuyerPDForecast}} </td>
+                                <!-- <td> {{((item.InventoryDays * item.BuyerPDForecast)-
+                                    (item.CurrentInventory-(item.SalesIntent + item.TillYesterdayDemand)))*item.ASP|number:'1.2-2'}}/
+                                    {{((item.InventoryDays * item.BuyerPDForecast)-
+                                    (item.CurrentInventory-(item.SalesIntent + item.TillYesterdayDemand)))}}
+                                </td> -->
+                                <!-- (D+ Safety Stock qty+B)-C -->
+                                     <td> {{((((item.InventoryDays * item.BuyerPDForecast)+(item.Safetystockqty)+(item.SalesIntent + item.TillYesterdayDemand))-(item.CurrentInventory)))*item.ASP|number:'1.2-2'}}/<br>{{((item.InventoryDays * item.BuyerPDForecast)+(item.Safetystockqty)+(item.SalesIntent + item.TillYesterdayDemand))-(item.CurrentInventory)}}
+                                     </td>
+                                <td>{{item.LastDemandValue | number : '1.0-2'}}/{{item.TillYesterdayDemand | number : '1.0-2'}}</td>
+                                <td>{{item.Safetystockqty?item.Safetystockqty:0}}</td>
+                                <td>{{item.SafetyDays?item.SafetyDays:0}}</td>
+                                <td>{{item.FulFillQty}}</td>
+                                <td>{{item.OPQty}}</td>
+                                <td>
+                                    {{item.CalculatedInventoryDays}} <br />
+                                    <input type="text" style="width: 60px"
+                                        onkeypress="if(this.value.length>=3) return false" 
+                                        (keypress)="keyPressNumbers($event)" [(ngModel)]="item.InventoryDays" disabled>
+                                    Predicted days to be {{item.predictedDays}}
+                                </td>
+                                <td class="cen" style="width: 9%;padding-top: 0px;">
+                                    <!-- <button class="upd-btn" (click)="updateDetails(item)">Update</button> -->
+                                    <!-- <button class="det-btn" (click)="showDetails(item)">Details</button> -->
+                                    <!-- disabled="!check_Hundred" -->
+                                    <span disabled="!check_Hundred" (click)="updateDetails(item)" data-toggle="tooltip" data-placement="top"
+                                        title="Update" *ngIf="regionSourcingRole || hqMasterRole ">
+                                        <!-- <i class="pi pi-refresh" style="font-size: 2rem; cursor: pointer;"></i> -->
+                                         <button style="background-color: #d64127;
+                                        color: white;border-color: #d64127;border-radius: 16px;">Update</button>
+                                    </span>
+                                    <span (click)="showDetails(item)" data-toggle="tooltip" data-placement="top"
+                                        title="Details"><i class="pi pi-external-link"
+                                         style="font-size: 2rem;cursor: pointer;"></i> </span>
+                                    <span *ngIf="item.Id == 0" (click)="addForecastItem(item)" data-toggle="tooltip" data-placement="top"
+                                        title="Add Item"><i class="pi pi-plus-circle"
+                                        style="font-size: 2rem;cursor: pointer;"></i> </span>     
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Show Edit Details --Start  -->
+<p-dialog header="Buyers Edit Details" [(visible)]="buyerEditdisplayOpen" [style]="{width: '60vw', left: '440px'}"
+    [modal]="true" appendTo="body" [draggable]="false">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 main-wrapper">
+                <div class="wrapper rounded">
+                    <div class="table-responsive table-wrapper-scroll-x my-custom-scrollbar">
+                        <p-table [value]="itemForcastHistory" class="table table-bordered mt-2">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th> Buyer </th>
+                                    <th> Brand </th>
+                                    <th> Product </th>
+                                    <!-- <th> Warehouse Name </th>
+                                    <th> Demand Forecasted <br> Value </th> -->
+                                    <th> Month </th>
+                                    <th> Year </th>
+                                    <th> Total Amount </th>
+                                    <th> Total Quantity </th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td> {{item.BuyerName}} </td>
+                                    <td> {{item.Subsubcategoryname}} </td>
+                                    <td> {{item.ItemName}} </td>
+                                    <!-- <td> {{item.WarehouseName}} </td>
+                                    <td> {{item.ItemMultiMrpId}} </td> -->
+                                    <td> {{item.month}} </td>
+                                    <td> {{item.Year}} </td>
+                                    <td> {{item.TotalAmount | number : '1.0-2'}} </td>
+                                    <td> {{item.TotalQty}} </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</p-dialog>
+<!-- Show Edit Details --End  -->
+
+
+<!-- Show history Details --Start  -->
+<p-dialog header="Buyers History Details" [(visible)]="buyersHistoryDisplayOpen"
+    [style]="{width: '60vw', left: '440px'}" [modal]="true" appendTo="body" [draggable]="false">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 main-wrapper">
+                <div class="wrapper rounded">
+                    <div class="table-responsive table-wrapper-scroll-x my-custom-scrollbar">
+                        <p-table [value]="itemForcastHistory" class="table table-bordered mt-2">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th> Product </th>
+                                    <th> Hub </th>
+                                    <th> Growth Forecast Qty </th>
+                                    <th> % </th>
+                                    <th> Total Demand </th>
+                                    <th> Inventory Days </th>
+                                    <th> Growth Forecast Qty Updated </th>
+                                    <th> % Updated </th>
+                                    <th> Total Demand Updated </th>
+                                    <th>Inventory Days Updated</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td> {{item.BuyerName}} </td>
+                                    <td> {{item.Subsubcategoryname}} </td>
+                                    <td> {{item.ItemName}} </td>
+                                    <td> {{item.WarehouseName}} </td>
+                                    <td> {{item.ItemMultiMrpId}} </td>
+                                    <td> {{item.month}} </td>
+                                    <td> {{item.Year}} </td>
+                                    <td> {{item.TotalAmount}} </td>
+                                    <td> {{item.TotalQty}} </td>
+                                    <td> {{item.TotalQty}} </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</p-dialog>
+<!-- Show history Details --End  -->
+<!-- 
+[modal]="true" appendTo="body" positionTop="50vh" [(visible)]="PopDetails"
+ [style]="{width: '70vw', left: '440px', height: '60%' , overflow:'scroll'}"[draggable]="false"  -->
+
+    <p-dialog  [modal]="true" appendTo="body" positionTop="20" [style]="{width: '70vw', left: '440px'}"
+        [draggable]="false" header="Add Item" [(visible)]="display">
+        <div class="card">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Mention Item Number</label>
+                        <input type="text" [(ngModel)]="selectedItemNumber" class="form-control" placeholder="Enter Item number">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary" (click)="SearchAddNewItem()" style="margin-top: 29px;"> Search</button>
+                    </div>
+                    <div class="col-md-2 d-flex">
+                        <button type="button" style="margin-top: 30px;" pButton class="btn btn-raised btn-raised btn-primary"
+                            (click)="DownLoadSampleFile();" label="Sample File"></button>
+                          
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4" style="float: right; width: 200px;" *ngIf="(regionSourcingRole || hqMasterRole) && isSearch">
+                        <p-fileUpload 
+                           name="myfile[]" [style]="{'width': '331px'}"
+                           customUpload="true" 
+                           [files]="letsClear" 
+                            accept=".xls,.xlsx"
+                            (uploadHandler)="onbulkUpload($event)" #uploadCustom>
+                            <code>*</code>
+                        </p-fileUpload>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="row">
+                <div class="col-12">
+                    <p-table [value]="itemList">
+                        <ng-template pTemplate="header" >
+                            <tr>
+                                <th> MultiMRP ID </th>
+                                <th> Item Name </th>
+                                <th> MRP </th>
+                                <th> APP </th>
+                                <th> System Quantity </th>
+                                <th> Inv Days </th>
+                                <th> Action </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td>{{row.ItemMultiMRPId}}</td>
+                                <td>{{row.itemname}}</td>
+                                <td>{{row.MRP}}</td>
+                                <td><input type="text" class="form-control" [(ngModel)]="row.APPvalue" (keyup)="addNewItemKeyUp($event,row,'APP')" (keypress)="allowDecimalVal($event)"></td>
+                                <td><input type="text" class="form-control" [(ngModel)]="row.SysQty" (keyup)="addNewItemKeyUp($event,row,'Sys')" (keypress)="removeDecimalVal($event)"></td>
+                                <td><input type="text" class="form-control" [(ngModel)]="row.InvDays" (keyup)="addNewItemKeyUp($event,row,'Inv')" (keypress)="removeDecimalVal($event)"></td>
+                                <td> 
+                                    <button class="btn" *ngIf="row.APPvalue && row.SysQty && row.InvDays " style="background-color: green;color: white;" 
+                                    (click)="onSubmitAddItem(row)"> Submit</button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-right">
+                <button type="button" class="btn"  style="background-color: rgb(248, 174, 25);color: white;" (click)="onCancelAddItem()">Cancel</button>
+            </div>
+        </div>
+    </p-dialog>
+
+<p-confirmDialog appendTo="body" header="Confirmation" [style]="{width: '40vw'}" [baseZIndex]="10000"></p-confirmDialog>
+<p-blockUI [blocked]="blocked" appendTo="body"></p-blockUI>
+<p-progressSpinner *ngIf="blocked" appendTo="body"
+    [style]="{width: '70px', height: '70px', position: 'fixed', left: '48%', top: '18%','background-color':'rgb(255,255,0)'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s">
+</p-progressSpinner>

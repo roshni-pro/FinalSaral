@@ -1,0 +1,155 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-confirmDialog #cd appendTo="body" header="Confirmation">
+  <p-footer>
+
+    <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+    <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+  </p-footer>
+</p-confirmDialog>
+
+
+<section id="Region">
+  <div class="my-2 d-flex justify-content-between">
+    <div class="header">
+      <h3 class="m-2"><b>Master Owner</b></h3>
+    </div>
+    <div>
+
+    </div>
+  </div>
+
+
+  <div class="row text-left">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-content">
+          <div class="px-3">
+            <form class="form">
+              <div class="form-body">
+                <h4 class="form-section"><i class="ft-user"></i> Filters</h4>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="projectinput1">Search</label>
+                      <input type="text" id="projectinput1" class="form-control" name="fname">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <button type="button" class="btn btn-raised btn-primary align-self-end" style="margin-top: auto;"
+                      (click)="addNewMaster()">
+                      Add New Master Owner
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-9">
+      <div class="card">
+        <div class="card-header pb-2">
+          <h4 class="card-title" id="basic-layout-colored-form-control">Master List</h4>
+        </div>
+        <div class="card-content">
+          <div class="px-3">
+            <div class="position-relative" *ngIf="masterList">
+              <p-table [value]="masterList">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Id</th>
+                    <th>Master Name</th>
+                    <th>Created Date</th>
+                    <th>Updated Date</th>
+                    <th>Action</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-master>
+                  <tr>
+                    <td>{{master.MasterId}}</td>
+                    <td>{{master.MasterName}}</td>
+                    <td>{{master.CreatedDate | date}}</td>
+                    <td>{{master.UpdatedDate | date}}</td>
+                    <td><a href="javascript:void(0);" (click)="edit(master)">Edit</a> | <a href="javascript:void(0);" (click)="deleteExportMaster(master)">Delete</a></td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div *ngIf="isOpenOwner">
+    <p-dialog [(visible)]="isOpenOwner" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+      [style]="{width: '70%', overflow: 'auto'}">
+      <p-header>
+        Manage Murli Story
+      </p-header>
+      <div class="ui-fluid">
+
+        <form #storyForm="ngForm">
+          <div class="ui-g">
+            <div class="ui-g-12">
+              <div class="ui-g">
+                <div class="ui-g-4">
+                  <div class="form-group">
+                    <label for="title">Name</label>
+                    <input class="form-control" id="title" name="title"
+                      [(ngModel)]="masterOwnerViewModel.MasterObject.MasterName" placeholder="Title" type="text"
+                      required #masterNameInput="ngModel">
+                    <code *ngIf="isFormInvalid && masterNameInput.invalid">
+                      Master name is required!
+                    </code>
+                  </div>
+
+                  <p-messages [(value)]="msgs" [closable]="false"></p-messages>
+
+
+                </div>
+                <div class="ui-g-8">
+                  <div style="min-height: 250px;" *ngIf="masterOwnerViewModel.MasterOwnerList">
+                    <div class="form-group">
+                      <label for="title">Approvers</label>
+                      <p-autoComplete [(ngModel)]="approverObj" name="approverInput" [suggestions]="peopleList"
+                        field="Field" (completeMethod)="searchApprover($event)" (onSelect)=onSelectApprover($event)>
+                      </p-autoComplete>
+                      <code *ngIf="isFormInvalid && masterNameInput.invalid">
+                        Master name is required!
+                    </code>
+                    </div>
+                    <div class="bx-apr">
+                      <span *ngFor="let masterOwner of masterOwnerViewModel.MasterOwnerList" class="tp"
+                        (click)="removeApprover(masterOwner)">
+                        {{masterOwner.Field}} &nbsp;&nbsp;
+                        <a href="javascript:void(0);"><i class="fa fa-times" aria-hidden="true"
+                            (click)="removeApprover(masterOwner)"></i></a>
+                        &nbsp;
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+
+            <div class="ui-g-12">
+              <div class="bdry"> </div>
+              <button class="btn btn-raised btn-raised btn-primary pull-right" (click)="saveMaster()">Save</button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </p-dialog>
+  </div>

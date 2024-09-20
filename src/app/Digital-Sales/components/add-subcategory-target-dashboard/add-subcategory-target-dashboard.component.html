@@ -1,0 +1,202 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="row text-left">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header pb-2">
+        <h4 class="card-title" id="basic-layout-form">Add Input</h4>
+      </div>
+      <div class="card-content">
+        <div class="px-3">
+          <form class="form" #AddsubTForm="ngForm">
+            <div class="form-body">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput1" >SELECT CITY<span  style="color:red"> *</span></label>
+                    <select id="city" name="city" class="form-control" [(ngModel)]="AddRecord.CityId" [disabled]="disablefield"
+                       #cityId="ngModel" required  (ngModelChange)="GetSubCat()">
+                      <option value="">--Select City--</option>
+                      <option *ngFor="let city of CityList" [ngValue]="city.Cityid">{{city.CityName}}
+                      </option>
+                    </select>
+                    <div *ngIf="isInvalid && !cityId.valid && cityId.errors.required">
+                      <code>City is required</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput2">SubCategory<span  style="color:red"> *</span></label>
+                    <select id="sb" name="sb" class="form-control" [(ngModel)]="AddRecord.SubCategoryId" [disabled]="disablefield"
+                      placeholder="Select SubCategory" required="1" #SubCategoryId="ngModel">
+                      <div class="col-md-6"></div>
+                      <option value="">--Select SubCategory--</option>
+                      <option *ngFor="let sb of SubCategoryList" [ngValue]="sb.SubCategoryId">
+                        {{sb.SubcategoryName}}
+                      </option>
+                    </select>
+                    <div *ngIf="isInvalid && !SubCategoryId.valid && SubCategoryId.errors.required">
+                      <code>SubCatgory is required</code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput3">StartDate<span  style="color:red"> *</span></label>                   
+                      <p-calendar id="ssb" name="ssb" [(ngModel)]="AddRecord.StartDate" [showTime]="false" [disabled]="disablefield"></p-calendar>
+                  <div *ngIf="isInvalid && !StartDate.valid && StartDate.errors.required">
+                    <code>StartDate is required</code>
+                  </div>
+                </div>     
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <label for="projectinput4">EndDate<span  style="color:red"> *</span></label>
+                      <p-calendar  id="esb" name="esb" [(ngModel)]="AddRecord.EndDate" [showTime]="false" [disabled]="disablefield"></p-calendar>
+                  <div *ngIf="isInvalid && !EndDate.valid && EndDate.errors.required">
+                    <code>EndDate is required</code>
+                  </div>
+                </div>
+                </div>
+              </div>              
+            </div>
+            <div class="form-actions">
+              <button type="button" style="float: right;" class="btn btn-raised btn-warning mr-1" [disabled]="disablefield" (click)="CheckRecord(AddRecord)">
+                Add
+              </button>             
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="card" *ngIf="showsection">
+      <div class="card-header pb-2" >
+        <h4 class="card-title" id="basic-layout-colored-form-control">Add List</h4>
+      </div>          
+      <div class="card-content"  >
+          <div class="hr-nt">            
+            <div class="col-md-12">
+              <div class="form-group m-2 ">
+                <table class="table table-striped table-bordered">    
+                  <thead>    
+                      <tr>    
+                          <th>Action</th>    
+                          <!-- <th>Level</th>     -->
+                          <th>Slab Lower Limit</th>    
+                          <th>Slab Upper Limit</th>    
+                          <th>Target by Value</th>  
+                          <th>No of Brand</th> 
+                          <th>Select Brand</th> 
+                          <th>No Of LineItem</th>  
+                          <th>Type</th>                            
+                          <th>Item/Point</th>  
+                          <th></th>
+                      </tr>    
+                  </thead>    
+                  <tbody>    
+                       <tr *ngFor="let dynamic of dynamicArray; let i = index;">    
+                        <td (click)="deleteRow(i)">    
+                          <i class="fa fa-trash fa-2x"></i>    
+                        </td>    
+                          <!-- <td>    
+                            <select style="width: 120px;" class="form-control"  [(ngModel)]="dynamicArray[i].Level" name="select" required>
+                              <option value="undefined" disabled hidden>-Select-</option>
+                              <option value="L1">L1</option>
+                              <option value="L2">L2</option>
+                              <option value="L3">L3</option>
+                              <option value="L4">L4</option>
+                              <option value="L5">L5</option>
+                            </select>
+                          </td>     -->
+                          <td>  
+                            <input [(ngModel)]="dynamicArray[i].SlabLowerLimit" class="form-control" type="number" />    
+                          </td>    
+                          <td>    
+                            <input [(ngModel)]="dynamicArray[i].SlabUpperLimit" class="form-control" type="number"/>    
+                          </td>   
+                          <td>    
+                            <input [(ngModel)]="dynamicArray[i].TargetbyValue" class="form-control" type="number"/>    
+                          </td>  
+                          <td>    
+                            <input [(ngModel)]="dynamicArray[i].NoofBrand" class="form-control" type="number"/>    
+                          </td>  
+                          <td>
+                            <p-multiSelect  appendTo="body" [options]="BrandList" [(ngModel)]="dynamicArray[i].subCatTargetBrandLists"
+                              name="BrandName" optionLabel="SubsubcategoryName" >
+                            </p-multiSelect>
+                          </td>
+                          <td>    
+                            <input [(ngModel)]="dynamicArray[i].NoOfLineItem" class="form-control" type="number"/>    
+                          </td>  
+                          <td>    
+                            <select style="width: 120px;"  class="form-control"  [(ngModel)]="dynamicArray[i].Type" name="select" required >
+                              <option value="undefined" disabled hidden>-Select-</option>
+                              <option value="WalletPoint">Wallet Point</option>
+                              <option value="Gift">Gift</option>
+                              <option value="Item">Item</option>
+                            </select>   
+                          </td>   
+                          <td>    
+                            <input *ngIf="dynamicArray[i].Type === 'WalletPoint'" [(ngModel)]="dynamicArray[i].Value" class="form-control" type="text"/> 
+                            <p-multiSelect *ngIf="dynamicArray[i].Type === 'Gift'"  appendTo="body" [options]="RewardItemList" [(ngModel)]="dynamicArray[i].subCatTargetItemLists"
+                            name="itemInput" optionLabel="rName">
+                          </p-multiSelect>
+
+                          <p-multiSelect *ngIf="dynamicArray[i].Type === 'Item'"  appendTo="body" [options]="SubCatItemList" [(ngModel)]="dynamicArray[i].subCatTargetItemLists"
+                            name="itemInput2" optionLabel="itemname">
+                          </p-multiSelect>
+                          </td>
+                          <td *ngIf="dynamicArray[i].Type == 'Gift'||dynamicArray[i].Type == 'Item'" colspan="9"> 
+                            <button type="button" (click)="showBasicDialog(dynamicArray[i])" pButton icon="pi pi-external-link" label="AddQty"></button>
+                          </td>
+                      </tr>    
+                      <tr>    
+                        <td (click)="addRow(i)">    
+                          <i class="fa fa-plus fa-2x"></i>    
+                        </td>    
+                      </tr>    
+                  </tbody>    
+              </table>    
+                <button type="button" class="btn btn-raised btn-warning mr-1" style="float:right;" [disabled]="dynamicArray.length!=5"  (click)="postdatatable()">
+                Post
+              </button>
+              </div>
+            </div>         
+        </div>
+      </div>
+  </div>
+</div>
+
+<div  *ngIf="selectedelement">
+<p-dialog [header]="selectedelement.Type" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
+                            <p-table [value]="selectedelement.subCatTargetItemLists">
+                              <ng-template pTemplate="header">
+                                  <tr>
+                                      <th>Itemname</th>
+                                      <th>Qty</th>
+                                  </tr>
+                              </ng-template>
+                            <br>
+                              <ng-template pTemplate="body" let-modqty>
+                              <br>
+
+                                  <tr>
+                                      <td *ngIf="selectedelement.Type=='Gift'">{{modqty.rItem}}</td>
+                                      <td *ngIf="selectedelement.Type=='Item'"> {{modqty.itemname}}</td>
+                                      <input id="ids" name="ids" [(ngModel)]="modqty.qty" class="form-control" type="number"/>    
+                                  </tr>
+                              </ng-template>
+                          </p-table>
+<p-footer>
+  <button type="button" pButton icon="pi pi-check" (click)="displayBasic=false" label="Yes"></button>
+  <button type="button" pButton icon="pi pi-times" (click)="displayBasic=false" label="No" class="ui-button-secondary"></button>
+</p-footer>
+</p-dialog>
+</div>
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

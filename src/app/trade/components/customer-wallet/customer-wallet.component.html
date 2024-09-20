@@ -1,0 +1,132 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+<div class="my-2 d-flex justify-content-between">
+    <div class=" header">
+        <div class="col-12">
+            <h1 class="h11">Trade Wallet Details &nbsp;<i class="fa fa-get-pocket" aria-hidden="true"></i>
+            </h1>
+        </div>
+    </div>
+</div>
+
+<div class="row ">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="orderType">Global Search</label>
+                    <input type="text" id="Search" [(ngModel)]="customerFilterPage.SearchKeyWords"
+                        placeholder="Srarch SKcode or Customer name or mobile" name="orderType" class="form-control">
+                </div>
+            </div>
+      
+        <div class="col-md-1" style="padding-top: 30px">
+            <div class="form-group">
+                <button type="button" class="btn btn-raised btn-raised btn-primary" style="margin-left:10px"
+                    (click)="onSearch(customerFilterPage.SearchKeyWords)">
+                    Search
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="ui-fluid shadow p-3 m-2 bg-white rounded table table-hover">
+    <div class="position-relative">
+        <section>
+            <div class="my-2 d-flex justify-content-between">
+                
+                <div class="header">
+                    <p-table #dt [value]="lstData" [lazy]="true" [totalRecords]="totalRecords"
+                         [paginator]="true" [rows]="pageSize" dataKey="Id"
+                        [scrollable]="true" scrollHeight="65vh" text-align: center>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="text-align: center">SkCode</th>
+                                <th style="text-align: center">CustomerName</th>
+                                <th style="text-align: center">City</th>
+                                <th style="text-align: center">Mobile</th>
+                                <th style="text-align: center">CreatedDate</th>
+                                <th style="text-align: center">BuyerRating</th>
+                                <th style="text-align: center">SellerRating</th>
+                                <th style="text-align: center">Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                            <tr>
+                                <td style="text-align: center">{{rowData.SkCode}}</td>
+                                <td style="text-align: center">{{rowData.CustomerName}}</td>
+                                <td style="text-align: center">{{rowData.City}}</td>
+                                <td style="text-align: center">{{rowData.Mobile}}</td>
+                                <td style="text-align: center">{{rowData.CreatedDate | date}}</td>
+                                <td style="text-align: center">{{rowData.BuyerRating | number : '1.2-2'}}</td>
+                                <td style="text-align: center">{{rowData.SellerRating | number : '1.2-2'}}</td>
+                                <td style="text-align: center">
+                                    <button style="color: #009DA0" class="btn" (click)="Edit(rowData)">Details</button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div *ngIf="istrue==true">
+    <h4 style="padding-top: 20px; padding-left: 18px"><b>Wallet :</b></h4>
+    <table class="table table-responsive-sm text-center" *ngIf="customerWallet">
+        <thead>
+            <tr>
+                <th>Customer Id</th>
+                <th>Wallet Amount</th>
+                <th>CreatedDate</th>
+                <th>Add Points</th>
+                <th>Comments  <span style="color:red"> *</span> </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{customerWallet.CustomerId}}</td>
+                <td>{{customerWallet.CurrentAmount}}</td>
+                <td>{{customerWallet.CreatedDate | date}}</td>
+                <td>
+                    <div>
+                        <input type="number" name="walletAmount" class="form-control" id="walletAmount"
+                            [(ngModel)]="customerWallet.Walletpoints" placeholder="Wallet Points">
+                    </div>
+                </td>
+                <td>                 
+                    <input type="text" name="Comments" class="form-control" id="Comments"
+                        [(ngModel)]="customerWallet.Comments" placeholder="Add Comments">                       
+                </td>
+                <td>
+                    <button style="color: #009DA0" class="btn" (click)="addAmount(customerWallet)">Add Wallet</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <h4 style="padding-top: 20px; padding-left: 18px"><b>Wallet History:</b></h4>
+    <table class="table table-responsive-sm text-center" *ngIf="CustomerWalletHistory">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Wallet Amount</th>
+                <th>Comments</th>
+                <th>CreatedDate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let walletHistory of CustomerWalletHistory; let i=index;">
+                <td>{{i+1}}</td>
+                <td>{{walletHistory.Amount}}</td>
+                <td>{{walletHistory.Event}}</td>
+                <td>{{walletHistory.CreatedDate | date}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>

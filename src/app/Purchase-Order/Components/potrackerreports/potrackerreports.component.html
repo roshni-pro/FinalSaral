@@ -1,0 +1,332 @@
+<p-toast></p-toast>
+
+<div class="row m-0">
+    <div class="col-12">
+        <!-- Kick start -->
+        <div id="kick-start" class="kick-start card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">PO Dashboard</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-content">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- <div class="col-lg-3">
+                            <div class="form-group">
+
+                                <div>
+                                    <label for="orderType">WareHouse</label>
+                                    <p-multiSelect id="warehouseids" name="warehouseids" [options]="warehouseList"
+                                        [(ngModel)]="filterdashboardsearch.WarehouseId" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName"></p-multiSelect>
+                                </div>
+                            </div>
+                        </div> -->
+
+
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Warehouse:</label>
+                                <div>
+                                    <select id="desg" name="desg" class="form-control"
+                                        [(ngModel)]="filterdashboardsearch.WarehouseId">
+                                        <option [value]="null">
+                                            -- warehouse --
+                                        </option>
+                                        <option *ngFor="let at of warehouseList" [value]="at.WarehouseId">
+                                            {{ at.WarehouseName }}
+                                        </option>
+                                    </select>
+                                    <!-- <p-multiSelect id="warehouseids" name="warehouseids" [options]="warehouseList"
+                                        [(ngModel)]="filterdashboardsearch.WarehouseId" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="WarehouseName"></p-multiSelect> -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Supplier:</label>
+                                <div>
+                                    <!-- <p-multiSelect id="supplierids" name="SupplierId" [options]="sellerlist"
+                                        [(ngModel)]="filterdashboardsearch.SupplierId" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="Name"></p-multiSelect> -->
+
+                                    <!-- <select id="desg" name="desg" class="form-control"
+                                        [(ngModel)]="filterdashboardsearch.SupplierId">
+                                        <option [value]="null">
+                                            -- supplier --
+                                        </option>
+                                        <option *ngFor="let at of sellerlist" [value]="at.SupplierId">
+                                            {{ at.Name }}
+                                        </option>
+                                    </select> -->
+
+                                    <p-autoComplete [suggestions]="sellerlist" (completeMethod)="getSeLlerList($event)"
+                                        field="Name" [size]="15" (onSelect)="setSeller($event)"
+                                        placeholder="enter at least 3 chars" [minLength]="3" name="Names" id="sellerid">
+                                    </p-autoComplete>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label> Buyer:</label>
+                                <div>
+                                    <!-- <p-multiSelect id="supplierids" name="SupplierId" [options]="sellerlist"
+                                        [(ngModel)]="filterdashboardsearch.SupplierId" #whouses="ngModel"
+                                        [panelStyle]="{minWidth:'25em'}" optionLabel="Name"></p-multiSelect> -->
+
+                                    <select id="d43esg" name="daaaesg" class="form-control"
+                                        [(ngModel)]="filterdashboardsearch.BuyerId">
+                                        <option [value]="null">
+                                            -- buyer --
+                                        </option>
+                                        <option *ngFor="let at of buyersList" [value]="at.PeopleID">
+                                            {{ at.DisplayName }}
+                                        </option>
+                                    </select>
+
+                                    <!-- <p-autoComplete [suggestions]="sellerlist" (completeMethod)="getSeLlerList($event)"
+                                        field="Name" [size]="30" (onSelect)="setSeller($event)"
+                                        placeholder="enter at least 3 chars" [minLength]="3" name="Names"
+                                        id="sellerid">
+                                    </p-autoComplete> -->
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="form-group">
+
+                                <div>
+                                    <label for="startdate">Start Date: </label>
+                                    <p-calendar [showIcon]="true" [(ngModel)]="filterdashboardsearch.StartDate"
+                                        name="startDate" required="1" [readonlyInput]="true" #dateRangeListInput>
+                                        <!-- {{filterdashboardsearch.StartDate | date: 'dd/MM/yyyy'}} -->
+                                    </p-calendar>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label> End Date:</label>
+                                <div>
+                                    <p-calendar [showIcon]="true" [(ngModel)]="filterdashboardsearch.EndDate"
+                                        name="EndDate" required="1" [readonlyInput]="true" required #dateRangeListInput>
+                                        <!-- {{filterdashboardsearch.EndDate | date: 'dd/MM/yyyy'}} -->
+                                    </p-calendar>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- <div class="col-lg-1">
+                            <div class="form-group">
+                                <label> Search</label>
+                                <div>
+                                    <button type="button" pButton class="btn btn-raised btn-raised btn-primary c1"
+                                        (click)="GetPODashboardData();" label="Search"></button>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Export PO Level Tracker : </label>
+                                <div>
+                                    <button type="button" class="btn btn-raised btn-success"
+                                        (click)="exportPoLevelToExcel('polevel');">
+                                        Export PO Level Tracker
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Export Item Level Tracker : </label>
+                                <div>
+                                    <button type="button" class="btn btn-raised btn-success"
+                                        (click)="exportItemLevelToExcel('itemlevel');">
+                                        Export Item Level Tracker
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group">
+                                <label> Reset:</label>
+                                <div>
+                                    <button type="button" pButton
+                                        (click)="initialize(); filterdashboardsearch.WarehouseId = this.warehouseList;"
+                                        label="Reset"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--/ Kick start -->
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-lg-4 rideCardSection" *ngIf="dashboarddata">
+        <div class="card greenCard">
+            <h5>GRN Done</h5>
+            <h2>{{dashboarddata.GRDoneAmount | number: '1.0-0'}}</h2>
+        </div>
+        <div class="card greenCard">
+            <h5>IRN Done</h5>
+            <h2>{{dashboarddata.IRDOneAmount | number: '1.0-0'}}</h2>
+        </div>
+        <div class="card greenCard">
+            <h5>Total Supplier Payment</h5>
+            <h2>{{dashboarddata.SupplierAmount | number: '1.0-0'}}</h2>
+        </div>
+    </div>
+    <div class="col-lg-8  rideCardSection" *ngIf="dashboarddata">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card redCard">
+                    <h5>Total POs created</h5>
+                    <ul>
+                        <li>
+                            <h5>No. of POs : {{dashboarddata.CreatedPo | number: '1.0-0'}}</h5>
+                        </li>
+                        <li>
+                            <h5> Value of POs :{{dashboarddata.CreatedValuePo | number: '1.0-0'}}</h5>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card orgCard">
+                    <h5>Total Active Pos</h5>
+                    <ul>
+                        <li>
+                            <h5>No. of POs : {{dashboarddata.ActivePo | number: '1.0-0'}}</h5>
+                        </li>
+                        <li>
+                            <h5> Value of POs :{{dashboarddata.ActivePoValue | number: '1.0-0'}}</h5>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card yellowCard">
+                    <h5>Total Closed Payment</h5>
+                    <ul>
+                        <li>
+                            <h5>No. of POs : {{dashboarddata.ClosedPo | number: '1.0-0'}}</h5>
+                        </li>
+                        <li>
+                            <h5> Value of POs :{{dashboarddata.ClosedPoValue | number: '1.0-0'}}</h5>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card redCard">
+                    <h5>PO In Transit</h5>
+                    <ul>
+                        <li>
+                            <h5>No. of POs : {{dashboarddata.TransitPo | number: '1.0-0'}}</h5>
+                        </li>
+                        <li>
+                            <h5> Value of POs :{{dashboarddata.TransitPoValue | number: '1.0-0'}}</h5>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card orgCard">
+                    <h5>Expired Po</h5>
+                    <ul>
+                        <li>
+                            <!-- <h4>No. of POs : {{dashboarddata.TransitPo | number: '1.0-0'}}</h4> -->
+                            <h5>No. of POs : {{dashboarddata.PoExpireCount | number: '1.0-0'}}</h5>
+                        </li>
+                        <li>
+                            <h5>Value. of POs : {{dashboarddata.PoExpireAmount | number: '1.0-0'}}</h5>
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card redCard">
+                    <h5>Recieved POs</h5>
+                    <ul>
+                        <li>
+                            <!-- <h4>No. of POs : {{dashboarddata.TransitPo | number: '1.0-0'}}</h4> -->
+                            <h5>No. of POs : {{dashboarddata.RecievedNoPO | number: '1.0-0'}}</h5>
+
+                        </li>
+                        <li>
+                            <h5>Value. of POs : {{dashboarddata.RecievedPOAmount | number: '1.0-0'}}</h5>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card orgCard">
+                    <h5>GRNI </h5>
+                    <ul>
+                        <li>
+                            <!-- <h4>No. of POs : {{dashboarddata.TransitPo | number: '1.0-0'}}</h4> -->
+                            <h5>No. of POs : {{dashboarddata.GRNoOfPo | number: '1.0-0'}}</h5>
+                        </li>
+                        <li>
+                            <h5>Value of POs : {{dashboarddata.GRAmount | number: '1.0-0'}}</h5>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card yellowCard">
+                    <h5>IR Pending from Buyer Side</h5>
+                    <ul>
+                        <li>
+                            <!-- <h4>No. of POs : {{dashboarddata.TransitPo | number: '1.0-0'}}</h4> -->
+                            <h5>No. of POs : {{dashboarddata.IrPendingPO | number: '1.0-0'}}</h5>
+                        </li>
+                        <li>
+                            <h5>Value. of POs : {{dashboarddata.IrPendingAmount | number: '1.0-0'}}</h5>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card redCard" style="height: 17%;">
+                    <h5>Unreconciled Advances</h5>
+                    <ul>
+
+                        <li>
+                            <h5>Amount : {{dashboarddata.UnreconciledPo | number: '1.0-0'}}</h5>
+                        </li>
+                        <h5></h5>
+                    </ul>
+                </div>
+                <div class="card orgCard">
+                    <h5>Overdue POs</h5>
+                    <ul>
+                        <li>
+                            <!-- <h4>No. of POs : {{dashboarddata.TransitPo | number: '1.0-0'}}</h4> -->
+                            <h5>No. of POs : {{dashboarddata.OverduePo | number: '1.0-0'}}</h5>
+                        </li>
+                        <li>
+                            <h5>Value. of POs : {{dashboarddata.OverdueAmountPo | number: '1.0-0'}}</h5>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<br />
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

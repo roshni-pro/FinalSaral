@@ -1,0 +1,146 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="my-2 d-flex justify-content-between">
+            <div class="header">
+                <h3 class="m-2"><b>Zila  Pincode</b></h3>
+            </div>
+        </div>
+    </div>
+    
+    <!-- <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="row m-2"> -->
+                    
+                    <!-- <div class="col-4">
+                        <label>Search Pin-Code</label>
+                        <input type="text" class="form-control" name="skipName" autocomplete="off"
+                            (keypress)="numberOnly($event)" placeholder="Pincode" [(ngModel)]="searchPinCode"
+                            maxlength="6" max="9" 
+                            
+                            [disabled]="!allPincodeList" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                            type="text" class="form-control"
+                            
+                            />
+                    </div> -->
+                    
+                    <!-- <div class="col-2">
+                        <button type="button" style="margin-top: 28px;" (click)="searchByPincode()" class="btn btn-primary">Search</button>
+                    </div> -->
+                    
+                    <!-- <div class="col-2">
+                        <button type="button" style="margin-top: 28px;" (click)="openAddDialogBox()"
+                            class="btn btn-primary">Add</button>
+                    </div> -->
+                
+                <!-- </div>
+            </div>
+        </div>
+    </div> -->
+    
+    <div class="row mt-2">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="row m-2">
+                    <div class="col-4">
+                        <label>Search Pin-Code</label>
+                        <input type="text" class="form-control" name="skipName" autocomplete="off"
+                            (keypress)="numberOnly($event)" placeholder="Pincode" [(ngModel)]="searchPinCode"
+                            maxlength="6" max="9" 
+                            
+                            [disabled]="!allPincodeList" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                            type="text" class="form-control"
+                            
+                            />
+                    </div>
+                    <!-- <div class="col-2">
+                        <button type="button" style="margin-top: 28px;" (click)="searchByPincode()" class="btn btn-primary">Search</button>
+                    </div> -->
+                    <div class="col-2">
+                        <button type="button" style="margin-top: 28px;" (click)="openAddDialogBox()"
+                            class="btn btn-primary">Add New</button>
+                    </div>
+                </div>
+                <div class="row m-2 text-center">
+                    <p-table #dt [paginator]="true" [value]="allPincodeList" [rows]="10" [scrollable]="false"
+                        scrollHeight="70vh"
+                        [globalFilterFields]="['PinCode']"
+                        >
+                        <ng-template pTemplate="header">
+                            <tr >
+                                <th>Warehouse</th>
+                                <th>Cluster</th>
+                                <th>Pin Code</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-trade let-rowIndex="rowIndex">
+                            <tr>
+                                <td>{{trade.WarehoueName}}</td>
+                                <td>{{trade.ClusterName}}</td>
+                                <td>{{trade.PinCode}}</td>
+                                <td><button class="btn btn-primary" (click)="openDeleteDialogBox(trade.id, trade.PinCode)" type="button">Delete</button></td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog header="Add Pincode" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="openAddDialog" [style]="{width: '60vw', left: '440px'}" [draggable]="false">
+
+    <!-- <section id="tax-details"> -->
+    <!-- <div > -->
+
+    <div class="row m-2">
+        <div class="col-4">
+            <label>Warehouse</label>
+        </div>
+        <div class="col-8">
+            <!-- <select class="form-control" [(ngModel)]="selectedWarehouse" (change)="getClustersByWarehouse($event.target)">
+                <option value="0" selected disabled>Select Warehouse</option>
+                <option name="title.WarehouseName" *ngFor="let title of allWarehouses" [value]="title">
+                    {{title.WarehouseName}}
+                </option>
+            </select> -->
+            <p-dropdown [options]="allWarehouses" optionLabel="WarehouseName" (onChange)="getClustersByWarehouse()" [(ngModel)]="selectedWarehouse"></p-dropdown>
+
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col-4">
+            <label>Cluster</label>
+        </div>
+        <div class="col-8">
+            <p-dropdown [disabled]="!isClusterAvailbale" [options]="allCluster" optionLabel="ClusterName" [(ngModel)]="selectedCluster"></p-dropdown>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col-4">
+            <label>Pin Code</label>
+        </div>
+        <div class="col-8">
+            <input type="text" class="form-control" name="skipName" autocomplete="off" (keypress)="numberOnly($event)"
+                placeholder="Pincode" [(ngModel)]="addPinCode" maxlength="6" max="4" />
+        </div>
+    </div>
+    <div class="row m-2">
+        <button class="btn btn-primary mx-2" (click)="savePincode()">Save</button>&nbsp;
+        <button class="btn btn-primary" (click)="closeAddDialogBox()">Close</button>
+    </div>
+
+    <!-- </div> -->
+    <!-- </section> -->
+
+</p-dialog>
+
+
+<p-dialog  header="Confirmation" [modal]="true" appendTo="body" positionTop="50vh" [(visible)]="openDeleteDialog" [style]="{width: '60vw', left: '440px'}" [draggable]="false">
+    <h5>Do you want to delete this PinCode - {{deletePincodeConfirmation}} </h5>
+    <div class="row m-2">
+        <button class="btn btn-primary mx-2" (click)="deletePincode()">Yes</button>&nbsp;
+        <button class="btn btn-primary" (click)="closeDeleteDialogBox()">No</button>
+    </div>
+</p-dialog>

@@ -1,0 +1,243 @@
+
+<div class="card tp common-padding">
+    <div>
+
+
+            <div  class="row">
+                <div class="col-6">
+                    <div style="margin-left: 10px;" *ngIf="offerInformationDetails" > <b>Sanction Amound / Repayment Schedule </b></div>
+                </div>
+                <div class="col-6">
+                    <div class="text-right">
+                        <button type="submit" (click)="Disbursementdata()" class="btn btn-raised btn-danger" >
+                            Show Disbursement data
+                          </button>
+                          </div>
+                </div>
+            </div>  <br>
+
+                      <!-- Table Format Start-->
+
+   <div *ngIf="offerInformationData" class="col-12">
+    <p-table [value]="offerInformationData"  [tableStyle]="{ 'min-width': '50rem' }"  text-align:center [scrollable]="true" 
+    scrollDirection="horizontal" scrollDirection="vertical"  >
+    <ng-template pTemplate="header" let-items>
+        <tr>
+            <!-- <th >Loan Amount </th> -->
+            <th >Sanction Amount</th>
+            <th >Total Interest</th>
+            <th >Total Interest rate</th>
+            <th >Tenure</th>
+            <th >Emi Count</th>
+            <th >EMI Amount</th>
+            <th >Loan Insurance Amount</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData >
+        <tr>
+            <!-- <td >{{rowData.loan_amount}}</td> -->
+            <td >{{rowData.SanctionAmount}}</td>
+            <td >{{rowData.loan_int_amt}}</td>
+            <td >{{rowData.loan_int_rate}}</td>
+            <td >{{rowData.tenure}}</td>
+            <td >{{rowData.emi_count}}</td>
+            <td >{{rowData.emi_amount}}</td>
+            <td >{{rowData.Loan_insurance_amount}}</td>
+        </tr>
+    </ng-template>
+</p-table>
+</div>
+<!-- Table Format End-->
+
+
+            <!-- <div *ngIf="offerInformationDetails" style="margin-left: 36px;" class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp"> Sanction Amount </div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{offerInformationDetails?.loan_amount}}</div>
+                </div>
+            </div>
+            <div *ngIf="offerInformationDetails" style="margin-left: 36px;" class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp"> Total Interest/ Total Interest rate </div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{offerInformationDetails?.loan_int_amt}} / {{offerInformationDetails?.loan_int_rate}}</div>
+                </div>
+            </div>
+            <div *ngIf="offerInformationDetails" style="margin-left: 36px;" class="row">
+                <div class="col-md-3 col-sm-3 col-12">
+                    <div class="ml cp"> EMI Amount
+                    </div>
+                </div>
+                <div class="col-md-9 col-sm-9 col-12">
+                    <div class="ml cl">{{offerInformationDetails?.emi_amount}}</div>
+                </div>
+            </div> -->
+            <hr>
+            <br>
+            <!-- ///////////////////////////////// -->
+    <div class="row">
+        <div   class="col-4">
+            <div class="row">
+                <div  class="col-6">
+                    <div class="ml cp" style="margin-left: 10px;"><b>  Loan Status: </b></div>
+                </div>
+                <div class="col-6">
+                    <div class="ml cl text-left" style="color:blue"> {{offerInformationDetails?.LoanStatus}}</div>
+                </div>
+            </div>
+            <br>
+            <div style="margin-left: 10px;">
+            
+                <p-dropdown [disabled]="offerInformationDetails==null || offerInformationDetails?.LoanStatus!='open'"  [options]="statuslist"  placeholder="--Select a stauts--" optionLabel="name" [(ngModel)]="selectedstatus"></p-dropdown>
+            </div>
+        </div>
+        <div class="col-4 mt-3">
+            <div >
+                <br>
+                <button type="submit" [disabled]="offerInformationDetails==null ||  offerInformationDetails?.LoanStatus!='open'"   (click)="kycapproval()" class="btn btn-raised btn-danger" >
+                    change loan status kyc approval
+                  </button>
+            </div>
+        </div>
+    </div>
+       <!-- ///////////////////////////////// -->
+        <div class="row" >
+            <div class="col-md-3 col-sm-3 col-12">
+                <div class="ml cp"></div>
+            </div>
+            <div class="col-md-9 col-sm-9 col-12 text-right">
+        </div>
+        </div> 
+        <div class="row">
+            <div class="col-12">
+                <div style="margin-left: 10px;" class="ml cp"> <b> Repayment Schedule Information</b></div>
+            </div>
+        </div><br>
+        <div class="row">
+            <div *ngIf="RepaymentScheduleDataList" class="col-12">
+                <p-table [value]="RepaymentScheduleDataList"  [tableStyle]="{ 'min-width': '50rem' }"  text-align:center [scrollable]="true" 
+                scrollDirection="horizontal" scrollDirection="vertical"  >
+                <ng-template pTemplate="header" let-items>
+                    <tr>
+                        <th style="width: 20%;">repay_schedule_id</th>
+                        <th style="width: 20%; text-align: center;">company_id</th>
+                        <th style="width: 20%;">product_id</th>
+                        <th style="width: 20%; text-align: center;">emi_no</th>
+                        <th style="width: 20%; text-align: center;">due_date </th>
+                        <th style="width: 20%;">emi_amount</th>
+                        <th style="width: 20%;">prin</th>
+                        <th style="width: 20%;">int_amount</th>
+                        <th style="width: 20%;"> principal_bal</th>
+                        <th style="width: 20%;">principal_outstanding</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData >
+                    <tr>
+                        <td >{{rowData.repay_schedule_id}}</td>
+                        <td >  {{rowData.company_id}}</td>
+                        <td >{{rowData.product_id}}</td>
+                        <td >{{rowData.emi_no}}</td>
+                        <td >{{rowData.due_date | date:'shortDate'}}</td>
+                        <td >{{rowData.emi_amount}}</td>
+                        <td >{{rowData.prin}}</td>
+                        <td >{{rowData.int_amount }}</td>
+                        <td >{{rowData.principal_bal}}</td>
+                        <td >{{rowData.principal_outstanding}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            </div>
+        </div>
+        <br>
+
+
+    </div>
+</div>
+<!-- width: '50%',height:'54%'  -->
+<p-dialog [(visible)]="isopenPopup" [resizable]="false" [modal]="true" appendTo="body" positionTop="100"
+[style]="{width: '65rem',height:'20rem' , overflow: 'auto'}"> 
+<p-header>Disbursement Data</p-header>
+
+<p-table [value]="Disbursementdetails"  [tableStyle]="{ 'min-width': '50rem' }"  text-align:center [scrollable]="true" 
+scrollDirection="horizontal" scrollDirection="vertical"  >
+<ng-template pTemplate="header" let-items>
+    <tr>
+        <th >loan_id</th>
+        <th >partner_loan_id</th>
+        <th >status_code</th>
+        <th >net_disbur_amt</th>
+        <th >utr_number</th>
+        <th >utr_date_time</th>
+    </tr>
+</ng-template>
+<ng-template pTemplate="body" let-rowData >
+    <tr>
+        <td >{{rowData.loan_id}}</td>
+        <td >  {{rowData.partner_loan_id}}</td>
+        <td >{{rowData.status_code}}</td>
+        <td >{{rowData.net_disbur_amt}}</td>
+        <td >{{rowData.utr_number}}</td>
+        <td >{{rowData.utr_date_time}}</td>
+    </tr>
+</ng-template>
+</p-table>
+
+<!-- <div class="ui-fluid mt-4">
+    <div  style="margin-left: 36px; " class="row">
+        <div class="col-6">
+            <div class="ml cp"><b>Loan Id</b> </div>
+        </div>
+        <div class="col-6">
+            <div class="ml cl">{{Disbursementdetails?.loan_id}}</div>
+        </div>
+    </div> <br>
+    <div  style="margin-left: 36px;" class="row">
+        <div class="col-6">
+            <div class="ml cp"> <b>Partner Loan Id </b> </div>
+        </div>
+        <div class="col-6">
+            <div class="ml cl">{{Disbursementdetails?.partner_loan_id}}</div>
+        </div>
+    </div> <br>
+    <div  style="margin-left: 36px;" class="row">
+        <div class="col-6">
+            <div class="ml cp"><b> Status Code </b> </div>
+        </div>
+        <div class="col-6">
+            <div class="ml cl">{{Disbursementdetails?.status_code}}</div>
+        </div>
+    </div> <br>
+    <div  style="margin-left: 36px;" class="row">
+        <div class="col-6">
+            <div class="ml cp"><b> Net Disbur Amt </b> </div>
+        </div>
+        <div class="col-6">
+            <div class="ml cl">{{Disbursementdetails?.net_disbur_amt}}</div>
+        </div>
+    </div> <br>
+    <div  style="margin-left: 36px;" class="row">
+        <div class="col-6">
+            <div class="ml cp"><b> Utr Number </b> </div>
+        </div>
+        <div class="col-6">
+            <div class="ml cl">{{Disbursementdetails?.utr_number}}</div>
+        </div>
+    </div> <br>
+    <div  style="margin-left: 36px;" class="row">
+        <div class="col-6">
+            <div class="ml cp"> <b>Utr Date Time </b> </div>
+        </div>
+        <div class="col-6">
+            <div class="ml cl">{{Disbursementdetails?.utr_date_time}}</div>
+        </div>
+    </div>
+</div> -->
+</p-dialog>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

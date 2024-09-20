@@ -1,0 +1,247 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+
+    <div class="my-2 d-flex justify-content-between align-items-center">
+        <div class="header">
+          <h3 class="m-2">Pending Order</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid ui-fluid shadow p-3 mb-3 bg-white rounded table table-hover">
+        <div class="row">
+          <div class="col-12">
+              <div class="row">
+                    <div class="col-md-3 mt-2">
+                        <label style="font-size: medium;" class="form-label">Zone</label>
+                        <p-dropdown [options]="warehouse" name="WarehouseName"  
+                        placeholder="Select Warehouse" [dataKey]="warehouseId"  optionLabel="WarehouseName" appendTo="body" 
+                        (onChange)="getWarehouseId($event)"></p-dropdown>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                      <label style="font-size: medium;" class="form-label">Order Id</label>
+                      <input type="text" class="form-control" placeholder="search" [(ngModel)]="order_id">
+                    </div>
+                    <div class="col-md-3 mt-2">
+                      <label style="font-size: medium;" class="form-label">Sk Code</label>
+                      <input type="text" class="form-control" placeholder="search" [(ngModel)]="sk_code">
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label style="font-size: medium;" class="form-label">Shop Name</label>
+                        <input type="text" class="form-control" placeholder="search" [(ngModel)]="shop_name">
+                    </div>
+               </div>
+               <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                      <div class="col-md-3  mt-2">
+                          <label style="font-size: medium;" class="form-label">Mobile</label>
+                          <input type="text" class="form-control" placeholder="search" [(ngModel)]="mobile">
+                      </div>
+                        <div class="col-md-3  mt-2">
+                          <label style="font-size: medium;" class="form-label">Select Date Range</label>
+                          <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" inputId="range" showTime="true" [hourFormat]="12" [showIcon]="true" [style]="{'width': '100%','display': 'inline-flex','height':'34px'}" >
+                            </p-calendar>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                  <input type="button" value="Search" [disabled]="!(order_id || sk_code || shop_name || mobile || rangeDates)"  (click)="searchdata()" class="btn btn-raised btn-primary" style="margin-top: 27px;">&nbsp;
+                  <input type="button" [disabled]="!wareHouseRecord" (click)="excelFile()" value="Export" class="btn btn-raised btn-primary" style="margin-top: 27px;">&nbsp;
+                  <input type="button" [disabled]="!wareHouseRecord" value="Refresh" (click)="refresh()" class="btn btn-raised btn-primary" style="margin-top: 27px;">&nbsp;
+                  <button class="btn btn-raised btn-primary" style="margin-top: 27px;" [disabled]="!wareHouseRecord"
+                    printTitle="ShopKirana - Empowering Retailers" printSectionId="print-section" ngxPrint>Print Invoice</button>
+                </div>
+            </div>
+           </div>
+        </div>
+    </div>              
+   
+    <div class="container-fluid ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover"> 
+          <div>
+            <p-table #dt [value]="wareHouseRecord" [paginator]="true" [rows]="50" dataKey="PeopleID"
+                [scrollable]="true" [lazy]="true" [totalRecords]="totalRecords" (onLazyLoad)="load($event)" scrollHeight="350vh" 
+                text-align: center>
+                
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <!-- <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="text-align: center">
+                            {{col.header}}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th> -->
+                        <th>S no</th>
+                        <th>Order No</th>
+                        <th>Time Left<br>(HH:MM:SS)</th>
+                        <th>Sales Person</th>
+                        <th>SK Code</th>
+                        <th>Shop Name</th>
+                        <th>Customer Name</th>
+                        <th>Warehouse Name</th>
+                        <th>Customer Phone</th>
+                        <th>Cluster Name</th>
+                        <th>Order Date</th>
+                        <th>Status</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-wareHouseRecord let-columns="columns"  let-rowIndex="rowIndex">
+                        <tr>
+                            <td style="text-align: left">{{rowIndex+1}}</td>
+                            <td style="text-align: left">{{wareHouseRecord.OrderId}}</td>
+                            <td style="text-align: left">
+                            <span *ngIf="wareHouseRecord.Status=='Pending' || wareHouseRecord.Status=='Issued' || wareHouseRecord.Status=='Shipped' ||wareHouseRecord.Status=='Delivery Redispatch' || wareHouseRecord.Status=='Ready to Dispatch'" >
+                                <ng-container *ngIf="GetOrderTime(wareHouseRecord.RemainingTime).hours > 100 else second">
+                                    <div class="label BOLD" [innerHtml]="GetOrderTime(wareHouseRecord.RemainingTime).template"></div>
+                                </ng-container>
+                                <ng-template #second>
+                                    <ng-container *ngIf="(GetOrderTime(wareHouseRecord.RemainingTime).hours >= 72 && GetOrderTime(wareHouseRecord.RemainingTime).hours <= 100) else third">
+                                        <div class="label Fail" [innerHtml]="GetOrderTime(wareHouseRecord.RemainingTime).template"></div>
+                                    </ng-container>
+                                </ng-template>
+                                <ng-template #third>
+                                    <ng-container *ngIf="(GetOrderTime(wareHouseRecord.RemainingTime).hours >= 48 && GetOrderTime(wareHouseRecord.RemainingTime).hours <= 72) else fourth">
+                                        <div class="label Miss" [innerHtml]="GetOrderTime(wareHouseRecord.RemainingTime).template"></div>
+                                    </ng-container>
+                                </ng-template>
+                                <ng-template #fourth>
+                                    <ng-container *ngIf="(GetOrderTime(wareHouseRecord.RemainingTime).hours >= 0 && GetOrderTime(wareHouseRecord.RemainingTime).hours <= 48)">
+                                        <div class="label Hit" [innerHtml]="GetOrderTime(wareHouseRecord.RemainingTime).template"></div>
+                                    </ng-container>
+                                </ng-template>
+                                
+                                
+                            </span>
+                            </td>
+                            <td style="text-align: left">{{wareHouseRecord.SalesPerson}}</td>
+                            <td style="text-align: left">{{wareHouseRecord.Skcode}}</td>
+                            <td style="text-align: left">{{wareHouseRecord.ShopName}}</td>
+                            <td style="text-align: left">{{wareHouseRecord.CustomerName}}</td>
+                            <td style="text-align: left">{{wareHouseRecord.WarehouseName}}</td>
+                            <td style="text-align: left">{{wareHouseRecord.Customerphonenum}}</td>
+                            <td style="text-align: left">{{wareHouseRecord.ClusterName}}</td>
+                            <td style="text-align: left">{{wareHouseRecord.CreatedDate}} 
+                                <span style="font-weight: bold;">ETA Date:-{{wareHouseRecord.Deliverydate}}</span></td>
+                            <td style="text-align: left" [ngClass]="wareHouseRecord.Status">{{wareHouseRecord.Status}}</td>
+                           
+                    </tr>
+                </ng-template>
+            </p-table>
+         </div>
+     </div>
+          
+      
+<!-- <p-blockUI [blocked]="blocked"></p-blockUI> -->
+<!-- <p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner> -->
+
+    
+    <!-- generate invoice start -->
+    <div [hidden]="true" id="print-section"> 
+            <div *ngFor="let item of wareHouseRecord" class="ng-scope">
+                <div class="containers">
+                    <div class="row contact-info">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <br><hr>
+                            <span style="float:right">
+                                <strong>Call : </strong>  0731-2386122
+                            </span>
+                            <hr>
+                        </div>
+                    </div><br><br>
+                    <div class="row pad-top-botm">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="col-lg-4 col-md-4 col-sm-5" style="float:left">
+                                <img src="../../../../assets/img/ShopKiranaLogo.png" style="width:50%">
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-sm-5" style="float:right!important;">
+                                <strong>   ShopKirana E Trading Pvt. Ltd.</strong><br>
+                                <span>TIN Number : </span><u>23489146465</u><br>
+                                <span>Address :</span> 08 Scheme no 71, Sector-D, <br>
+                                Near Vedant Hospital, Indore, MP
+                            </div>
+                        </div>
+                    </div><br><br><br><br><br><br>
+                    <hr>
+                    <div class="row pad-top-botm client-info" style="height:170px;">
+                        <div class="col-lg-12 col-md-12 col-sm-12" style="width:100% !important">
+                            <div style="width:65%;text-align:left;float:left;">
+                                <h4>  <strong style="font-size: 23px;">Client Information</strong></h4><br>
+                                <b>Shop Name :</b>
+                                <strong style="font-size: 12px; padding-left:10px!important">{{item.ShopName}}</strong>
+                                <br>
+                                <b>SK Code :</b>
+                                <strong style="font-size: 17px; padding-left:10px!important"> {{item.Skcode}}</strong>
+                                <br>
+                                <b>Customer Name :</b>
+                                <strong style="font-size: 17px; padding-left:10px!important"> {{item.CustomerName}}</strong>
+                                <br>
+                                <b>Call :</b>
+                                <strong style="padding-left:10px!important">{{item.Customerphonenum}}</strong>
+                                <br>
+                            </div>
+                            <div style="width:35%;text-align:left;float:right;">
+                                <h4><strong style="font-size: 23px;">Payment Details </strong></h4><br>
+                                <b class="col-md-3">Invoice Id :</b>
+                                <strong style="padding-left:10px!important">{{item.invoice_no}}</strong>
+                                <br>
+                                <b class="col-md-3">Bill Amount :</b>
+                                <strong style="font-size: 18px; padding-left:10px!important;">  {{item.GrossAmount}}&nbsp; &#x20b9;</strong>
+                                <br>
+                                <b class="col-md-3">Bill Date :</b>
+                                <span style="padding-left:10px!important">{{item.UpdatedDate}}</span>
+                            </div>
+                        </div>
+                    </div><br>
+                    <div class="col-lg-12 col-md-12 col-sm-12" style="padding-bottom:30px!important;padding-left:1px!important;font-size: 18px;">
+                        <b>Address :</b><span style="padding-left:30px;" class="ng-binding">{{item.BillingAddress}}</span>
+                        <br>
+                    </div>
+                    <div class="row">
+                        <div>
+                            <table style="font-size:12px!important; border: 1px solid black; width: 100%;border-collapse: collapse;">
+                              <thead>
+                                <tr style="height: 40px!important;">
+                                  <th style="border: 1px solid black;">S_No</th>
+                                  <th style="border: 1px solid black;">Item Name.</th>
+                                  <th style="border: 1px solid black;">MRP.</th>
+                                  <th style="border: 1px solid black;">Unit Price.</th>
+                                  <th style="border: 1px solid black;">MOQ</th>
+                                  <th style="border: 1px solid black;">Peti/Outer/Qty.</th>
+                                  <th style="border: 1px solid black;">Total Qty(pcs)</th>
+                                  <th style="border: 1px solid black;">Tax %</th>
+                                  <th style="border: 1px solid black;">Total Amt. inc Tax</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr style="height: 40px!important;" *ngFor="let order of item.orderDetails; let i= index;">
+                                    <td style="border: 1px solid black; padding-left: 8px;">{{i+1}}</td>
+                                    <td style="border: 1px solid black; padding-left: 8px;">{{order.SellingUnitName}}</td>
+                                    <td style="border: 1px solid black; padding-left: 8px;">{{order.price}}</td>
+                                    <td style="border: 1px solid black; padding-left: 8px;">{{order.UnitPrice}}</td>
+                                    <td style="border: 1px solid black; padding-left: 8px;">{{order.MinOrderQty}}</td>
+                                    <td style="border: 1px solid black; padding-left: 8px;">{{order.qty / order.MinOrderQty}}</td>
+                                    <td style="border: 1px solid black; padding-left: 8px;">{{order.qty}}</td>
+                                    <td style="border: 1px solid black; padding-left: 8px;">{{order.TaxPercentage}}</td>
+                                    <td style="border: 1px solid black; padding-left: 8px;">{{order.TotalAmt}}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div><br>
+                        <hr><hr><br>
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="col-md-6 col-lg-6 col-xs-6" style="float:left!important ;font-size:12px; font-weight: bold;">
+                                <strong>Total Amount Incl. Tax : {{item.TotalAmount}}&nbsp; &#x20b9;</strong><br>
+                                <strong>Discount : {{item.DiscountAmount}}&nbsp; &#x20b9;</strong><br>
+                                <strong>Total Tax Amount : {{item.TaxAmount}}&nbsp; &#x20b9;</strong><br>
+                                <strong>Delivery Charge : {{item.deliveryCharge}}&nbsp; &#x20b9;</strong><br>
+                                <strong>Net Amount (Rounded Off) : {{item.GrossAmount}}&nbsp; &#x20b9;</strong><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>     
+                <footer style="page-break-before: always;"></footer>
+    </div> 
+    <!-- generate invoice end -->
+    
+    

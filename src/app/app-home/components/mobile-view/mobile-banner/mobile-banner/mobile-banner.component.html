@@ -1,0 +1,30 @@
+<ng-container *ngIf="bannerType != 'Slider' || section.length == 1 && bannerType == 'Slider'">
+
+    <ng-container *ngFor="let product of section">
+        <ng-container *ngIf="product && product.BannerImage">
+            <ng-container *ngIf="!product.Deleted || product.Deleted == 'false'">
+                <div class="row">
+                    <img style="width: 100%;margin-right: 50px;" [src]=product.BannerImage alt="text">
+                </div>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+    <p style=" text-align: center; font-weight: bold;">Banner 1 - {{bannerType}}</p>
+    <hr>
+</ng-container>
+
+<ng-container *ngIf="bannerType == 'Slider' && section.length > 1">
+    <p-carousel dir="ltr" [value]="section" [autoplayInterval]="1000" [numVisible]="1">
+        <div class="row">
+            <ng-template let-product pTemplate="item">
+                <ng-container *ngIf="product && product.BannerImage">
+                    <ng-container *ngIf="!product.Deleted || product.Deleted == 'false'">
+                        <img style="width: 100%;margin-right: 50px;" [src]=product.BannerImage alt="text">
+                    </ng-container>
+                </ng-container>
+            </ng-template>
+        </div>
+    </p-carousel>
+    <p style=" text-align: center; font-weight: bold;">Banner - {{bannerType}}</p>
+    <hr>
+</ng-container>

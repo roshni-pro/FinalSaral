@@ -1,0 +1,156 @@
+<!-- <p>return-replace-dashboard works!</p> -->
+<p-toast [style]="{marginTop: '80px'}" appendTo="body"></p-toast>
+<div class="ui-fluid" >
+    <!-- <p-confirmDialog #cd appendTo="body" header="Confirmation">
+        <p-footer>
+          <h6 class="text-left">Comment Section:</h6>
+            <textarea type="text"  class="form-control" [(ngModel)]="Comment"></textarea><br/>
+            <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+            <button type="button" class="btn btn-raised btn-danger mr-1" [disabled]="!Comment" (click)="cd.accept()">Yes</button>
+        </p-footer>
+      </p-confirmDialog> -->
+    
+    <section *ngIf="!isopen" >
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="content-header">Return Dashboard</div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="name">Select Warehouse</label>
+                <!-- <select id="ware" name="ware" class="form-control" [(ngModel)]="warehouseid"
+                    placeholder="Select Region Name">
+                    <option *ngFor="let ware of warehouseList" [ngValue]="ware.WarehouseId">
+                        {{ ware.WarehouseName }}
+                    </option>
+                </select> -->
+                <p-dropdown [options]="warehouseList" name="warehouse" optionLabel="label" 
+                    [(ngModel)]="warehouseid" [filter]="true" placeholder="Select Warehouse">
+                </p-dropdown>
+            </div>
+
+            <div class=" col-md-1">
+                <label>&nbsp;</label>
+                <div></div>
+                <button type="button" class="btn btn-raised btn-primary" (click)="onSearch()">Search</button>
+            </div>
+            <div class=" col-md-1">
+                <label>&nbsp;</label>
+                <div></div>
+                <button type="button" class="btn btn-raised btn-primary" (click)="Export()">Export</button>
+            </div>
+
+        </div>
+
+        <div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover" *ngIf="!plannerRole">
+            <div class="position-relative">
+                <p-table #dt [globalFilterFields]="cols" [value]="returnReplaceList" [paginator]="true" [rows]="20"
+                    dataKey="KkRequestId" [scrollable]="true" scrollHeight="70vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <!-- <th>Edit</th> -->
+                            <th *ngFor="let col of cols" style="text-align: center">
+                                {{col.header}}
+                                <!-- <p-sortIcon [field]="col.field"></p-sortIcon> -->
+                            </th>
+                            <!-- <th>Open</th> -->
+                            <!-- <th>Action</th> -->
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+                        <tr >
+                            <td *ngFor="let col of cols" style="text-align: center" (click)="open(rowData)">                                
+                                <div *ngIf="col.field!='RequestType' &&  col.field!='ReturnImage' && col.field!='CreatedDate'">
+                                    {{rowData[col.field]}}
+                                </div>
+                                <div *ngIf="col.field=='RequestType'">
+                                    {{rowData[col.field] == 0 ? 'Return' : 'Replace'}}
+                                </div>
+                                <div *ngIf="col.field=='CreatedDate'">
+                                    {{rowData[col.field] | date : 'medium'}}
+                                </div>
+                                <!-- <div *ngIf="col.field =='ReturnImage'">
+                                                                      <img  alt="" [src]="{{baseURL}}/UploadKKReturnReplaceImages/{{rowData[col.field]}}" height="40px">
+                                    <img  [src]='baseURL+"/UploadKKReturnReplaceImages/"+ rowData[col.field]'height="40px">
+                                </div> -->
+                            </td>
+                            <!-- <td><button type="button" class="btn btn-raised " style="background-color:brown;" (click)="open(rowData)"> Open
+                                </button></td>-->
+                            
+                            <!-- <td > 
+                                <div *ngIf="rowData.Status != 'Pending to Pick'">
+                                <button *ngIf="rowData.Status == 'Pick from Customer'" type="button" class="btn btn-raised "
+                                    style="background-color:rgb(173, 125, 22);" (click)="OnWhAccept(rowData)"> WH Accept </button>
+                                    <button *ngIf="rowData.Status == 'Received at Warehouse'" type="button" class="btn btn-raised " style="background-color:blueviolet;" (click)="open(rowData)"> QC Accept </button>
+                                </div>
+                                <div *ngIf="rowData.Status == 'Pending to Pick'">
+                                      NA
+                                </div>
+                                </td> -->
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+
+        </div>
+        <div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover" *ngIf="plannerRole">
+            <div class="position-relative">
+                <p-table #dt [globalFilterFields]="items" [value]="returnReplaceList" [paginator]="true" [rows]="20"
+                    dataKey="KkRequestId" [scrollable]="true" scrollHeight="70vh" text-align: center>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="text-align: center">S.No.</th>
+                            <th *ngFor="let col of items" style="text-align: center">
+                                {{col.header}}
+                            </th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded" let-i="rowIndex">
+                        <tr >
+                            <td style="text-align: center">{{i+1}}</td>
+                            <td *ngFor="let col of items" style="text-align: center" (click)="open(rowData)">
+                                
+                                <div *ngIf="col.field!='CreatedDate'">
+                                    {{rowData[col.field]}}
+                                </div>
+                                <div *ngIf="col.field=='CreatedDate'">
+                                    {{rowData[col.field] | date : 'medium'}}
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
+        </div>
+    </section>
+    <section  *ngIf="isopen">
+    <app-return-replace-items [details]="order" (isdetailsclose)="isDetailsFalse($event)"></app-return-replace-items>
+    </section>
+</div>
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+  <p-progressSpinner *ngIf="blocked" [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+
+<!-- <div class="col-md-6">         
+    <div class="form-group">
+      <label for="uploadAdvertisements">MarkSheet:</label><br />
+      <input class="btn btn-raised btn-info" id="file" type="file" accept="image/*" (change)="upload($event.target.files)"  />
+      <br />
+        <button type="button" class="btn btn-raised btn-primary" (click)="uploadImage()">
+        Upload
+      </button>
+       <div class="form-group">
+        <img alt="" src="{{baseURL}}{{people.MarkSheet}}" class="img-square"  *ngIf="people.MarkSheet">
+      </div> 
+    </div> 
+   -->
+
+
+      

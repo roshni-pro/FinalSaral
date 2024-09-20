@@ -1,0 +1,447 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<p-dialog header="{{docName}} Document view"  [(visible)]="display"[contentStyle]="{'overflow-y': 'auto', 'overflow-x': 'hidden', 
+'max-height': '80vh','min-height':'250px'}">
+    <table>
+        <tr *ngFor="let room of imagelist; let i = index">
+            <td>
+                
+                <img alt="" src="{{room}}" class="img-square" height="400px;" width="500px" *ngIf="room" >
+            </td>
+            
+            <td>
+                <a style="margin-left: 200px;" href="{{room}}" target="_blank">Download</a>
+                <button style="margin-left: 10px;" (click)="RemoveImage(i,docName)" >Remove</button>   
+            </td>
+        </tr>
+    </table>
+</p-dialog>
+<br>
+<h3 style="color:orange">ADD Depo</h3>
+<!-- <div class="row"> -->
+<form id="depoFormaall" name="depoForma" (ngSubmit)="onSave(depoForma)" #depoForma="ngForm">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="State">State<span style="color:red"> *</span></label>
+                <br>
+                <select id="State" name="State" class="form-control" required [(ngModel)]="selectdepoMaster.Stateid"
+                    (change)="getcity(selectdepoMaster.Stateid)" #StateidInput="ngModel">
+                    <option value="" disabled>--select--</option>
+                    <option *ngFor="let state of statelist" [ngValue]="state.Stateid">
+                        {{ state.StateName }}
+                    </option>
+                </select>
+                <div>
+                    <code
+                        *ngIf="depoForma.submitted && StateidInput.invalid && StateidInput.errors && StateidInput.errors.required">
+                    State Name required! 
+                </code>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label for="City">City<span style="color:red"> *</span></label>
+                <br>
+                <select id="City" name="City" class="form-control" required [(ngModel)]="selectdepoMaster.cityId"
+                    #cityIdInput="ngModel">
+                    <option value="" disabled>--select--</option>
+                    <option *ngFor="let city of citylist" [ngValue]="city.Cityid">
+                        {{ city.CityName }}
+                    </option>
+                </select>
+                <div>
+                    <code
+                        *ngIf="depoForma.submitted && cityIdInput.invalid && cityIdInput.errors && cityIdInput.errors.required">
+                    City Name required! 
+                </code>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label>Depo Name:<span style="color:red"> *</span> </label>
+            <input name="DepoName" type="text" class="form-control" required [(ngModel)]="selectdepoMaster.DepoName"
+                #DepoNameInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && DepoNameInput.invalid && DepoNameInput.errors && DepoNameInput.errors.required">
+                Depo Name required! 
+            </code>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label>Depo Code:<span style="color:red"> *</span></label>
+            <input name="DepoCodes" type="text" class="form-control" required [(ngModel)]="selectdepoMaster.DepoCodes"
+                #DepoCodesInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && DepoCodesInput.invalid && DepoCodesInput.errors && DepoCodesInput.errors.required">
+                Depo Name required! 
+            </code>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <label>GST Number<span style="color:red"> *</span></label>
+            <input name="TINNo" type="text" pattern="\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[a-zA-Z]{1}[A-Z\d]{1}" class="form-control" required [(ngModel)]="selectdepoMaster.TINNo"
+                #TINNoInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && TINNoInput.invalid && TINNoInput.errors && TINNoInput.errors.required">
+                GST No. required! 
+            </code>
+            </div>
+
+            <div>
+                <code  *ngIf="TINNoInput.errors?.pattern">
+                  Please Enter valid gst number
+                </code>
+              </div>
+        </div>
+        <div class="col-sm-3">
+            <label>GST Image <span style="color:red"> *</span></label>
+            <br>
+            <input #takeInput class="btn btn-raised btn-info chooseImg" id="file-input" name="file-input" type="file" accept="image/*"
+                (change)="upload($event,'GSTN')" (change)="onFileChange($event)" multiple/>
+                <label for="file-input"> &nbsp; &nbsp; {{proppan3}} &nbsp;file selected</label>
+             <br />
+                <button type="button" *ngIf="uploadFlagGST" class="btn btn-raised btn-primary " (click)="uploadGSTProof()">
+                    Upload
+                </button>
+            <button type="button" *ngIf="!uploadFlagGST" class="btn btn-raised btn-primary " (click)="removeGSTimg()" >
+                Remove
+            </button>&nbsp;
+            <img [src]="imageSrc" *ngIf="imageSrc" style="height: 100px; width:200px">
+            
+            <div>
+                <br>
+               
+                    <button type="button" (click)="showDialog(selectdepoMaster.GstImage,'GSTN')" pButton
+                    icon="pi pi-info-circle" label="Show Document"></button>
+
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label>Full Business Address:<span style="color:red"> *</span></label>
+            <input name="Address" type="text" class="form-control" required [(ngModel)]="selectdepoMaster.Address"
+                #AddressInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && AddressInput.invalid && AddressInput.errors && AddressInput.errors.required">
+                Address required! 
+            </code>
+            </div>
+        </div>
+        
+        
+        <div class="col-sm-3">
+            <label>City Pincode:<span style="color:red"> *</span></label>
+            <input name="CityPincode" maxlength="7" minlength="5" pattern="^[0-9]*$" class="form-control" required
+                [(ngModel)]="selectdepoMaster.CityPincode" #CityPincodeInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && CityPincodeInput.invalid && CityPincodeInput.errors && CityPincodeInput.errors.required">
+                    City Pincode required! 
+                </code>
+            </div>
+            <div>
+                <code  *ngIf="CityPincodeInput.errors?.pattern">
+                  Please Enter valid Pin code number
+                </code>
+              </div>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Contact Person Name:<span style="color:red"> *</span></label>
+            <input name="ContactPerson" type="text" class="form-control"   required
+                [(ngModel)]="selectdepoMaster.ContactPerson" #ContactPersonInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && ContactPersonInput.invalid && ContactPersonInput.errors && ContactPersonInput.errors.required">
+                Contact Person required! 
+            </code>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label>Contact Number:<span style="color:red"> *</span></label>
+            <input name="Phone" pattern="^[6-9]\d{9}$" class="form-control" maxlength="10" minlength="10"  required [(ngModel)]="selectdepoMaster.PhoneNumber"
+                #PhoneInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && PhoneInput.invalid && PhoneInput.errors && PhoneInput.errors.required">
+                Phone Number required! 
+            </code>
+            </div>
+            <div *ngIf="PhoneInput.touched">
+                <code  *ngIf="PhoneInput.errors?.pattern">
+                  Please Enter valid contact number
+                </code>
+              </div>
+        </div>
+        <div class="col-sm-3">
+            <label>Email Address:<span style="color:red"> *</span></label>
+            <input name="Email" type="text" class="form-control" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$" required [(ngModel)]="selectdepoMaster.Email"
+                #EmailInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && EmailInput.invalid && EmailInput.errors && EmailInput.errors.required">
+                Email required! 
+            </code>
+            </div>
+            <div *ngIf="EmailInput.touched">
+                <code  *ngIf="EmailInput.errors?.pattern">
+                  This is not a valid Email!!
+                </code>
+              </div>
+        </div>
+        <div class="col-sm-3" >
+            <!-- <label>FSSAI:<span style="color:red" > *</span></label>
+            <input name="FSSAI" type="text" class="form-control" required [(ngModel)]="selectdepoMaster.FSSAI"
+                #FSSAIInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && FSSAIInput.invalid && FSSAIInput.errors && FSSAIInput.errors.required">
+                FSSAI No. required! 
+            </code>
+            </div> -->
+            <label>FSSAI Number :</label>
+            <input name="FSSAI" type="text" class="form-control"  [(ngModel)]="selectdepoMaster.FSSAI"
+                #FSSAIInput="ngModel">
+            <!-- <div>
+                <code
+                    *ngIf="SupplierSegment=='Food'|| SupplierSegment=='Both' && depoForma.submitted && FSSAIInput.invalid && FSSAIInput.errors && FSSAIInput.errors.required">
+                FSSAI No. required! 
+            </code>
+            </div> -->
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <label>FSSAI Image:</label><br>
+            <input #takeInput1 class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*"
+                (change)="upload($event,'FSSAI')" (change)="onFileChange2($event)"  multiple />
+                <label for=""> &nbsp; &nbsp; {{proppan2}} &nbsp;file selected</label>
+            <br />
+            <button type="button" *ngIf="uploadFlagFSSAI" class="btn btn-raised btn-primary "
+                (click)="uploadFSSAIProof()">
+                Upload
+            </button>
+            <button type="button" *ngIf="!uploadFlagFSSAI" class="btn btn-raised btn-primary "
+                (click)="removeFSSAIimg()">
+                Remove
+            </button>&nbsp;
+            <img [src]="imageSrc2" *ngIf="imageSrc2" style="height: 100px; width:200px">
+            <div>
+                <br>
+                <!-- <img alt="" src="{{baseURL}}{{selectdepoMaster.FSSAIImage}}" class="img-square" height="80px;"
+                    *ngIf="selectdepoMaster.FSSAIImage"> -->
+                    <!-- <a href="{{baseURL}}{{selectdepoMaster.FSSAIImage}}">download</a> -->
+                    <button type="button" (click)="showDialog(selectdepoMaster.FSSAIImage,'FSSAI')" pButton
+                    icon="pi pi-info-circle" label="Show Document"></button>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label>PAN Card No:</label>
+            <input name="PANCardNo" type="text" class="form-control"   [(ngModel)]="selectdepoMaster.PANCardNo" pattern="^[A-Za-z]{5}[0-9]{4}[A-Za-z]$"
+                #PANCardNoInput="ngModel">
+            <div>
+                <code *ngIf="PANCardNoInput.errors?.pattern">
+                  Please Enter valid pan number
+                </code>
+            </div>
+            <!-- <div>
+                <code
+                    *ngIf="depoForma.submitted && PANCardNoInput.invalid && PANCardNoInput.errors && PANCardNoInput.errors.required">
+                PANCard No. required! 
+            </code>
+            </div> -->
+        </div>
+        <div class="col-sm-3">
+            <label>PanCard Image :</label><br>
+            <input #takeInput2 class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*"
+                (change)="upload($event,'PanCard')" (change)="onFileChange3($event)"  multiple />
+                <label for=""> &nbsp; &nbsp; {{proppan1}} &nbsp;file selected</label>
+            <br />
+            <button type="button" *ngIf="uploadFlagPAN" class="btn btn-raised btn-primary "
+                (click)="uploadPanCardProof()">
+                Upload
+            </button>
+            <button type="button" *ngIf="!uploadFlagPAN" class="btn btn-raised btn-primary " (click)="removePANimg()">
+                Remove
+            </button>&nbsp;
+            <img [src]="imageSrc3" *ngIf="imageSrc3" style="height: 100px; width:200px">
+            <div>
+                <br>
+                <!-- <img alt="" src="{{baseURL}}{{selectdepoMaster.PanCardImage}}" class="img-square" height="80px;"
+                    *ngIf="selectdepoMaster.PanCardImage"> -->
+                    <!-- <a href="{{baseURL}}{{selectdepoMaster.PanCardImage}}">download</a> -->
+                    <button type="button" (click)="showDialog(selectdepoMaster.PanCardImage,'PanCard')" pButton
+                    icon="pi pi-info-circle" label="Show Document"></button>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <label>Bank Name:<span style="color:red" > *</span></label>
+            <input name="Bank_Name" type="text" class="form-control" required [(ngModel)]="selectdepoMaster.Bank_Name"
+                #Bank_NameInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && Bank_NameInput.invalid && Bank_NameInput.errors && Bank_NameInput.errors.required">
+                Bank Name required! 
+            </code>
+            </div>
+        </div>
+        
+        
+       
+        
+    </div>
+    <div class="row">
+       <div class="col-sm-3">
+        <div>
+            <label>Bank Account Type<i class="fa fa-asterisk" aria-hidden="true"></i></label>
+        </div>
+        <select name="Bank Account Type" class="form-control" required
+            [(ngModel)]="selectdepoMaster.BankAccountType" #BankAccountTypenput="ngModel">
+            <option value="Current">Current</option>
+            <option value="Saving">Saving</option>
+            <option value="Virtual">Virtual</option>
+        </select>
+
+        <div>
+            <code
+                *ngIf="depoForma.submitted && BankAccountTypenput.invalid && BankAccountTypenput.errors && BankAccountTypenput.errors.required">
+                BankAccountType  required!
+            </code>
+        </div>
+
+       </div>
+        <div class="col-sm-3">
+            <label>Bank Account No:<span style="color:red"> *</span></label>
+            <input name="Bank_AC_No" type="text" (keypress)="numberOnly($event)"  class="form-control" required [(ngModel)]="selectdepoMaster.Bank_AC_No"
+                #Bank_AC_NoInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && Bank_AC_NoInput.invalid && Bank_AC_NoInput.errors && Bank_AC_NoInput.errors.required">
+                Bank AC/No. required! 
+            </code>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label>Bank A/C Image:<span style="color:red"> *</span></label><br>
+            <div class="d-flex">
+            <input #takeInput3  class="btn btn-raised btn-info chooseImg" id="file" type="file" accept="image/*" 
+                (change)="upload($event,'CancelCheque')" (change)="onFileChange4($event)"  multiple />
+                <label for=""> &nbsp; &nbsp; {{proppan4}} &nbsp;file selected</label>
+            <br /></div>
+            <button type="button" *ngIf="uploadFlagCancelChq" class="btn btn-raised btn-primary "
+                (click)="uploadCancelChequeProof()">
+                Upload
+            </button>
+            <button type="button" *ngIf="!uploadFlagCancelChq" class="btn btn-raised btn-primary "
+                (click)="removeCancelChqimg()">
+                Remove
+            </button>&nbsp;
+            <img [src]="imageSrc4" *ngIf="imageSrc4" style="height: 100px; width:200px">
+            <div>
+                <br>
+                <!-- <img alt="" src="{{baseURL}}{{selectdepoMaster.CancelCheque}}" class="img-square" height="80px;"
+                    *ngIf="selectdepoMaster.CancelCheque"> -->
+                    <!-- <a href="{{baseURL}}{{selectdepoMaster.CancelCheque}}">download</a> -->
+                    <button type="button" (click)="showDialog(selectdepoMaster.CancelCheque,'CancelCheque')" pButton
+                    icon="pi pi-info-circle" label="Show Document"></button>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label>IFSC code:<span style="color:red"> *</span></label>
+            <input name="Bank_Ifsc" type="text" class="form-control" required [(ngModel)]="selectdepoMaster.Bank_Ifsc"
+                #Bank_IfscInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && Bank_IfscInput.invalid && Bank_IfscInput.errors && Bank_IfscInput.errors.required">
+                Bank IFSC Code required! 
+            </code>
+            </div>
+        </div>
+        <!-- <div class="col-sm-3">
+            <label>Opening Hours:<span style="color:red"> *</span></label>
+            <input name="OpeningHours" type="number" class="form-control" required
+                [(ngModel)]="selectdepoMaster.OpeningHours" #OpeningHoursInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && OpeningHoursInput.invalid && OpeningHoursInput.errors && OpeningHoursInput.errors.required">
+                Opening Hours required! 
+            </code>
+            </div>
+        </div> -->
+        
+        <!-- <div class="col-sm-3">
+        <label>Depo Active:<span style="color:red"> *</span></label>
+        <input type="checkbox"[(ngModel)]="selectdepoMaster.IsActive">
+    </div> -->
+    </div>
+    <div class="row">
+        
+        <div class="col-sm-3">
+            <label>Bank Address:<span style="color:red"> *</span></label>
+            <input name="BankAddress" type="text" class="form-control" required
+                [(ngModel)]="selectdepoMaster.BankAddress" #BankAddressInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && BankAddressInput.invalid && BankAddressInput.errors && BankAddressInput.errors.required">
+                Bank Address required! 
+            </code>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <label>Bank Pin Code:<span style="color:red"> *</span></label>
+            <input name="BankPinCode" maxlength="7" minlength="5" pattern="^[0-9]*$" class="form-control" required
+                [(ngModel)]="selectdepoMaster.BankPinCode" #BankPinCodeInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && BankPinCodeInput.invalid && BankPinCodeInput.errors && BankPinCodeInput.errors.required">
+                Bank PinCode required! 
+            </code>
+            </div>
+
+              <div>
+                <code  *ngIf="BankPinCodeInput.errors?.pattern">
+                  Please Enter valid Pin code number
+                </code>
+              </div>
+        </div> 
+        <div class="col-sm-3">
+            <label>PR/PO Stop After Value:<span style="color:red"> *</span></label>
+            <input name="PRPOStopAfterValue" type="number" class="form-control" required
+                [(ngModel)]="selectdepoMaster.PRPOStopAfterValue" #PRPOStopAfterValueInput="ngModel">
+            <div>
+                <code
+                    *ngIf="depoForma.submitted && PRPOStopAfterValueInput.invalid && PRPOStopAfterValueInput.errors && PRPOStopAfterValueInput.errors.required">
+                PR/PO Stop After Value required! 
+            </code>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+    <!-- </div> -->
+    <br>
+    <div class="row">
+        <button class="btn btn-primary pull left" type="submit" form="depoFormaall">Save</button>
+       &nbsp;&nbsp; <button class="btn btn-primary pull right" type="submit" (click)="back()">Back</button>
+
+    </div>
+</form>
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+    [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+    fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>

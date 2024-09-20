@@ -1,0 +1,107 @@
+
+<div class="my-2 d-flex justify-content-between">
+    <div class="header">
+        <h3 class="m-2">Item Live Dashboard</h3>
+    </div>
+    <div>
+        <button  label="Export"
+            class="btn btn-raised btn-success m-2 shadow" (click)="export()">Export  
+           </button>
+    </div>
+</div> 
+<div class="ui-fluid">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <div class="row">
+                <div class="col-sm-3">
+                  <p-calendar [(ngModel)]="inputModel.StartDate" [showTime]="false"></p-calendar>
+                </div>
+                <div class="col-sm-3">
+                  <p-calendar [(ngModel)]="inputModel.EndDate" [showTime]="false"></p-calendar>
+                </div>
+
+                <div class="col-sm-3" style="height: 60px ; padding-right: 15px">
+                  <button type="button" class="btn btn-raised btn-primary align-self-end" style="margin-top: auto;"
+                    (click)="getData()"> GetData
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="projectinput3">StartDate<span  style="color:red"> *</span></label>
+       
+          <p-calendar [(ngModel)]="Search.StartDate" [showTime]="false"></p-calendar>
+
+      <div *ngIf="isInvalid && !StartDate.valid && StartDate.errors.required">
+        <code>StartDate is required</code>
+      </div>
+    </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="projectinput4">EndDate<span  style="color:red"> *</span></label>
+          <p-calendar [(ngModel)]="Search.EndDate" [showTime]="false"></p-calendar>
+      <div *ngIf="isInvalid && !EndDate.valid && EndDate.errors.required">
+        <code>EndDate is required</code>
+      </div>
+    </div>
+    </div>
+  </div> -->
+<p-table [value]="ItemLiveDashboardList">
+    <ng-template pTemplate="header">
+        
+        <tr>
+            <th>HUB </th>
+            <th colspan="2">Total Item </th>
+            <th colspan="2">Brand </th>
+            <th colspan="2">Sub Category</th>
+            <th colspan="2">Category </th>
+        </tr>
+        <tr>            
+            <th>Name </th>
+            <th>Active </th>
+            <th>Inactive </th>
+            <th>Active </th>
+            <th>Inactive </th>
+            <th>Active </th>
+            <th>Inactive </th>
+            <th>Active </th>
+            <th>Inactive </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-ItemLiveDashboardList>
+        <tr>
+            <td>{{ItemLiveDashboardList.WarehouseName}}</td>
+            <td>{{ItemLiveDashboardList.ActiveItems}}</td>
+            <td>{{ItemLiveDashboardList.InActiveItems}}</td>
+            <td>{{ItemLiveDashboardList.ActiveBrands}}</td>
+            <td>{{ItemLiveDashboardList.InactiveBrands}}</td>
+
+            <td>{{ItemLiveDashboardList.ActiveSubCategories}}</td>
+
+            <td>{{ItemLiveDashboardList.inactiveSubCat}}</td>
+
+            <td>{{ItemLiveDashboardList.ActiveCategories}}</td>
+
+            <td>{{ItemLiveDashboardList.InactiveCategories}}</td>
+            
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+       
+    </ng-template>
+</p-table>

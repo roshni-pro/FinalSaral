@@ -1,0 +1,71 @@
+<p-toast [style]="{marginTop: '80px'}"></p-toast>
+<div class="ui-fluid">
+  <section id="basic-form-layouts">
+
+    <div class="row text-left">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header pb-2">
+          </div>
+          <div class="card-content">
+            <div class="px-3">
+              <form class="form form-inline" name="form" #deptEditForm="ngForm">
+                <div class="form-body">
+                  <h4 class="form-section"><i class="ft-user"></i><b> Department</b></h4>
+                  <div class="row col-md-12" *ngIf="department">
+                    <div class="col-md-6">
+                      <div class="form-group m-2">
+                        <label for="dname" class="col-md-6"><b>Department Name:</b><span  style="color:red"> *</span></label>
+                        <input type="text" id="dname" class="form-control col-md-6" name="dname" [(ngModel)]="department.DepName" (input)="inputValidator($event)"
+                          placeholder="Department Name"  required="1" maxlength="50" minlength="4" #firstName="ngModel"/>
+                          <div class="col-md-6"></div>
+                          <div *ngIf="isInvalid && !firstName.valid && firstName.errors.required">
+                              <code>Department Name is required</code>
+                            </div>
+                            <div *ngIf="isInvalid && !firstName.valid && firstName.errors.minlength">
+                                <code>minlength 4</code>
+                              </div>
+                          </div>
+                      </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group m-2">
+                        <label for="descp" class="col-md-6"><b>Description:</b><span  style="color:red"> *</span></label>
+                        <input type="text" id="descp" class="form-control col-md-6" name="aname"placeholder="Description" (input)="inputValidator($event)" [(ngModel)]="department.Description" required="1"  minlength="4" #descName="ngModel"/>
+                        <div class="col-md-6"></div>
+                        <div *ngIf="isInvalid && !descName.valid && descName.errors.required">
+                            <code>Department Description is required</code>
+                          </div>
+                          <div *ngIf="isInvalid && !descName.valid && descName.errors.minlength">
+                              <code>minlength 4</code>
+                            </div>
+                      
+                    </div> 
+                    </div>
+                    </div>
+                </div>
+                    <!-- <div class="col-md-6"></div>  
+                    <div class="form-actions right"> -->
+                        <div class="form-actions right col-sm-12 p-3">
+                      <button type="button" class="btn btn-raised btn-warning mr-1" (click) = "onCancel()">
+                        Cancel
+                      </button>
+                      <button type="button" class="btn btn-raised btn-primary" (click)="update(deptEditForm)">
+                       Save
+                      </button>
+                    </div>
+
+
+                  <!-- </div>
+                </div> -->
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>

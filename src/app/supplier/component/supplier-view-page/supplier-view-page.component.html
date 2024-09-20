@@ -1,0 +1,88 @@
+<section id="Supplier">
+    <div class="my-2 d-flex justify-content-between">
+        <div class="header">
+            <h3 class="m-2">Supplier View Page</h3>
+        </div>
+    </div>
+    <div class="ui-fluid shadow p-3 mb-5 bg-white rounded table table-hover">
+    <div class="position-relative">
+      <div class="position-absolute country-details">
+        <!-- <input class="form-control" type="text" name="search" [(ngModel)]="searchText" autocomplete="off" > -->
+      </div>
+      
+      <div class="position-relative">
+    
+        <p-table #dt [columns]="cols" [value]="SupplierList" [paginator]="true" [rows]="20" dataKey="Supplierid" [scrollable]="true" scrollHeight="70vh" text-align: center>
+
+          <ng-template pTemplate="caption" >
+              
+            <div class="row">
+              <div class="col-md-3" style="margin-left: 30%;">
+                <p-dropdown [options]="statusFilter" [style]="{'border-radius':'20px !important'}" optionLabel="label" optionValue="value"  (onChange)="filterdata($event)"></p-dropdown>
+              </div>
+                  <div class="col" style="text-align: right">        
+                    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                  </div>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="header" >
+            <tr>           
+              <!-- <th *ngFor="let col of cols" style="text-align: initial">
+                {{col.header}}                   
+              </th>             -->
+              <th style="width: 100px;">Supplier Code</th>
+              <th style="width: 150px;">Supplier Name</th>
+              <th style="width:150px">Selling Brands</th>
+              <th style="width: 150px;">Contact Person Name</th>
+              <th style="width: 150px;">GST Number</th>
+              <th style="width: 150px;">MobileNo</th>
+              <th style="width: 250px;">EmailId</th>
+              <!-- <th>Subcategory Name</th> -->
+              <th style="width: 100px;">City Name</th>
+              <th style="width: 100px;">State</th>
+              <th style="width: 150px;">Depo Name</th>
+              <th style="width: 150px;">Payment Terms</th>
+              <th style="width: 150px;">Active</th>
+              <!-- <th>Billing Address</th>
+              <th>Business Type</th> -->
+              <th style="width: 150px;">Created Date</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+            <tr >           
+              <!-- <td *ngFor="let col of columns | filter:searchText" style="text-align: initial">
+                {{rowData[col.field]}}
+              </td> -->
+              <td style="width: 100px;">{{rowData.SUPPLIERCODES}}</td>
+              <td style="width: 150px;">{{rowData.Name}}</td>
+              <td style="width: 150px;  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" >{{rowData.SellingBrands}}</td>
+              <td style="width: 150px;" >{{rowData.ContactPerson}}</td>
+              <td style="width: 150px;">{{rowData.GstInNumber}}</td>
+              <td style="width: 150px;">{{rowData.MobileNo}}</td>
+              <td style="width: 250px;">{{rowData.EmailId}}</td>
+              <!-- <td>{{rowData.SubcategoryName}}</td> -->
+              <td style="width: 100px;">{{rowData.City}}</td>
+              <td style="width: 100px;">{{rowData.StateName}}</td>
+              <td style="width: 150px;">{{rowData.DepoName}}</td>
+              <td style="width: 150px;">{{rowData.PaymentTerms}}</td>
+              <td style="width: 150px;">{{rowData.Active}}</td>
+              <!-- <td>{{rowData.BillingAddress}}</td>
+              <td>{{rowData.businessType}}</td> -->
+              <td style="width: 150px;">{{rowData.CreatedDate | date:'dd/mm/yyyy'}}</td>
+              
+            </tr>
+          </ng-template>
+         
+        </p-table>
+        
+      </div>       
+    </div>
+    </div>
+</section>
+
+
+
+

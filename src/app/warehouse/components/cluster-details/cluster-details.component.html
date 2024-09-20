@@ -1,0 +1,330 @@
+
+
+<div id="tax-details">
+  <p-dialog [visible]="showDialog" [closable]="false" [responsive]="true" appendTo="body" [style]="{width: '90vw', minWidth: '90vw'}"
+    [positionTop]="10" [contentStyle]="{'max-height':'90vh'}" [baseZIndex]="99" [minY]="70" [maximizable]="true">
+    <p-header>
+      <h3 class="a12">{{details[activeFields[0].field]}}</h3>
+      <button class="bt" (click)="closeDetails(false);">x</button>
+    </p-header>
+    <p-toast [style]="{marginTop: '80px'}" appendTo="body" [baseZIndex]="101"></p-toast >
+    <div class="">
+      <div class="">
+        <div class="info-header">
+          <!-- <button type="button" class="close" aria-label="Close" (click)="closeDetails(false)">
+            <span aria-hidden="true">&times;</span>
+          </button> -->
+          <div class="float-right mx-4">
+            <!-- <button class="btn btn-sm bg-warning text-white m-2" *ngIf="details.Active" (click)="open(activationModal)">Deactivate</button> -->
+            <!-- <button class="btn btn-sm bg-warning text-white m-2" *ngIf="!details.Active" (click)="open(activationModal)">Activateeee</button> -->
+            <!-- Activation Modal Start -->
+            <ng-template #activationModal let-modal>
+              <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body d-flex flex-column align-items-center">
+                <h2>Are You Sure?</h2>
+                <p class="m-2" style="text-align: center"><strong>Note:</strong> This will <strong><span
+                      *ngIf="details.Active">Deactivate</span><span *ngIf="!details.Active">Activate</span></strong> the
+                  supplier in the database.</p>
+              </div>
+              <div class="modal-footer d-flex p-0 justify-content-center">
+                <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0"
+                  (click)="modal.close('No click')">Cancel</button>
+                <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+                  (click)="ToggleActivation(details)"><span *ngIf="details.Active">Deactivate</span><span
+                    *ngIf="!details.Active">Activate</span></button>
+              </div>
+            </ng-template>
+            <p-blockUI [blocked]="blocked"></p-blockUI>
+            <p-progressSpinner *ngIf="blocked"
+              [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+              fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+            <!--   <ng-template #removeModal let-modal>
+              <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body d-flex flex-column align-items-center">
+                <h2>Are You Sure?</h2>
+                <p class="m-2" style="text-align: center"><strong>Note:</strong> This will permanently delete the cluster
+                  deatil from the records.</p>
+  
+              </div>
+              <div class="modal-footer d-flex p-0 justify-content-center">
+                <button type="button" class="btn btn-lg btn-raised btn-primary align-self-stretch col-6 rounded-0"
+                  (click)="modal.close('No click')">Cancel</button>
+                <button type="button" class="btn btn-lg btn-raised btn-danger ml-0 col-6 rounded-0"
+                  (click)="onDelete(details)">Delete</button>
+              </div>
+            </ng-template>
+            <!-- Remove Modal End -->
+          </div>
+          <!-- <h3 class="m-2">{{details[activeFields[0].field]}}</h3> -->
+
+          <ul class="nav border-bottom">
+            <li class="nav-item" (click)="overviewDisplay($event)">
+              <a [ngClass]="activeTabClass[0].isActive==true? 'nav-link active' : 'nav-link' " id="overview-btn">Overview</a>
+            </li>
+            <li class="nav-item" (click)="editinfo($event)">
+              <a [ngClass]="activeTabClass[1].isActive==true? 'nav-link active' : 'nav-link' ">Edit</a>
+            </li>
+            <li class="nav-item" (click)="CitydisplayTabs($event)">
+
+              <a [ngClass]="activeTabClass[2].isActive==true? 'nav-link active' : 'nav-link' ">Add City</a>
+            </li>
+
+            <li class="nav-item" (click)="Vehicle($event)">
+              <a [ngClass]="activeTabClass[3].isActive==true? 'nav-link active' : 'nav-link' ">Add Vehicle</a>
+            </li>
+            <li class="nav-item" (click)="Agent($event)">
+              <a [ngClass]="activeTabClass[4].isActive==true? 'nav-link active' : 'nav-link' ">Add Agent</a>
+            </li>
+
+            <li class="nav-item" (click)="map($event)">
+              <a [ngClass]="activeTabClass[5].isActive==true? 'nav-link active' : 'nav-link' ">View</a>
+            </li>
+
+            <li class="nav-item" (click)="Executive($event)">
+              <a [ngClass]="activeTabClass[6].isActive==true? 'nav-link active' : 'nav-link' ">Store</a>
+            </li>
+          </ul>
+        </div>
+        <div id="editForm" *ngIf="displayTabs[1].bool" class="info-div m-2">
+          <div>
+            <app-cluster-edit (isdetailsclose)="closeDetails($event)" (refreshParent)="RefreshParent()">
+            </app-cluster-edit>
+          </div>
+        </div>
+
+
+        <div id="depo" *ngIf="displayTabs[2].bool" class="info-div m-2">
+          <!-- <app-depot></app-depot> -->
+        </div>
+
+        <!-- Depo Start -->
+        <div id="depo" *ngIf="displayTabs[2].bool" class="">
+
+        </div>
+        <!-- Depo End -->
+
+        <div id="depoedit" *ngIf="displayTabs[3].bool" class="info-div overflow-hidden h-100 m-2">
+          {{details.CityId}}
+          <app-cluster-editinfo [clusterDetail]="details" (refreshParent)="RefreshParent()"></app-cluster-editinfo>
+        </div>
+
+        <div id="depo" *ngIf="displayTabs[4].bool" class="info-div overflow-hidden h-100 m-2">
+          {{details.CityId}}
+          <app-addcity [ClusterId]="details.ClusterId" (isdetailsclose)="closeDetails($event)"
+            (refreshParent)="RefreshParent()"></app-addcity>
+        </div>
+        <div id="depo1" *ngIf="displayTabs[5].bool" class="info-div overflow-hidden h-100 m-2">
+          <app-addvehicle [VehicleId]="details.VehicleId" [WarehouseId]="details.WarehouseId"
+            [ClusterId]="details.ClusterId" (isdetailsclose)="closeDetails($event)" (refreshParent)="RefreshParent()">
+          </app-addvehicle>
+
+        </div>
+        <div id="depo2" *ngIf="displayTabs[6].bool" class="info-div overflow-hidden h-100 m-2">
+          <app-addagent [AgentId]="details.AgentId" [WarehouseId]="details.WarehouseId" [ClusterId]="details.ClusterId"
+            (isdetailsclose)="closeDetails($event)" (refreshParent)="RefreshParent()"></app-addagent>
+        </div>
+        <div id="depo3" *ngIf="displayTabs[7].bool" class="info-div overflow-hidden h-100 m-2">
+          <app-clustermap [CityId]="details.CityId" [WarehouseName]="details.WarehouseName"
+            [ClusterName]="details.ClusterName" [ClusterId]="details.ClusterId"></app-clustermap>
+        </div>
+
+        <div id="aassignExecutives" *ngIf="displayTabs[8].bool" class="info-div overflow-hidden h-100 m-2">
+          <div class="ui-g">
+            <div class="ui-md-5 ui-g-12">
+              <div class="form-group">
+                <label for="published">Select Store<span style="color:red"> *</span></label><br>
+                <select id="Store" name="Store" class="form-control" [(ngModel)]="StoreId" (change)="selected = true">
+                  <option [value]="null">--- Select Store</option>
+                  <option *ngFor="let store of StoreList" [ngValue]="store.Id">{{store.Name}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="published">Select Channel<span style="color:red"> *</span></label><br>
+                <select id="Channel" name="Channel" class="form-control" [(ngModel)]="ChannelMasterId"
+                (change)="digiExe(ChannelMasterId)"> 
+                  <option [value]="null">--- Select Channel --- </option>
+                  <option *ngFor="let chan of ChannelTypeList" [ngValue]="chan.ChannelMasterId">
+                    {{chan.ChannelType}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="published">Select Sales Executive<span style="color:red"> *</span></label><br>
+                <select id="salesexecutive" name="salesexecutive" class="form-control" [(ngModel)]="ExecutiveId"
+                  (change)="selected = true">
+                  <option [value]="null">--- Select Sales Executive --- </option>
+                  <option *ngFor="let exec of ClusterStoreExecutiveList" [ngValue]="exec.ExecutiveId">
+                    {{exec.ExecutiveName}} ({{exec.Empcode}})
+                  </option>
+                </select>
+              </div>
+
+
+              <!-- <p-footer> -->
+              <div class="form-group">
+                <button type="button" class="btn btn-primary" (click)="Add(StoreId,ExecutiveId,details.ClusterId,ChannelMasterId)">
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- <button type="button" class="btn btn-raised btn-warning mr-1 float-right" (click)="closeDetails(false)">
+                Back
+              </button> -->
+          <!-- <p class="text-right" style="color: red;" *ngIf="selected == false">
+                Please select Executive 
+              </p> -->
+
+
+          <!-- <p class="text-right" style="color: red;" *ngIf="selected == false">
+              Please select Executive
+            </p> -->
+          <!-- <div class="ui-g">
+              <div class="ui-g-12">
+                <button class="btn btn-primary pull-right" (click)="addExecutive()">
+                  Assign Executive</button>
+              </div>
+            </div> -->
+
+          <!-- </p-footer> -->
+
+          <!-- <p-toast></p-toast> -->
+          <div class="row">
+            <p-table #dt [columns]="cols" [value]="MappedClusterExecutiveList" dataKey="id" editMode="row">
+
+              <ng-template pTemplate="caption">
+                <div style="text-align: right">
+                  <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+                  <input type="text" pInputText size="50" placeholder="Global Filter"
+                    (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+                </div>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns">
+                    {{col.header}}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                  <td *ngFor="let col of columns">
+                    {{rowData[col.field]}}
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>S.No</th>
+                  <th>StoreName</th>
+                  <th>ChannelName</th>
+                  <th>ExecutiveName</th>
+                  <th style="width:8rem"></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-mproduct let-ri="rowIndex">
+                <tr>
+                  <td>
+                    {{ri+1}}
+                  </td>
+                  <td>
+                    <!-- *ngIf="!mproduct.isEditing" -->
+                    <span >
+                      {{mproduct.StoreName}}
+                    </span>
+                    <!-- <div *ngIf="mproduct.isEditing">
+                      <select [(ngModel)]="mproduct.StoreId" name="{{ri}}_snm">
+                        <option value="null">select</option>
+                        <option *ngFor="let store of StoreList" [ngValue]="store.Id">{{store.Name}}
+                      </select>
+                    </div> -->
+                  </td>
+                  <td>
+                    <!-- *ngIf="!mproduct.isEditing" -->
+                    <span >
+                      {{mproduct.ChannelName}}
+                    </span>
+                  <td>
+                    <span *ngIf="!mproduct.isEditing">
+                      {{mproduct.ExecutiveName}}
+                    </span>
+                    <div *ngIf="mproduct.isEditing">
+                      <select [(ngModel)]="mproduct.ExecutiveId" name="{{ri}}_nm" id="ctyy" name="ctyy">
+                        <option value="null">select</option>
+                        <option *ngFor="let exedit of ClusterrowExecutiveList" [ngValue]="exedit.ExecutiveId">
+                           {{exedit.ExecutiveName}} ({{exedit.Empcode}})
+                      </select>
+                    </div>
+                  </td>
+                  <td style="text-align:center">
+                    <button *ngIf="!mproduct.isEditing" id="cty" name="cty" pButton pRipple type="button" icon="pi pi-pencil"
+                      (click)="mproduct.isEditing = true;rowExecutiveList(mproduct.ChannelMasterId)" class="p-button-rounded p-button-text" [disabled]="isShow"
+                      ></button>
+                    <button *ngIf="mproduct.isEditing" pButton pRipple type="button" icon="pi pi-check" [disabled]="!isShow"
+                      (click)="onRowEditSave(mproduct)"
+                      class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                    <button *ngIf="mproduct.isEditing" pButton pRipple type="button" icon="pi pi-times" [disabled]="!isShow"
+                      (click)="onRowEditCancel(mproduct, ri)"
+                      class="p-button-rounded p-button-text p-button-danger"></button>
+                    <button *ngIf="mproduct.isEditing" pButton pRipple type="button" icon="pi pi-trash" [disabled]="!isShow"
+                      (click)="onRowEditDelete(mproduct,mproduct.IsDeleted = true)"
+                      class="p-button-rounded p-button-text p-button-danger p-mr-2"></button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+        <div id="overview" *ngIf="displayTabs[0].bool" class="info-div text-sm">
+          <!-- <div class="info-heading text-bold-600 m-3"><h4>Supplier Info</h4></div> -->
+          <div class="info-content">
+            <div class="row m-2 mx-4">
+              <div class="col-md-6 d-flex" *ngFor="let activeField of activeFields">
+                <div class="info-label font-weight-bold m-2">{{activeField.label}}</div>
+
+                <div class="info-value m-2">
+                  <div *ngIf="activeField.field == 'ExecutiveName' && details.primeExecutive != details.ExecutiveName">
+                    {{details.primeExecutive + ','}}</div>
+                  {{details[activeField.field]}}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+
+
+  </p-dialog>
+
+</div>
+
+
+
+
+
+<p-blockUI [blocked]="blocked"></p-blockUI>
+<p-progressSpinner *ngIf="blocked"
+  [style]="{width: '50px', height: '50px', position: 'absolute', left: '48%', top: '48%'}" strokeWidth="8"
+  fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
+
+<!-- <ng-container *ngIf="selected == true">
+  <p-confirmDialog #cd appendTo="body" header="Confirmation">
+    
+      <button type="button" class="btn btn-raised btn-primary mr-1" (click)="cd.reject()">No</button>
+      <button type="button" class="btn btn-raised btn-danger mr-1" (click)="cd.accept()">Yes</button>
+    
+  </p-confirmDialog>
+</ng-container> -->
